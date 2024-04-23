@@ -89,8 +89,16 @@ func (c *LumosAPIClient) searchApp(name string) (*lumosAPIAppResponse, error) {
 	}
 
 	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIAppResponse])
-	if !ok || len(result.Items) == 0 || len(result.Items) > 1 {
-		return nil, fmt.Errorf("unexpected response type")
+	if !ok {
+		return nil, fmt.Errorf("unexpected error occurred")
+	}
+
+	if len(result.Items) == 0 {
+		return nil, fmt.Errorf("no app found with name %s", name)
+	}
+
+	if len(result.Items) > 1 {
+		return nil, fmt.Errorf("multiple apps found with name %s", name)
 	}
 
 	return &result.Items[0], nil
