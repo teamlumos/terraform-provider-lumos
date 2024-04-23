@@ -179,7 +179,8 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 				MarkdownDescription: "The provisioning group ID optionally associated with this config",
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Required:            true,
+						Required:            false,
+						Optional:            true,
 						MarkdownDescription: "The ID of the provisioning group",
 						PlanModifiers: []planmodifier.String{
 							stringplanmodifier.UseStateForUnknown(),
