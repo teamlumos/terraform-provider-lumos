@@ -173,12 +173,34 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"provisioning_group": schema.StringAttribute{
+			"provisioning_group": schema.SingleNestedAttribute{
 				Required:            false,
 				Optional:            true,
 				MarkdownDescription: "The provisioning group ID optionally associated with this config",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Required:            true,
+						MarkdownDescription: "The ID of the provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
+					"app_id": schema.StringAttribute{
+						Required:            false,
+						Optional:            true,
+						MarkdownDescription: "The ID of the app associated with this provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
+					"integration_specific_id": schema.StringAttribute{
+						Required:            false,
+						Optional:            true,
+						MarkdownDescription: "The ID of the integration specific to the provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
 				},
 			},
 			"last_updated": schema.StringAttribute{

@@ -4,7 +4,8 @@ import (
 	"context"
 	"flag"
 	"log"
-	"terraform-provider-lumos-appstore/internal/provider"
+
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
