@@ -100,7 +100,9 @@ type lumosAPIInlineWebhook struct {
 }
 
 type lumosAPIGroup struct {
-	Id string `json:"id"`
+	Id                    string `json:"id"`
+	AppId                 string `json:"app_id"`
+	IntegrationSpecificId string `json:"integration_specific_id"`
 }
 
 type lumosAPIUser struct {
@@ -254,11 +256,17 @@ func buildAppStoreAppRequestablePermissionFulfillmentConfig(p requestablePermiss
 	}
 
 	// Set Request Config -> Fulfullment Config -> Provisioning Group
-	if !p.ProvisioningGroup.IsNull() {
+	if !p.ProvisioningGroup.Id.IsNull() {
 		request_fulfillment_config["provisioning_group"] = map[string]string{
-			"id": p.ProvisioningGroup.ValueString(),
+			"id": p.ProvisioningGroup.Id.ValueString(),
+		}
+	} else if !p.ProvisioningGroup.IntegrationSpecificId.IsNull() && !p.ProvisioningGroup.AppId.IsNull() {
+		request_fulfillment_config["provisioning_group"] = map[string]string{
+			"integration_specific_id": p.ProvisioningGroup.IntegrationSpecificId.ValueString(),
+			"app_id":                  p.ProvisioningGroup.AppId.ValueString(),
 		}
 	}
+
 	// Set Request Config -> Fulfullment Config -> Provisioning Webhook
 	if !p.ProvisioningInlineWebhook.IsNull() {
 		request_fulfillment_config["provisioning_webhook"] = map[string]string{
@@ -401,7 +409,10 @@ func setRequestablePermissionResourceModelFromLumosAPIRequestablePermission(ctx 
 	}
 
 	if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id != "" {
-		permissionResource.ProvisioningGroup = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id)
+		permissionResource.ProvisioningGroup.Id = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id)
+	} else if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppId != "" && lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificId != "" {
+		permissionResource.ProvisioningGroup.AppId = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppId)
+		permissionResource.ProvisioningGroup.IntegrationSpecificId = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificId)
 	}
 
 	if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Id != "" {
