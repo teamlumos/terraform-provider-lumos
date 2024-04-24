@@ -29,27 +29,34 @@ type requestablePermissionResource struct {
 	client *LumosAPIClient
 }
 
+type ProvisioningGroupModel struct {
+	Id                    types.String `tfsdk:"id"`
+	AppId                 types.String `tfsdk:"app_id"`
+	IntegrationSpecificId types.String `tfsdk:"integration_specific_id"`
+}
+
 type requestablePermissionResourceModel struct {
-	Id                             types.String `tfsdk:"id"`
-	AppId                          types.String `tfsdk:"app_id"`
-	Label                          types.String `tfsdk:"label"`
-	PermissionType                 types.String `tfsdk:"permission_type"`
-	VisibleInAppStore              types.Bool   `tfsdk:"visible_in_appstore"`
-	AllowedGroups                  types.Set    `tfsdk:"allowed_groups"`
-	ManagerApprovalRequired        types.Bool   `tfsdk:"manager_approval_required"`
-	ApproverGroupsStage1           types.Set    `tfsdk:"approver_groups_stage_1"`
-	ApproverUsersStage1            types.Set    `tfsdk:"approver_users_stage_1"`
-	ApproverGroupsStage2           types.Set    `tfsdk:"approver_groups_stage_2"`
-	ApproverUsersStage2            types.Set    `tfsdk:"approver_users_stage_2"`
-	RequireAdditionalApproval      types.Bool   `tfsdk:"require_additional_approval"`
-	AccessRemovalInlineWebhook     types.String `tfsdk:"access_removal_inline_webhook"`
-	RequestValidationInlineWebhook types.String `tfsdk:"request_validation_inline_webhook"`
-	ProvisioningInlineWebhook      types.String `tfsdk:"provisioning_inline_webhook"`
-	ManualStepsNeeded              types.Bool   `tfsdk:"manual_steps_needed"`
-	ManualInstructions             types.String `tfsdk:"manual_instructions"`
-	TimeBasedAccessOptions         types.Set    `tfsdk:"time_based_access_options"`
-	ProvisioningGroup              types.String `tfsdk:"provisioning_group"`
-	LastUpdated                    types.String `tfsdk:"last_updated"`
+	Id                             types.String           `tfsdk:"id"`
+	AppId                          types.String           `tfsdk:"app_id"`
+	Label                          types.String           `tfsdk:"label"`
+	PermissionType                 types.String           `tfsdk:"permission_type"`
+	VisibleInAppStore              types.Bool             `tfsdk:"visible_in_appstore"`
+	AllowedGroups                  types.Set              `tfsdk:"allowed_groups"`
+	ManagerApprovalRequired        types.Bool             `tfsdk:"manager_approval_required"`
+	ApproverGroupsStage1           types.Set              `tfsdk:"approver_groups_stage_1"`
+	ApproverUsersStage1            types.Set              `tfsdk:"approver_users_stage_1"`
+	ApproverGroupsStage2           types.Set              `tfsdk:"approver_groups_stage_2"`
+	ApproverUsersStage2            types.Set              `tfsdk:"approver_users_stage_2"`
+	RequireAdditionalApproval      types.Bool             `tfsdk:"require_additional_approval"`
+	AccessRemovalInlineWebhook     types.String           `tfsdk:"access_removal_inline_webhook"`
+	RequestValidationInlineWebhook types.String           `tfsdk:"request_validation_inline_webhook"`
+	ProvisioningInlineWebhook      types.String           `tfsdk:"provisioning_inline_webhook"`
+	ManualStepsNeeded              types.Bool             `tfsdk:"manual_steps_needed"`
+	ManualInstructions             types.String           `tfsdk:"manual_instructions"`
+	TimeBasedAccessOptions         types.Set              `tfsdk:"time_based_access_options"`
+	TimeBasedAccessOverride        types.Bool             `tfsdk:"time_based_access_override"`
+	ProvisioningGroup              ProvisioningGroupModel `tfsdk:"provisioning_group"`
+	LastUpdated                    types.String           `tfsdk:"last_updated"`
 }
 
 func (r *requestablePermissionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -160,6 +167,10 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 				Required:            true,
 				ElementType:         types.StringType,
 				MarkdownDescription: "Access length options available for the users to request an app for a selected duration. After expiry, Lumos will automatically remove user's access. If empty default will be Unlimited.",
+			},
+			"time_based_access_override": schema.BoolAttribute{
+				Required:            true,
+				MarkdownDescription: "TODO",
 			},
 			"manual_steps_needed": schema.BoolAttribute{
 				Required:            true,
