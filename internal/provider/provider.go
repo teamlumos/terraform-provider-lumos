@@ -34,6 +34,7 @@ type lumosAppStoreProvider struct {
 
 type lumosAppStoreProviderModel struct {
 	APIToken types.String `tfsdk:"api_token"`
+	BaseURL  types.String `tfsdk:"base_url"`
 }
 
 func (p *lumosAppStoreProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -49,6 +50,11 @@ func (p *lumosAppStoreProvider) Schema(_ context.Context, _ provider.SchemaReque
 				Sensitive:           true,
 				Description:         "The Lumos API Token.",
 				MarkdownDescription: "The Lumos API Token.",
+			},
+			"base_url": schema.StringAttribute{
+				Optional:            true,
+				Description:         "Base URL for the Lumos API.",
+				MarkdownDescription: "Base URL for the Lumos API.",
 			},
 		},
 	}
@@ -80,9 +86,13 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
 	apiToken := os.Getenv("LUMOS_API_TOKEN")
+	baseURL := BASE_URL
 
 	if !config.APIToken.IsNull() {
 		apiToken = config.APIToken.ValueString()
+	}
+	if !config.BaseURL.IsNull() {
+		baseURL = config.BaseURL.ValueString()
 	}
 
 	// If any of the expected configurations are missing, return
@@ -102,7 +112,7 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 		return
 	}
 
-	lumosClient, err := NewLumosAPIClient(BASE_URL, apiToken)
+	lumosClient, err := NewLumosAPIClient(baseURL, apiToken)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to Create Lumos API Client",
