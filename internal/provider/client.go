@@ -115,8 +115,8 @@ func (c *LumosAPIClient) getUser(id string) (*lumosAPIUserResponse, error) {
 
 func (c *LumosAPIClient) getGroup(id string) (*lumosAPIGroupResponse, error) {
 	endpoint := fmt.Sprintf(GROUP_BY_ID_URL, id)
-	var user lumosAPIGroupResponse
-	respInterface, err := c.MakeRequest("GET", endpoint, nil, &user)
+	var group lumosAPIGroupResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &group)
 	if err != nil {
 		fmt.Printf("Error getting group %s: %s", id, err)
 		return nil, err
