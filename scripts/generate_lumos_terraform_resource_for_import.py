@@ -3,8 +3,10 @@ from dataclasses import dataclass
 import requests
 import sys
 import json
+import urllib
 
 REQUESTABLE_PERMISSION_RESOURCE = "lumos-appstore_requestable_permission"
+USER_RESOURCE = "lumos-appstore_user"
 
 
 class LumosAPI:
@@ -19,6 +21,41 @@ class LumosAPI:
             "Content-Type": "application/json",
         }
 
+    def search_user(self, email: str) -> dict:
+        response = requests.get(
+            f"{self.LUMOS_API_ENDPOINT}/users?search_term={urllib.parse.quote(email)}",
+            headers=self._headers,
+        )
+        if response.status_code != 200:
+            print(
+                f"Failed to get user with email {email}. "
+                f"Got {response.status_code} response: {response.text}"
+            )
+
+        response_json = response.json()
+        if response_json["total"] == 0:
+            return None
+        if response_json["total"] > 1:
+            print(
+                f"Found more than one user with email {email}. "
+                f"Returning the first one."
+            )
+        return response_json["items"][0]
+
+
+    def get_user(self, user_id: str) -> dict:
+        response = requests.get(
+            f"{self.LUMOS_API_ENDPOINT}/users/{user_id}",
+            headers=self._headers,
+        )
+        if response.status_code != 200:
+            print(
+                f"Failed to get user with ID {user_id}. "
+                f"Got {response.status_code} response: {response.text}"
+            )
+
+        return response.json()
+
     def get_requestable_permission(self, permission_id: str) -> dict:
         response = requests.get(
             f"{self.LUMOS_API_ENDPOINT}/appstore/requestable_permissions/{permission_id}",
@@ -32,6 +69,16 @@ class LumosAPI:
 
         return response.json()
 
+@dataclass
+class User:
+    id: str
+    given_name: str
+    family_name: str
+    email: str
+
+    @property
+    def resource_name(self) -> str:
+        
 
 @dataclass
 class Permission:
@@ -60,8 +107,15 @@ class Permission:
 
         return ''.join(letter for letter in snake_case_string if letter.isalnum() or letter == "_")
 
+def parse_user_response(user_json: dict) -> User:
+    return User(
+        id=user_json["id"],
+        given_name=user_json["given_name"],
+        family_name=user_json["family_name"],
+        email=user_json["email"],
+    )
 
-def parse_permission_resposne(permission_json: dict) -> Permission:
+def parse_permission_response(permission_json: dict) -> Permission:
     allowed_group_ids: list[str] = []
     for group in permission_json["request_config"].get("allowed_groups", {}).get("groups", []):
         allowed_group_ids.append(group["id"])
@@ -140,10 +194,17 @@ def parse_permission_resposne(permission_json: dict) -> Permission:
         time_based_access_options=permission_json["request_config"].get("request_fulfillment_config", {}).get("time_based_access")
     )
 
+def search_user(email: str) -> User:
+    user_json = LumosAPI().search_user(email)
+    return parse_user_response(user_json)
+
+def get_user(id: str) -> User:
+    user_json = LumosAPI().get_user(id)
+    return parse_user_response(user_json)
 
 def get_permission(id: str) -> Permission:
     permission_json = LumosAPI().get_requestable_permission(id)
-    return parse_permission_resposne(permission_json)
+    return parse_permission_response(permission_json)
 
 
 def generate_resource_definition(permission_id: str):

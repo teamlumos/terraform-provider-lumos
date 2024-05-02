@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"reflect"
 )
 
@@ -76,6 +77,40 @@ func (c *LumosAPIClient) MakeRequest(method string, endpoint string, requestBody
 
 	return responseTypeInstance, nil
 
+}
+
+func (c *LumosAPIClient) searchUser(email string) (*lumosAPIUserResponse, error) {
+	endpoint := fmt.Sprintf(USER_BY_EMAIL_URL, url.QueryEscape(email))
+	var users lumosAPIPagedResponse[lumosAPIUserResponse]
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &users)
+	if err != nil {
+		fmt.Printf("Error searching user %s: %s", email, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIUserResponse])
+	if !ok || len(result.Items) == 0 {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return &result.Items[0], nil
+}
+
+func (c *LumosAPIClient) getUser(id string) (*lumosAPIUserResponse, error) {
+	endpoint := fmt.Sprintf(USER_BY_ID_URL, id)
+	var user lumosAPIUserResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &user)
+	if err != nil {
+		fmt.Printf("Error getting user %s: %s", id, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIUserResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
 }
 
 func (c *LumosAPIClient) createPermission(p requestablePermissionResourceModel) (*lumosAPIAppStoreRequestablePermissionResponse, error) {

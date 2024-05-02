@@ -13,9 +13,11 @@ terraform {
 
 provider "lumos-appstore" {
   api_token = "<LUMOS API TOKEN>"
+  base_url = "https://api.lumos.com"
 }
 ```
 
 ## Schema
 
 - `api_token` (Required) <Lumos API Token>
+- `base_url` (Required) <Lumos API URL>

@@ -1,13 +1,14 @@
 terraform {
   required_providers {
     lumos-appstore = {
-      source = "lumos.com/tf/lumos-appstore"
+      source = "lumos.com/tf/lumos"
     }
   }
 }
 
 provider "lumos-appstore" {
   api_token = "<API TOKEN>"
+  base_url="<BASE_URL>"
 }
 
 // TODO Replace UUIDs with your local UUIDs For Testing
@@ -19,6 +20,10 @@ locals {
   user_1_id             = "<FILL IN ID>" # Find UUID like so: https://www.loom.com/share/1413b71a5f8f4692a01f986a95b3e6fc?sid=5def1c2a-6cae-4c9b-b2d2-b944131ab5b8
   user_2_id             = "<FILL IN ID>"
   user_3_id             = "<FILL IN ID>"
+}
+
+data "lumos-appstore_user" "user_1" {
+  email = "albus@lumostester.com"
 }
 
 // TODO Uncomment to create requestable permissions.
