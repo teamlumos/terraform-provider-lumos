@@ -24,7 +24,7 @@ type lumosAPIUserResponse struct {
 	Status     string `json:"status"`
 }
 
-type lumosAPIGroupResponse struct {
+<<<<<<< HEAD{
 	Id                    types.String `json:"id"`
 	AppId                 types.String `json:"app_id"`
 	SourceAppId           types.String `json:"source_app_id"`
