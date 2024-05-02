@@ -429,3 +429,13 @@ func setRequestablePermissionResourceModelFromLumosAPIRequestablePermission(ctx 
 
 	return permissionResource
 }
+
+func setUserResourceModelFromLumosAPIUser(ctx context.Context, userResource userResourceModel, lumosApiUser lumosAPIUserResponse) userResourceModel {
+	userResource.Id = types.StringValue(lumosApiUser.Id)
+	userResource.Email = types.StringValue(lumosApiUser.Email)
+	userResource.GivenName = types.StringValue(lumosApiUser.GivenName)
+	userResource.FamilyName = types.StringValue(lumosApiUser.FamilyName)
+	userResource.Status = types.StringValue(lumosApiUser.Status)
+
+	return userResource
+}
