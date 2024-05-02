@@ -202,6 +202,10 @@ def get_user(id: str) -> User:
     user_json = LumosAPI().get_user(id)
     return parse_user_response(user_json)
 
+def get_user(id: str) -> User:
+    user_json = LumosAPI().get_user(id)
+    return parse_user_response(user_json)
+
 def get_permission(id: str) -> Permission:
     permission_json = LumosAPI().get_requestable_permission(id)
     return parse_permission_response(permission_json)
