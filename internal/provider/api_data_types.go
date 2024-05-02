@@ -24,6 +24,16 @@ type lumosAPIUserResponse struct {
 	Status     string `json:"status"`
 }
 
+type lumosAPIGroupResponse struct {
+	Id                    types.String `json:"id"`
+	AppId                 types.String `json:"app_id"`
+	SourceAppId           types.String `json:"source_app_id"`
+	IntegrationSpecificId types.String `json:"integration_specific_id"`
+	Name                  types.String `json:"name"`
+	Description           types.String `json:"description"`
+	Lifecycle             types.String `json:"lifecycle"`
+}
+
 type lumosAPIAppStoreRequestablePermissionResponse struct {
 	Id            string                                     `json:"id"`
 	Type          string                                     `json:"type"`

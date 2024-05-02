@@ -113,6 +113,40 @@ func (c *LumosAPIClient) getUser(id string) (*lumosAPIUserResponse, error) {
 	return result, nil
 }
 
+func (c *LumosAPIClient) getGroup(id string) (*lumosAPIGroupResponse, error) {
+	endpoint := fmt.Sprintf(GROUP_BY_ID_URL, id)
+	var user lumosAPIGroupResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &user)
+	if err != nil {
+		fmt.Printf("Error getting group %s: %s", id, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIGroupResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
+}
+
+func (c *LumosAPIClient) searchGroup(name string) (*lumosAPIGroupResponse, error) {
+	endpoint := fmt.Sprintf(GROUP_BY_NAME_URL, name)
+	var group lumosAPIGroupResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &group)
+	if err != nil {
+		fmt.Printf("Error getting group %s: %s", name, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIGroupResponse])
+	if !ok || len(result.Items) == 0 {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return &result.Items[0], nil
+}
+
 func (c *LumosAPIClient) createPermission(p requestablePermissionResourceModel) (*lumosAPIAppStoreRequestablePermissionResponse, error) {
 	endpoint := PERMISSIONS_URL
 	payload := buildAppStoreAppRequestablePermissionPayload(p)
