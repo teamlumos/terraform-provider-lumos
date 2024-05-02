@@ -34,6 +34,7 @@ type lumosAppStoreProvider struct {
 
 type lumosAppStoreProviderModel struct {
 	APIToken types.String `tfsdk:"api_token"`
+	BaseUrl  types.String `tfsdk:"base_url"`
 }
 
 func (p *lumosAppStoreProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -45,10 +46,18 @@ func (p *lumosAppStoreProvider) Schema(_ context.Context, _ provider.SchemaReque
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"api_token": schema.StringAttribute{
-				Optional:            true,
+				Optional:            false,
+				Required:            true,
 				Sensitive:           true,
 				Description:         "The Lumos API Token.",
 				MarkdownDescription: "The Lumos API Token.",
+			},
+			"base_url": schema.StringAttribute{
+				Optional:            true,
+				Required:            false,
+				Sensitive:           false,
+				Description:         "The Lumos API URL.",
+				MarkdownDescription: "The Lumos API URL.",
 			},
 		},
 	}
@@ -80,11 +89,14 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 	// Default values to environment variables, but override
 	// with Terraform configuration value if set.
 	apiToken := os.Getenv("LUMOS_API_TOKEN")
-
 	if !config.APIToken.IsNull() {
 		apiToken = config.APIToken.ValueString()
 	}
 
+	baseUrl := "https://api.lumos.com"
+	if !config.BaseUrl.IsNull() {
+		baseUrl = config.BaseUrl.ValueString()
+	}
 	// If any of the expected configurations are missing, return
 	// errors with provider-specific guidance.
 
@@ -102,7 +114,7 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 		return
 	}
 
-	lumosClient, err := NewLumosAPIClient(BASE_URL, apiToken)
+	lumosClient, err := NewLumosAPIClient(baseUrl, apiToken)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to Create Lumos API Client",
@@ -118,7 +130,8 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 
 func (p *lumosAppStoreProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewrequestablePermissionDataSource,
+		NewRequestablePermissionDataSource,
+		NewUserDataSource,
 	}
 }
 

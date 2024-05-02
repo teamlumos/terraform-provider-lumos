@@ -12,6 +12,18 @@ import (
 type lumosAPIResponse interface {
 }
 
+type lumosAPIPagedResponse[K lumosAPIResponse] struct {
+	Items []K `json:"items"`
+}
+
+type lumosAPIUserResponse struct {
+	Id         string `json:"id"`
+	Email      string `json:"email"`
+	GivenName  string `json:"given_name"`
+	FamilyName string `json:"family_name"`
+	Status     string `json:"status"`
+}
+
 type lumosAPIAppStoreRequestablePermissionResponse struct {
 	Id            string                                     `json:"id"`
 	Type          string                                     `json:"type"`
