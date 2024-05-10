@@ -94,6 +94,7 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 	}
 
 	baseUrl := "https://api.lumos.com"
+
 	if !config.BaseUrl.IsNull() {
 		baseUrl = config.BaseUrl.ValueString()
 	}
@@ -132,6 +133,7 @@ func (p *lumosAppStoreProvider) DataSources(_ context.Context) []func() datasour
 	return []func() datasource.DataSource{
 		NewRequestablePermissionDataSource,
 		NewUserDataSource,
+		NewAppstoreAppDataSource,
 	}
 }
 
