@@ -89,7 +89,7 @@ func (c *LumosAPIClient) searchUser(email string) (*lumosAPIUserResponse, error)
 	}
 
 	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIUserResponse])
-	if !ok || len(result.Items) == 0 {
+	if !ok || len(result.Items) == 0 || len(result.Items) > 1 {
 		return nil, fmt.Errorf("unexpected response type")
 	}
 
@@ -132,15 +132,15 @@ func (c *LumosAPIClient) getGroup(id string) (*lumosAPIGroupResponse, error) {
 
 func (c *LumosAPIClient) searchGroup(name string) (*lumosAPIGroupResponse, error) {
 	endpoint := fmt.Sprintf(GROUP_BY_NAME_URL, name)
-	var group lumosAPIGroupResponse
-	respInterface, err := c.MakeRequest("GET", endpoint, nil, &group)
+	var groups lumosAPIPagedResponse[lumosAPIGroupResponse]
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &groups)
 	if err != nil {
 		fmt.Printf("Error getting group %s: %s", name, err)
 		return nil, err
 	}
 
 	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIGroupResponse])
-	if !ok || len(result.Items) == 0 {
+	if !ok || len(result.Items) == 0 || len(result.Items) > 1 {
 		return nil, fmt.Errorf("unexpected response type")
 	}
 
