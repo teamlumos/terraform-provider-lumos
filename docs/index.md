@@ -20,4 +20,4 @@ provider "lumos-appstore" {
 ## Schema
 
 - `api_token` (Required) <Lumos API Token>
-- `base_url` (Required) <Lumos API URL>
+- `base_url` (Optional) "https://api.lumos.com"
