@@ -24,14 +24,13 @@ type lumosAPIUserResponse struct {
 	Status     string `json:"status"`
 }
 
-<<<<<<< HEAD{
+type lumosAPIGroupResponse struct {
 	Id                    types.String `json:"id"`
 	AppId                 types.String `json:"app_id"`
 	SourceAppId           types.String `json:"source_app_id"`
 	IntegrationSpecificId types.String `json:"integration_specific_id"`
 	Name                  types.String `json:"name"`
 	Description           types.String `json:"description"`
-	Lifecycle             types.String `json:"lifecycle"`
 }
 
 type lumosAPIAppStoreRequestablePermissionResponse struct {
@@ -438,14 +437,4 @@ func setRequestablePermissionResourceModelFromLumosAPIRequestablePermission(ctx 
 	permissionResource.TimeBasedAccessOptions, _ = types.SetValueFrom(ctx, types.StringType, lumosApiPermission.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess)
 
 	return permissionResource
-}
-
-func setUserResourceModelFromLumosAPIUser(ctx context.Context, userResource userResourceModel, lumosApiUser lumosAPIUserResponse) userResourceModel {
-	userResource.Id = types.StringValue(lumosApiUser.Id)
-	userResource.Email = types.StringValue(lumosApiUser.Email)
-	userResource.GivenName = types.StringValue(lumosApiUser.GivenName)
-	userResource.FamilyName = types.StringValue(lumosApiUser.FamilyName)
-	userResource.Status = types.StringValue(lumosApiUser.Status)
-
-	return userResource
 }

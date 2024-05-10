@@ -22,7 +22,7 @@ func NewgroupDataSource() datasource.DataSource {
 
 // groupDataSource defines the data source implementation.
 type groupDataSource struct {
-	apiToken string
+	client *LumosAPIClient
 }
 
 // groupDataSourceModel describes the data source data model.
@@ -33,7 +33,6 @@ type groupDataSourceModel struct {
 	IntegrationSpecificId types.String `tfsdk:"integration_specific_id"`
 	Name                  types.String `tfsdk:"name"`
 	Description           types.String `tfsdk:"description"`
-	Lifecycle             types.String `tfsdk:"lifecycle"`
 }
 
 func (d *groupDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -44,22 +43,21 @@ func (d *groupDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Group",
-
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "The ID of this group.",
 			},
 			"app_id": schema.StringAttribute{
-				Required:            true,
+				Computed:            true,
 				MarkdownDescription: "The ID of the app that owns this group.",
 			},
 			"source_app_id": schema.StringAttribute{
-				Required:            true,
+				Computed:            true,
 				MarkdownDescription: "The ID of the app that owns this group.",
 			},
 			"integration_specific_id": schema.StringAttribute{
-				Required:            true,
+				Computed:            true,
 				MarkdownDescription: "The ID of this group, specific to the integration.",
 			},
 			"name": schema.StringAttribute{
@@ -67,12 +65,8 @@ func (d *groupDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				MarkdownDescription: "The name of this group",
 			},
 			"description": schema.StringAttribute{
-				Required:            true,
+				Computed:            true,
 				MarkdownDescription: "The description of this group",
-			},
-			"lifecycle": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "An enumeration of SYNCED or NATIVE",
 			},
 		},
 	}
@@ -83,40 +77,39 @@ func (d *groupDataSource) Configure(ctx context.Context, req datasource.Configur
 		return
 	}
 
-	apiToken, ok := req.ProviderData.(string)
+	client, ok := req.ProviderData.(*LumosAPIClient)
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected string, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			"Unexpected Data Source Configure Type in GroupDataSource",
+			fmt.Sprintf("Expected LumosAPIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
 	}
 
-	d.apiToken = apiToken
+	d.client = client
 }
 
 func (d *groupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state groupDataSourceModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 
-	///////////////////// API Call
-
-	// TODO: update to retrieve ID from Terraform configuration.
-	client, _ := NewLumosAPIClient(BASE_URL, d.apiToken)
-	state.Name = "Example Group"
-	group, err := client.searchGroup(state.Name)
+	group, err := d.client.searchGroup(state.Name.ValueString())
 	if err != nil {
-		fmt.Printf("Error getting group %s: %s", state.Name, err)
+		fmt.Println("Error creating request:", err)
+		return
 	}
 
-	// For the purposes of this example code, hardcoding a response value to
-	// save into the Terraform state.
-	state.Id = group.Id
-	state.Name = group.Name
+	state.Id = types.StringValue(group.Id.ValueString())
+	state.Name = types.StringValue(group.Name.ValueString())
+	state.Description = types.StringValue(group.Description.ValueString())
+	state.AppId = types.StringValue(group.AppId.ValueString())
+	state.SourceAppId = types.StringValue(group.SourceAppId.ValueString())
+	state.IntegrationSpecificId = types.StringValue(group.IntegrationSpecificId.ValueString())
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log
-	tflog.Trace(ctx, "read a data source")
+	tflog.Trace(ctx, "read a group data source")
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
