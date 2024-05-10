@@ -33,6 +33,14 @@ type lumosAPIGroupResponse struct {
 	Description           types.String `json:"description"`
 }
 
+type lumosAPIAppResponse struct {
+	Id                string `json:"id"`
+	AppClassId        string `json:"app_class_id"`
+	InstanceId        string `json:"instance_id"`
+	UserFriendlyLabel string `json:"user_friendly_label"`
+	Status            string `json:"status"`
+}
+
 type lumosAPIAppStoreRequestablePermissionResponse struct {
 	Id            string                                     `json:"id"`
 	Type          string                                     `json:"type"`

@@ -79,6 +79,40 @@ func (c *LumosAPIClient) MakeRequest(method string, endpoint string, requestBody
 
 }
 
+func (c *LumosAPIClient) searchApp(name string) (*lumosAPIAppResponse, error) {
+	endpoint := fmt.Sprintf(APPSTORE_APP_BY_NAME_URL, url.QueryEscape(name))
+	var apps lumosAPIPagedResponse[lumosAPIAppResponse]
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &apps)
+	if err != nil {
+		fmt.Printf("Error searching app %s: %s", name, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIPagedResponse[lumosAPIAppResponse])
+	if !ok || len(result.Items) == 0 || len(result.Items) > 1 {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return &result.Items[0], nil
+}
+
+func (c *LumosAPIClient) getApp(id string) (*lumosAPIAppResponse, error) {
+	endpoint := fmt.Sprintf(APPSTORE_APP_BY_ID_URL, id)
+	var app lumosAPIAppResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &app)
+	if err != nil {
+		fmt.Printf("Error getting app %s: %s", id, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIAppResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
+}
+
 func (c *LumosAPIClient) searchUser(email string) (*lumosAPIUserResponse, error) {
 	endpoint := fmt.Sprintf(USER_BY_EMAIL_URL, url.QueryEscape(email))
 	var users lumosAPIPagedResponse[lumosAPIUserResponse]

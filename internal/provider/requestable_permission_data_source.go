@@ -28,6 +28,7 @@ type requestablePermissionDataSource struct {
 // requestablePermissionDataSourceModel describes the data source data model.
 type requestablePermissionDataSourceModel struct {
 	Id    types.String `tfsdk:"id"`
+	AppId types.String `tfsdk:"app_id"`
 	Label types.String `tfsdk:"label"`
 }
 
@@ -44,6 +45,10 @@ func (d *requestablePermissionDataSource) Schema(ctx context.Context, req dataso
 			"id": schema.StringAttribute{
 				Required:            true,
 				MarkdownDescription: "The ID of this requestable permission.",
+			},
+			"app_id": schema.StringAttribute{
+				Required:            true,
+				MarkdownDescription: "The app ID of this requestable permission.",
 			},
 			"label": schema.StringAttribute{
 				Computed:            true,
@@ -84,6 +89,7 @@ func (d *requestablePermissionDataSource) Read(ctx context.Context, req datasour
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
 	state.Id = types.StringValue(permission.Id)
+	state.AppId = types.StringValue(permission.AppId)
 	state.Label = types.StringValue(permission.Label)
 
 	// Write logs using the tflog package
