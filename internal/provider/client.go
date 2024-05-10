@@ -131,7 +131,7 @@ func (c *LumosAPIClient) getGroup(id string) (*lumosAPIGroupResponse, error) {
 }
 
 func (c *LumosAPIClient) searchGroup(name string) (*lumosAPIGroupResponse, error) {
-	endpoint := fmt.Sprintf(GROUP_BY_NAME_URL, name)
+	endpoint := fmt.Sprintf(GROUP_BY_NAME_URL, url.QueryEscape(name))
 	var groups lumosAPIPagedResponse[lumosAPIGroupResponse]
 	respInterface, err := c.MakeRequest("GET", endpoint, nil, &groups)
 	if err != nil {
