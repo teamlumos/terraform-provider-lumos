@@ -38,16 +38,16 @@ func (d *userDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 func (d *userDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "User",
+		Description: "User",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of this user.",
+				Computed:    true,
+				Description: "The ID of this user.",
 			},
 			"email": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "The email of this user.",
+				Required:    true,
+				Description: "The email of this user.",
 			},
 		},
 	}

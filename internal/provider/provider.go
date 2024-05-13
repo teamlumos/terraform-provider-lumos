@@ -38,7 +38,7 @@ type lumosAppStoreProviderModel struct {
 }
 
 func (p *lumosAppStoreProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "lumos-appstore"
+	resp.TypeName = "lumos"
 	resp.Version = p.version
 }
 
@@ -46,18 +46,16 @@ func (p *lumosAppStoreProvider) Schema(_ context.Context, _ provider.SchemaReque
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"api_token": schema.StringAttribute{
-				Optional:            false,
-				Required:            true,
-				Sensitive:           true,
-				Description:         "The Lumos API Token.",
-				MarkdownDescription: "The Lumos API Token.",
+				Optional:    false,
+				Required:    true,
+				Sensitive:   true,
+				Description: "The Lumos API Token.",
 			},
 			"base_url": schema.StringAttribute{
-				Optional:            true,
-				Required:            false,
-				Sensitive:           false,
-				Description:         "The Lumos API URL.",
-				MarkdownDescription: "The Lumos API URL.",
+				Optional:    true,
+				Required:    false,
+				Sensitive:   false,
+				Description: "The Lumos API URL.",
 			},
 		},
 	}

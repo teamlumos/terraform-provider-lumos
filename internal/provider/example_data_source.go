@@ -39,16 +39,16 @@ func (d *ExampleDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (d *ExampleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Example data source",
+		Description: "Example data source",
 
 		Attributes: map[string]schema.Attribute{
 			"configurable_attribute": schema.StringAttribute{
-				MarkdownDescription: "Example configurable attribute",
-				Optional:            true,
+				Description: "Example configurable attribute",
+				Optional:    true,
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: "Example identifier",
-				Computed:            true,
+				Description: "Example identifier",
+				Computed:    true,
 			},
 		},
 	}

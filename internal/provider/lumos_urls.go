@@ -11,5 +11,5 @@ const (
 	GROUP_BY_NAME_URL        = GROUPS_URL + "?name=%s&exact_match=true"
 	APPSTORE_APPS_URL        = "appstore/apps"
 	APPSTORE_APP_BY_ID_URL   = APPSTORE_APPS_URL + "/%s"
-	APPSTORE_APP_BY_NAME_URL = APPSTORE_APPS_URL + "?search_term=%s&exact_match=true"
+	APPSTORE_APP_BY_NAME_URL = APPSTORE_APPS_URL + "?name_search=%s&exact_match=true"
 )
