@@ -42,31 +42,31 @@ func (d *groupDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 func (d *groupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Group",
+		Description: "Group",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of this group.",
+				Computed:    true,
+				Description: "The ID of this group.",
 			},
 			"app_id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of the app that owns this group.",
+				Computed:    true,
+				Description: "The ID of the app that owns this group.",
 			},
 			"source_app_id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of the app that owns this group.",
+				Computed:    true,
+				Description: "The ID of the app that owns this group.",
 			},
 			"integration_specific_id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of this group, specific to the integration.",
+				Computed:    true,
+				Description: "The ID of this group, specific to the integration.",
 			},
 			"name": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "The name of this group",
+				Required:    true,
+				Description: "The name of this group",
 			},
 			"description": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The description of this group",
+				Computed:    true,
+				Description: "The description of this group",
 			},
 		},
 	}

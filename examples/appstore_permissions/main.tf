@@ -22,12 +22,12 @@ locals {
   user_3_id             = "<FILL IN ID>"
 }
 
-data "lumos-appstore_user" "user_1" {
-  email = "albus@lumostester.com"
+data "lumos_appstore_app" "okta" {
+  user_friendly_label = "Okta"
 }
 
 // TODO Uncomment to create requestable permissions.
-# resource "lumos-appstore_requestable_permission" "hello_terraform_one" {
+# resource "lumos_requestable_permission" "hello_terraform_one" {
 #   app_id                            = local.terraform_test_app_id
 #   label                             = "Hello Terraform One!"
 #   visible_in_appstore               = false
@@ -47,7 +47,7 @@ data "lumos-appstore_user" "user_1" {
 #   provisioning_group                 = local.group_3_id
 # }
 
-# resource "lumos-appstore_requestable_permission" "hello_terraform_two" {
+# resource "lumos_requestable_permission" "hello_terraform_two" {
 #   app_id                            = local.terraform_test_app_id
 #   label                             = "Hello Terraform Two!"
 #   visible_in_appstore               = false

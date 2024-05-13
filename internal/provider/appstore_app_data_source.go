@@ -41,28 +41,28 @@ func (d *appstoreAppDataSource) Metadata(ctx context.Context, req datasource.Met
 func (d *appstoreAppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "App",
+		Description: "App",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The ID of this app.",
+				Computed:    true,
+				Description: "The ID of this app.",
 			},
 			"app_class_id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The app class ID of this app.",
+				Computed:    true,
+				Description: "The app class ID of this app.",
 			},
 			"user_friendly_label": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "The user friendly label of this app.",
+				Required:    true,
+				Description: "The user friendly label of this app.",
 			},
 			"status": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The status of this app.",
+				Computed:    true,
+				Description: "The status of this app.",
 			},
 			"instance_id": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The instance ID of this app.",
+				Computed:    true,
+				Description: "The instance ID of this app.",
 			},
 		},
 	}

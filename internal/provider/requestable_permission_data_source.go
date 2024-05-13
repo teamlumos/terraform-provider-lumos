@@ -39,20 +39,20 @@ func (d *requestablePermissionDataSource) Metadata(ctx context.Context, req data
 func (d *requestablePermissionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "Requestable Permission",
+		Description: "Requestable Permission",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "The ID of this requestable permission.",
+				Required:    true,
+				Description: "The ID of this requestable permission.",
 			},
 			"app_id": schema.StringAttribute{
-				Required:            true,
-				MarkdownDescription: "The app ID of this requestable permission.",
+				Required:    true,
+				Description: "The app ID of this requestable permission.",
 			},
 			"label": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: "The label of this requestable permission.",
+				Computed:    true,
+				Description: "The label of this requestable permission.",
 			},
 		},
 	}
