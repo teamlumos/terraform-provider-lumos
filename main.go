@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"log"
-	"terraform-provider-lumos/internal/provider"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider"
 )
 
 var (
