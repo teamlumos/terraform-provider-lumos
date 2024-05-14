@@ -20,7 +20,6 @@ import (
 
 var _ resource.Resource = &requestablePermissionResource{}
 var _ resource.ResourceWithImportState = &requestablePermissionResource{}
-var _ resource.ResourceWithImportState = &requestablePermissionResource{}
 
 func NewRequestablePermissionResource() resource.Resource {
 	return &requestablePermissionResource{}

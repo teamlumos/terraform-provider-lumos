@@ -121,6 +121,56 @@ func (c *LumosAPIClient) getApp(id string) (*lumosAPIAppResponse, error) {
 	return result, nil
 }
 
+func (c *LumosAPIClient) getAppSetting(id string) (*lumosAPIAppSettingResponse, error) {
+	endpoint := fmt.Sprintf(APPSTORE_APP_BY_ID_URL, id)
+	var app lumosAPIAppSettingResponse
+	respInterface, err := c.MakeRequest("GET", endpoint, nil, &app)
+	if err != nil {
+		fmt.Printf("Error getting settings for app %s: %s", id, err)
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIAppSettingResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
+}
+
+func (c *LumosAPIClient) updateAppSetting(id string, s appStoreSettingResourceModel) (*lumosAPIAppSettingResponse, error) {
+	endpoint := fmt.Sprintf(APPSTORE_APP_SETTING_BY_ID_URL, id)
+
+	var setting lumosAPIAppSettingResponse
+	postResp, err := c.MakeRequest("PATCH", endpoint, s, &setting)
+	if err != nil {
+		return nil, err
+	}
+	appSetting, ok := postResp.(*lumosAPIAppSettingResponse)
+	if !ok {
+		return nil, err
+	}
+	return appSetting, nil
+}
+
+func (c *LumosAPIClient) createApp(a appResourceModel) (*lumosAPIAppResponse, error) {
+	payload := buildAppPayload(a)
+
+	var app lumosAPIAppResponse
+	_, appErr := c.MakeRequest("POST", APPS_URL, payload, &app)
+	if appErr != nil {
+		return nil, appErr
+	}
+	endpoint := fmt.Sprintf(APPSTORE_APP_BY_ID_URL, app.Id)
+
+	var appStoreApp lumosAPIResponse
+	_, err := c.MakeRequest("PUT", endpoint, a.Settings, &appStoreApp)
+	if err != nil {
+		return nil, err
+	}
+	return &app, nil
+}
+
 func (c *LumosAPIClient) searchUser(email string) (*lumosAPIUserResponse, error) {
 	endpoint := fmt.Sprintf(USER_BY_EMAIL_URL, url.QueryEscape(email))
 	var users lumosAPIPagedResponse[lumosAPIUserResponse]
