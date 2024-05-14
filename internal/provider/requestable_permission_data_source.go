@@ -80,12 +80,15 @@ func (d *requestablePermissionDataSource) Read(ctx context.Context, req datasour
 	var state requestablePermissionDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &state)...)
 
-	///////////////////// API Call
 	permission, err := d.client.getPermission(state.Id.ValueString())
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		resp.Diagnostics.AddError(
+			"Could not read Requestable Permission",
+			fmt.Sprintf("Requestable Permission with ID: %T not found. Please report this issue to the provider developers.", state.Id.ValueString()),
+		)
 		return
 	}
+
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
 	state.Id = types.StringValue(permission.Id)

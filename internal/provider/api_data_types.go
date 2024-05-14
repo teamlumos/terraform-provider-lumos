@@ -101,9 +101,10 @@ type appStoreRequestablePermissionConfigAllowedGroups struct {
 }
 
 type appStoreRequestablePermissionRequestApprovalConfig struct {
-	ManagerApproval           string                                              `json:"manager_approval"`
-	RequireAdditionalApproval bool                                                `json:"require_additional_approval"`
-	RequestApprovalStages     []appStoreRequestablePermissionManagerApprovalStage `json:"request_approval_stages"`
+	ManagerApproval               string                                              `json:"manager_approval"`
+	RequireAdditionalApproval     bool                                                `json:"require_additional_approval"`
+	RequestApprovalStages         []appStoreRequestablePermissionManagerApprovalStage `json:"request_approval_stages"`
+	RequestApprovalConfigOverride bool                                                `json:"request_approval_config_override"`
 }
 
 type appStoreRequestablePermissionManagerApprovalStage struct {
@@ -117,11 +118,12 @@ type appStoreRequestablePermissionApprovers struct {
 }
 
 type appStoreRequestablePermissionRequestFulfillmentConfig struct {
-	ManualStepsNeeded   bool                  `json:"manual_steps_needed"`
-	ManualInstructions  string                `json:"manual_instructions"`
-	TimeBasedAccess     []string              `json:"time_based_access"`
-	ProvisioningGroup   lumosAPIGroup         `json:"provisioning_group"`
-	ProvisioningWebhook lumosAPIInlineWebhook `json:"provisioning_webhook"`
+	ManualStepsNeeded       bool                  `json:"manual_steps_needed"`
+	ManualInstructions      string                `json:"manual_instructions"`
+	TimeBasedAccess         []string              `json:"time_based_access"`
+	TimeBasedAccessOverride bool                  `json:"time_based_access_override"`
+	ProvisioningGroup       lumosAPIGroup         `json:"provisioning_group"`
+	ProvisioningWebhook     lumosAPIInlineWebhook `json:"provisioning_webhook"`
 }
 
 type lumosAPIInlineWebhook struct {
@@ -129,7 +131,9 @@ type lumosAPIInlineWebhook struct {
 }
 
 type lumosAPIGroup struct {
-	Id string `json:"id"`
+	Id                    string `json:"id"`
+	AppId                 string `json:"app_id"`
+	IntegrationSpecificId string `json:"integration_specific_id"`
 }
 
 type lumosAPIUser struct {
@@ -210,7 +214,12 @@ func buildAppStoreRequestablePermissionApprovalConfig(p requestablePermissionRes
 		request_approval_config["manager_approval"] = managerApprovalValueMap[key]
 	}
 
-	request_approval_config["require_additional_approval"] = p.RequireAdditionalApproval.ValueBool()
+	if !p.RequestApprovalConfigOverride.IsNull() {
+		request_approval_config["request_approval_config_override"] = p.RequestApprovalConfigOverride.ValueBool()
+	}
+	if !p.RequestApprovalConfigOverride.IsNull() {
+		request_approval_config["require_additional_approval"] = p.RequireAdditionalApproval.ValueBool()
+	}
 
 	// Set Request Config -> Approval Config -> Request Approval Stages
 	if !p.ApproverGroupsStage1.IsNull() || !p.ApproverUsersStage1.IsNull() {
@@ -280,14 +289,23 @@ func buildAppStoreAppRequestablePermissionFulfillmentConfig(p requestablePermiss
 			options = append(options, trimmedOption)
 		}
 		request_fulfillment_config["time_based_access"] = options
-	}
 
-	// Set Request Config -> Fulfullment Config -> Provisioning Group
-	if !p.ProvisioningGroup.IsNull() {
-		request_fulfillment_config["provisioning_group"] = map[string]string{
-			"id": p.ProvisioningGroup.ValueString(),
+		if !p.TimeBasedAccessOverride.IsNull() {
+			request_fulfillment_config["time_based_access_override"] = p.TimeBasedAccessOverride.ValueBool()
 		}
 	}
+
+	if !p.ProvisioningGroup.IntegrationSpecificId.IsNull() && !p.ProvisioningGroup.AppId.IsNull() {
+		request_fulfillment_config["provisioning_group"] = map[string]string{
+			"integration_specific_id": p.ProvisioningGroup.IntegrationSpecificId.ValueString(),
+			"app_id":                  p.ProvisioningGroup.AppId.ValueString(),
+		}
+	} else if !p.ProvisioningGroup.Id.IsNull() && !p.ProvisioningGroup.Id.IsUnknown() {
+		request_fulfillment_config["provisioning_group"] = map[string]string{
+			"id": p.ProvisioningGroup.Id.ValueString(),
+		}
+	}
+
 	// Set Request Config -> Fulfullment Config -> Provisioning Webhook
 	if !p.ProvisioningInlineWebhook.IsNull() {
 		request_fulfillment_config["provisioning_webhook"] = map[string]string{
@@ -430,7 +448,10 @@ func setRequestablePermissionResourceModelFromLumosAPIRequestablePermission(ctx 
 	}
 
 	if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id != "" {
-		permissionResource.ProvisioningGroup = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id)
+		permissionResource.ProvisioningGroup.Id = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Id)
+	} else if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppId != "" && lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificId != "" {
+		permissionResource.ProvisioningGroup.AppId = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppId)
+		permissionResource.ProvisioningGroup.IntegrationSpecificId = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificId)
 	}
 
 	if lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Id != "" {
@@ -443,6 +464,7 @@ func setRequestablePermissionResourceModelFromLumosAPIRequestablePermission(ctx 
 		permissionResource.ManualInstructions = types.StringValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 	}
 	permissionResource.TimeBasedAccessOptions, _ = types.SetValueFrom(ctx, types.StringType, lumosApiPermission.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess)
+	permissionResource.TimeBasedAccessOverride = types.BoolValue(lumosApiPermission.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)
 
 	return permissionResource
 }

@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -29,27 +30,35 @@ type requestablePermissionResource struct {
 	client *LumosAPIClient
 }
 
+type ProvisioningGroupModel struct {
+	Id                    types.String `tfsdk:"id"`
+	AppId                 types.String `tfsdk:"app_id"`
+	IntegrationSpecificId types.String `tfsdk:"integration_specific_id"`
+}
+
 type requestablePermissionResourceModel struct {
-	Id                             types.String `tfsdk:"id"`
-	AppId                          types.String `tfsdk:"app_id"`
-	Label                          types.String `tfsdk:"label"`
-	PermissionType                 types.String `tfsdk:"permission_type"`
-	VisibleInAppStore              types.Bool   `tfsdk:"visible_in_appstore"`
-	AllowedGroups                  types.Set    `tfsdk:"allowed_groups"`
-	ManagerApprovalRequired        types.Bool   `tfsdk:"manager_approval_required"`
-	ApproverGroupsStage1           types.Set    `tfsdk:"approver_groups_stage_1"`
-	ApproverUsersStage1            types.Set    `tfsdk:"approver_users_stage_1"`
-	ApproverGroupsStage2           types.Set    `tfsdk:"approver_groups_stage_2"`
-	ApproverUsersStage2            types.Set    `tfsdk:"approver_users_stage_2"`
-	RequireAdditionalApproval      types.Bool   `tfsdk:"require_additional_approval"`
-	AccessRemovalInlineWebhook     types.String `tfsdk:"access_removal_inline_webhook"`
-	RequestValidationInlineWebhook types.String `tfsdk:"request_validation_inline_webhook"`
-	ProvisioningInlineWebhook      types.String `tfsdk:"provisioning_inline_webhook"`
-	ManualStepsNeeded              types.Bool   `tfsdk:"manual_steps_needed"`
-	ManualInstructions             types.String `tfsdk:"manual_instructions"`
-	TimeBasedAccessOptions         types.Set    `tfsdk:"time_based_access_options"`
-	ProvisioningGroup              types.String `tfsdk:"provisioning_group"`
-	LastUpdated                    types.String `tfsdk:"last_updated"`
+	Id                             types.String           `tfsdk:"id"`
+	AppId                          types.String           `tfsdk:"app_id"`
+	Label                          types.String           `tfsdk:"label"`
+	PermissionType                 types.String           `tfsdk:"permission_type"`
+	VisibleInAppStore              types.Bool             `tfsdk:"visible_in_appstore"`
+	AllowedGroups                  types.Set              `tfsdk:"allowed_groups"`
+	ManagerApprovalRequired        types.Bool             `tfsdk:"manager_approval_required"`
+	ApproverGroupsStage1           types.Set              `tfsdk:"approver_groups_stage_1"`
+	ApproverUsersStage1            types.Set              `tfsdk:"approver_users_stage_1"`
+	ApproverGroupsStage2           types.Set              `tfsdk:"approver_groups_stage_2"`
+	ApproverUsersStage2            types.Set              `tfsdk:"approver_users_stage_2"`
+	RequestApprovalConfigOverride  types.Bool             `tfsdk:"request_approval_config_override"`
+	RequireAdditionalApproval      types.Bool             `tfsdk:"require_additional_approval"`
+	AccessRemovalInlineWebhook     types.String           `tfsdk:"access_removal_inline_webhook"`
+	RequestValidationInlineWebhook types.String           `tfsdk:"request_validation_inline_webhook"`
+	ProvisioningInlineWebhook      types.String           `tfsdk:"provisioning_inline_webhook"`
+	ManualStepsNeeded              types.Bool             `tfsdk:"manual_steps_needed"`
+	ManualInstructions             types.String           `tfsdk:"manual_instructions"`
+	TimeBasedAccessOptions         types.Set              `tfsdk:"time_based_access_options"`
+	TimeBasedAccessOverride        types.Bool             `tfsdk:"time_based_access_override"`
+	ProvisioningGroup              ProvisioningGroupModel `tfsdk:"provisioning_group"`
+	LastUpdated                    types.String           `tfsdk:"last_updated"`
 }
 
 func (r *requestablePermissionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -131,6 +140,10 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 				Required:    true,
 				Description: "Only turn on when working with sensitive permissions to ensure a smooth employee experience.",
 			},
+			"request_approval_config_override": schema.BoolAttribute{
+				Required:            true,
+				MarkdownDescription: "TODO",
+			},
 			"request_validation_inline_webhook": schema.StringAttribute{
 				Required:    false,
 				Optional:    true,
@@ -160,6 +173,10 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 				ElementType: types.StringType,
 				Description: "Access length options available for the users to request an app for a selected duration. After expiry, Lumos will automatically remove user's access. If empty default will be Unlimited.",
 			},
+			"time_based_access_override": schema.BoolAttribute{
+				Required:            true,
+				MarkdownDescription: "TODO",
+			},
 			"manual_steps_needed": schema.BoolAttribute{
 				Required:    true,
 				Description: "If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.",
@@ -172,12 +189,36 @@ func (r *requestablePermissionResource) Schema(ctx context.Context, req resource
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"provisioning_group": schema.StringAttribute{
-				Required:    false,
-				Optional:    true,
-				Description: "The provisioning group ID optionally associated with this config",
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
+			"provisioning_group": schema.SingleNestedAttribute{
+				Required:            false,
+				Optional:            true,
+				MarkdownDescription: "The provisioning group ID optionally associated with this config",
+				Attributes: map[string]schema.Attribute{
+					"id": schema.StringAttribute{
+						Required:            false,
+						Optional:            true,
+						Computed:            true,
+						MarkdownDescription: "The ID of the provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
+					"app_id": schema.StringAttribute{
+						Required:            false,
+						Optional:            true,
+						MarkdownDescription: "The ID of the app associated with this provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
+					"integration_specific_id": schema.StringAttribute{
+						Required:            false,
+						Optional:            true,
+						MarkdownDescription: "The ID of the integration specific to the provisioning group",
+						PlanModifiers: []planmodifier.String{
+							stringplanmodifier.UseStateForUnknown(),
+						},
+					},
 				},
 			},
 			"last_updated": schema.StringAttribute{
@@ -205,12 +246,53 @@ func (r *requestablePermissionResource) Configure(ctx context.Context, req resou
 	r.client = lumos_client
 }
 
+func validateOktaGroupId(groupId string) error {
+	pattern := `^00g[a-zA-Z0-9]{17}$`
+
+	regex, err := regexp.Compile(pattern)
+	if err != nil {
+		return fmt.Errorf("Invalid regex pattern")
+	}
+
+	if !regex.MatchString(groupId) {
+		return fmt.Errorf("'%s' is not a valid Okta Group ID.", groupId)
+	}
+
+	return nil
+}
+
+func validateProvisioningGroup(provisioningGroup ProvisioningGroupModel) error {
+	if provisioningGroup.Id.IsUnknown() || provisioningGroup.Id.IsNull() {
+		if provisioningGroup.AppId.IsUnknown() || provisioningGroup.AppId.IsNull() || provisioningGroup.IntegrationSpecificId.IsUnknown() || provisioningGroup.IntegrationSpecificId.IsNull() {
+			return fmt.Errorf("either 'id' must be specified or both 'app_id' and 'integration_specific_id' must be provided")
+		}
+	} else {
+		if !provisioningGroup.AppId.IsNull() || !provisioningGroup.IntegrationSpecificId.IsNull() {
+			return fmt.Errorf("'id' cannot be provided with 'app_id' or 'integration_specific_id'")
+		}
+	}
+
+	// For now we expect all "IntegrationSpecificId"s to take the form of Okta group IDs
+	if !provisioningGroup.IntegrationSpecificId.IsNull() {
+		if err := validateOktaGroupId(provisioningGroup.IntegrationSpecificId.ValueString()); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (r *requestablePermissionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan requestablePermissionResourceModel
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "Error at the start.")
+		return
+	}
+
+	if err := validateProvisioningGroup(plan.ProvisioningGroup); err != nil {
+		resp.Diagnostics.AddError("Invalid Provisioning Group Configuration", err.Error())
 		return
 	}
 
