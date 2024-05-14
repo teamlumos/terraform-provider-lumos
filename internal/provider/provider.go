@@ -90,14 +90,11 @@ func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.Conf
 	if !config.APIToken.IsNull() {
 		apiToken = config.APIToken.ValueString()
 	}
-
 	baseUrl := "https://api.lumos.com"
 
 	if !config.BaseUrl.IsNull() {
 		baseUrl = config.BaseUrl.ValueString()
 	}
-	// If any of the expected configurations are missing, return
-	// errors with provider-specific guidance.
 
 	if apiToken == "" {
 		resp.Diagnostics.AddAttributeError(
@@ -132,6 +129,7 @@ func (p *lumosAppStoreProvider) DataSources(_ context.Context) []func() datasour
 		NewRequestablePermissionDataSource,
 		NewUserDataSource,
 		NewAppstoreAppDataSource,
+		NewGroupDataSource,
 	}
 }
 
