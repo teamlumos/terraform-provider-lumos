@@ -1,14 +1,14 @@
 terraform {
   required_providers {
-    lumos-appstore = {
+    lumos = {
       source = "lumos.com/tf/lumos"
     }
   }
 }
 
-provider "lumos-appstore" {
-  api_token = "<API TOKEN>"
-  base_url="<BASE_URL>"
+provider "lumos" {
+  api_token = "lsk_uPOw7AtKDHE5QhQMOSxPrw7gAH_J1HeNgidlgPx4kp7Q"
+  base_url  = "http://localhost:8000"
 }
 
 // TODO Replace UUIDs with your local UUIDs For Testing
@@ -22,47 +22,17 @@ locals {
   user_3_id             = "<FILL IN ID>"
 }
 
-data "lumos_appstore_app" "okta" {
-  user_friendly_label = "Okta"
+
+resource "lumos_pre_approval_rule" "pre_approval_one" {
+  app_id        = "b4bb7f9c-e287-4cda-878d-8638a85206f9"
+  justification = "CHANGEtesting!!!"
+
+  preapproved_groups = [
+    { id = "93b9b293-592b-f24e0-5a77-2b49dd9942f6" }
+  ]
+  preapproved_permissions = [
+    {
+      id = "77974394-b239-1d96-801f-c77d83e7d92f"
+    }
+  ]
 }
-
-// TODO Uncomment to create requestable permissions.
-# resource "lumos_requestable_permission" "hello_terraform_one" {
-#   app_id                            = local.terraform_test_app_id
-#   label                             = "Hello Terraform One!"
-#   visible_in_appstore               = false
-#   allowed_groups                    = [local.group_1_id, local.group_2_id]
-#   manager_approval_required         = false
-#   require_additional_approval       = false
-#   approver_groups_stage_1           = []
-#   approver_users_stage_1            = [local.user_1_id]
-#   approver_groups_stage_2           = []
-#   approver_users_stage_2            = []
-#   access_removal_inline_webhook     = null
-#   request_validation_inline_webhook = null
-#   provisioning_inline_webhook       = null
-#   manual_steps_needed               = true
-#   manual_instructions               = "It's very important you follow these instructions so that we can stay compliant. Thank you!"
-#   time_based_access_options         = ["Unlimited"]
-#   provisioning_group                 = local.group_3_id
-# }
-
-# resource "lumos_requestable_permission" "hello_terraform_two" {
-#   app_id                            = local.terraform_test_app_id
-#   label                             = "Hello Terraform Two!"
-#   visible_in_appstore               = false
-#   allowed_groups                    = null
-#   manager_approval_required         = false
-#   require_additional_approval       = true
-#   approver_groups_stage_1           = []
-#   approver_users_stage_1            = [local.user_2_id]
-#   approver_groups_stage_2           = [local.group_1_id]
-#   approver_users_stage_2            = []
-#   access_removal_inline_webhook     = null
-#   request_validation_inline_webhook = null
-#   provisioning_inline_webhook       = null
-#   manual_steps_needed               = true
-#   manual_instructions               = "Please follow these critical steps!"
-#   time_based_access_options         = ["Unlimited"]
-#   provisioning_group                 = local.group_3_id
-# }

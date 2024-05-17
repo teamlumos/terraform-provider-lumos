@@ -1,0 +1,25 @@
+provider:
+  name: lumos
+
+resources:
+  pre_approval_rule:
+    create:
+      path: /appstore/pre_approval_rules
+      method: POST
+    read:
+      path: /appstore/pre_approval_rules/{pre_approval_rule_id}
+      method: GET
+    schema:
+      attributes:
+        aliases:
+          pre_approval_rule_id: id
+
+data_sources:
+  pre_approval_rule:
+    read:
+      path: /appstore/pre_approval_rules/{pre_approval_rule_id}
+      method: GET
+    schema:
+      attributes:
+        aliases:
+          pre_approval_rule_id: id

@@ -1,3 +1,4 @@
 *.tfstate.backup
 *.tfstate
-
+spec.json
+provider-code-spec.json

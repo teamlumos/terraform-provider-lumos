@@ -10,34 +10,39 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/teamlumos/lumos-go-sdk/lumos"
 )
 
-var _ provider.Provider = (*lumosProvider)(nil)
+var (
+	_ provider.Provider = &lumosAppStoreProvider{}
+)
 
-func New() func() provider.Provider {
+func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &lumosProvider{}
+		return &lumosAppStoreProvider{
+			version: version,
+		}
 	}
 }
 
-type lumosProvider struct {
+// lumosAppStoreProvider is the provider implementation.
+type lumosAppStoreProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-type lumosProviderModel struct {
+type lumosAppStoreProviderModel struct {
 	APIToken types.String `tfsdk:"api_token"`
 	BaseUrl  types.String `tfsdk:"base_url"`
 }
 
-func NewLumosAPIClient(hostURL string, apiToken string) (*lumos.ClientWithResponses, error) {
-	return lumos.GetAuthenticatedClientWithResponses(hostURL, apiToken), nil
+func (p *lumosAppStoreProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "lumos"
+	resp.Version = p.version
 }
 
-func (p *lumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *lumosAppStoreProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"api_token": schema.StringAttribute{
@@ -56,9 +61,10 @@ func (p *lumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 	}
 }
 
-func (p *lumosProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *lumosAppStoreProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+
 	// Retrieve provider data from configuration
-	var config lumosProviderModel
+	var config lumosAppStoreProviderModel
 	diags := req.Config.Get(ctx, &config)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -118,15 +124,17 @@ func (p *lumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	resp.ResourceData = lumosClient
 }
 
-func (p *lumosProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "lumos"
-	resp.Version = p.version
+func (p *lumosAppStoreProvider) DataSources(_ context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{
+		NewRequestablePermissionDataSource,
+		NewUserDataSource,
+		NewAppstoreAppDataSource,
+		NewGroupDataSource,
+	}
 }
 
-func (p *lumosProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{NewPreApprovalRuleDataSource}
-}
-
-func (p *lumosProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{NewPreApprovalRuleResource}
+func (p *lumosAppStoreProvider) Resources(_ context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewRequestablePermissionResource,
+	}
 }
