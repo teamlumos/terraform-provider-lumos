@@ -5,6 +5,7 @@ import (
 
 	"context"
 
+	"github.com/fatih/structs"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
@@ -39,6 +40,11 @@ type lumosAPIAppResponse struct {
 	InstanceId        string `json:"instance_id"`
 	UserFriendlyLabel string `json:"user_friendly_label"`
 	Status            string `json:"status"`
+}
+
+type lumosAPIAppSettingResponse struct {
+	CustomRequestInstructions string                     `json:"custom_request_instructions"`
+	RequestFlow               appStoreRequestFlowSetting `json:"request_flow"`
 }
 
 type lumosAPIAppStoreRequestablePermissionResponse struct {
@@ -84,6 +90,31 @@ var managerApprovalKeyMap = make(map[string]bool)
 func init() {
 	managerApprovalKeyMap["INITIAL_APPROVAL"] = true
 	managerApprovalKeyMap["NONE"] = false
+}
+
+type appStoreRequestFlowSetting struct {
+	Discoverability           types.String                      `json:"discoverability"`
+	CustomApprovalMessage     types.String                      `json:"custom_approval_message"`
+	RequireManagerApproval    types.Bool                        `json:"require_manager_approval"`
+	RequireAdditionalApproval types.Bool                        `json:"require_additional_approval"`
+	Approvers                 appStoreRequestFlowUsersAndGroups `json:"approvers"`
+	Admins                    appStoreRequestFlowUsersAndGroups `json:"admins"`
+}
+
+type appStoreRequestFlowUsersAndGroups struct {
+	Groups []lumosAPIBaseObject `json:"groups"`
+	Users  []lumosAPIBaseObject `json:"users"`
+}
+
+type lumosAPIBaseObject struct {
+	Id string `json:"id"`
+}
+
+type appStoreProvisioningSetting struct {
+	GroupsProvisioning types.String `json:"groups_provisioning"`
+	TimeBasedAccess    types.Set    `json:"time_based_access"`
+	ManualStepsNeeded  types.Bool   `json:"manual_steps_needed"`
+	CustomInstructions types.String `json:"custom_provisioning_instructions"`
 }
 
 type appStoreRequestablePermissionRequestConfig struct {
@@ -138,6 +169,25 @@ type lumosAPIGroup struct {
 
 type lumosAPIUser struct {
 	Id string `json:"id"`
+}
+
+func buildAppPayload(a appResourceModel) map[string]interface{} {
+
+	// Build the payload from calculated inputs
+	payload := map[string]interface{}{
+		"name":        a.Name.ValueString(),
+		"description": a.Description.ValueString(),
+		"category":    a.Category.ValueString(),
+	}
+
+	return payload
+}
+
+func buildAddAppToAppstorePayload(id string, a appResourceModel) map[string]interface{} {
+	payload := structs.Map(a.Settings)
+	payload["app_id"] = id
+
+	return payload
 }
 
 func buildAppStoreAppRequestablePermissionPayload(p requestablePermissionResourceModel) map[string]interface{} {
