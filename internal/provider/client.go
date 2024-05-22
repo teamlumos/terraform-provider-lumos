@@ -14,14 +14,17 @@ type LumosAPIClient struct {
 	HostURL    string
 	HTTPClient *http.Client
 	ApiToken   string
+	UserAgent  UserAgent
 }
 
 func NewLumosAPIClient(hostURL string, apiToken string) (*LumosAPIClient, error) {
 	// TO-DO: error?
+	ua := NewUserAgent()
 	return &LumosAPIClient{
 		HTTPClient: &http.Client{},
 		HostURL:    hostURL,
 		ApiToken:   apiToken,
+		UserAgent:  ua,
 	}, nil
 
 }
@@ -48,6 +51,7 @@ func (c *LumosAPIClient) MakeRequest(method string, endpoint string, requestBody
 	// Set headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.ApiToken))
+	req.Header.Set("User-Agent", c.UserAgent.String())
 
 	// Create an HTTP client
 	client := &http.Client{}
