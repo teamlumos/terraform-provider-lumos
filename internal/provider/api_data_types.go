@@ -25,12 +25,12 @@ type lumosAPIUserResponse struct {
 }
 
 type lumosAPIGroupResponse struct {
-	Id                    types.String `json:"id"`
-	AppId                 types.String `json:"app_id"`
-	SourceAppId           types.String `json:"source_app_id"`
-	IntegrationSpecificId types.String `json:"integration_specific_id"`
-	Name                  types.String `json:"name"`
-	Description           types.String `json:"description"`
+	Id                    string `json:"id"`
+	AppId                 string `json:"app_id"`
+	SourceAppId           string `json:"source_app_id"`
+	IntegrationSpecificId string `json:"integration_specific_id"`
+	Name                  string `json:"name"`
+	Description           string `json:"description"`
 }
 
 type lumosAPIAppResponse struct {
