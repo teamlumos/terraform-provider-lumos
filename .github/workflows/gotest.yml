@@ -5,7 +5,7 @@ name: Test
 
 on:
   push:
-    tags:
+    branches:
       - "*"
 
 jobs:
