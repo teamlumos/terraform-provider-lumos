@@ -100,12 +100,12 @@ func (d *groupDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	state.Id = types.StringValue(group.Id.ValueString())
-	state.Name = types.StringValue(group.Name.ValueString())
-	state.Description = types.StringValue(group.Description.ValueString())
-	state.AppId = types.StringValue(group.AppId.ValueString())
-	state.SourceAppId = types.StringValue(group.SourceAppId.ValueString())
-	state.IntegrationSpecificId = types.StringValue(group.IntegrationSpecificId.ValueString())
+	state.Id = types.StringValue(group.Id)
+	state.Name = types.StringValue(group.Name)
+	state.Description = types.StringValue(group.Description)
+	state.AppId = types.StringValue(group.AppId)
+	state.SourceAppId = types.StringValue(group.SourceAppId)
+	state.IntegrationSpecificId = types.StringValue(group.IntegrationSpecificId)
 
 	// Write logs using the tflog package
 	// Documentation: https://terraform.io/plugin/log

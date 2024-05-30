@@ -72,6 +72,10 @@ func (c *LumosAPIClient) MakeRequest(method string, endpoint string, requestBody
 		return nil, fmt.Errorf("HTTP method %s failed with status %s and body %s", method, resp.Status, responseBody)
 	}
 
+	if method == "DELETE" {
+		return nil, nil
+	}
+
 	// Create a new instance of the response type using reflection.
 	responseTypeInstance := reflect.New(reflect.TypeOf(responseType).Elem()).Interface()
 
