@@ -7,6 +7,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+const APP_ID = "de97161b-13a8-7d16-8a06-722859c1b4a2"
+const APP_NAME = "Terraform Testing"
+const EMAIL = "albus@lumostester.com"
+const USER_ID = "f7dae071-7640-5280-4764-0772993807ef"
+const GROUP_ID = "b4aff9b6-f701-98a2-7404-d24a121ebf9c"
+const GROUP_NAME = "OnlyAlbus"
+
 func GetNewClient(t *testing.T) *LumosAPIClient {
 	apiToken := os.Getenv("LUMOS_API_TOKEN")
 	if apiToken == "" {
@@ -18,12 +25,12 @@ func GetNewClient(t *testing.T) *LumosAPIClient {
 
 func TestSearchApp(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.searchApp("Terraform Testing")
+	response, err := client.searchApp(APP_NAME)
 	if err != nil || response == nil {
-		t.Fatalf(`searchApp("Terraform Testing") was unsuccessful`)
+		t.Fatalf(`searchApp(%s) was unsuccessful`, APP_NAME)
 	}
-	if response.Id != "de97161b-13a8-7d16-8a06-722859c1b4a2" {
-		t.Fatalf(`searchApp("Terraform Testing") = %v, %v`, response, err)
+	if response.Id != APP_ID {
+		t.Fatalf(`searchApp(%s) = %v, %v`, APP_NAME, response, err)
 	}
 }
 
@@ -37,23 +44,23 @@ func TestSearchAppIsExactMatch(t *testing.T) {
 
 func TestGetApp(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.getApp("de97161b-13a8-7d16-8a06-722859c1b4a2")
+	response, err := client.getApp(APP_ID)
 	if err != nil || response == nil {
-		t.Fatalf(`getApp("de97161b-13a8-7d16-8a06-722859c1b4a2") was unsuccessful`)
+		t.Fatalf(`getApp(%s) was unsuccessful`, APP_ID)
 	}
-	if response.Id != "de97161b-13a8-7d16-8a06-722859c1b4a2" {
-		t.Fatalf(`getApp("de97161b-13a8-7d16-8a06-722859c1b4a2") = %v, %v`, response, err)
+	if response.Id != APP_ID {
+		t.Fatalf(`getApp(%s) = %v, %v`, APP_ID, response, err)
 	}
 }
 
 func TestSearchUser(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.searchUser("albus@lumostester.com")
+	response, err := client.searchUser(EMAIL)
 	if err != nil || response == nil {
-		t.Fatalf(`searchUser("albus@lumostester.com") was unsuccessful`)
+		t.Fatalf(`searchUser(%s) was unsuccessful`, EMAIL)
 	}
-	if response.Id != "f7dae071-7640-5280-4764-0772993807ef" {
-		t.Fatalf(`searchUser("albus@lumostester.com") = %v, %v`, response, err)
+	if response.Id != USER_ID {
+		t.Fatalf(`searchUser(%s) = %v, %v`, EMAIL, response, err)
 	}
 }
 
@@ -67,34 +74,34 @@ func TestSearchUserIsExactMatch(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.getUser("f7dae071-7640-5280-4764-0772993807ef")
+	response, err := client.getUser(USER_ID)
 	if err != nil || response == nil {
-		t.Fatalf(`getUser("f7dae071-7640-5280-4764-0772993807ef") was unsuccessful`)
+		t.Fatalf(`getUser(%s) was unsuccessful`, USER_ID)
 	}
-	if response.Id != "f7dae071-7640-5280-4764-0772993807ef" {
-		t.Fatalf(`getUser("f7dae071-7640-5280-4764-0772993807ef") = %v, %v`, response, err)
+	if response.Id != USER_ID {
+		t.Fatalf(`getUser(%s) = %v, %v`, USER_ID, response, err)
 	}
 }
 
 func TestGetGroup(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.getGroup("b4aff9b6-f701-98a2-7404-d24a121ebf9c")
+	response, err := client.getGroup(GROUP_ID)
 	if err != nil || response == nil {
-		t.Fatalf(`getGroup("b4aff9b6-f701-98a2-7404-d24a121ebf9c") was unsuccessful`)
+		t.Fatalf(`getGroup(%s) was unsuccessful`, GROUP_ID)
 	}
-	if response.Id != "b4aff9b6-f701-98a2-7404-d24a121ebf9c" {
-		t.Fatalf(`getGroup("b4aff9b6-f701-98a2-7404-d24a121ebf9c") = %v, %v`, response, err)
+	if response.Id != GROUP_ID {
+		t.Fatalf(`getGroup(%s) = %v, %v`, GROUP_ID, response, err)
 	}
 }
 
 func TestSearchGroup(t *testing.T) {
 	client := GetNewClient(t)
-	response, err := client.searchGroup("OnlyAlbus")
+	response, err := client.searchGroup(GROUP_NAME)
 	if err != nil || response == nil {
-		t.Fatalf(`searchGroup("OnlyAlbus") was unsuccessful`)
+		t.Fatalf(`searchGroup(%s) was unsuccessful`, GROUP_NAME)
 	}
-	if response.Id != "b4aff9b6-f701-98a2-7404-d24a121ebf9c" {
-		t.Fatalf(`searchGroup("OnlyAlbus") = %v, %v`, response, err)
+	if response.Id != GROUP_ID {
+		t.Fatalf(`searchGroup(%s) = %v, %v`, GROUP_NAME, response, err)
 	}
 
 }
@@ -102,7 +109,7 @@ func TestSearchGroup(t *testing.T) {
 func TestPermissionCRUD(t *testing.T) {
 	client := GetNewClient(t)
 	var permission requestablePermissionResourceModel
-	permission.AppId = types.StringValue("de97161b-13a8-7d16-8a06-722859c1b4a2")
+	permission.AppId = types.StringValue(APP_ID)
 	permission.Label = types.StringValue("Test Permission 2")
 
 	createResponse, err := client.createPermission(permission)
