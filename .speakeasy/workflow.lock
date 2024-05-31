@@ -1,0 +1,27 @@
+speakeasyVersion: 1.299.4
+sources:
+    FastAPI:
+        sourceNamespace: fast-api
+        sourceRevisionDigest: sha256:ee48e2c11b9b72faef8d612d6205597a6160f648d4d9ae7fcd4c8254750d0709
+        sourceBlobDigest: sha256:08a3602803cb8a5ade2c47f9752d2898084d7ad7d96503566799265024d42110
+        tags:
+            - latest
+targets:
+    my-first-target:
+        source: FastAPI
+        sourceNamespace: fast-api
+        sourceRevisionDigest: sha256:ee48e2c11b9b72faef8d612d6205597a6160f648d4d9ae7fcd4c8254750d0709
+        sourceBlobDigest: sha256:08a3602803cb8a5ade2c47f9752d2898084d7ad7d96503566799265024d42110
+        outLocation: /Users/ethanzh/terraform-provider-lumos
+workflow:
+    workflowVersion: 1.0.0
+    sources:
+        FastAPI:
+            inputs:
+                - location: ./openapi.json
+            registry:
+                location: registry.speakeasyapi.dev/lumos/lumos/fast-api
+    targets:
+        my-first-target:
+            target: terraform
+            source: FastAPI
