@@ -10,6 +10,7 @@ const (
 	GROUP_BY_ID_URL                = GROUPS_URL + "/%s"
 	GROUP_BY_NAME_URL              = GROUPS_URL + "?name=%s&exact_match=true"
 	APPS_URL                       = "apps"
+	APP_BY_ID_URL                  = APPS_URL + "/%s"
 	APPSTORE_APPS_URL              = "appstore/apps"
 	APPSTORE_APP_BY_ID_URL         = APPSTORE_APPS_URL + "/%s"
 	APPSTORE_APP_SETTING_BY_ID_URL = APPSTORE_APP_BY_ID_URL + "/settings"

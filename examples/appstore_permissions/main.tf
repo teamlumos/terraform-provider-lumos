@@ -7,15 +7,15 @@ terraform {
 }
 
 provider "lumos-appstore" {
-  api_token = "7NzDoLxlOZzxZDRfy7WkroOfEsuomGgCD8R6F3c7u2"
-  base_url="http://localhost:8000"
+  api_token = "<API_TOKEN>"
+  base_url="<BASE_URL>"
 }
 
 // TODO Replace UUIDs with your local UUIDs For Testing
 locals {
-  group_1_id            = "f40deb90-a40d-0b4e-5eaa-05e33b401e55" # Find UUID like so: https://www.loom.com/share/b313034f7ad84d83b0195fe1b0f370f8?sid=ff1220e9-874c-4021-b915-d9be509ee1c2
-  group_2_id            = "7d7295d0-0d67-20c6-34c1-7c4edb0c529d"
-  group_3_id            = "64e35659-eb62-e697-6f39-608781b0fb5d"
+  group_1_id            = "<FILL IN ID>" # Find UUID like so: https://www.loom.com/share/b313034f7ad84d83b0195fe1b0f370f8?sid=ff1220e9-874c-4021-b915-d9be509ee1c2
+  group_2_id            = "<FILL IN ID>"
+  group_3_id            = "<FILL IN ID>"
   user_1_id             = "<FILL IN ID>" # Find UUID like so: https://www.loom.com/share/1413b71a5f8f4692a01f986a95b3e6fc?sid=5def1c2a-6cae-4c9b-b2d2-b944131ab5b8
   user_2_id             = "<FILL IN ID>"
   user_3_id             = "<FILL IN ID>"
@@ -48,25 +48,25 @@ resource "lumos_appstore_app" "my_first_app" {
 }
 
 // TODO Uncomment to create requestable permissions.
-resource "lumos_requestable_permission" "hello_terraform_one" {
-  app_id                            = resource.lumos_appstore_app.my_first_app.id
-  label                             = "Hello Terraform One!"
-  visible_in_appstore               = false
-  allowed_groups                    = [local.group_1_id, local.group_2_id]
-  manager_approval_required         = false
-  require_additional_approval       = false
-  approver_groups_stage_1           = []
-  approver_users_stage_1            = [data.lumos_user.albus.id]
-  approver_groups_stage_2           = []
-  approver_users_stage_2            = []
-  access_removal_inline_webhook     = null
-  request_validation_inline_webhook = null
-  provisioning_inline_webhook       = null
-  manual_steps_needed               = true
-  manual_instructions               = "It's very important you follow these instructions so that we can stay compliant. Thank you!"
-  time_based_access_options         = ["Unlimited"]
-  provisioning_group                = local.group_3_id
-}
+# resource "lumos_requestable_permission" "hello_terraform_one" {
+#   app_id                            = local.terraform_test_app_id
+#   label                             = "Hello Terraform One!"
+#   visible_in_appstore               = false
+#   allowed_groups                    = [local.group_1_id, local.group_2_id]
+#   manager_approval_required         = false
+#   require_additional_approval       = false
+#   approver_groups_stage_1           = []
+#   approver_users_stage_1            = [local.user_1_id]
+#   approver_groups_stage_2           = []
+#   approver_users_stage_2            = []
+#   access_removal_inline_webhook     = null
+#   request_validation_inline_webhook = null
+#   provisioning_inline_webhook       = null
+#   manual_steps_needed               = true
+#   manual_instructions               = "It's very important you follow these instructions so that we can stay compliant. Thank you!"
+#   time_based_access_options         = ["Unlimited"]
+#   provisioning_group                 = local.group_3_id
+# }
 
 # resource "lumos_requestable_permission" "hello_terraform_two" {
 #   app_id                            = local.terraform_test_app_id

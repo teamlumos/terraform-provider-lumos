@@ -183,8 +183,8 @@ func buildAppPayload(a appResourceModel) map[string]interface{} {
 	return payload
 }
 
-func buildAddAppToAppstorePayload(id string, a appResourceModel) map[string]interface{} {
-	payload := structs.Map(a.Settings)
+func buildAddAppToAppstorePayload(id string, a appStoreSettingResourceModel) map[string]interface{} {
+	payload := structs.Map(a)
 	payload["app_id"] = id
 
 	return payload

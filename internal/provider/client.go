@@ -129,7 +129,7 @@ func (c *LumosAPIClient) getApp(id string) (*lumosAPIAppResponse, error) {
 	return result, nil
 }
 
-func (c *LumosAPIClient) getAppSetting(id string) (*lumosAPIAppSettingResponse, error) {
+func (c *LumosAPIClient) getAppSettings(id string) (*lumosAPIAppSettingResponse, error) {
 	endpoint := fmt.Sprintf(APPSTORE_APP_BY_ID_URL, id)
 	var app lumosAPIAppSettingResponse
 	respInterface, err := c.MakeRequest("GET", endpoint, nil, &app)
@@ -161,17 +161,72 @@ func (c *LumosAPIClient) createApp(a appResourceModel) (*lumosAPIAppResponse, er
 	payload := buildAppPayload(a)
 
 	var app lumosAPIAppResponse
-	_, appErr := c.MakeRequest("POST", APPS_URL, payload, &app)
+	respInterface, appErr := c.MakeRequest("POST", APPS_URL, payload, &app)
 	if appErr != nil {
 		return nil, appErr
 	}
 
+	result, ok := respInterface.(*lumosAPIAppResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
+}
+
+func (c *LumosAPIClient) addAppToAppStore(id string, a appStoreSettingResourceModel) (*lumosAPIAppSettingResponse, error) {
 	var appStoreApp lumosAPIResponse
-	_, err := c.MakeRequest("POST", APPSTORE_APPS_URL, buildAddAppToAppstorePayload(app.Id, a), &appStoreApp)
+	respInterface, err := c.MakeRequest("POST", APPSTORE_APPS_URL, buildAddAppToAppstorePayload(id, a), &appStoreApp)
 	if err != nil {
 		return nil, err
 	}
-	return &app, nil
+	result, ok := respInterface.(*lumosAPIAppSettingResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type: %v", appStoreApp)
+	}
+
+	return result, nil
+}
+
+func (c *LumosAPIClient) removeAppFromAppStore(id string, a appStoreSettingResourceModel) (*lumosAPIAppSettingResponse, error) {
+	var appStoreApp lumosAPIResponse
+	_, err := c.MakeRequest("DELETE", APPSTORE_APPS_URL, buildAddAppToAppstorePayload(id, a), &appStoreApp)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+func (c *LumosAPIClient) createAppStoreApp(a appResourceModel) (*lumosAPIAppResponse, error) {
+	app, err := c.createApp(a)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.addAppToAppStore(app.Id, a.Settings)
+	if err != nil {
+		return nil, err
+	}
+	return app, nil
+}
+
+func (c *LumosAPIClient) updateApp(id string, a appResourceModel) (*lumosAPIAppResponse, error) {
+	endpoint := fmt.Sprintf(APP_BY_ID_URL, id)
+	payload := buildAppPayload(a)
+
+	var app lumosAPIAppResponse
+	respInterface, err := c.MakeRequest("PATCH", endpoint, payload, &app)
+	if err != nil {
+		return nil, err
+	}
+
+	result, ok := respInterface.(*lumosAPIAppResponse)
+	if !ok {
+		return nil, fmt.Errorf("unexpected response type")
+	}
+
+	return result, nil
 }
 
 func (c *LumosAPIClient) searchUser(email string) (*lumosAPIUserResponse, error) {
