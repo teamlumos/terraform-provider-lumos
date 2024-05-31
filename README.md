@@ -1,45 +1,113 @@
-# Terraform Provider Lumos AppStore (Early Access)
+# lumos
 
-## Requirements
+<div align="left">
+    <a href="https://speakeasyapi.dev/"><img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" /></a>
+</div>
 
-- [Terraform](https://www.terraform.io/downloads.html) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.19
+<no value>
+<!-- Start SDK <no value> -->
+To install this provider, copy and paste this code into your Terraform configuration. Then, run `terraform init`.
 
-## Building The Provider
+```hcl
+terraform {
+  required_providers {
+    lumos = {
+      source  = "lumos/lumos"
+      version = "0.1.3"
+    }
+  }
+}
 
-1. Clone the repository
-1. Enter the repository directory
-1. Build the provider using the Go `install` command:
-
-```shell
-go install
+provider "lumos" {
+  # Configuration options
+}
 ```
+<!-- End SDK <no value> -->
 
-## Testing the provider
+<no value>
+<!-- Start SDK <no value> -->
+### Testing the provider locally
 
-Note that these instructions allow you to expand on a stub already present in `examples/appstore_permissions`. You can take this example and
-create your own `main.tf` file as you see fit!
+Should you want to validate a change locally, the `--debug` flag allows you to execute the provider against a terraform instance locally.
 
-- Enter into the `/examples/appstore_permissions` directory.
-- Fill in an API Token in the `<API TOKEN>` section. Note that you will need a Lumos API Token, which you can fetch using instructions [here](https://developers.lumos.com/reference/overview#creating-an-api-token).
+This also allows for debuggers (e.g. delve) to be attached to the provider.
 
-Since our provider is still in early access, we're not on the public Terraform Registry yet. To get up and running, you’ll need to update your provider installer to include an override to build the Lumos provider from a local reference.
+### Example
 
-- First, find the `GOBIN` path where Go installs your binaries. Your path may vary depending on how your Go environment variables are configured.
-
-```shell
-$ go env GOBIN
-/Users/<Username>/go/bin
+```sh
+go run main.go --debug
+# Copy the TF_REATTACH_PROVIDERS env var
+# In a new terminal
+cd examples/your-example
+TF_REATTACH_PROVIDERS=... terraform init
+TF_REATTACH_PROVIDERS=... terraform apply
 ```
+<!-- End SDK <no value> -->
 
-- If the `GOBIN` go environment variable is not set, use the default path, `/Users/<Username>/go/bin`. You can use the `whoami` command to find your `<Username>`.
-- Create a new file called `.terraformrc` in your home directory (`~`), then add to the`dev_overrides` block as shown below. Change the `<PATH>` to the value returned from the `go env GOBIN` command above.
+<no value>
+<!-- Start SDK <no value> -->
 
-```shell
+<!-- End SDK <no value> -->
+
+<!-- Start SDK Installation [installation] -->
+## SDK Installation
+
+To install this provider, copy and paste this code into your Terraform configuration. Then, run `terraform init`.
+
+```hcl
+terraform {
+  required_providers {
+    lumos = {
+      source  = "lumos/lumos"
+      version = "0.3.16"
+    }
+  }
+}
+
+provider "lumos" {
+  # Configuration options
+}
+```
+<!-- End SDK Installation [installation] -->
+
+<!-- Start SDK Example Usage [usage] -->
+## SDK Example Usage
+
+### Testing the provider locally
+
+Should you want to validate a change locally, the `--debug` flag allows you to execute the provider against a terraform instance locally.
+
+This also allows for debuggers (e.g. delve) to be attached to the provider.
+
+### Example
+
+```sh
+go run main.go --debug
+# Copy the TF_REATTACH_PROVIDERS env var
+# In a new terminal
+cd examples/your-example
+TF_REATTACH_PROVIDERS=... terraform init
+TF_REATTACH_PROVIDERS=... terraform apply
+```
+<!-- End SDK Example Usage [usage] -->
+
+<!-- Start Available Resources and Operations [operations] -->
+## Available Resources and Operations
+
+
+<!-- End Available Resources and Operations [operations] -->
+
+<!-- Placeholder for Future Speakeasy SDK Sections -->
+
+Terraform allows you to use local provider builds by setting a `dev_overrides` block in a configuration file called `.terraformrc`. This block overrides all other configured installation methods.
+
+Terraform searches for the `.terraformrc` file in your home directory and applies any configuration settings you set.
+
+```
 provider_installation {
 
   dev_overrides {
-      "lumos.com/tf/lumos-appstore" = "<PATH>"
+      "registry.terraform.io/lumos/lumos" = "<PATH>"
   }
 
   # For all other providers, install them directly from their origin provider
@@ -49,42 +117,13 @@ provider_installation {
 }
 ```
 
-You are now ready to test the provider!
+Your `<PATH>` may vary depending on how your Go environment variables are configured. Execute `go env GOBIN` to set it, then set the `<PATH>` to the value returned. If nothing is returned, set it to the default location, `$HOME/go/bin`.
 
-```shell
-cd examples/appstore_permissions
-terraform plan
-terraform apply
-```
+Note: To use the dev_overrides, please ensure you run `go build` in this folder. You must have a binary available for terraform to find.
 
-Initially you shouldn't see any planned changes. Once you uncomment the resource blocks and fill in the UUIDs
-on the locals block in the starter `main.tf` file you can start testing out the provider.
+### Contributions
 
-To get Lumos UUIDs you can call the API:
+While we value open-source contributions to this SDK, this library is generated programmatically.
+Feel free to open a PR or a Github issue as a proof of concept and we'll do our best to include it in a future release!
 
-- Get Group UUIDs: https://developers.lumos.com/reference/getgroups
-- Get User UUIDs: https://developers.lumos.com/reference/listusers
-- Get AppStore Apps UUIDs: https://developers.lumos.com/reference/getappstoreapps
-- Get WebHook UUIDs: https://developers.lumos.com/reference/get_inline_webhooks_inline_webhooks_get
-
-To import existing requestable permissions:
-
-Requirements:
-
-- Python3
-
-1. Get Requestable Permission Stable ID from Lumos API
-2. Run scripts/generate_lumos_terraform_resource_for_import.py [Add API Token]
-
-```
-generate_lumos_terraform_resource_for_import.py lumos-appstore_requestable_permission <requestable-permission-id>
-```
-
-3. Get the output and paste it in examples/appstore_permissions/main.tf
-4. Run terraform import
-
-```
-terraform import lumos-appstore_requestable_permission.<resource_name> <requestable-permission-id>
-```
-
-5. terraform apply
+### SDK Created by [Speakeasy](https://docs.speakeasyapi.dev/docs/using-speakeasy/client-sdks)

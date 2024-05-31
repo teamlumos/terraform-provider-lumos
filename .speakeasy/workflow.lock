@@ -1,0 +1,31 @@
+speakeasyVersion: 1.299.4
+sources:
+    lumos:
+        sourceNamespace: lumos
+        sourceRevisionDigest: sha256:32713c7f6b0aa3bf0bda9b9271dfea3f9a3d619c1f9abbdc453b59e2ede6d38c
+        sourceBlobDigest: sha256:05a3899bfab969dd930843963c0c3addacf7aa15b872cad8b8baa9e3bef8c0c0
+        tags:
+            - latest
+targets:
+    terraform:
+        source: lumos
+        sourceNamespace: lumos
+        sourceRevisionDigest: sha256:32713c7f6b0aa3bf0bda9b9271dfea3f9a3d619c1f9abbdc453b59e2ede6d38c
+        sourceBlobDigest: sha256:05a3899bfab969dd930843963c0c3addacf7aa15b872cad8b8baa9e3bef8c0c0
+        outLocation: .
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        lumos:
+            inputs:
+                - location: ./openapi-original.json
+            overlays:
+                - location: ./overlay.yaml
+            registry:
+                location: registry.speakeasyapi.dev/lumos/lumos/lumos
+    targets:
+        terraform:
+            target: terraform
+            source: lumos
+            output: .

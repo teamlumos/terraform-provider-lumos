@@ -1,0 +1,22 @@
+configVersion: 2.0.0
+generation:
+  sdkClassName: SDK
+  maintainOpenAPIOrder: true
+  usageSnippets:
+    optionalPropertyRendering: withExample
+  useClassNamesForArrayFields: true
+  fixes:
+    nameResolutionDec2023: true
+    parameterOrderingFeb2024: true
+    requestResponseComponentNamesFeb2024: true
+  auth:
+    oAuth2ClientCredentialsEnabled: true
+terraform:
+  version: 0.3.16
+  additionalDataSources: []
+  additionalDependencies: {}
+  additionalResources: []
+  allowUnknownFieldsInWeakUnions: false
+  author: lumos
+  environmentVariables: []
+  packageName: lumos

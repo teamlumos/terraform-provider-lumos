@@ -1,0 +1,15 @@
+workflowVersion: 1.0.0
+speakeasyVersion: latest
+sources:
+    lumos:
+        inputs:
+            - location: ./openapi-original.json
+        overlays:
+            - location: ./overlay.yaml
+        registry:
+            location: registry.speakeasyapi.dev/lumos/lumos/lumos
+targets:
+    terraform:
+        target: terraform
+        source: lumos
+        output: .
