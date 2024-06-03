@@ -27,5 +27,12 @@ jobs:
       run: go test -v ./...
       env:
         LUMOS_API_TOKEN: ${{ secrets.LUMOS_API_TOKEN }}
+        TF_ACC: 1
+        APP_ID: ${{ vars.APP_ID }}
+        APP_NAME: ${{ vars.APP_NAME }}
+        GROUP_ID: ${{ vars.GROUP_ID }}
+        GROUP_NAME: ${{ vars.GROUP_NAME }}
+        USER_EMAIL: ${{ vars.USER_EMAIL }}
+        USER_ID: ${{ vars.USER_ID }}
 
 
