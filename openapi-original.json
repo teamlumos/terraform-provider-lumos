@@ -187,6 +187,62 @@
                         "HTTPBearer": []
                     }
                 ]
+            },
+            "patch": {
+                "tags": [
+                    "Core"
+                ],
+                "summary": "Update App",
+                "description": "Update an app.",
+                "operationId": "updateApp",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        },
+                        "name": "app_id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppInputCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/App"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/apps/categories": {
@@ -1513,12 +1569,51 @@
                     }
                 ]
             },
+            "delete": {
+                "tags": [
+                    "AppStore"
+                ],
+                "summary": "Delete Pre Approval Rule",
+                "description": "Delete a pre-approval rule by ID.",
+                "operationId": "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Pre Approval Rule Id"
+                        },
+                        "name": "pre_approval_rule_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
             "patch": {
                 "tags": [
                     "AppStore"
                 ],
                 "summary": "Update Pre Approval Rule",
-                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
+                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
                 "operationId": "update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch",
                 "parameters": [
                     {
@@ -1792,7 +1887,6 @@
                 ]
             },
             "post": {
-                "x-speakeasy-entity-operation": "AppStoreApp#create",
                 "tags": [
                     "AppStore"
                 ],

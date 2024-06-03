@@ -18,6 +18,8 @@ actions:
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
+  - target: $["paths"]["/apps/{app_id}"]["patch"]
+    remove: true
   - target: $["paths"]["/users"]["get"]
     update:
       "x-speakeasy-entity-operation": "Users#read"
@@ -60,12 +62,31 @@ actions:
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#update"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["description"]
+    update: "**Update a pre-approval rule attached to an App in the AppStore.**\n\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded."
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
-  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]
     update:
-      "delete": {"x-speakeasy-entity-operation": "PreApprovalRule#delete", "tags": ["AppStore"], "summary": "Update Pre Approval Rule", "description": "", "operationId": "delete_pre_approval_rule", "parameters": [{"required": true, "schema": {"type": "string", "title": "Pre Approval Rule Id"}, "name": "pre_approval_rule_id", "in": "path", "x-speakeasy-match": "id"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"type": "string", "title": "Pre Approval Rule"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"HTTPBearer": []}]}
+      "x-speakeasy-entity-operation": "PreApprovalRule#delete"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["summary"]
+    update: "Update Pre Approval Rule"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["description"]
+    update: ""
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["operationId"]
+    update: "delete_pre_approval_rule"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["responses"]
+    update:
+      "200": {"description": "Successful Response", "content": {"application/json": {"schema": {"type": "string", "title": "Pre Approval Rule"}}}}
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["responses"]["204"]
+    remove: true
+  - target: $["paths"]["/appstore/apps"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreApp#create"
   - target: $["paths"]["/appstore/apps/{app_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#read"
