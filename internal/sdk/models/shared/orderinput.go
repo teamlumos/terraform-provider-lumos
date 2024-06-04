@@ -3,8 +3,8 @@
 package shared
 
 import (
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
 // OrderInputVendor - Information about the vendor associated with this contract. Currently, we will only support a name field.

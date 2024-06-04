@@ -5,7 +5,7 @@ package shared
 import (
 	"errors"
 	"fmt"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 type LocType string

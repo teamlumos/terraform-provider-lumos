@@ -5,7 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 // AppStoreAppSettingsOutputAllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.

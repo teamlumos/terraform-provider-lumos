@@ -3,8 +3,8 @@
 package shared
 
 import (
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
 // Vendor - The vendor in which the agreement is created for

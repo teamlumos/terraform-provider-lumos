@@ -12,11 +12,11 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: true
 terraform:
-  version: 0.0.1
+  version: 0.1.26
   additionalDataSources: []
   additionalDependencies: {}
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
-  author: speakeasy
+  author: teamlumos
   environmentVariables: []
   packageName: lumos

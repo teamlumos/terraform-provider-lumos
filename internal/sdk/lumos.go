@@ -5,9 +5,9 @@ package sdk
 import (
 	"context"
 	"fmt"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/hooks"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/hooks"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 	"time"
 )
@@ -145,8 +145,8 @@ func New(opts ...SDKOption) *Lumos {
 			Language:          "go",
 			OpenAPIDocVersion: "0.1.0",
 			SDKVersion:        "0.0.1",
-			GenVersion:        "2.338.7",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.338.7 0.1.0 github.com/speakeasy/terraform-provider-lumos/internal/sdk",
+			GenVersion:        "2.338.12",
+			UserAgent:         "speakeasy-sdk/go 0.0.1 2.338.12 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			Hooks:             hooks.New(),
 		},
 	}

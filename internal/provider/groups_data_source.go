@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	tfTypes "github.com/speakeasy/terraform-provider-lumos/internal/provider/types"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/operations"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
