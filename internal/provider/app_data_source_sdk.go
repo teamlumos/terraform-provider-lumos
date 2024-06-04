@@ -4,7 +4,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
 func (r *AppDataSourceModel) RefreshFromSharedApp(resp *shared.App) {

@@ -3,7 +3,7 @@
 package shared
 
 import (
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"time"
 )
 

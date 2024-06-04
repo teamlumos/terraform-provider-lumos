@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 

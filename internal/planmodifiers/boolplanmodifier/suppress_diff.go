@@ -4,7 +4,7 @@ package boolplanmodifier
 
 import (
 	"context"
-	"github.com/speakeasy/terraform-provider-lumos/internal/planmodifiers/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/utils"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 )

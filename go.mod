@@ -1,4 +1,4 @@
-module github.com/speakeasy/terraform-provider-lumos
+module github.com/teamlumos/terraform-provider-lumos
 
 go 1.21
 

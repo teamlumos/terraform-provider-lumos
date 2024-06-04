@@ -3,8 +3,8 @@
 package operations
 
 import (
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/internal/utils"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 

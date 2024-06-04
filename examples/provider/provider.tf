@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     lumos = {
-      source  = "speakeasy/lumos"
-      version = "0.0.1"
+      source  = "teamlumos/lumos"
+      version = "0.1.26"
     }
   }
 }

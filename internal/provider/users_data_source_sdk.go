@@ -4,8 +4,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	tfTypes "github.com/speakeasy/terraform-provider-lumos/internal/provider/types"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
 func (r *UsersDataSourceModel) RefreshFromSharedPageUser(resp *shared.PageUser) {

@@ -16,12 +16,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	speakeasy_objectplanmodifier "github.com/speakeasy/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
-	speakeasy_stringplanmodifier "github.com/speakeasy/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
-	tfTypes "github.com/speakeasy/terraform-provider-lumos/internal/provider/types"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/operations"
-	speakeasy_stringvalidators "github.com/speakeasy/terraform-provider-lumos/internal/validators/stringvalidators"
+	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
+	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
+	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
