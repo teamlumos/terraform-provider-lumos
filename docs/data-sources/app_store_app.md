@@ -27,7 +27,7 @@ data "lumos_app_store_app" "my_appstoreapp" {
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time.
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
 - `app_class_id` (String) The ID of the service associated with this app.
 - `id` (String) The ID of this app.
 - `instance_id` (String) The ID of the instance associated with this app.

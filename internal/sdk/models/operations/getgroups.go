@@ -9,12 +9,16 @@ import (
 )
 
 type GetGroupsRequest struct {
+	// Filters groups by integration specific ID, e.g. the group's Okta ID
 	IntegrationSpecificID *string `queryParam:"style=form,explode=true,name=integration_specific_id"`
-	Name                  *string `queryParam:"style=form,explode=true,name=name"`
-	ExactMatch            *bool   `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
-	AppID                 *string `queryParam:"style=form,explode=true,name=app_id"`
-	Page                  *int64  `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size                  *int64  `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Filters groups by name.
+	Name *string `queryParam:"style=form,explode=true,name=name"`
+	// Search filter should be an exact match.
+	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Filters groups by the ID of the app to which they belong.
+	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
+	Page  *int64  `default:"1" queryParam:"style=form,explode=true,name=page"`
+	Size  *int64  `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetGroupsRequest) MarshalJSON() ([]byte, error) {

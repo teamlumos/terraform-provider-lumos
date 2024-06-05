@@ -52,14 +52,17 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: `Filters groups by the ID of the app to which they belong.`,
 			},
 			"exact_match": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Search filter should be an exact match.`,
 			},
 			"integration_specific_id": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: `Filters groups by integration specific ID, e.g. the group's Okta ID`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
@@ -97,7 +100,8 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				},
 			},
 			"name": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: `Filters groups by name.`,
 			},
 			"page": schema.Int64Attribute{
 				Computed: true,

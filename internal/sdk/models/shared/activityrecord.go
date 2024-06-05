@@ -44,7 +44,7 @@ func (o *Event) GetType() ActivityRecordEventType {
 
 // ActivityRecordApp - Metadata that Lumos can use to match the activity record to an application within Lumos.
 type ActivityRecordApp struct {
-	// The ID of the app.
+	// The ID of the app as it is identified in the source E.g. the ID that Okta uses to identify the app
 	InstanceIdentifier string `json:"instance_identifier"`
 }
 
@@ -62,7 +62,7 @@ type ActivityRecord struct {
 	Event Event `json:"event"`
 	// The timestamp of this event, in ISO 8601 format.
 	Timestamp time.Time `json:"timestamp"`
-	// UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos)
+	// UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos found by going to Apps > Find your app in the list > Click '...' > Copy Stable Identifier)
 	SourceAppID string `json:"source_app_id"`
 	// Metadata that Lumos can use to match the activity record to an application within Lumos.
 	App *ActivityRecordApp `json:"app,omitempty"`

@@ -66,7 +66,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether the app is configured to allow multiple permissions to be requested at a time.`,
+				Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,
@@ -147,6 +147,15 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 						},
 						Description: `An inactivity workflow can be optionally associated with this app. Requires replacement if changed. `,
+					},
+					"allow_multiple_permission_selection": schema.BoolAttribute{
+						Computed: true,
+						PlanModifiers: []planmodifier.Bool{
+							boolplanmodifier.RequiresReplaceIfConfigured(),
+							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
+						},
+						Optional:    true,
+						Description: `Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed. `,
 					},
 					"custom_provisioning_instructions": schema.StringAttribute{
 						Computed: true,
@@ -1001,10 +1010,10 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	appID := data.AppID.ValueString()
-	request := operations.DotRequest{
+	request := operations.RemoveAppFromAppStoreRequest{
 		AppID: appID,
 	}
-	res, err := r.client.AppStore.Dot(ctx, request)
+	res, err := r.client.AppStore.RemoveAppFromAppStore(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

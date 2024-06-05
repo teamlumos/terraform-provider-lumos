@@ -2,8 +2,9 @@
 provider: overlay.yaml
 	speakeasy run
 
-overlay.yaml: openapi-original.json openapi.json
-	speakeasy overlay compare --schemas openapi-original.json --schemas openapi.json > overlay.yaml
+overlay.yaml: openapi.json
+	curl https://raw.githubusercontent.com/teamlumos/lumos-openapi-spec/main/openapi.json > original-openapi.json
+	speakeasy overlay compare --schemas original-openapi.json --schemas openapi.json > overlay.yaml
 
 .PHONY: testacc
 testacc:

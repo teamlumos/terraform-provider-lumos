@@ -9,11 +9,7 @@ import (
 )
 
 type GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest struct {
-	// Filters preapproval rules by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.
-	AppClassID *string `queryParam:"style=form,explode=true,name=app_class_id"`
-	// Filters preapproval rules by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.
-	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
-	// Filters preapproval rules by the ID of the app they belong to them.
+	// Filters preapproval rules by the ID of the app to which they belong.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
 	Page  *int64  `default:"1" queryParam:"style=form,explode=true,name=page"`
 	Size  *int64  `default:"50" queryParam:"style=form,explode=true,name=size"`
@@ -28,20 +24,6 @@ func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) Un
 		return err
 	}
 	return nil
-}
-
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetAppClassID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppClassID
-}
-
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetAppInstanceID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppInstanceID
 }
 
 func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetAppID() *string {

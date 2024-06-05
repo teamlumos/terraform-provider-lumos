@@ -15,11 +15,11 @@ Groups DataSource
 ```terraform
 data "lumos_groups" "my_groups" {
   app_id                  = "...my_app_id..."
-  exact_match             = true
+  exact_match             = false
   integration_specific_id = "...my_integration_specific_id..."
-  name                    = "Mrs. Wilson Krajcik DDS"
-  page                    = 1
-  size                    = 4
+  name                    = "Kristina Crist"
+  page                    = 9
+  size                    = 6
 }
 ```
 
@@ -28,10 +28,10 @@ data "lumos_groups" "my_groups" {
 
 ### Optional
 
-- `app_id` (String)
-- `exact_match` (Boolean)
-- `integration_specific_id` (String)
-- `name` (String)
+- `app_id` (String) Filters groups by the ID of the app to which they belong.
+- `exact_match` (Boolean) Search filter should be an exact match.
+- `integration_specific_id` (String) Filters groups by integration specific ID, e.g. the group's Okta ID
+- `name` (String) Filters groups by name.
 - `page` (Number)
 - `size` (Number)
 

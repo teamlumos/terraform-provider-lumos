@@ -56,7 +56,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether the app is configured to allow multiple permissions to be requested at a time.`,
+				Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,
@@ -66,14 +66,14 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Optional:    true,
-				Description: `The category of the app you're creating. Requires replacement if changed. `,
+				Required:    true,
+				Description: `The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'. Requires replacement if changed. `,
 			},
 			"description": schema.StringAttribute{
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Optional:    true,
+				Required:    true,
 				Description: `The description of the app you're creating. Requires replacement if changed. `,
 			},
 			"id": schema.StringAttribute{
@@ -91,7 +91,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 				},
-				Optional:    true,
+				Required:    true,
 				Description: `The name of the app you're creating. Requires replacement if changed. `,
 			},
 			"sources": schema.ListAttribute{

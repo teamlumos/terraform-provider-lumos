@@ -13,7 +13,7 @@ type GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest struct
 	AppClassID *string `queryParam:"style=form,explode=true,name=app_class_id"`
 	// Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.
 	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
-	// Filters requestable permissions by the ID of the app they belong to them.
+	// Filters requestable permissions by the ID of the app to which they belong.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
 	//     Searches permissions by any of the permission's group name,
 	//     request configuration name, or specific integration ID.

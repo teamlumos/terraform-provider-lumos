@@ -15,9 +15,9 @@ type GetAppStoreAppsRequest struct {
 	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
 	// Filters apps by the ID of the app.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
-	// Filters apps by name. This parameter requires a domain_id to be included.
+	// Filters apps by name.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
-	// Filters apps by name. This parameter requires a domain_id to be included.
+	// Search filter should be an exact match.
 	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	Page       *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	Size       *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`

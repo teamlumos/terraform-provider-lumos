@@ -264,6 +264,8 @@ type AddAppToAppStoreInputProvisioning struct {
 	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	// Whether the app is configured to allow users to request multiple permissions in a single request
+	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
 	// If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
 	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
@@ -286,6 +288,13 @@ func (o *AddAppToAppStoreInputProvisioning) GetTimeBasedAccess() []TimeBasedAcce
 		return nil
 	}
 	return o.TimeBasedAccess
+}
+
+func (o *AddAppToAppStoreInputProvisioning) GetAllowMultiplePermissionSelection() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.AllowMultiplePermissionSelection
 }
 
 func (o *AddAppToAppStoreInputProvisioning) GetManualStepsNeeded() *bool {

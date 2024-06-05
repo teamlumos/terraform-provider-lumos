@@ -231,6 +231,12 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
 			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
 		}
+		allowMultiplePermissionSelection := new(bool)
+		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {
+			*allowMultiplePermissionSelection = r.Provisioning.AllowMultiplePermissionSelection.ValueBool()
+		} else {
+			allowMultiplePermissionSelection = nil
+		}
 		manualStepsNeeded := new(bool)
 		if !r.Provisioning.ManualStepsNeeded.IsUnknown() && !r.Provisioning.ManualStepsNeeded.IsNull() {
 			*manualStepsNeeded = r.Provisioning.ManualStepsNeeded.ValueBool()
@@ -258,12 +264,13 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			}
 		}
 		provisioning = &shared.AddAppToAppStoreInputProvisioning{
-			GroupsProvisioning:             groupsProvisioning,
-			TimeBasedAccess:                timeBasedAccess,
-			ManualStepsNeeded:              manualStepsNeeded,
-			CustomProvisioningInstructions: customProvisioningInstructions,
-			ProvisioningWebhook:            provisioningWebhook,
-			AccessRemovalInlineWebhook:     accessRemovalInlineWebhook,
+			GroupsProvisioning:               groupsProvisioning,
+			TimeBasedAccess:                  timeBasedAccess,
+			AllowMultiplePermissionSelection: allowMultiplePermissionSelection,
+			ManualStepsNeeded:                manualStepsNeeded,
+			CustomProvisioningInstructions:   customProvisioningInstructions,
+			ProvisioningWebhook:              provisioningWebhook,
+			AccessRemovalInlineWebhook:       accessRemovalInlineWebhook,
 		}
 	}
 	appId4 := r.AppID.ValueString()
@@ -292,6 +299,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 				r.Provisioning.AccessRemovalInlineWebhook.ID = types.StringValue(resp.Provisioning.AccessRemovalInlineWebhook.ID)
 				r.Provisioning.AccessRemovalInlineWebhook.Name = types.StringValue(resp.Provisioning.AccessRemovalInlineWebhook.Name)
 			}
+			r.Provisioning.AllowMultiplePermissionSelection = types.BoolPointerValue(resp.Provisioning.AllowMultiplePermissionSelection)
 			r.Provisioning.CustomProvisioningInstructions = types.StringPointerValue(resp.Provisioning.CustomProvisioningInstructions)
 			if resp.Provisioning.GroupsProvisioning != nil {
 				r.Provisioning.GroupsProvisioning = types.StringValue(string(*resp.Provisioning.GroupsProvisioning))

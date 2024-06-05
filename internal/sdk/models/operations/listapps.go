@@ -9,8 +9,12 @@ import (
 )
 
 type ListAppsRequest struct {
-	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Filters apps by name.
+	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
+	// Search filter should be an exact match.
+	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	Page       *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	Size       *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (l ListAppsRequest) MarshalJSON() ([]byte, error) {
@@ -22,6 +26,20 @@ func (l *ListAppsRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (o *ListAppsRequest) GetNameSearch() *string {
+	if o == nil {
+		return nil
+	}
+	return o.NameSearch
+}
+
+func (o *ListAppsRequest) GetExactMatch() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.ExactMatch
 }
 
 func (o *ListAppsRequest) GetPage() *int64 {

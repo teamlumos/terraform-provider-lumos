@@ -7,18 +7,18 @@ import (
 	"net/http"
 )
 
-type DeletePreApprovalRuleRequest struct {
-	PreApprovalRuleID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
+type RemoveAppFromAppStoreRequest struct {
+	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
 }
 
-func (o *DeletePreApprovalRuleRequest) GetPreApprovalRuleID() string {
+func (o *RemoveAppFromAppStoreRequest) GetAppID() string {
 	if o == nil {
 		return ""
 	}
-	return o.PreApprovalRuleID
+	return o.AppID
 }
 
-type DeletePreApprovalRuleResponse struct {
+type RemoveAppFromAppStoreResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -26,40 +26,40 @@ type DeletePreApprovalRuleResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	PreApprovalRule *string
+	Any any
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *DeletePreApprovalRuleResponse) GetContentType() string {
+func (o *RemoveAppFromAppStoreResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *DeletePreApprovalRuleResponse) GetStatusCode() int {
+func (o *RemoveAppFromAppStoreResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *DeletePreApprovalRuleResponse) GetRawResponse() *http.Response {
+func (o *RemoveAppFromAppStoreResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *DeletePreApprovalRuleResponse) GetPreApprovalRule() *string {
+func (o *RemoveAppFromAppStoreResponse) GetAny() any {
 	if o == nil {
 		return nil
 	}
-	return o.PreApprovalRule
+	return o.Any
 }
 
-func (o *DeletePreApprovalRuleResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+func (o *RemoveAppFromAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {
 	if o == nil {
 		return nil
 	}

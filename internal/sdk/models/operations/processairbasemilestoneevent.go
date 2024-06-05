@@ -7,6 +7,25 @@ import (
 	"net/http"
 )
 
+type ProcessAirbaseMilestoneEventRequest struct {
+	DomainAppUUID               string                             `pathParam:"style=simple,explode=false,name=domain_app_uuid"`
+	AirbasePurchaseRequestEvent shared.AirbasePurchaseRequestEvent `request:"mediaType=application/json"`
+}
+
+func (o *ProcessAirbaseMilestoneEventRequest) GetDomainAppUUID() string {
+	if o == nil {
+		return ""
+	}
+	return o.DomainAppUUID
+}
+
+func (o *ProcessAirbaseMilestoneEventRequest) GetAirbasePurchaseRequestEvent() shared.AirbasePurchaseRequestEvent {
+	if o == nil {
+		return shared.AirbasePurchaseRequestEvent{}
+	}
+	return o.AirbasePurchaseRequestEvent
+}
+
 type ProcessAirbaseMilestoneEventResponse struct {
 	// HTTP response content type for this operation
 	ContentType string

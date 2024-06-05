@@ -34,7 +34,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time.
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
 - `app_class_id` (String) The ID of the service associated with this app.
 - `id` (String) The ID of this app.
 - `instance_id` (String) The ID of the instance associated with this app.
@@ -48,6 +48,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 Optional:
 
 - `access_removal_inline_webhook` (Attributes) An inactivity workflow can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.
 - `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
 - `groups_provisioning` (String) An enumeration. Requires replacement if changed. ; must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]
 - `manual_steps_needed` (Boolean) If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.

@@ -4,30 +4,30 @@ package shared
 
 type AppInputCreate struct {
 	// The name of the app you're creating.
-	Name *string `json:"name,omitempty"`
-	// The category of the app you're creating.
-	Category *string `json:"category,omitempty"`
+	Name string `json:"name"`
+	// The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+	Category string `json:"category"`
 	// The description of the app you're creating.
-	Description *string `json:"description,omitempty"`
+	Description string `json:"description"`
 }
 
-func (o *AppInputCreate) GetName() *string {
+func (o *AppInputCreate) GetName() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Name
 }
 
-func (o *AppInputCreate) GetCategory() *string {
+func (o *AppInputCreate) GetCategory() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Category
 }
 
-func (o *AppInputCreate) GetDescription() *string {
+func (o *AppInputCreate) GetDescription() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Description
 }
