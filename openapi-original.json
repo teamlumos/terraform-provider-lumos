@@ -187,6 +187,62 @@
                         "HTTPBearer": []
                     }
                 ]
+            },
+            "patch": {
+                "tags": [
+                    "Core"
+                ],
+                "summary": "Update App",
+                "description": "Update an app.",
+                "operationId": "updateApp",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        },
+                        "name": "app_id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppInputCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/App"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
             }
         },
         "/apps/categories": {
@@ -228,31 +284,6 @@
                 "summary": "Get Current User",
                 "description": "Get current user",
                 "operationId": "currentUser",
-                "parameters": [
-                    {
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1.0,
-                            "title": "Page",
-                            "default": 1
-                        },
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100.0,
-                            "minimum": 1.0,
-                            "title": "Size",
-                            "default": 50
-                        },
-                        "name": "size",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -260,16 +291,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -292,19 +313,23 @@
                 "operationId": "listUsers",
                 "parameters": [
                     {
+                        "description": "Search for users by name or email.",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Search Term"
+                            "title": "Search Term",
+                            "description": "Search for users by name or email."
                         },
                         "name": "search_term",
                         "in": "query"
                     },
                     {
+                        "description": "If a search_term is provided, only accept exact matches.",
                         "required": false,
                         "schema": {
                             "type": "boolean",
                             "title": "Exact Match",
+                            "description": "If a search_term is provided, only accept exact matches.",
                             "default": false
                         },
                         "name": "exact_match",
@@ -1513,12 +1538,51 @@
                     }
                 ]
             },
+            "delete": {
+                "tags": [
+                    "AppStore"
+                ],
+                "summary": "Delete Pre Approval Rule",
+                "description": "Delete a pre-approval rule by ID.",
+                "operationId": "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Pre Approval Rule Id"
+                        },
+                        "name": "pre_approval_rule_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
             "patch": {
                 "tags": [
                     "AppStore"
                 ],
                 "summary": "Update Pre Approval Rule",
-                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
+                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
                 "operationId": "update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch",
                 "parameters": [
                     {
@@ -1792,7 +1856,6 @@
                 ]
             },
             "post": {
-                "x-speakeasy-entity-operation": "AppStoreApp#create",
                 "tags": [
                     "AppStore"
                 ],
@@ -2418,51 +2481,6 @@
                 ]
             }
         },
-        "/webhooks/airbase/milestone_event": {
-            "post": {
-                "tags": [
-                    "Integration Webhooks"
-                ],
-                "summary": "Process Airbase Milestone Event",
-                "description": "Webhook for Airbase to send events as a workflow transitions through milestones",
-                "operationId": "processAirbaseMilestoneEvent",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AirbaseMilestoneEvent"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
         "/art": {
             "get": {
                 "tags": [
@@ -2501,6 +2519,57 @@
                                 "schema": {
                                     "type": "object",
                                     "title": "Response Lumos Liveness Check"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/airbase/purchase_request_approved/{domain_app_uuid}": {
+            "post": {
+                "tags": [
+                    "Integration Webhooks"
+                ],
+                "summary": "Process Airbase Purchase Request Approved",
+                "description": "Webhook for Airbase to send events as a workflow transitions through milestones",
+                "operationId": "processAirbaseMilestoneEvent",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Domain App Uuid"
+                        },
+                        "name": "domain_app_uuid",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AirbasePurchaseRequestEvent"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -2976,11 +3045,39 @@
                 ],
                 "title": "AddAppToAppStoreInput"
             },
-            "AirbaseMilestoneEvent": {
-                "properties": {},
+            "AirbasePurchaseRequestEvent": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "object": {
+                        "type": "string",
+                        "title": "Object"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "created_date": {
+                        "type": "string",
+                        "title": "Created Date"
+                    },
+                    "data": {
+                        "type": "object",
+                        "title": "Data"
+                    }
+                },
                 "type": "object",
-                "title": "AirbaseMilestoneEvent",
-                "description": "Model of the input we'll get from Airbase's webhook call.\nTo be completed when we get docs."
+                "required": [
+                    "id",
+                    "object",
+                    "type",
+                    "created_date",
+                    "data"
+                ],
+                "title": "AirbasePurchaseRequestEvent",
+                "description": "Model of the input we'll get from Airbase's webhook call.\nAll events seem to follow this same base structure, it is just `data` that is different\nfor each. We are using `dict` here to be permissive to other webhook events (so we can warn if\nthe customer misconfigures for a different webhook), and we actually only use 2 fields from it."
             },
             "AllowedGroupsConfigInput": {
                 "properties": {
