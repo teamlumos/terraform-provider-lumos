@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/operations"
-	"github.com/speakeasy/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
 func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
