@@ -51,7 +51,7 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether the app is configured to allow multiple permissions to be requested at a time.`,
+				Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,

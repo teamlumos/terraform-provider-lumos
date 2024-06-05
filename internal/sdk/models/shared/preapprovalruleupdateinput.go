@@ -3,32 +3,30 @@
 package shared
 
 type PreApprovalRuleUpdateInput struct {
-	// The ID of this preapproval rule.
-	ID *string `json:"id,omitempty"`
 	// The justification of this preapproval rule.
-	Justification *string `json:"justification,omitempty"`
+	Justification string `json:"justification"`
+	// Preapproval rule time access length,
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
 	// The preapproved groups of this preapproval rule.
 	PreapprovedGroups []BaseGroup `json:"preapproved_groups,omitempty"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions,omitempty"`
 	// The preapproval webhooks of this preapproval rule.
 	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
-	// Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
 }
 
-func (o *PreApprovalRuleUpdateInput) GetID() *string {
+func (o *PreApprovalRuleUpdateInput) GetJustification() string {
 	if o == nil {
-		return nil
-	}
-	return o.ID
-}
-
-func (o *PreApprovalRuleUpdateInput) GetJustification() *string {
-	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Justification
+}
+
+func (o *PreApprovalRuleUpdateInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if o == nil {
+		return nil
+	}
+	return o.TimeBasedAccess
 }
 
 func (o *PreApprovalRuleUpdateInput) GetPreapprovedGroups() []BaseGroup {
@@ -50,11 +48,4 @@ func (o *PreApprovalRuleUpdateInput) GetPreapprovalWebhooks() []BaseInlineWebhoo
 		return nil
 	}
 	return o.PreapprovalWebhooks
-}
-
-func (o *PreApprovalRuleUpdateInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
-		return nil
-	}
-	return o.TimeBasedAccess
 }

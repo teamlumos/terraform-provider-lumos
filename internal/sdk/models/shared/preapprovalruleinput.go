@@ -3,59 +3,39 @@
 package shared
 
 type PreApprovalRuleInput struct {
-	// The ID of this preapproval rule.
-	ID *string `json:"id,omitempty"`
-	// The ID of the app associated with this pre-approval rule.
-	AppID *string `json:"app_id,omitempty"`
-	// The ID of the service associated with this pre-approval rule.
-	AppClassID *string `json:"app_class_id,omitempty"`
-	// Optionally, an app has an identifer associated with it's particular instance.
-	AppInstanceID *string `json:"app_instance_id,omitempty"`
 	// The justification of this preapproval rule.
-	Justification *string `json:"justification,omitempty"`
+	Justification string `json:"justification"`
+	// Preapproval rule time access length,
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	// The ID of the app associated with this pre-approval rule.
+	AppID string `json:"app_id"`
 	// The preapproved groups of this preapproval rule.
 	PreapprovedGroups []BaseGroup `json:"preapproved_groups,omitempty"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions,omitempty"`
 	// The preapproval webhooks of this preapproval rule.
 	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
-	// Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
 }
 
-func (o *PreApprovalRuleInput) GetID() *string {
+func (o *PreApprovalRuleInput) GetJustification() string {
 	if o == nil {
-		return nil
-	}
-	return o.ID
-}
-
-func (o *PreApprovalRuleInput) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-func (o *PreApprovalRuleInput) GetAppClassID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppClassID
-}
-
-func (o *PreApprovalRuleInput) GetAppInstanceID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppInstanceID
-}
-
-func (o *PreApprovalRuleInput) GetJustification() *string {
-	if o == nil {
-		return nil
+		return ""
 	}
 	return o.Justification
+}
+
+func (o *PreApprovalRuleInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if o == nil {
+		return nil
+	}
+	return o.TimeBasedAccess
+}
+
+func (o *PreApprovalRuleInput) GetAppID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppID
 }
 
 func (o *PreApprovalRuleInput) GetPreapprovedGroups() []BaseGroup {
@@ -77,11 +57,4 @@ func (o *PreApprovalRuleInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
 		return nil
 	}
 	return o.PreapprovalWebhooks
-}
-
-func (o *PreApprovalRuleInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
-		return nil
-	}
-	return o.TimeBasedAccess
 }

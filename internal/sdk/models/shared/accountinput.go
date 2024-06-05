@@ -19,6 +19,8 @@ type AccountInput struct {
 	Status *AccountLifecycleStatus `json:"status,omitempty"`
 	// The permissions of the account.
 	Permissions []PermissionInput `json:"permissions,omitempty"`
+	// The attributes of the account.
+	Attributes []AttributeInput `json:"attributes,omitempty"`
 }
 
 func (o *AccountInput) GetUniqueIdentifier() string {
@@ -75,4 +77,11 @@ func (o *AccountInput) GetPermissions() []PermissionInput {
 		return nil
 	}
 	return o.Permissions
+}
+
+func (o *AccountInput) GetAttributes() []AttributeInput {
+	if o == nil {
+		return nil
+	}
+	return o.Attributes
 }

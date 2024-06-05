@@ -72,8 +72,8 @@ type Lumos struct {
 	Core                *Core
 	AppStore            *AppStore
 	VendorManagement    *VendorManagement
-	IntegrationWebhooks *IntegrationWebhooks
 	Meta                *Meta
+	IntegrationWebhooks *IntegrationWebhooks
 
 	sdkConfiguration sdkConfiguration
 }
@@ -145,8 +145,8 @@ func New(opts ...SDKOption) *Lumos {
 			Language:          "go",
 			OpenAPIDocVersion: "0.1.0",
 			SDKVersion:        "0.0.1",
-			GenVersion:        "2.338.12",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.338.12 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			GenVersion:        "2.339.1",
+			UserAgent:         "speakeasy-sdk/go 0.0.1 2.339.1 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			Hooks:             hooks.New(),
 		},
 	}
@@ -172,9 +172,9 @@ func New(opts ...SDKOption) *Lumos {
 
 	sdk.VendorManagement = newVendorManagement(sdk.sdkConfiguration)
 
-	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk.sdkConfiguration)
-
 	sdk.Meta = newMeta(sdk.sdkConfiguration)
+
+	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk.sdkConfiguration)
 
 	return sdk
 }

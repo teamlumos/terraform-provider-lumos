@@ -50,8 +50,9 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `If a search_term is provided, only accept exact matches.`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
@@ -88,7 +89,8 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed: true,
 			},
 			"search_term": schema.StringAttribute{
-				Optional: true,
+				Optional:    true,
+				Description: `Search for users by name or email.`,
 			},
 			"size": schema.Int64Attribute{
 				Computed: true,

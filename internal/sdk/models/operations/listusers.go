@@ -9,10 +9,12 @@ import (
 )
 
 type ListUsersRequest struct {
+	// Search for users by name or email.
 	SearchTerm *string `queryParam:"style=form,explode=true,name=search_term"`
-	ExactMatch *bool   `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
-	Page       *int64  `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size       *int64  `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// If a search_term is provided, only accept exact matches.
+	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	Page       *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	Size       *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (l ListUsersRequest) MarshalJSON() ([]byte, error) {

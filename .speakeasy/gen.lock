@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: e48d84fd8e7cb202d8390c98c20859f6
+  docChecksum: 755ba8874f55ca9a2e6660b31b211bf7
   docVersion: 0.1.0
-  speakeasyVersion: 1.299.6
-  generationVersion: 2.338.12
-  releaseVersion: 0.1.26
-  configChecksum: fc4abf3b4d2a487a00a678e5d2bf5097
+  speakeasyVersion: 1.300.1
+  generationVersion: 2.339.1
+  releaseVersion: 0.1.31
+  configChecksum: 86d61053ab2752cf6ab01f64fef27c43
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -19,8 +19,8 @@ generatedFiles:
   - internal/sdk/core.go
   - internal/sdk/appstore.go
   - internal/sdk/vendormanagement.go
-  - internal/sdk/integrationwebhooks.go
   - internal/sdk/meta.go
+  - internal/sdk/integrationwebhooks.go
   - internal/sdk/lumos.go
   - internal/sdk/models/errors/sdkerror.go
   - internal/sdk/types/bigint.go
@@ -40,7 +40,9 @@ generatedFiles:
   - internal/sdk/internal/utils/utils.go
   - internal/sdk/models/operations/listapps.go
   - internal/sdk/models/operations/createapp.go
+  - internal/sdk/models/operations/getappcategories.go
   - internal/sdk/models/operations/getapp.go
+  - internal/sdk/models/operations/updateapp.go
   - internal/sdk/models/operations/currentuser.go
   - internal/sdk/models/operations/listusers.go
   - internal/sdk/models/operations/getuser.go
@@ -62,24 +64,24 @@ generatedFiles:
   - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
   - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
   - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
+  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
   - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
-  - internal/sdk/models/operations/deletepreapprovalrule.go
   - internal/sdk/models/operations/getappstoreappsettings.go
   - internal/sdk/models/operations/updateappstoreappsettings.go
   - internal/sdk/models/operations/getappstoreapps.go
   - internal/sdk/models/operations/addapptoappstore.go
   - internal/sdk/models/operations/getappstoreapp.go
-  - internal/sdk/models/operations/dot.go
+  - internal/sdk/models/operations/removeappfromappstore.go
   - internal/sdk/models/operations/createaccessrequest.go
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createfounddocumentmultipart.go
+  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createorder.go
-  - internal/sdk/models/operations/processairbasemilestoneevent.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
+  - internal/sdk/models/operations/processairbasemilestoneevent.go
   - internal/sdk/models/shared/httpvalidationerror.go
   - internal/sdk/models/shared/validationerror.go
   - internal/sdk/models/shared/pageapp.go
@@ -104,6 +106,7 @@ generatedFiles:
   - internal/sdk/models/shared/activitylog.go
   - internal/sdk/models/shared/accountsuploadinput.go
   - internal/sdk/models/shared/accountinput.go
+  - internal/sdk/models/shared/attributeinput.go
   - internal/sdk/models/shared/permissioninput.go
   - internal/sdk/models/shared/accountlifecyclestatus.go
   - internal/sdk/models/shared/activityrecordoutput.go
@@ -154,7 +157,7 @@ generatedFiles:
   - internal/sdk/models/shared/ordercustomattribute.go
   - internal/sdk/models/shared/ordercustomattributetype.go
   - internal/sdk/models/shared/lineiteminput.go
-  - internal/sdk/models/shared/airbasemilestoneevent.go
+  - internal/sdk/models/shared/airbasepurchaserequestevent.go
   - internal/sdk/models/shared/security.go
   - internal/sdk/.gitignore
   - internal/sdk/.gitattributes

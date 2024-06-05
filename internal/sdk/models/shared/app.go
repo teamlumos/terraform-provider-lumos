@@ -15,7 +15,7 @@ type App struct {
 	Status DomainAppStatus `json:"status"`
 	// The sources of this app.
 	Sources []DiscoverySource `json:"sources"`
-	// Whether the app is configured to allow multiple permissions to be requested at a time.
+	// Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
 }
 

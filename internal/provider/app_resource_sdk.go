@@ -8,24 +8,9 @@ import (
 )
 
 func (r *AppResourceModel) ToSharedAppInputCreate() *shared.AppInputCreate {
-	name := new(string)
-	if !r.Name.IsUnknown() && !r.Name.IsNull() {
-		*name = r.Name.ValueString()
-	} else {
-		name = nil
-	}
-	category := new(string)
-	if !r.Category.IsUnknown() && !r.Category.IsNull() {
-		*category = r.Category.ValueString()
-	} else {
-		category = nil
-	}
-	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() {
-		*description = r.Description.ValueString()
-	} else {
-		description = nil
-	}
+	name := r.Name.ValueString()
+	category := r.Category.ValueString()
+	description := r.Description.ValueString()
 	out := shared.AppInputCreate{
 		Name:        name,
 		Category:    category,

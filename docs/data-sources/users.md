@@ -14,10 +14,10 @@ Users DataSource
 
 ```terraform
 data "lumos_users" "my_users" {
-  exact_match = true
-  page        = 9
+  exact_match = false
+  page        = 4
   search_term = "...my_search_term..."
-  size        = 1
+  size        = 7
 }
 ```
 
@@ -26,9 +26,9 @@ data "lumos_users" "my_users" {
 
 ### Optional
 
-- `exact_match` (Boolean)
+- `exact_match` (Boolean) If a search_term is provided, only accept exact matches.
 - `page` (Number)
-- `search_term` (String)
+- `search_term` (String) Search for users by name or email.
 - `size` (Number)
 
 ### Read-Only

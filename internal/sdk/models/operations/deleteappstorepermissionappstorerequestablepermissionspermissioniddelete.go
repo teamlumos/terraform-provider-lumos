@@ -25,8 +25,6 @@ type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRes
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
-	// Successful Response
-	ResponseDeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete *string
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -50,13 +48,6 @@ func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelet
 		return nil
 	}
 	return o.RawResponse
-}
-
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetResponseDeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ResponseDeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete
 }
 
 func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetHTTPValidationError() *shared.HTTPValidationError {

@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -56,43 +55,30 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 		MarkdownDescription: "PreApprovalRule Resource",
 		Attributes: map[string]schema.Attribute{
 			"app_class_id": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Optional:    true,
-				Description: `The ID of the service associated with this pre-approval rule. Requires replacement if changed. `,
+				Computed:    true,
+				Description: `The ID of the service associated with this pre-approval rule.`,
 			},
 			"app_id": schema.StringAttribute{
-				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Optional:    true,
+				Required:    true,
 				Description: `The ID of the app associated with this pre-approval rule. Requires replacement if changed. `,
 			},
 			"app_instance_id": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Optional:    true,
-				Description: `Optionally, an app has an identifer associated with it's particular instance. Requires replacement if changed. `,
+				Computed:    true,
+				Description: `Optionally, an app has an identifer associated with it's particular instance.`,
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Optional:    true,
 				Description: `The ID of this preapproval rule.`,
 			},
 			"justification": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
+				Required:    true,
 				Description: `The justification of this preapproval rule.`,
 			},
 			"preapproval_webhooks": schema.ListNestedAttribute{
@@ -185,41 +171,16 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"app_class_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The ID of the service associated with this requestable permission.`,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.Expressions{
-									path.MatchRelative().AtParent().AtParent().AtName("app_id"),
-								}...),
-							},
 						},
 						"app_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The ID of the app associated with this requestable permission.`,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.Expressions{
-									path.MatchRelative().AtParent().AtParent().AtName("app_class_id"),
-									path.MatchRelative().AtParent().AtParent().AtName("app_instance_id"),
-								}...),
-							},
 						},
 						"app_instance_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The ID of the instance associated with this requestable permission.`,
-							Validators: []validator.String{
-								stringvalidator.ConflictsWith(path.Expressions{
-									path.MatchRelative().AtParent().AtParent().AtName("app_id"),
-								}...),
-							},
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -248,7 +209,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed:    true,
 				Optional:    true,
 				ElementType: types.StringType,
-				Description: `Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show.`,
+				Description: `Preapproval rule time access length,`,
 			},
 		},
 	}
@@ -410,10 +371,10 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	preApprovalRuleID := data.ID.ValueString()
-	request := operations.DeletePreApprovalRuleRequest{
+	request := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
 		PreApprovalRuleID: preApprovalRuleID,
 	}
-	res, err := r.client.AppStore.DeletePreApprovalRule(ctx, request)
+	res, err := r.client.AppStore.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -425,7 +386,7 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	if res.StatusCode != 204 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

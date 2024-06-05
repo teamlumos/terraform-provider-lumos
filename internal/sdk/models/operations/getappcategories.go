@@ -3,11 +3,10 @@
 package operations
 
 import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
-type CurrentUserResponse struct {
+type GetAppCategoriesResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -15,33 +14,33 @@ type CurrentUserResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	User *shared.User
+	ResponseGetappcategories []string
 }
 
-func (o *CurrentUserResponse) GetContentType() string {
+func (o *GetAppCategoriesResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *CurrentUserResponse) GetStatusCode() int {
+func (o *GetAppCategoriesResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *CurrentUserResponse) GetRawResponse() *http.Response {
+func (o *GetAppCategoriesResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *CurrentUserResponse) GetUser() *shared.User {
+func (o *GetAppCategoriesResponse) GetResponseGetappcategories() []string {
 	if o == nil {
 		return nil
 	}
-	return o.User
+	return o.ResponseGetappcategories
 }

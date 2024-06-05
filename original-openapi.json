@@ -21,23 +21,23 @@
                 "operationId": "listApps",
                 "parameters": [
                     {
-                        "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                        "description": "Filters apps by name.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name. This parameter requires a domain_id to be included."
+                            "description": "Filters apps by name."
                         },
                         "name": "name_search",
                         "in": "query"
                     },
                     {
-                        "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                        "description": "Search filter should be an exact match.",
                         "required": false,
                         "schema": {
                             "type": "boolean",
                             "title": "Exact Match",
-                            "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                            "description": "Search filter should be an exact match.",
                             "default": false
                         },
                         "name": "exact_match",
@@ -141,6 +141,37 @@
                 ]
             }
         },
+        "/apps/categories": {
+            "get": {
+                "tags": [
+                    "Core"
+                ],
+                "summary": "Get App Categories",
+                "description": "Get app categories.",
+                "operationId": "getAppCategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Getappcategories"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
         "/apps/{app_id}": {
             "get": {
                 "tags": [
@@ -187,27 +218,42 @@
                         "HTTPBearer": []
                     }
                 ]
-            }
-        },
-        "/apps/categories": {
-            "get": {
+            },
+            "patch": {
                 "tags": [
                     "Core"
                 ],
-                "summary": "Get App Categories",
-                "description": "Get app categories.",
-                "operationId": "getAppCategories",
+                "summary": "Update App",
+                "description": "Update an app.",
+                "operationId": "updateApp",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        },
+                        "name": "app_id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppInputCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "Successful Response",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "type": "array",
-                                    "title": "Response Getappcategories"
+                                    "$ref": "#/components/schemas/App"
                                 }
                             }
                         }
@@ -228,31 +274,6 @@
                 "summary": "Get Current User",
                 "description": "Get current user",
                 "operationId": "currentUser",
-                "parameters": [
-                    {
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1.0,
-                            "title": "Page",
-                            "default": 1
-                        },
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "maximum": 100.0,
-                            "minimum": 1.0,
-                            "title": "Size",
-                            "default": 50
-                        },
-                        "name": "size",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -260,16 +281,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/User"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -292,19 +303,23 @@
                 "operationId": "listUsers",
                 "parameters": [
                     {
+                        "description": "Search for users by name or email.",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Search Term"
+                            "title": "Search Term",
+                            "description": "Search for users by name or email."
                         },
                         "name": "search_term",
                         "in": "query"
                     },
                     {
+                        "description": "If a search_term is provided, only accept exact matches.",
                         "required": false,
                         "schema": {
                             "type": "boolean",
                             "title": "Exact Match",
+                            "description": "If a search_term is provided, only accept exact matches.",
                             "default": false
                         },
                         "name": "exact_match",
@@ -642,38 +657,46 @@
                 "operationId": "getGroups",
                 "parameters": [
                     {
+                        "description": "Filters groups by integration specific ID, e.g. the group's Okta ID",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Integration Specific Id"
+                            "title": "Integration Specific Id",
+                            "description": "Filters groups by integration specific ID, e.g. the group's Okta ID"
                         },
                         "name": "integration_specific_id",
                         "in": "query"
                     },
                     {
+                        "description": "Filters groups by name.",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "Name"
+                            "title": "Name",
+                            "description": "Filters groups by name."
                         },
                         "name": "name",
                         "in": "query"
                     },
                     {
+                        "description": "Search filter should be an exact match.",
                         "required": false,
                         "schema": {
                             "type": "boolean",
                             "title": "Exact Match",
+                            "description": "Search filter should be an exact match.",
                             "default": false
                         },
                         "name": "exact_match",
                         "in": "query"
                     },
                     {
+                        "description": "Filters groups by the ID of the app to which they belong.",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "title": "App Id"
+                            "title": "App Id",
+                            "description": "Filters groups by the ID of the app to which they belong."
                         },
                         "name": "app_id",
                         "in": "query"
@@ -1033,12 +1056,12 @@
                         "in": "query"
                     },
                     {
-                        "description": "Filters requestable permissions by the ID of the app they belong to them.",
+                        "description": "Filters requestable permissions by the ID of the app to which they belong.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "App Id",
-                            "description": "Filters requestable permissions by the ID of the app they belong to them."
+                            "description": "Filters requestable permissions by the ID of the app to which they belong."
                         },
                         "name": "app_id",
                         "in": "query"
@@ -1241,16 +1264,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string",
-                                    "title": "Response Delete Appstore Permission Appstore Requestable Permissions  Permission Id  Delete"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Successful Response"
                     },
                     "422": {
                         "description": "Validation Error",
@@ -1336,34 +1351,12 @@
                 "operationId": "get_appstore_pre_approval_rules_for_app_appstore_pre_approval_rules_get",
                 "parameters": [
                     {
-                        "description": "Filters preapproval rules by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Class Id",
-                            "description": "Filters preapproval rules by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included."
-                        },
-                        "name": "app_class_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters preapproval rules by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Instance Id",
-                            "description": "Filters preapproval rules by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included."
-                        },
-                        "name": "app_instance_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters preapproval rules by the ID of the app they belong to them.",
+                        "description": "Filters preapproval rules by the ID of the app to which they belong.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "App Id",
-                            "description": "Filters preapproval rules by the ID of the app they belong to them."
+                            "description": "Filters preapproval rules by the ID of the app to which they belong."
                         },
                         "name": "app_id",
                         "in": "query"
@@ -1513,12 +1506,51 @@
                     }
                 ]
             },
+            "delete": {
+                "tags": [
+                    "AppStore"
+                ],
+                "summary": "Delete Pre Approval Rule",
+                "description": "Delete a pre-approval rule by ID.",
+                "operationId": "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Pre Approval Rule Id"
+                        },
+                        "name": "pre_approval_rule_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
             "patch": {
                 "tags": [
                     "AppStore"
                 ],
                 "summary": "Update Pre Approval Rule",
-                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
+                "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
                 "operationId": "update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch",
                 "parameters": [
                     {
@@ -1717,23 +1749,23 @@
                         "in": "query"
                     },
                     {
-                        "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                        "description": "Filters apps by name.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name. This parameter requires a domain_id to be included."
+                            "description": "Filters apps by name."
                         },
                         "name": "name_search",
                         "in": "query"
                     },
                     {
-                        "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                        "description": "Search filter should be an exact match.",
                         "required": false,
                         "schema": {
                             "type": "boolean",
                             "title": "Exact Match",
-                            "description": "Filters apps by name. This parameter requires a domain_id to be included.",
+                            "description": "Search filter should be an exact match.",
                             "default": false
                         },
                         "name": "exact_match",
@@ -1792,7 +1824,6 @@
                 ]
             },
             "post": {
-                "x-speakeasy-entity-operation": "AppStoreApp#create",
                 "tags": [
                     "AppStore"
                 ],
@@ -2095,14 +2126,14 @@
                         "in": "query"
                     },
                     {
-                        "description": "Filters requests by their status.",
+                        "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'",
                         "required": false,
                         "schema": {
                             "items": {
                                 "$ref": "#/components/schemas/SupportRequestStatus"
                             },
                             "type": "array",
-                            "description": "Filters requests by their status."
+                            "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'"
                         },
                         "name": "statuses",
                         "in": "query"
@@ -2418,51 +2449,6 @@
                 ]
             }
         },
-        "/webhooks/airbase/milestone_event": {
-            "post": {
-                "tags": [
-                    "Integration Webhooks"
-                ],
-                "summary": "Process Airbase Milestone Event",
-                "description": "Webhook for Airbase to send events as a workflow transitions through milestones",
-                "operationId": "processAirbaseMilestoneEvent",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AirbaseMilestoneEvent"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "HTTPBearer": []
-                    }
-                ]
-            }
-        },
         "/art": {
             "get": {
                 "tags": [
@@ -2501,6 +2487,57 @@
                                 "schema": {
                                     "type": "object",
                                     "title": "Response Lumos Liveness Check"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/webhooks/airbase/purchase_request_approved/{domain_app_uuid}": {
+            "post": {
+                "tags": [
+                    "Integration Webhooks"
+                ],
+                "summary": "Process Airbase Purchase Request Approved",
+                "description": "Webhook for Airbase to send events as a workflow transitions through milestones",
+                "operationId": "processAirbaseMilestoneEvent",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Domain App Uuid"
+                        },
+                        "name": "domain_app_uuid",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AirbasePurchaseRequestEvent"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -2606,7 +2643,7 @@
                     "unique_identifier": {
                         "type": "string",
                         "title": "Unique Identifier",
-                        "description": "The stable identifier of this account."
+                        "description": "The stable identifier of this account from the associated service."
                     },
                     "account_type": {
                         "allOf": [
@@ -2614,12 +2651,17 @@
                                 "$ref": "#/components/schemas/AccountType"
                             }
                         ],
-                        "description": "The type of this account."
+                        "description": "The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP)."
                     },
                     "email": {
                         "type": "string",
                         "title": "Email",
                         "description": "The email of this account."
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id",
+                        "description": "The ID of the user associated with this account."
                     }
                 },
                 "type": "object",
@@ -2976,11 +3018,39 @@
                 ],
                 "title": "AddAppToAppStoreInput"
             },
-            "AirbaseMilestoneEvent": {
-                "properties": {},
+            "AirbasePurchaseRequestEvent": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "object": {
+                        "type": "string",
+                        "title": "Object"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "created_date": {
+                        "type": "string",
+                        "title": "Created Date"
+                    },
+                    "data": {
+                        "type": "object",
+                        "title": "Data"
+                    }
+                },
                 "type": "object",
-                "title": "AirbaseMilestoneEvent",
-                "description": "Model of the input we'll get from Airbase's webhook call.\nTo be completed when we get docs."
+                "required": [
+                    "id",
+                    "object",
+                    "type",
+                    "created_date",
+                    "data"
+                ],
+                "title": "AirbasePurchaseRequestEvent",
+                "description": "Model of the input we'll get from Airbase's webhook call.\nAll events seem to follow this same base structure, it is just `data` that is different\nfor each. We are using `dict` here to be permissive to other webhook events (so we can warn if\nthe customer misconfigures for a different webhook), and we actually only use 2 fields from it."
             },
             "AllowedGroupsConfigInput": {
                 "properties": {
@@ -3078,7 +3148,7 @@
                     "allow_multiple_permission_selection": {
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
-                        "description": "Whether the app is configured to allow multiple permissions to be requested at a time."
+                        "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
                     }
                 },
                 "type": "object",
@@ -3195,15 +3265,21 @@
                     "category": {
                         "type": "string",
                         "title": "Category",
-                        "description": "The category of the app you're creating."
+                        "description": "The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
                     },
                     "description": {
                         "type": "string",
+                        "maxLength": 8192,
                         "title": "Description",
                         "description": "The description of the app you're creating."
                     }
                 },
                 "type": "object",
+                "required": [
+                    "name",
+                    "category",
+                    "description"
+                ],
                 "title": "AppInputCreate"
             },
             "AppStoreApp": {
@@ -3246,7 +3322,7 @@
                     "allow_multiple_permission_selection": {
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
-                        "description": "Whether the app is configured to allow multiple permissions to be requested at a time."
+                        "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
                     }
                 },
                 "type": "object",
@@ -3336,6 +3412,11 @@
                         "type": "array",
                         "description": "If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access."
                     },
+                    "allow_multiple_permission_selection": {
+                        "type": "boolean",
+                        "title": "Allow Multiple Permission Selection",
+                        "description": "Whether the app is configured to allow users to request multiple permissions in a single request"
+                    },
                     "manual_steps_needed": {
                         "type": "boolean",
                         "title": "Manual Steps Needed",
@@ -3384,6 +3465,11 @@
                         },
                         "type": "array",
                         "description": "If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access."
+                    },
+                    "allow_multiple_permission_selection": {
+                        "type": "boolean",
+                        "title": "Allow Multiple Permission Selection",
+                        "description": "Whether the app is configured to allow users to request multiple permissions in a single request"
                     },
                     "manual_steps_needed": {
                         "type": "boolean",
@@ -3775,11 +3861,21 @@
                     "note": {
                         "type": "string",
                         "title": "Note",
+                        "description": "[Deprecated - use business_justification] Why the user needs access."
+                    },
+                    "business_justification": {
+                        "type": "string",
+                        "title": "Business Justification",
                         "description": "Why the user needs access."
                     },
                     "expiration_in_seconds": {
                         "type": "integer",
                         "title": "Expiration In Seconds",
+                        "description": "[Deprecated, use access_length] Once granted, how long the access should last. Omit for permanent access."
+                    },
+                    "access_length": {
+                        "type": "string",
+                        "title": "Access Length",
                         "description": "Once granted, how long the access should last. Omit for permanent access."
                     },
                     "requestable_permission_ids": {
@@ -3793,8 +3889,7 @@
                 },
                 "type": "object",
                 "required": [
-                    "app_id",
-                    "note"
+                    "app_id"
                 ],
                 "title": "CreateAccessRequestInput"
             },
@@ -3958,7 +4053,7 @@
                         "title": "Description",
                         "description": "The description of this group."
                     },
-                    "lifecycle": {
+                    "group_lifecycle": {
                         "allOf": [
                             {
                                 "$ref": "#/components/schemas/Lifecycle"
@@ -4753,30 +4848,22 @@
             },
             "PreApprovalRuleInput": {
                 "properties": {
-                    "id": {
+                    "justification": {
                         "type": "string",
-                        "title": "Id",
-                        "description": "The ID of this preapproval rule."
+                        "title": "Justification",
+                        "description": "The justification of this preapproval rule."
+                    },
+                    "time_based_access": {
+                        "items": {
+                            "$ref": "#/components/schemas/TimeBasedAccessOptions"
+                        },
+                        "type": "array",
+                        "description": "Preapproval rule time access length,"
                     },
                     "app_id": {
                         "type": "string",
                         "title": "App Id",
                         "description": "The ID of the app associated with this pre-approval rule."
-                    },
-                    "app_class_id": {
-                        "type": "string",
-                        "title": "App Class Id",
-                        "description": "The ID of the service associated with this pre-approval rule."
-                    },
-                    "app_instance_id": {
-                        "type": "string",
-                        "title": "App Instance Id",
-                        "description": "Optionally, an app has an identifer associated with it's particular instance."
-                    },
-                    "justification": {
-                        "type": "string",
-                        "title": "Justification",
-                        "description": "The justification of this preapproval rule."
                     },
                     "preapproved_groups": {
                         "items": {
@@ -4784,7 +4871,8 @@
                         },
                         "type": "array",
                         "title": "Preapproved Groups",
-                        "description": "The preapproved groups of this preapproval rule."
+                        "description": "The preapproved groups of this preapproval rule.",
+                        "default": []
                     },
                     "preapproved_permissions": {
                         "items": {
@@ -4792,7 +4880,8 @@
                         },
                         "type": "array",
                         "title": "Preapproved Permissions",
-                        "description": "The preapproved permissions of this preapproval rule."
+                        "description": "The preapproved permissions of this preapproval rule.",
+                        "default": []
                     },
                     "preapproval_webhooks": {
                         "items": {
@@ -4800,30 +4889,35 @@
                         },
                         "type": "array",
                         "title": "Preapproval Webhooks",
-                        "description": "The preapproval webhooks of this preapproval rule."
+                        "description": "The preapproval webhooks of this preapproval rule.",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "justification",
+                    "app_id"
+                ],
+                "title": "PreApprovalRuleInput"
+            },
+            "PreApprovalRuleOutput": {
+                "properties": {
+                    "justification": {
+                        "type": "string",
+                        "title": "Justification",
+                        "description": "The justification of this preapproval rule."
                     },
                     "time_based_access": {
                         "items": {
                             "$ref": "#/components/schemas/TimeBasedAccessOptions"
                         },
                         "type": "array",
-                        "description": "Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show."
-                    }
-                },
-                "type": "object",
-                "title": "PreApprovalRuleInput"
-            },
-            "PreApprovalRuleOutput": {
-                "properties": {
+                        "description": "Preapproval rule time access length,"
+                    },
                     "id": {
                         "type": "string",
                         "title": "Id",
                         "description": "The ID of this preapproval rule."
-                    },
-                    "justification": {
-                        "type": "string",
-                        "title": "Justification",
-                        "description": "The justification of this preapproval rule."
                     },
                     "app_id": {
                         "type": "string",
@@ -4866,6 +4960,23 @@
                         "title": "Preapproval Webhooks",
                         "description": "The preapproval webhooks of this preapproval rule.",
                         "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "justification",
+                    "app_id",
+                    "app_class_id",
+                    "app_instance_id"
+                ],
+                "title": "PreApprovalRuleOutput"
+            },
+            "PreApprovalRuleUpdateInput": {
+                "properties": {
+                    "justification": {
+                        "type": "string",
+                        "title": "Justification",
+                        "description": "The justification of this preapproval rule."
                     },
                     "time_based_access": {
                         "items": {
@@ -4873,25 +4984,6 @@
                         },
                         "type": "array",
                         "description": "Preapproval rule time access length,"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "justification"
-                ],
-                "title": "PreApprovalRuleOutput"
-            },
-            "PreApprovalRuleUpdateInput": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "title": "Id",
-                        "description": "The ID of this preapproval rule."
-                    },
-                    "justification": {
-                        "type": "string",
-                        "title": "Justification",
-                        "description": "The justification of this preapproval rule."
                     },
                     "preapproved_groups": {
                         "items": {
@@ -4899,7 +4991,8 @@
                         },
                         "type": "array",
                         "title": "Preapproved Groups",
-                        "description": "The preapproved groups of this preapproval rule."
+                        "description": "The preapproved groups of this preapproval rule.",
+                        "default": []
                     },
                     "preapproved_permissions": {
                         "items": {
@@ -4907,7 +5000,8 @@
                         },
                         "type": "array",
                         "title": "Preapproved Permissions",
-                        "description": "The preapproved permissions of this preapproval rule."
+                        "description": "The preapproved permissions of this preapproval rule.",
+                        "default": []
                     },
                     "preapproval_webhooks": {
                         "items": {
@@ -4915,17 +5009,14 @@
                         },
                         "type": "array",
                         "title": "Preapproval Webhooks",
-                        "description": "The preapproval webhooks of this preapproval rule."
-                    },
-                    "time_based_access": {
-                        "items": {
-                            "$ref": "#/components/schemas/TimeBasedAccessOptions"
-                        },
-                        "type": "array",
-                        "description": "Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show."
+                        "description": "The preapproval webhooks of this preapproval rule.",
+                        "default": []
                     }
                 },
                 "type": "object",
+                "required": [
+                    "justification"
+                ],
                 "title": "PreApprovalRuleUpdateInput"
             },
             "RequestApprovalConfigInput": {

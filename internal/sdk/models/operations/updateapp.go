@@ -7,18 +7,26 @@ import (
 	"net/http"
 )
 
-type DotRequest struct {
-	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
+type UpdateAppRequest struct {
+	AppID          string                `pathParam:"style=simple,explode=false,name=app_id"`
+	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
 }
 
-func (o *DotRequest) GetAppID() string {
+func (o *UpdateAppRequest) GetAppID() string {
 	if o == nil {
 		return ""
 	}
 	return o.AppID
 }
 
-type DotResponse struct {
+func (o *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
+	if o == nil {
+		return shared.AppInputCreate{}
+	}
+	return o.AppInputCreate
+}
+
+type UpdateAppResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -26,40 +34,40 @@ type DotResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Dot *string
+	App *shared.App
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *DotResponse) GetContentType() string {
+func (o *UpdateAppResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *DotResponse) GetStatusCode() int {
+func (o *UpdateAppResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *DotResponse) GetRawResponse() *http.Response {
+func (o *UpdateAppResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *DotResponse) GetDot() *string {
+func (o *UpdateAppResponse) GetApp() *shared.App {
 	if o == nil {
 		return nil
 	}
-	return o.Dot
+	return o.App
 }
 
-func (o *DotResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+func (o *UpdateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
 	if o == nil {
 		return nil
 	}

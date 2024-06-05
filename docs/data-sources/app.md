@@ -14,7 +14,7 @@ App DataSource
 
 ```terraform
 data "lumos_app" "my_app" {
-  id = "7292afd9-2327-420d-a8f8-46bd9cdb3faf"
+  id = "9232d259-b0ac-4589-917f-afa4f89362b5"
 }
 ```
 
@@ -23,7 +23,7 @@ data "lumos_app" "my_app" {
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time.
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
 - `app_class_id` (String) The ID of the service associated with this app.
 - `id` (String) The ID of this resource.
 - `instance_id` (String) The ID of the instance associated with this app.

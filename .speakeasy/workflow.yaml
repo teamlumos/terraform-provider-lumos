@@ -3,10 +3,12 @@ speakeasyVersion: latest
 sources:
     FastAPI:
         inputs:
-            - location: ./openapi.json
+            - location: ./original-openapi.json
+        overlays:
+            - location: ./overlay.yaml
         registry:
             location: registry.speakeasyapi.dev/lumos/lumos/fast-api
 targets:
-    my-first-target:
+    lumos-terraform-provider-target:
         target: terraform
         source: FastAPI

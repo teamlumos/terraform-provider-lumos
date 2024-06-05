@@ -1,3 +1,3 @@
 data "lumos_app" "my_app" {
-  id = "7292afd9-2327-420d-a8f8-46bd9cdb3faf"
+  id = "9232d259-b0ac-4589-917f-afa4f89362b5"
 }

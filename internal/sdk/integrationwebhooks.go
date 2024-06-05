@@ -13,7 +13,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"io"
 	"net/http"
-	"net/url"
 )
 
 type IntegrationWebhooks struct {
@@ -26,9 +25,9 @@ func newIntegrationWebhooks(sdkConfig sdkConfiguration) *IntegrationWebhooks {
 	}
 }
 
-// ProcessAirbaseMilestoneEvent - Process Airbase Milestone Event
+// ProcessAirbaseMilestoneEvent - Process Airbase Purchase Request Approved
 // Webhook for Airbase to send events as a workflow transitions through milestones
-func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, request shared.AirbaseMilestoneEvent) (*operations.ProcessAirbaseMilestoneEventResponse, error) {
+func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, request operations.ProcessAirbaseMilestoneEventRequest) (*operations.ProcessAirbaseMilestoneEventResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
 		OperationID:    "processAirbaseMilestoneEvent",
@@ -37,12 +36,12 @@ func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, 
 	}
 
 	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := url.JoinPath(baseURL, "/webhooks/airbase/milestone_event")
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/webhooks/airbase/purchase_request_approved/{domain_app_uuid}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
 
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AirbasePurchaseRequestEvent", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
