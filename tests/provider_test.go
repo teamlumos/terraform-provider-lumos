@@ -6,16 +6,16 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/speakeasy/terraform-provider-lumos/internal/provider"
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider"
 )
 
 func providerConfig() string {
 	return fmt.Sprintf(`
 provider "lumos" {
   http_bearer    = "%s"
-  server_url     = "https://api.lumos.com"
+  server_url     = "%s"
 }
-`, os.Getenv("LUMOS_API_TOKEN"))
+`, os.Getenv("LUMOS_API_TOKEN"), os.Getenv("LUMOS_API_URL"))
 }
 
 var (
