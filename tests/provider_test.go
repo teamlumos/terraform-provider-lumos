@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/speakeasy/terraform-provider-lumos/internal/provider"
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider"
 )
 
 func providerConfig() string {
