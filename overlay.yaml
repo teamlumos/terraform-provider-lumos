@@ -18,9 +18,25 @@ actions:
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
+  - target: $["paths"]["/apps/{app_id}"]["patch"]
+    remove: true
+  - target: $["paths"]["/users/current"]["get"]
+    update:
+      "parameters": [{"required": false, "schema": {"type": "integer", "minimum": 1.0, "title": "Page", "default": 1}, "name": "page", "in": "query"}, {"required": false, "schema": {"type": "integer", "maximum": 100.0, "minimum": 1.0, "title": "Size", "default": 50}, "name": "size", "in": "query"}]
+  - target: $["paths"]["/users/current"]["get"]["responses"]
+    update:
+      "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}
   - target: $["paths"]["/users"]["get"]
     update:
       "x-speakeasy-entity-operation": "Users#read"
+  - target: $["paths"]["/users"]["get"]["parameters"][0]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/users"]["get"]["parameters"][0]["description"]
+    remove: true
+  - target: $["paths"]["/users"]["get"]["parameters"][1]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/users"]["get"]["parameters"][1]["description"]
+    remove: true
   - target: $["paths"]["/users/{user_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "User#read"
@@ -30,6 +46,26 @@ actions:
   - target: $["paths"]["/groups"]["get"]
     update:
       "x-speakeasy-entity-operation": "Groups#read"
+  - target: $["paths"]["/groups"]["get"]["parameters"][0]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][0]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][1]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][1]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][2]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][2]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][3]["schema"]["description"]
+    remove: true
+  - target: $["paths"]["/groups"]["get"]["parameters"][3]["description"]
+    remove: true
+  - target: $["paths"]["/appstore/requestable_permissions"]["get"]["parameters"][2]["description"]
+    update: "Filters requestable permissions by the ID of the app they belong to them."
+  - target: $["paths"]["/appstore/requestable_permissions"]["get"]["parameters"][2]["schema"]["description"]
+    update: "Filters requestable permissions by the ID of the app they belong to them."
   - target: $["paths"]["/appstore/requestable_permissions"]["post"]
     update:
       "x-speakeasy-entity-operation": "RequestablePermission#create"
@@ -45,12 +81,26 @@ actions:
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["delete"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["delete"]["responses"]
+    update:
+      "200": {"description": "Successful Response", "content": {"application/json": {"schema": {"type": "string", "title": "Response Delete Appstore Permission Appstore Requestable Permissions  Permission Id  Delete"}}}}
+  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["delete"]["responses"]["204"]
+    remove: true
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "RequestablePermission#update"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["patch"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/pre_approval_rules"]["get"]["parameters"][*]
+    remove: true
+  - target: $["paths"]["/appstore/pre_approval_rules"]["get"]["parameters"]
+    update:
+      - {"description": "Filters preapproval rules by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.", "required": false, "schema": {"type": "string", "title": "App Class Id", "description": "Filters preapproval rules by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included."}, "name": "app_class_id", "in": "query"}
+      - {"description": "Filters preapproval rules by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.", "required": false, "schema": {"type": "string", "title": "App Instance Id", "description": "Filters preapproval rules by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included."}, "name": "app_instance_id", "in": "query"}
+      - {"description": "Filters preapproval rules by the ID of the app they belong to them.", "required": false, "schema": {"type": "string", "title": "App Id", "description": "Filters preapproval rules by the ID of the app they belong to them."}, "name": "app_id", "in": "query"}
+      - {"required": false, "schema": {"type": "integer", "minimum": 1.0, "title": "Page", "default": 1}, "name": "page", "in": "query"}
+      - {"required": false, "schema": {"type": "integer", "maximum": 100.0, "minimum": 1.0, "title": "Size", "default": 50}, "name": "size", "in": "query"}
   - target: $["paths"]["/appstore/pre_approval_rules"]["post"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#create"
@@ -60,12 +110,39 @@ actions:
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#update"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["description"]
+    update: "**Update a pre-approval rule attached to an App in the AppStore.**\n\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded."
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
-  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]
     update:
-      "delete": {"x-speakeasy-entity-operation": "PreApprovalRule#delete", "tags": ["AppStore"], "summary": "Update Pre Approval Rule", "description": "", "operationId": "delete_pre_approval_rule", "parameters": [{"required": true, "schema": {"type": "string", "title": "Pre Approval Rule Id"}, "name": "pre_approval_rule_id", "in": "path", "x-speakeasy-match": "id"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"type": "string", "title": "Pre Approval Rule"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"HTTPBearer": []}]}
+      "x-speakeasy-entity-operation": "PreApprovalRule#delete"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["summary"]
+    update: "Update Pre Approval Rule"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["description"]
+    update: ""
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["operationId"]
+    update: "delete_pre_approval_rule"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["responses"]
+    update:
+      "200": {"description": "Successful Response", "content": {"application/json": {"schema": {"type": "string", "title": "Pre Approval Rule"}}}}
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["responses"]["204"]
+    remove: true
+  - target: $["paths"]["/appstore/apps"]["get"]["parameters"][3]["description"]
+    update: "Filters apps by name. This parameter requires a domain_id to be included."
+  - target: $["paths"]["/appstore/apps"]["get"]["parameters"][3]["schema"]["description"]
+    update: "Filters apps by name. This parameter requires a domain_id to be included."
+  - target: $["paths"]["/appstore/apps"]["get"]["parameters"][4]["description"]
+    update: "Filters apps by name. This parameter requires a domain_id to be included."
+  - target: $["paths"]["/appstore/apps"]["get"]["parameters"][4]["schema"]["description"]
+    update: "Filters apps by name. This parameter requires a domain_id to be included."
+  - target: $["paths"]["/appstore/apps"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreApp#create"
   - target: $["paths"]["/appstore/apps/{app_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#read"
@@ -84,7 +161,16 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}"]["delete"]["responses"]["200"]["content"]["application/json"]["schema"]
     update:
       "title": "..."
+  - target: $["paths"]["/appstore/access_requests"]["get"]["parameters"][3]["description"]
+    update: "Filters requests by their status."
+  - target: $["paths"]["/appstore/access_requests"]["get"]["parameters"][3]["schema"]["description"]
+    update: "Filters requests by their status."
+  - target: $["paths"]
+    update:
+      "/webhooks/airbase/milestone_event": {"post": {"tags": ["Integration Webhooks"], "summary": "Process Airbase Milestone Event", "description": "Webhook for Airbase to send events as a workflow transitions through milestones", "operationId": "processAirbaseMilestoneEvent", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/AirbaseMilestoneEvent"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}, "security": [{"HTTPBearer": []}]}}
   - target: $["paths"]["/apps/categories"]
+    remove: true
+  - target: $["paths"]["/webhooks/airbase/purchase_request_approved/{domain_app_uuid}"]
     remove: true
   - target: $["components"]["schemas"]["AccountInput"]["properties"]["attributes"]
     remove: true
@@ -92,18 +178,35 @@ actions:
     update: "UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos)"
   - target: $["components"]["schemas"]["ActivityRecordAppInput"]["properties"]["instance_identifier"]["description"]
     update: "The ID of the app."
+  - target: $["components"]["schemas"]
+    update:
+      "AirbaseMilestoneEvent": {"properties": {}, "type": "object", "title": "AirbaseMilestoneEvent", "description": "Model of the input we'll get from Airbase's webhook call.\nTo be completed when we get docs."}
   - target: $["components"]["schemas"]["App"]
     update:
       "x-speakeasy-entity": "App"
   - target: $["components"]["schemas"]["App"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["App"]["properties"]["allow_multiple_permission_selection"]["description"]
+    update: "Whether the app is configured to allow multiple permissions to be requested at a time."
   - target: $["components"]["schemas"]["AppInputCreate"]
     update:
       "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["AppInputCreate"]["properties"]["category"]["description"]
+    update: "The category of the app you're creating."
+  - target: $["components"]["schemas"]["AppInputCreate"]["properties"]["description"]["maxLength"]
+    remove: true
+  - target: $["components"]["schemas"]["AppInputCreate"]["required"]
+    remove: true
   - target: $["components"]["schemas"]["AppStoreApp"]
     update:
       "x-speakeasy-entity": "AppStoreApp"
+  - target: $["components"]["schemas"]["AppStoreApp"]["properties"]["allow_multiple_permission_selection"]["description"]
+    update: "Whether the app is configured to allow multiple permissions to be requested at a time."
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningInput"]["properties"]["allow_multiple_permission_selection"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningOutput"]["properties"]["allow_multiple_permission_selection"]
+    remove: true
   - target: $["components"]["schemas"]["Group"]["properties"]
     update:
       "group_lifecycle": {"allOf": [{"$ref": "#/components/schemas/GroupLifecycle"}], "description": "The lifecycle of this group.", "default": "SYNCED"}
@@ -118,9 +221,46 @@ actions:
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]
+    update:
+      "id": {"type": "string", "title": "Id", "description": "The ID of this preapproval rule."}
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]
+    update:
+      "app_class_id": {"type": "string", "title": "App Class Id", "description": "The ID of the service associated with this pre-approval rule."}
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]
+    update:
+      "app_instance_id": {"type": "string", "title": "App Instance Id", "description": "Optionally, an app has an identifer associated with it's particular instance."}
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproved_groups"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproved_permissions"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproval_webhooks"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["time_based_access"]["description"]
+    update: "Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show."
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["required"]
+    remove: true
   - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["required"][*]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["required"]
+    update:
+      - "justification"
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]
+    update:
+      "id": {"type": "string", "title": "Id", "description": "The ID of this preapproval rule."}
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproved_groups"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproved_permissions"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproval_webhooks"]["default"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["time_based_access"]["description"]
+    update: "Users will be pre-approved only when they request for the time lengths selected here. When multiple permissions are selected, only time lengths that are valid for all of the selected permissions will show."
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["required"]
+    remove: true
   - target: $["components"]["schemas"]["RequestablePermissionBase"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
@@ -154,6 +294,8 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["AirbasePurchaseRequestEvent"]
+    remove: true
   - target: $["components"]["schemas"]["AttributeInput"]
     remove: true
   - target: $["components"]["schemas"]["Lifecycle"]
