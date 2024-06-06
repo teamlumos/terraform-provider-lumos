@@ -107,7 +107,7 @@ Terraform searches for the `.terraformrc` file in your home directory and applie
 provider_installation {
 
   dev_overrides {
-      "registry.terraform.io/speakeasy/lumos" = "<PATH>"
+      "registry.terraform.io/teamlumos/lumos" = "<PATH>"
   }
 
   # For all other providers, install them directly from their origin provider
