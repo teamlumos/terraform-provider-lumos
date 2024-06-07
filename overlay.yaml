@@ -6,10 +6,28 @@ actions:
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
+  - target: $["paths"]["/apps/{app_id}"]["patch"]
+    update:
+      "x-speakeasy-entity-operation": "App#update"
+  - target: $["paths"]["/apps/{app_id}"]["patch"]["parameters"][0]
+    update:
+      "x-speakeasy-match": "id"
   - target: $["paths"]["/apps/{app_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "App#read"
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreAppSettings#update"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]["parameters"][0]
+    update:
+      "x-speakeasy-match": "id"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreAppSettings#read"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
     update:
       "x-speakeasy-match": "id"
   - target: $["paths"]["/users"]["get"]
