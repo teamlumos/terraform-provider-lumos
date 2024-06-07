@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: 755ba8874f55ca9a2e6660b31b211bf7
+  docChecksum: c28c515e3f308ec4ceeeaa15176302e9
   docVersion: 0.1.0
   speakeasyVersion: 1.300.1
   generationVersion: 2.339.1
-  releaseVersion: 0.1.31
-  configChecksum: 86d61053ab2752cf6ab01f64fef27c43
+  releaseVersion: 0.1.32
+  configChecksum: 4f93863dec1b8359d7ad3714ba1f0f1b
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -76,8 +76,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
@@ -248,6 +248,9 @@ generatedFiles:
   - internal/provider/appstoreapp_data_source.go
   - internal/provider/appstoreapp_data_source_sdk.go
   - examples/data-sources/lumos_app_store_app/data-source.tf
+  - internal/provider/appstoreappsettings_data_source.go
+  - internal/provider/appstoreappsettings_data_source_sdk.go
+  - examples/data-sources/lumos_app_store_app_settings/data-source.tf
   - internal/provider/group_data_source.go
   - internal/provider/group_data_source_sdk.go
   - examples/data-sources/lumos_group/data-source.tf

@@ -25,9 +25,9 @@ resource "lumos_app" "my_app" {
 
 ### Required
 
-- `category` (String) The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'. Requires replacement if changed.
-- `description` (String) The description of the app you're creating. Requires replacement if changed.
-- `name` (String) The name of the app you're creating. Requires replacement if changed.
+- `category` (String) The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+- `description` (String) The description of the app you're creating.
+- `name` (String) The name of the app you're creating.
 
 ### Read-Only
 

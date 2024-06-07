@@ -35,8 +35,6 @@ type UpdateAppResponse struct {
 	RawResponse *http.Response
 	// Successful Response
 	App *shared.App
-	// Validation Error
-	HTTPValidationError *shared.HTTPValidationError
 }
 
 func (o *UpdateAppResponse) GetContentType() string {
@@ -65,11 +63,4 @@ func (o *UpdateAppResponse) GetApp() *shared.App {
 		return nil
 	}
 	return o.App
-}
-
-func (o *UpdateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
-		return nil
-	}
-	return o.HTTPValidationError
 }
