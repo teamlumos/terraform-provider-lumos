@@ -26,12 +26,12 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
 
 ### Required
 
+- `app_id` (String) The ID of the app associated with this requestable permission.
 - `label` (String) The label of this requestable permission.
 
 ### Optional
 
 - `app_class_id` (String) The ID of the service associated with this requestable permission.
-- `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) Optionally, an app has an identifer associated with it's particular instance.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--request_config))
 

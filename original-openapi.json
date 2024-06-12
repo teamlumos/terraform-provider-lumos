@@ -21,12 +21,12 @@
                 "operationId": "listApps",
                 "parameters": [
                     {
-                        "description": "Filters apps by name.",
+                        "description": "Search against name, app instance identifier, and app class ID.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name."
+                            "description": "Search against name, app instance identifier, and app class ID."
                         },
                         "name": "name_search",
                         "in": "query"
@@ -254,6 +254,16 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/App"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -1034,28 +1044,6 @@
                 "operationId": "get_appstore_permissions_for_app_appstore_requestable_permissions_get",
                 "parameters": [
                     {
-                        "description": "Filters requestable permissions by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Class Id",
-                            "description": "Filters requestable permissions by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included."
-                        },
-                        "name": "app_class_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Instance Id",
-                            "description": "Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included."
-                        },
-                        "name": "app_instance_id",
-                        "in": "query"
-                    },
-                    {
                         "description": "Filters requestable permissions by the ID of the app to which they belong.",
                         "required": false,
                         "schema": {
@@ -1716,28 +1704,6 @@
                 "operationId": "getAppStoreApps",
                 "parameters": [
                     {
-                        "description": "Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Class Id",
-                            "description": "Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included."
-                        },
-                        "name": "app_class_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Instance Id",
-                            "description": "Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included."
-                        },
-                        "name": "app_instance_id",
-                        "in": "query"
-                    },
-                    {
                         "description": "Filters apps by the ID of the app.",
                         "required": false,
                         "schema": {
@@ -1749,12 +1715,12 @@
                         "in": "query"
                     },
                     {
-                        "description": "Filters apps by name.",
+                        "description": "Search against name, app instance identifier, and app class ID.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name."
+                            "description": "Search against name, app instance identifier, and app class ID."
                         },
                         "name": "name_search",
                         "in": "query"
@@ -3149,6 +3115,21 @@
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
                         "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of this app."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of this app."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -3272,6 +3253,21 @@
                         "maxLength": 8192,
                         "title": "Description",
                         "description": "The description of the app you're creating."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of the app you're creating."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of the app you're creating."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -3323,6 +3319,21 @@
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
                         "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of this app."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of this app."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -5561,6 +5572,7 @@
                 },
                 "type": "object",
                 "required": [
+                    "app_id",
                     "label"
                 ],
                 "title": "RequestablePermissionInput"

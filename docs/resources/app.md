@@ -14,9 +14,12 @@ App Resource
 
 ```terraform
 resource "lumos_app" "my_app" {
-  category    = "...my_category..."
-  description = "...my_description..."
-  name        = "Frances Collier"
+  category             = "...my_category..."
+  description          = "...my_description..."
+  logo_url             = "...my_logo_url..."
+  name                 = "Frances Collier"
+  request_instructions = "...my_request_instructions..."
+  website_url          = "...my_website_url..."
 }
 ```
 
@@ -28,6 +31,12 @@ resource "lumos_app" "my_app" {
 - `category` (String) The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
 - `description` (String) The description of the app you're creating.
 - `name` (String) The name of the app you're creating.
+
+### Optional
+
+- `logo_url` (String) The URL of the logo of the app you're creating.
+- `request_instructions` (String) The request instructions.
+- `website_url` (String) The URL of the website of the app you're creating.
 
 ### Read-Only
 

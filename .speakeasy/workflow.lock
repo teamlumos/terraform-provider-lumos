@@ -1,18 +1,18 @@
-speakeasyVersion: 1.300.1
+speakeasyVersion: 1.306.0
 sources:
     FastAPI:
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:2e49a3c72a2269b646f748ffc3088f41b07e426b410aceb98701c0f7ad56c65f
-        sourceBlobDigest: sha256:e30b039362447279e6be7d99f8a7cfece340b393ec4381bddf75947267770620
+        sourceRevisionDigest: sha256:f1824bb58084e67c3eeac8c9470c31b843a0a81eebcb4d13d8d6d6df0da45a60
+        sourceBlobDigest: sha256:577bae4eefd2a93375090e7aa45616f1982a874499a243b53696b8b7ad3688fa
         tags:
             - latest
 targets:
     lumos-terraform-provider-target:
         source: FastAPI
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:2e49a3c72a2269b646f748ffc3088f41b07e426b410aceb98701c0f7ad56c65f
-        sourceBlobDigest: sha256:e30b039362447279e6be7d99f8a7cfece340b393ec4381bddf75947267770620
-        outLocation: /Users/niamh/terraform-provider-lumos
+        sourceRevisionDigest: sha256:f1824bb58084e67c3eeac8c9470c31b843a0a81eebcb4d13d8d6d6df0da45a60
+        sourceBlobDigest: sha256:577bae4eefd2a93375090e7aa45616f1982a874499a243b53696b8b7ad3688fa
+        outLocation: /Users/ethanzh/terraform-provider-lumos
     my-first-target:
         source: FastAPI
         sourceNamespace: fast-api

@@ -32,9 +32,12 @@ type AppDataSourceModel struct {
 	AppClassID                       types.String   `tfsdk:"app_class_id"`
 	ID                               types.String   `tfsdk:"id"`
 	InstanceID                       types.String   `tfsdk:"instance_id"`
+	LogoURL                          types.String   `tfsdk:"logo_url"`
+	RequestInstructions              types.String   `tfsdk:"request_instructions"`
 	Sources                          []types.String `tfsdk:"sources"`
 	Status                           types.String   `tfsdk:"status"`
 	UserFriendlyLabel                types.String   `tfsdk:"user_friendly_label"`
+	WebsiteURL                       types.String   `tfsdk:"website_url"`
 }
 
 // Metadata returns the data source type name.
@@ -63,6 +66,14 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Computed:    true,
 				Description: `The ID of the instance associated with this app.`,
 			},
+			"logo_url": schema.StringAttribute{
+				Computed:    true,
+				Description: `The URL of the logo of this app.`,
+			},
+			"request_instructions": schema.StringAttribute{
+				Computed:    true,
+				Description: `The request instructions.`,
+			},
 			"sources": schema.ListAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
@@ -75,6 +86,10 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-friendly label of this app.`,
+			},
+			"website_url": schema.StringAttribute{
+				Computed:    true,
+				Description: `The URL of the website of this app.`,
 			},
 		},
 	}
@@ -142,8 +157,8 @@ func (r *AppDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res.App)

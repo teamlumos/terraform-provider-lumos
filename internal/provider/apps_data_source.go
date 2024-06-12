@@ -15,71 +15,96 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ datasource.DataSource = &UsersDataSource{}
-var _ datasource.DataSourceWithConfigure = &UsersDataSource{}
+var _ datasource.DataSource = &AppsDataSource{}
+var _ datasource.DataSourceWithConfigure = &AppsDataSource{}
 
-func NewUsersDataSource() datasource.DataSource {
-	return &UsersDataSource{}
+func NewAppsDataSource() datasource.DataSource {
+	return &AppsDataSource{}
 }
 
-// UsersDataSource is the data source implementation.
-type UsersDataSource struct {
+// AppsDataSource is the data source implementation.
+type AppsDataSource struct {
 	client *sdk.Lumos
 }
 
-// UsersDataSourceModel describes the data model.
-type UsersDataSourceModel struct {
-	ExactMatch types.Bool     `tfsdk:"exact_match"`
-	Items      []tfTypes.User `tfsdk:"items"`
-	Page       types.Int64    `tfsdk:"page"`
-	Pages      types.Int64    `tfsdk:"pages"`
-	SearchTerm types.String   `tfsdk:"search_term"`
-	Size       types.Int64    `tfsdk:"size"`
-	Total      types.Int64    `tfsdk:"total"`
+// AppsDataSourceModel describes the data model.
+type AppsDataSourceModel struct {
+	ExactMatch types.Bool    `tfsdk:"exact_match"`
+	Items      []tfTypes.App `tfsdk:"items"`
+	NameSearch types.String  `tfsdk:"name_search"`
+	Page       types.Int64   `tfsdk:"page"`
+	Pages      types.Int64   `tfsdk:"pages"`
+	Size       types.Int64   `tfsdk:"size"`
+	Total      types.Int64   `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
-func (r *UsersDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_users"
+func (r *AppsDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_apps"
 }
 
 // Schema defines the schema for the data source.
-func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Users DataSource",
+		MarkdownDescription: "Apps DataSource",
 
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{
 				Computed:    true,
 				Optional:    true,
-				Description: `If a search_term is provided, only accept exact matches.`,
+				Description: `Search filter should be an exact match.`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"email": schema.StringAttribute{
+						"allow_multiple_permission_selection": schema.BoolAttribute{
 							Computed:    true,
-							Description: `The email of this user.`,
+							Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
 						},
-						"family_name": schema.StringAttribute{
+						"app_class_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The family name of this user.`,
-						},
-						"given_name": schema.StringAttribute{
-							Computed:    true,
-							Description: `The given name of this user.`,
+							Description: `The ID of the service associated with this app.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of this user.`,
+							Description: `The ID of this app.`,
+						},
+						"instance_id": schema.StringAttribute{
+							Computed:    true,
+							Description: `The ID of the instance associated with this app.`,
+						},
+						"logo_url": schema.StringAttribute{
+							Computed:    true,
+							Description: `The URL of the logo of this app.`,
+						},
+						"request_instructions": schema.StringAttribute{
+							Computed:    true,
+							Description: `The request instructions.`,
+						},
+						"sources": schema.ListAttribute{
+							Computed:    true,
+							ElementType: types.StringType,
+							Description: `The sources of this app.`,
 						},
 						"status": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+							Description: `An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
+						},
+						"user_friendly_label": schema.StringAttribute{
+							Computed:    true,
+							Description: `The user-friendly label of this app.`,
+						},
+						"website_url": schema.StringAttribute{
+							Computed:    true,
+							Description: `The URL of the website of this app.`,
 						},
 					},
 				},
+			},
+			"name_search": schema.StringAttribute{
+				Optional:    true,
+				Description: `Search against name, app instance identifier, and app class ID.`,
 			},
 			"page": schema.Int64Attribute{
 				Computed: true,
@@ -87,10 +112,6 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
-			},
-			"search_term": schema.StringAttribute{
-				Optional:    true,
-				Description: `Search for users by name or email.`,
 			},
 			"size": schema.Int64Attribute{
 				Computed: true,
@@ -103,7 +124,7 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 	}
 }
 
-func (r *UsersDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (r *AppsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -123,8 +144,8 @@ func (r *UsersDataSource) Configure(ctx context.Context, req datasource.Configur
 	r.client = client
 }
 
-func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *UsersDataSourceModel
+func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *AppsDataSourceModel
 	var item types.Object
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &item)...)
@@ -141,11 +162,11 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	searchTerm := new(string)
-	if !data.SearchTerm.IsUnknown() && !data.SearchTerm.IsNull() {
-		*searchTerm = data.SearchTerm.ValueString()
+	nameSearch := new(string)
+	if !data.NameSearch.IsUnknown() && !data.NameSearch.IsNull() {
+		*nameSearch = data.NameSearch.ValueString()
 	} else {
-		searchTerm = nil
+		nameSearch = nil
 	}
 	exactMatch := new(bool)
 	if !data.ExactMatch.IsUnknown() && !data.ExactMatch.IsNull() {
@@ -165,13 +186,13 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 	} else {
 		size = nil
 	}
-	request := operations.ListUsersRequest{
-		SearchTerm: searchTerm,
+	request := operations.ListAppsRequest{
+		NameSearch: nameSearch,
 		ExactMatch: exactMatch,
 		Page:       page,
 		Size:       size,
 	}
-	res, err := r.client.Core.ListUsers(ctx, request)
+	res, err := r.client.Core.ListApps(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -191,11 +212,11 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.PageUser != nil) {
+	if !(res.PageApp != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPageUser(res.PageUser)
+	data.RefreshFromSharedPageApp(res.PageApp)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

@@ -9,6 +9,12 @@ type AppInputCreate struct {
 	Category string `json:"category"`
 	// The description of the app you're creating.
 	Description string `json:"description"`
+	// The URL of the logo of the app you're creating.
+	LogoURL *string `json:"logo_url,omitempty"`
+	// The URL of the website of the app you're creating.
+	WebsiteURL *string `json:"website_url,omitempty"`
+	// The request instructions.
+	RequestInstructions *string `json:"request_instructions,omitempty"`
 }
 
 func (o *AppInputCreate) GetName() string {
@@ -30,4 +36,25 @@ func (o *AppInputCreate) GetDescription() string {
 		return ""
 	}
 	return o.Description
+}
+
+func (o *AppInputCreate) GetLogoURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.LogoURL
+}
+
+func (o *AppInputCreate) GetWebsiteURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.WebsiteURL
+}
+
+func (o *AppInputCreate) GetRequestInstructions() *string {
+	if o == nil {
+		return nil
+	}
+	return o.RequestInstructions
 }
