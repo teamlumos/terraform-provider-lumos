@@ -6,6 +6,9 @@ actions:
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
+  - target: $["paths"]["/apps"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Apps#read"
   - target: $["paths"]["/apps/{app_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "App#update"
@@ -119,6 +122,9 @@ actions:
   - target: $["components"]["schemas"]["Page_Group_"]
     update:
       "x-speakeasy-entity": "Groups"
+  - target: $["components"]["schemas"]["Page_App_"]
+    update:
+      "x-speakeasy-entity": "Apps"
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
@@ -134,9 +140,48 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionInput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["request_config"]["allowed_groups"]["groups"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["request_approval_config"]["custom_approval_message"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["request_approval_config"]["custom_approval_message_override"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["request_config"]["allowed_groups"]["type"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionOutput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
   - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["allowed_groups"]["groups"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["allowed_groups"]["type"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["app_instance_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["allowed_groups"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_approval_config"]["custom_approval_message"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_approval_config"]["custom_approval_message_override"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true

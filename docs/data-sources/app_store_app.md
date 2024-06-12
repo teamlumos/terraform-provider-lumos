@@ -31,8 +31,11 @@ data "lumos_app_store_app" "my_appstoreapp" {
 - `app_class_id` (String) The ID of the service associated with this app.
 - `id` (String) The ID of this app.
 - `instance_id` (String) The ID of the instance associated with this app.
+- `logo_url` (String) The URL of the logo of this app.
+- `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
 - `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.
+- `website_url` (String) The URL of the website of this app.
 
 

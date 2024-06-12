@@ -14,7 +14,7 @@ AppStoreAppSettings DataSource
 
 ```terraform
 data "lumos_app_store_app_settings" "my_appstoreappsettings" {
-  id = "7292afd9-2327-420d-a8f8-46bd9cdb3faf"
+  id = "2afd9232-720d-468f-846b-d9cdb3faf8ec"
 }
 ```
 

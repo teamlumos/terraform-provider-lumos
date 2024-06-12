@@ -39,10 +39,13 @@ type AppResourceModel struct {
 	Description                      types.String   `tfsdk:"description"`
 	ID                               types.String   `tfsdk:"id"`
 	InstanceID                       types.String   `tfsdk:"instance_id"`
+	LogoURL                          types.String   `tfsdk:"logo_url"`
 	Name                             types.String   `tfsdk:"name"`
+	RequestInstructions              types.String   `tfsdk:"request_instructions"`
 	Sources                          []types.String `tfsdk:"sources"`
 	Status                           types.String   `tfsdk:"status"`
 	UserFriendlyLabel                types.String   `tfsdk:"user_friendly_label"`
+	WebsiteURL                       types.String   `tfsdk:"website_url"`
 }
 
 func (r *AppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -80,9 +83,19 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed:    true,
 				Description: `The ID of the instance associated with this app.`,
 			},
+			"logo_url": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `The URL of the logo of the app you're creating.`,
+			},
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `The name of the app you're creating.`,
+			},
+			"request_instructions": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `The request instructions.`,
 			},
 			"sources": schema.ListAttribute{
 				Computed:    true,
@@ -105,6 +118,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-friendly label of this app.`,
+			},
+			"website_url": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `The URL of the website of the app you're creating.`,
 			},
 		},
 	}
@@ -165,8 +183,8 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res.App)
@@ -191,8 +209,8 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if res1.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res1.RawResponse))
+	if !(res1.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res1.App)
@@ -244,8 +262,8 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res.App)
@@ -290,8 +308,8 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res.App)
@@ -316,8 +334,8 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if res1.App == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res1.RawResponse))
+	if !(res1.App != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
 	data.RefreshFromSharedApp(res1.App)

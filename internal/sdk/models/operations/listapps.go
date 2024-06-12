@@ -9,7 +9,7 @@ import (
 )
 
 type ListAppsRequest struct {
-	// Filters apps by name.
+	// Search against name, app instance identifier, and app class ID.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
 	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
