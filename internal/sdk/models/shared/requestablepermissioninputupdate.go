@@ -122,6 +122,50 @@ func (e *RequestablePermissionInputUpdateManagerApprovalOption) UnmarshalJSON(da
 	}
 }
 
+// RequestablePermissionInputUpdateApprovers - AppStore App approvers assigned.
+type RequestablePermissionInputUpdateApprovers struct {
+	// Groups assigned as support request approvers.
+	Groups []BaseGroup `json:"groups,omitempty"`
+	// Users assigned as support request approvers.
+	Users []BaseUser `json:"users,omitempty"`
+}
+
+func (o *RequestablePermissionInputUpdateApprovers) GetGroups() []BaseGroup {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *RequestablePermissionInputUpdateApprovers) GetUsers() []BaseUser {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
+// RequestablePermissionInputUpdateApproversStage2 - AppStore App stage 2 approvers assigned.
+type RequestablePermissionInputUpdateApproversStage2 struct {
+	// Groups assigned as support request approvers.
+	Groups []BaseGroup `json:"groups,omitempty"`
+	// Users assigned as support request approvers.
+	Users []BaseUser `json:"users,omitempty"`
+}
+
+func (o *RequestablePermissionInputUpdateApproversStage2) GetGroups() []BaseGroup {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *RequestablePermissionInputUpdateApproversStage2) GetUsers() []BaseUser {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
 // RequestablePermissionInputUpdateRequestApprovalConfig - A request approval config can be optionally associated with this config
 type RequestablePermissionInputUpdateRequestApprovalConfig struct {
 	// Indicates if approval flow is overrided
@@ -134,6 +178,10 @@ type RequestablePermissionInputUpdateRequestApprovalConfig struct {
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
 	// Indicates if custom_approval_message is overrided
 	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
+	// AppStore App approvers assigned.
+	Approvers *RequestablePermissionInputUpdateApprovers `json:"approvers,omitempty"`
+	// AppStore App stage 2 approvers assigned.
+	ApproversStage2 *RequestablePermissionInputUpdateApproversStage2 `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageInput `json:"request_approval_stages,omitempty"`
 }
@@ -182,6 +230,20 @@ func (o *RequestablePermissionInputUpdateRequestApprovalConfig) GetCustomApprova
 		return nil
 	}
 	return o.CustomApprovalMessageOverride
+}
+
+func (o *RequestablePermissionInputUpdateRequestApprovalConfig) GetApprovers() *RequestablePermissionInputUpdateApprovers {
+	if o == nil {
+		return nil
+	}
+	return o.Approvers
+}
+
+func (o *RequestablePermissionInputUpdateRequestApprovalConfig) GetApproversStage2() *RequestablePermissionInputUpdateApproversStage2 {
+	if o == nil {
+		return nil
+	}
+	return o.ApproversStage2
 }
 
 func (o *RequestablePermissionInputUpdateRequestApprovalConfig) GetRequestApprovalStages() []RequestApprovalStageInput {

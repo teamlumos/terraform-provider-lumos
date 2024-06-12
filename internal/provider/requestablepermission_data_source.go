@@ -29,13 +29,13 @@ type RequestablePermissionDataSource struct {
 
 // RequestablePermissionDataSourceModel describes the data model.
 type RequestablePermissionDataSourceModel struct {
-	AppClassID    types.String          `tfsdk:"app_class_id"`
-	AppID         types.String          `tfsdk:"app_id"`
-	AppInstanceID types.String          `tfsdk:"app_instance_id"`
-	ID            types.String          `tfsdk:"id"`
-	Label         types.String          `tfsdk:"label"`
-	RequestConfig tfTypes.RequestConfig `tfsdk:"request_config"`
-	Type          types.String          `tfsdk:"type"`
+	AppClassID    types.String                                    `tfsdk:"app_class_id"`
+	AppID         types.String                                    `tfsdk:"app_id"`
+	AppInstanceID types.String                                    `tfsdk:"app_instance_id"`
+	ID            types.String                                    `tfsdk:"id"`
+	Label         types.String                                    `tfsdk:"label"`
+	RequestConfig tfTypes.RequestablePermissionInputRequestConfig `tfsdk:"request_config"`
+	Type          types.String                                    `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -150,6 +150,146 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 					"request_approval_config": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{
+							"approvers": schema.SingleNestedAttribute{
+								Computed: true,
+								Attributes: map[string]schema.Attribute{
+									"groups": schema.ListNestedAttribute{
+										Computed: true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"app_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of the app that owns this group.`,
+												},
+												"description": schema.StringAttribute{
+													Computed:    true,
+													Description: `The description of this group.`,
+												},
+												"group_lifecycle": schema.StringAttribute{
+													Computed:    true,
+													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+												},
+												"id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this group.`,
+												},
+												"integration_specific_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this group, specific to the integration.`,
+												},
+												"name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The name of this group.`,
+												},
+												"source_app_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of the app that owns this group.`,
+												},
+											},
+										},
+										Description: `Groups assigned as support request approvers.`,
+									},
+									"users": schema.ListNestedAttribute{
+										Computed: true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"email": schema.StringAttribute{
+													Computed:    true,
+													Description: `The email of this user.`,
+												},
+												"family_name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The family name of this user.`,
+												},
+												"given_name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The given name of this user.`,
+												},
+												"id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this user.`,
+												},
+												"status": schema.StringAttribute{
+													Computed:    true,
+													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+												},
+											},
+										},
+										Description: `Users assigned as support request approvers.`,
+									},
+								},
+								Description: `AppStore App approvers assigned.`,
+							},
+							"approvers_stage_2": schema.SingleNestedAttribute{
+								Computed: true,
+								Attributes: map[string]schema.Attribute{
+									"groups": schema.ListNestedAttribute{
+										Computed: true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"app_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of the app that owns this group.`,
+												},
+												"description": schema.StringAttribute{
+													Computed:    true,
+													Description: `The description of this group.`,
+												},
+												"group_lifecycle": schema.StringAttribute{
+													Computed:    true,
+													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+												},
+												"id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this group.`,
+												},
+												"integration_specific_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this group, specific to the integration.`,
+												},
+												"name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The name of this group.`,
+												},
+												"source_app_id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of the app that owns this group.`,
+												},
+											},
+										},
+										Description: `Groups assigned as support request approvers.`,
+									},
+									"users": schema.ListNestedAttribute{
+										Computed: true,
+										NestedObject: schema.NestedAttributeObject{
+											Attributes: map[string]schema.Attribute{
+												"email": schema.StringAttribute{
+													Computed:    true,
+													Description: `The email of this user.`,
+												},
+												"family_name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The family name of this user.`,
+												},
+												"given_name": schema.StringAttribute{
+													Computed:    true,
+													Description: `The given name of this user.`,
+												},
+												"id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The ID of this user.`,
+												},
+												"status": schema.StringAttribute{
+													Computed:    true,
+													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+												},
+											},
+										},
+										Description: `Users assigned as support request approvers.`,
+									},
+								},
+								Description: `AppStore App stage 2 approvers assigned.`,
+							},
 							"custom_approval_message": schema.StringAttribute{
 								Computed:    true,
 								Description: `During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.`,
@@ -165,86 +305,6 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							"request_approval_config_override": schema.BoolAttribute{
 								Computed:    true,
 								Description: `Indicates if approval flow is overrided`,
-							},
-							"request_approval_stages": schema.ListNestedAttribute{
-								Computed: true,
-								NestedObject: schema.NestedAttributeObject{
-									Attributes: map[string]schema.Attribute{
-										"approvers": schema.ListNestedAttribute{
-											Computed: true,
-											NestedObject: schema.NestedAttributeObject{
-												Attributes: map[string]schema.Attribute{
-													"group": schema.SingleNestedAttribute{
-														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"app_id": schema.StringAttribute{
-																Computed:    true,
-																Description: `The ID of the app that owns this group.`,
-															},
-															"description": schema.StringAttribute{
-																Computed:    true,
-																Description: `The description of this group.`,
-															},
-															"group_lifecycle": schema.StringAttribute{
-																Computed:    true,
-																Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-															},
-															"id": schema.StringAttribute{
-																Computed:    true,
-																Description: `The ID of this group.`,
-															},
-															"integration_specific_id": schema.StringAttribute{
-																Computed:    true,
-																Description: `The ID of this group, specific to the integration.`,
-															},
-															"name": schema.StringAttribute{
-																Computed:    true,
-																Description: `The name of this group.`,
-															},
-															"source_app_id": schema.StringAttribute{
-																Computed:    true,
-																Description: `The ID of the app that owns this group.`,
-															},
-														},
-														Description: `Optionally, the approver can be a group.`,
-													},
-													"type": schema.StringAttribute{
-														Computed:    true,
-														Description: `An enumeration. must be one of ["USER", "GROUP"]`,
-													},
-													"user": schema.SingleNestedAttribute{
-														Computed: true,
-														Attributes: map[string]schema.Attribute{
-															"email": schema.StringAttribute{
-																Computed:    true,
-																Description: `The email of this user.`,
-															},
-															"family_name": schema.StringAttribute{
-																Computed:    true,
-																Description: `The family name of this user.`,
-															},
-															"given_name": schema.StringAttribute{
-																Computed:    true,
-																Description: `The given name of this user.`,
-															},
-															"id": schema.StringAttribute{
-																Computed:    true,
-																Description: `The ID of this user.`,
-															},
-															"status": schema.StringAttribute{
-																Computed:    true,
-																Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-															},
-														},
-														Description: `Optionally, the approver can be a user.`,
-													},
-												},
-											},
-											Description: `The approvers of this stage.`,
-										},
-									},
-								},
-								Description: `The stages of this request approval.`,
 							},
 							"require_additional_approval": schema.BoolAttribute{
 								Computed:    true,
@@ -427,8 +487,8 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.RequestablePermissionOutput == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.RequestablePermissionOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedRequestablePermissionOutput(res.RequestablePermissionOutput)

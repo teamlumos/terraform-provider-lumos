@@ -35,18 +35,18 @@ func (e *AppStoreVisibilityOption) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
-type AllowedGroupsConfigType string
+// RequestablePermissionOutputAllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
+type RequestablePermissionOutputAllowedGroupsConfigType string
 
 const (
-	AllowedGroupsConfigTypeAllGroups       AllowedGroupsConfigType = "ALL_GROUPS"
-	AllowedGroupsConfigTypeSpecifiedGroups AllowedGroupsConfigType = "SPECIFIED_GROUPS"
+	RequestablePermissionOutputAllowedGroupsConfigTypeAllGroups       RequestablePermissionOutputAllowedGroupsConfigType = "ALL_GROUPS"
+	RequestablePermissionOutputAllowedGroupsConfigTypeSpecifiedGroups RequestablePermissionOutputAllowedGroupsConfigType = "SPECIFIED_GROUPS"
 )
 
-func (e AllowedGroupsConfigType) ToPointer() *AllowedGroupsConfigType {
+func (e RequestablePermissionOutputAllowedGroupsConfigType) ToPointer() *RequestablePermissionOutputAllowedGroupsConfigType {
 	return &e
 }
-func (e *AllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
+func (e *RequestablePermissionOutputAllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -55,40 +55,40 @@ func (e *AllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
 	case "ALL_GROUPS":
 		fallthrough
 	case "SPECIFIED_GROUPS":
-		*e = AllowedGroupsConfigType(v)
+		*e = RequestablePermissionOutputAllowedGroupsConfigType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for AllowedGroupsConfigType: %v", v)
+		return fmt.Errorf("invalid value for RequestablePermissionOutputAllowedGroupsConfigType: %v", v)
 	}
 }
 
-// AllowedGroups - The allowed groups config associated with this config.
-type AllowedGroups struct {
+// RequestablePermissionOutputAllowedGroups - The allowed groups config associated with this config.
+type RequestablePermissionOutputAllowedGroups struct {
 	// The type of this allowed groups config, can be all groups or specific.
-	Type *AllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
+	Type *RequestablePermissionOutputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups associated with this config.
 	Groups []Group `json:"groups,omitempty"`
 }
 
-func (a AllowedGroups) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
+func (r RequestablePermissionOutputAllowedGroups) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
 }
 
-func (a *AllowedGroups) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+func (r *RequestablePermissionOutputAllowedGroups) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, false); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AllowedGroups) GetType() *AllowedGroupsConfigType {
+func (o *RequestablePermissionOutputAllowedGroups) GetType() *RequestablePermissionOutputAllowedGroupsConfigType {
 	if o == nil {
 		return nil
 	}
 	return o.Type
 }
 
-func (o *AllowedGroups) GetGroups() []Group {
+func (o *RequestablePermissionOutputAllowedGroups) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
@@ -122,6 +122,50 @@ func (e *ManagerApprovalOption) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// RequestablePermissionOutputApprovers - AppStore App approvers assigned.
+type RequestablePermissionOutputApprovers struct {
+	// Groups assigned as support request approvers.
+	Groups []Group `json:"groups,omitempty"`
+	// Users assigned as support request approvers.
+	Users []User `json:"users,omitempty"`
+}
+
+func (o *RequestablePermissionOutputApprovers) GetGroups() []Group {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *RequestablePermissionOutputApprovers) GetUsers() []User {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
+// RequestablePermissionOutputApproversStage2 - AppStore App stage 2 approvers assigned.
+type RequestablePermissionOutputApproversStage2 struct {
+	// Groups assigned as support request approvers.
+	Groups []Group `json:"groups,omitempty"`
+	// Users assigned as support request approvers.
+	Users []User `json:"users,omitempty"`
+}
+
+func (o *RequestablePermissionOutputApproversStage2) GetGroups() []Group {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *RequestablePermissionOutputApproversStage2) GetUsers() []User {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
 // RequestApprovalConfig - A request approval config can be optionally associated with this config
 type RequestApprovalConfig struct {
 	// Indicates if approval flow is overrided
@@ -134,6 +178,10 @@ type RequestApprovalConfig struct {
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
 	// Indicates if custom_approval_message is overrided
 	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
+	// AppStore App approvers assigned.
+	Approvers *RequestablePermissionOutputApprovers `json:"approvers,omitempty"`
+	// AppStore App stage 2 approvers assigned.
+	ApproversStage2 *RequestablePermissionOutputApproversStage2 `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages,omitempty"`
 }
@@ -182,6 +230,20 @@ func (o *RequestApprovalConfig) GetCustomApprovalMessageOverride() *bool {
 		return nil
 	}
 	return o.CustomApprovalMessageOverride
+}
+
+func (o *RequestApprovalConfig) GetApprovers() *RequestablePermissionOutputApprovers {
+	if o == nil {
+		return nil
+	}
+	return o.Approvers
+}
+
+func (o *RequestApprovalConfig) GetApproversStage2() *RequestablePermissionOutputApproversStage2 {
+	if o == nil {
+		return nil
+	}
+	return o.ApproversStage2
 }
 
 func (o *RequestApprovalConfig) GetRequestApprovalStages() []RequestApprovalStageOutput {
@@ -394,8 +456,8 @@ func (o *RequestFulfillmentConfig) GetProvisioningWebhook() *RequestablePermissi
 	return o.ProvisioningWebhook
 }
 
-// AccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
-type AccessRemovalInlineWebhook struct {
+// RequestablePermissionOutputAccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
+type RequestablePermissionOutputAccessRemovalInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
 	// The type of this inline webhook.
@@ -406,36 +468,36 @@ type AccessRemovalInlineWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *AccessRemovalInlineWebhook) GetID() string {
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-func (o *AccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
 	if o == nil {
 		return InlineWebhookType("")
 	}
 	return o.HookType
 }
 
-func (o *AccessRemovalInlineWebhook) GetName() string {
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *AccessRemovalInlineWebhook) GetDescription() *string {
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetDescription() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Description
 }
 
-// RequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
-type RequestValidationInlineWebhook struct {
+// RequestablePermissionOutputRequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
+type RequestablePermissionOutputRequestValidationInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
 	// The type of this inline webhook.
@@ -446,28 +508,28 @@ type RequestValidationInlineWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *RequestValidationInlineWebhook) GetID() string {
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-func (o *RequestValidationInlineWebhook) GetHookType() InlineWebhookType {
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetHookType() InlineWebhookType {
 	if o == nil {
 		return InlineWebhookType("")
 	}
 	return o.HookType
 }
 
-func (o *RequestValidationInlineWebhook) GetName() string {
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *RequestValidationInlineWebhook) GetDescription() *string {
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetDescription() *string {
 	if o == nil {
 		return nil
 	}
@@ -481,15 +543,15 @@ type RequestConfig struct {
 	// Indicates if allowed groups is overrided
 	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
 	// The allowed groups config associated with this config.
-	AllowedGroups *AllowedGroups `json:"allowed_groups,omitempty"`
+	AllowedGroups *RequestablePermissionOutputAllowedGroups `json:"allowed_groups,omitempty"`
 	// A request approval config can be optionally associated with this config
 	RequestApprovalConfig *RequestApprovalConfig `json:"request_approval_config,omitempty"`
 	// A request fulfillment config can be optionally associated with this config
 	RequestFulfillmentConfig *RequestFulfillmentConfig `json:"request_fulfillment_config,omitempty"`
 	// An inactivity workflow can be optionally associated with this config.
-	AccessRemovalInlineWebhook *AccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
+	AccessRemovalInlineWebhook *RequestablePermissionOutputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
-	RequestValidationInlineWebhook *RequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	RequestValidationInlineWebhook *RequestablePermissionOutputRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
 func (r RequestConfig) MarshalJSON() ([]byte, error) {
@@ -517,7 +579,7 @@ func (o *RequestConfig) GetAllowedGroupsOverride() *bool {
 	return o.AllowedGroupsOverride
 }
 
-func (o *RequestConfig) GetAllowedGroups() *AllowedGroups {
+func (o *RequestConfig) GetAllowedGroups() *RequestablePermissionOutputAllowedGroups {
 	if o == nil {
 		return nil
 	}
@@ -538,14 +600,14 @@ func (o *RequestConfig) GetRequestFulfillmentConfig() *RequestFulfillmentConfig 
 	return o.RequestFulfillmentConfig
 }
 
-func (o *RequestConfig) GetAccessRemovalInlineWebhook() *AccessRemovalInlineWebhook {
+func (o *RequestConfig) GetAccessRemovalInlineWebhook() *RequestablePermissionOutputAccessRemovalInlineWebhook {
 	if o == nil {
 		return nil
 	}
 	return o.AccessRemovalInlineWebhook
 }
 
-func (o *RequestConfig) GetRequestValidationInlineWebhook() *RequestValidationInlineWebhook {
+func (o *RequestConfig) GetRequestValidationInlineWebhook() *RequestablePermissionOutputRequestValidationInlineWebhook {
 	if o == nil {
 		return nil
 	}

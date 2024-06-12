@@ -8,18 +8,18 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// AppStoreAppSettingsOutputAllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
-type AppStoreAppSettingsOutputAllowedGroupsConfigType string
+// AllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
+type AllowedGroupsConfigType string
 
 const (
-	AppStoreAppSettingsOutputAllowedGroupsConfigTypeAllGroups       AppStoreAppSettingsOutputAllowedGroupsConfigType = "ALL_GROUPS"
-	AppStoreAppSettingsOutputAllowedGroupsConfigTypeSpecifiedGroups AppStoreAppSettingsOutputAllowedGroupsConfigType = "SPECIFIED_GROUPS"
+	AllowedGroupsConfigTypeAllGroups       AllowedGroupsConfigType = "ALL_GROUPS"
+	AllowedGroupsConfigTypeSpecifiedGroups AllowedGroupsConfigType = "SPECIFIED_GROUPS"
 )
 
-func (e AppStoreAppSettingsOutputAllowedGroupsConfigType) ToPointer() *AppStoreAppSettingsOutputAllowedGroupsConfigType {
+func (e AllowedGroupsConfigType) ToPointer() *AllowedGroupsConfigType {
 	return &e
 }
-func (e *AppStoreAppSettingsOutputAllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
+func (e *AllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -28,114 +28,114 @@ func (e *AppStoreAppSettingsOutputAllowedGroupsConfigType) UnmarshalJSON(data []
 	case "ALL_GROUPS":
 		fallthrough
 	case "SPECIFIED_GROUPS":
-		*e = AppStoreAppSettingsOutputAllowedGroupsConfigType(v)
+		*e = AllowedGroupsConfigType(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for AppStoreAppSettingsOutputAllowedGroupsConfigType: %v", v)
+		return fmt.Errorf("invalid value for AllowedGroupsConfigType: %v", v)
 	}
 }
 
-// AppStoreAppSettingsOutputAllowedGroups - The allowed groups config associated with this config.
-type AppStoreAppSettingsOutputAllowedGroups struct {
+// AllowedGroups - The allowed groups config associated with this config.
+type AllowedGroups struct {
 	// The type of this allowed groups config, can be all groups or specific.
-	Type *AppStoreAppSettingsOutputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
+	Type *AllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups associated with this config.
 	Groups []Group `json:"groups,omitempty"`
 }
 
-func (a AppStoreAppSettingsOutputAllowedGroups) MarshalJSON() ([]byte, error) {
+func (a AllowedGroups) MarshalJSON() ([]byte, error) {
 	return utils.MarshalJSON(a, "", false)
 }
 
-func (a *AppStoreAppSettingsOutputAllowedGroups) UnmarshalJSON(data []byte) error {
+func (a *AllowedGroups) UnmarshalJSON(data []byte) error {
 	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AppStoreAppSettingsOutputAllowedGroups) GetType() *AppStoreAppSettingsOutputAllowedGroupsConfigType {
+func (o *AllowedGroups) GetType() *AllowedGroupsConfigType {
 	if o == nil {
 		return nil
 	}
 	return o.Type
 }
 
-func (o *AppStoreAppSettingsOutputAllowedGroups) GetGroups() []Group {
+func (o *AllowedGroups) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
 }
 
-// AppStoreAppSettingsOutputApprovers - AppStore App approvers assigned.
-type AppStoreAppSettingsOutputApprovers struct {
+// Approvers - AppStore App approvers assigned.
+type Approvers struct {
 	// Groups assigned as support request approvers.
 	Groups []Group `json:"groups,omitempty"`
 	// Users assigned as support request approvers.
 	Users []User `json:"users,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputApprovers) GetGroups() []Group {
+func (o *Approvers) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
 }
 
-func (o *AppStoreAppSettingsOutputApprovers) GetUsers() []User {
+func (o *Approvers) GetUsers() []User {
 	if o == nil {
 		return nil
 	}
 	return o.Users
 }
 
-// AppStoreAppSettingsOutputApproversStage2 - AppStore App stage 2 approvers assigned.
-type AppStoreAppSettingsOutputApproversStage2 struct {
+// ApproversStage2 - AppStore App stage 2 approvers assigned.
+type ApproversStage2 struct {
 	// Groups assigned as support request approvers.
 	Groups []Group `json:"groups,omitempty"`
 	// Users assigned as support request approvers.
 	Users []User `json:"users,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputApproversStage2) GetGroups() []Group {
+func (o *ApproversStage2) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
 }
 
-func (o *AppStoreAppSettingsOutputApproversStage2) GetUsers() []User {
+func (o *ApproversStage2) GetUsers() []User {
 	if o == nil {
 		return nil
 	}
 	return o.Users
 }
 
-// AppStoreAppSettingsOutputAdmins - AppStore App admins assigned.
-type AppStoreAppSettingsOutputAdmins struct {
+// Admins - AppStore App admins assigned.
+type Admins struct {
 	// Groups assigned as app admins.
 	Groups []Group `json:"groups,omitempty"`
 	// Users assigned as app admins.
 	Users []User `json:"users,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputAdmins) GetGroups() []Group {
+func (o *Admins) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
 }
 
-func (o *AppStoreAppSettingsOutputAdmins) GetUsers() []User {
+func (o *Admins) GetUsers() []User {
 	if o == nil {
 		return nil
 	}
 	return o.Users
 }
 
-// AppStoreAppSettingsOutputRequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
-type AppStoreAppSettingsOutputRequestValidationInlineWebhook struct {
+// RequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
+type RequestValidationInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
 	// The type of this inline webhook.
@@ -146,36 +146,36 @@ type AppStoreAppSettingsOutputRequestValidationInlineWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputRequestValidationInlineWebhook) GetID() string {
+func (o *RequestValidationInlineWebhook) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-func (o *AppStoreAppSettingsOutputRequestValidationInlineWebhook) GetHookType() InlineWebhookType {
+func (o *RequestValidationInlineWebhook) GetHookType() InlineWebhookType {
 	if o == nil {
 		return InlineWebhookType("")
 	}
 	return o.HookType
 }
 
-func (o *AppStoreAppSettingsOutputRequestValidationInlineWebhook) GetName() string {
+func (o *RequestValidationInlineWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *AppStoreAppSettingsOutputRequestValidationInlineWebhook) GetDescription() *string {
+func (o *RequestValidationInlineWebhook) GetDescription() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Description
 }
 
-// AppStoreAppSettingsOutputRequestFlow - Request flow configuration to request access to app.
-type AppStoreAppSettingsOutputRequestFlow struct {
+// RequestFlow - Request flow configuration to request access to app.
+type RequestFlow struct {
 	// AppStore App visibility.
 	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
 	// During the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
@@ -185,82 +185,82 @@ type AppStoreAppSettingsOutputRequestFlow struct {
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// The allowed groups config associated with this config.
-	AllowedGroups *AppStoreAppSettingsOutputAllowedGroups `json:"allowed_groups,omitempty"`
+	AllowedGroups *AllowedGroups `json:"allowed_groups,omitempty"`
 	// AppStore App approvers assigned.
-	Approvers *AppStoreAppSettingsOutputApprovers `json:"approvers,omitempty"`
+	Approvers *Approvers `json:"approvers,omitempty"`
 	// AppStore App stage 2 approvers assigned.
-	ApproversStage2 *AppStoreAppSettingsOutputApproversStage2 `json:"approvers_stage_2,omitempty"`
+	ApproversStage2 *ApproversStage2 `json:"approvers_stage_2,omitempty"`
 	// AppStore App admins assigned.
-	Admins *AppStoreAppSettingsOutputAdmins `json:"admins,omitempty"`
+	Admins *Admins `json:"admins,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
-	RequestValidationInlineWebhook *AppStoreAppSettingsOutputRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	RequestValidationInlineWebhook *RequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetDiscoverability() *AppStoreVisibility {
+func (o *RequestFlow) GetDiscoverability() *AppStoreVisibility {
 	if o == nil {
 		return nil
 	}
 	return o.Discoverability
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetCustomApprovalMessage() *string {
+func (o *RequestFlow) GetCustomApprovalMessage() *string {
 	if o == nil {
 		return nil
 	}
 	return o.CustomApprovalMessage
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetRequireManagerApproval() *bool {
+func (o *RequestFlow) GetRequireManagerApproval() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.RequireManagerApproval
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetRequireAdditionalApproval() *bool {
+func (o *RequestFlow) GetRequireAdditionalApproval() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.RequireAdditionalApproval
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetAllowedGroups() *AppStoreAppSettingsOutputAllowedGroups {
+func (o *RequestFlow) GetAllowedGroups() *AllowedGroups {
 	if o == nil {
 		return nil
 	}
 	return o.AllowedGroups
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetApprovers() *AppStoreAppSettingsOutputApprovers {
+func (o *RequestFlow) GetApprovers() *Approvers {
 	if o == nil {
 		return nil
 	}
 	return o.Approvers
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetApproversStage2() *AppStoreAppSettingsOutputApproversStage2 {
+func (o *RequestFlow) GetApproversStage2() *ApproversStage2 {
 	if o == nil {
 		return nil
 	}
 	return o.ApproversStage2
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetAdmins() *AppStoreAppSettingsOutputAdmins {
+func (o *RequestFlow) GetAdmins() *Admins {
 	if o == nil {
 		return nil
 	}
 	return o.Admins
 }
 
-func (o *AppStoreAppSettingsOutputRequestFlow) GetRequestValidationInlineWebhook() *AppStoreAppSettingsOutputRequestValidationInlineWebhook {
+func (o *RequestFlow) GetRequestValidationInlineWebhook() *RequestValidationInlineWebhook {
 	if o == nil {
 		return nil
 	}
 	return o.RequestValidationInlineWebhook
 }
 
-// AppStoreAppSettingsOutputProvisioningWebhook - The provisioning webhook optionally associated with this config.
-type AppStoreAppSettingsOutputProvisioningWebhook struct {
+// ProvisioningWebhook - The provisioning webhook optionally associated with this config.
+type ProvisioningWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
 	// The type of this inline webhook.
@@ -271,36 +271,36 @@ type AppStoreAppSettingsOutputProvisioningWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputProvisioningWebhook) GetID() string {
+func (o *ProvisioningWebhook) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-func (o *AppStoreAppSettingsOutputProvisioningWebhook) GetHookType() InlineWebhookType {
+func (o *ProvisioningWebhook) GetHookType() InlineWebhookType {
 	if o == nil {
 		return InlineWebhookType("")
 	}
 	return o.HookType
 }
 
-func (o *AppStoreAppSettingsOutputProvisioningWebhook) GetName() string {
+func (o *ProvisioningWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *AppStoreAppSettingsOutputProvisioningWebhook) GetDescription() *string {
+func (o *ProvisioningWebhook) GetDescription() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Description
 }
 
-// AppStoreAppSettingsOutputAccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
-type AppStoreAppSettingsOutputAccessRemovalInlineWebhook struct {
+// AccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
+type AccessRemovalInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
 	// The type of this inline webhook.
@@ -311,36 +311,36 @@ type AppStoreAppSettingsOutputAccessRemovalInlineWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputAccessRemovalInlineWebhook) GetID() string {
+func (o *AccessRemovalInlineWebhook) GetID() string {
 	if o == nil {
 		return ""
 	}
 	return o.ID
 }
 
-func (o *AppStoreAppSettingsOutputAccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
+func (o *AccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
 	if o == nil {
 		return InlineWebhookType("")
 	}
 	return o.HookType
 }
 
-func (o *AppStoreAppSettingsOutputAccessRemovalInlineWebhook) GetName() string {
+func (o *AccessRemovalInlineWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
 }
 
-func (o *AppStoreAppSettingsOutputAccessRemovalInlineWebhook) GetDescription() *string {
+func (o *AccessRemovalInlineWebhook) GetDescription() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Description
 }
 
-// AppStoreAppSettingsOutputProvisioning - Provisioning flow configuration to request access to app.
-type AppStoreAppSettingsOutputProvisioning struct {
+// Provisioning flow configuration to request access to app.
+type Provisioning struct {
 	// If enabled, Approvers must choose a group to provision the user to for access requests.
 	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
@@ -352,86 +352,106 @@ type AppStoreAppSettingsOutputProvisioning struct {
 	// Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
 	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
 	// The provisioning webhook optionally associated with this config.
-	ProvisioningWebhook *AppStoreAppSettingsOutputProvisioningWebhook `json:"provisioning_webhook,omitempty"`
+	ProvisioningWebhook *ProvisioningWebhook `json:"provisioning_webhook,omitempty"`
 	// An inactivity workflow can be optionally associated with this config.
-	AccessRemovalInlineWebhook *AppStoreAppSettingsOutputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
+	AccessRemovalInlineWebhook *AccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetGroupsProvisioning() *GroupProvisioningOption {
+func (o *Provisioning) GetGroupsProvisioning() *GroupProvisioningOption {
 	if o == nil {
 		return nil
 	}
 	return o.GroupsProvisioning
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (o *Provisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
 	if o == nil {
 		return nil
 	}
 	return o.TimeBasedAccess
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetAllowMultiplePermissionSelection() *bool {
+func (o *Provisioning) GetAllowMultiplePermissionSelection() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.AllowMultiplePermissionSelection
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetManualStepsNeeded() *bool {
+func (o *Provisioning) GetManualStepsNeeded() *bool {
 	if o == nil {
 		return nil
 	}
 	return o.ManualStepsNeeded
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetCustomProvisioningInstructions() *string {
+func (o *Provisioning) GetCustomProvisioningInstructions() *string {
 	if o == nil {
 		return nil
 	}
 	return o.CustomProvisioningInstructions
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetProvisioningWebhook() *AppStoreAppSettingsOutputProvisioningWebhook {
+func (o *Provisioning) GetProvisioningWebhook() *ProvisioningWebhook {
 	if o == nil {
 		return nil
 	}
 	return o.ProvisioningWebhook
 }
 
-func (o *AppStoreAppSettingsOutputProvisioning) GetAccessRemovalInlineWebhook() *AppStoreAppSettingsOutputAccessRemovalInlineWebhook {
+func (o *Provisioning) GetAccessRemovalInlineWebhook() *AccessRemovalInlineWebhook {
 	if o == nil {
 		return nil
 	}
 	return o.AccessRemovalInlineWebhook
 }
 
-type AppStoreAppSettingsOutput struct {
+type AppSettingOutput struct {
 	// AppStore App instructions.
 	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
 	// Request flow configuration to request access to app.
-	RequestFlow *AppStoreAppSettingsOutputRequestFlow `json:"request_flow,omitempty"`
+	RequestFlow *RequestFlow `json:"request_flow,omitempty"`
 	// Provisioning flow configuration to request access to app.
-	Provisioning *AppStoreAppSettingsOutputProvisioning `json:"provisioning,omitempty"`
+	Provisioning *Provisioning `json:"provisioning,omitempty"`
+	// Whether the app is in the app store.
+	InAppStore *bool `default:"false" json:"in_app_store"`
 }
 
-func (o *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
+func (a AppSettingOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppSettingOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *AppSettingOutput) GetCustomRequestInstructions() *string {
 	if o == nil {
 		return nil
 	}
 	return o.CustomRequestInstructions
 }
 
-func (o *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsOutputRequestFlow {
+func (o *AppSettingOutput) GetRequestFlow() *RequestFlow {
 	if o == nil {
 		return nil
 	}
 	return o.RequestFlow
 }
 
-func (o *AppStoreAppSettingsOutput) GetProvisioning() *AppStoreAppSettingsOutputProvisioning {
+func (o *AppSettingOutput) GetProvisioning() *Provisioning {
 	if o == nil {
 		return nil
 	}
 	return o.Provisioning
+}
+
+func (o *AppSettingOutput) GetInAppStore() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.InAppStore
 }

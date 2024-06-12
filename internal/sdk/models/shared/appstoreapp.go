@@ -17,6 +17,12 @@ type AppStoreApp struct {
 	Sources []DiscoverySource `json:"sources"`
 	// Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
+	// The URL of the logo of this app.
+	LogoURL *string `json:"logo_url,omitempty"`
+	// The URL of the website of this app.
+	WebsiteURL *string `json:"website_url,omitempty"`
+	// The request instructions.
+	RequestInstructions *string `json:"request_instructions,omitempty"`
 }
 
 func (o *AppStoreApp) GetID() string {
@@ -66,4 +72,25 @@ func (o *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
 		return false
 	}
 	return o.AllowMultiplePermissionSelection
+}
+
+func (o *AppStoreApp) GetLogoURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.LogoURL
+}
+
+func (o *AppStoreApp) GetWebsiteURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.WebsiteURL
+}
+
+func (o *AppStoreApp) GetRequestInstructions() *string {
+	if o == nil {
+		return nil
+	}
+	return o.RequestInstructions
 }

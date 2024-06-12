@@ -1296,7 +1296,7 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 }
 
 // GetAppStoreApps - Get Appstore Apps
-// List all AppStore apps. If supported app identifier filters are provided, will return only one app that matches provided filters.
+// List all AppStore apps.
 func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAppStoreAppsRequest) (*operations.GetAppStoreAppsResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,

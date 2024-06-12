@@ -1,20 +1,20 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: c28c515e3f308ec4ceeeaa15176302e9
+  docChecksum: 0e1cb09631e3fecc99d4d7fa0b59c4df
   docVersion: 0.1.0
-  speakeasyVersion: 1.300.1
-  generationVersion: 2.339.1
-  releaseVersion: 0.1.32
-  configChecksum: 4f93863dec1b8359d7ad3714ba1f0f1b
+  speakeasyVersion: 1.307.2
+  generationVersion: 2.342.2
+  releaseVersion: 0.1.48
+  configChecksum: c77a60f3f77887d6111bfebc92f999e6
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.21.2
+    core: 3.21.3
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
-    unions: 2.81.14
+    unions: 2.81.15
 generatedFiles:
   - internal/sdk/core.go
   - internal/sdk/appstore.go
@@ -43,6 +43,8 @@ generatedFiles:
   - internal/sdk/models/operations/getappcategories.go
   - internal/sdk/models/operations/getapp.go
   - internal/sdk/models/operations/updateapp.go
+  - internal/sdk/models/operations/getappsettings.go
+  - internal/sdk/models/operations/updateappsettings.go
   - internal/sdk/models/operations/currentuser.go
   - internal/sdk/models/operations/listusers.go
   - internal/sdk/models/operations/getuser.go
@@ -89,15 +91,22 @@ generatedFiles:
   - internal/sdk/models/shared/discoverysource.go
   - internal/sdk/models/shared/domainappstatus.go
   - internal/sdk/models/shared/appinputcreate.go
+  - internal/sdk/models/shared/appsettingoutput.go
+  - internal/sdk/models/shared/inlinewebhooktype.go
+  - internal/sdk/models/shared/timebasedaccessoptions.go
+  - internal/sdk/models/shared/groupprovisioningoption.go
   - internal/sdk/models/shared/user.go
   - internal/sdk/models/shared/userlifecyclestatus.go
+  - internal/sdk/models/shared/group.go
+  - internal/sdk/models/shared/appstorevisibility.go
+  - internal/sdk/models/shared/appsettinginput.go
+  - internal/sdk/models/shared/baseuser.go
+  - internal/sdk/models/shared/basegroup.go
   - internal/sdk/models/shared/pageuser.go
   - internal/sdk/models/shared/inlinewebhook.go
-  - internal/sdk/models/shared/inlinewebhooktype.go
   - internal/sdk/models/shared/pageaccount.go
   - internal/sdk/models/shared/account.go
   - internal/sdk/models/shared/accounttype.go
-  - internal/sdk/models/shared/group.go
   - internal/sdk/models/shared/pagegroup.go
   - internal/sdk/models/shared/jobstateoutput.go
   - internal/sdk/models/shared/flowstate.go
@@ -117,7 +126,6 @@ generatedFiles:
   - internal/sdk/models/shared/synctaskoutput.go
   - internal/sdk/models/shared/pagerequestablepermissionoutput.go
   - internal/sdk/models/shared/requestablepermissionoutput.go
-  - internal/sdk/models/shared/timebasedaccessoptions.go
   - internal/sdk/models/shared/requestapprovalstageoutput.go
   - internal/sdk/models/shared/approveroutput.go
   - internal/sdk/models/shared/approvertype.go
@@ -125,7 +133,6 @@ generatedFiles:
   - internal/sdk/models/shared/requestablepermissioninput.go
   - internal/sdk/models/shared/requestapprovalstageinput.go
   - internal/sdk/models/shared/approverinput.go
-  - internal/sdk/models/shared/basegroup.go
   - internal/sdk/models/shared/requestablepermissioninputupdate.go
   - internal/sdk/models/shared/pagepreapprovalruleoutput.go
   - internal/sdk/models/shared/preapprovalruleoutput.go
@@ -135,10 +142,7 @@ generatedFiles:
   - internal/sdk/models/shared/requestablepermissionbase.go
   - internal/sdk/models/shared/preapprovalruleupdateinput.go
   - internal/sdk/models/shared/appstoreappsettingsoutput.go
-  - internal/sdk/models/shared/groupprovisioningoption.go
-  - internal/sdk/models/shared/appstorevisibility.go
   - internal/sdk/models/shared/appstoreappsettingsinput.go
-  - internal/sdk/models/shared/baseuser.go
   - internal/sdk/models/shared/pageappstoreapp.go
   - internal/sdk/models/shared/appstoreapp.go
   - internal/sdk/models/shared/addapptoappstoreinput.go
@@ -215,15 +219,10 @@ generatedFiles:
   - internal/provider/types/add_app_to_app_store_input_allowed_groups.go
   - internal/provider/types/add_app_to_app_store_input_request_flow.go
   - internal/provider/types/requestable_permission_base.go
-  - internal/provider/types/approver_input.go
-  - internal/provider/types/request_approval_stage_input.go
   - internal/provider/types/requestable_permission_input_request_approval_config.go
   - internal/provider/types/requestable_permission_input_request_fulfillment_config.go
   - internal/provider/types/requestable_permission_input_request_config.go
-  - internal/provider/types/approver_output.go
-  - internal/provider/types/request_approval_stage_output.go
-  - internal/provider/types/request_approval_config.go
-  - internal/provider/types/request_config.go
+  - internal/provider/types/app.go
   - USAGE.md
   - internal/provider/provider.go
   - examples/provider/provider.tf
@@ -245,6 +244,9 @@ generatedFiles:
   - internal/provider/app_data_source.go
   - internal/provider/app_data_source_sdk.go
   - examples/data-sources/lumos_app/data-source.tf
+  - internal/provider/apps_data_source.go
+  - internal/provider/apps_data_source_sdk.go
+  - examples/data-sources/lumos_apps/data-source.tf
   - internal/provider/appstoreapp_data_source.go
   - internal/provider/appstoreapp_data_source_sdk.go
   - examples/data-sources/lumos_app_store_app/data-source.tf

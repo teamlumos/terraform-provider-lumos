@@ -26,12 +26,12 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
 
 ### Required
 
+- `app_id` (String) The ID of the app associated with this requestable permission.
 - `label` (String) The label of this requestable permission.
 
 ### Optional
 
 - `app_class_id` (String) The ID of the service associated with this requestable permission.
-- `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) Optionally, an app has an identifer associated with it's particular instance.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--request_config))
 
@@ -98,31 +98,24 @@ Read-Only:
 
 Optional:
 
+- `approvers` (Attributes) AppStore App approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
+- `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
 - `custom_approval_message` (String) During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overrided
 - `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]; Default: "NONE"
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overrided
-- `request_approval_stages` (Attributes List) The stages of this request approval. (see [below for nested schema](#nestedatt--request_config--request_approval_config--request_approval_stages))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
-<a id="nestedatt--request_config--request_approval_config--request_approval_stages"></a>
-### Nested Schema for `request_config.request_approval_config.request_approval_stages`
+<a id="nestedatt--request_config--request_approval_config--approvers"></a>
+### Nested Schema for `request_config.request_approval_config.approvers`
 
 Optional:
 
-- `approvers` (Attributes List) The approvers of this stage. (see [below for nested schema](#nestedatt--request_config--request_approval_config--request_approval_stages--approvers))
+- `groups` (Attributes List) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--groups))
+- `users` (Attributes List) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--users))
 
-<a id="nestedatt--request_config--request_approval_config--request_approval_stages--approvers"></a>
-### Nested Schema for `request_config.request_approval_config.request_approval_stages.approvers`
-
-Optional:
-
-- `group` (Attributes) Optionally, the approver can be a group. (see [below for nested schema](#nestedatt--request_config--request_approval_config--request_approval_stages--approvers--group))
-- `type` (String) An enumeration. must be one of ["USER", "GROUP"]
-- `user` (Attributes) Optionally, the approver can be a user. (see [below for nested schema](#nestedatt--request_config--request_approval_config--request_approval_stages--approvers--user))
-
-<a id="nestedatt--request_config--request_approval_config--request_approval_stages--approvers--group"></a>
-### Nested Schema for `request_config.request_approval_config.request_approval_stages.approvers.group`
+<a id="nestedatt--request_config--request_approval_config--approvers--groups"></a>
+### Nested Schema for `request_config.request_approval_config.approvers.users`
 
 Optional:
 
@@ -138,8 +131,8 @@ Read-Only:
 - `source_app_id` (String) The ID of the app that owns this group.
 
 
-<a id="nestedatt--request_config--request_approval_config--request_approval_stages--approvers--user"></a>
-### Nested Schema for `request_config.request_approval_config.request_approval_stages.approvers.user`
+<a id="nestedatt--request_config--request_approval_config--approvers--users"></a>
+### Nested Schema for `request_config.request_approval_config.approvers.users`
 
 Optional:
 
@@ -152,6 +145,46 @@ Read-Only:
 - `given_name` (String) The given name of this user.
 - `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
 
+
+
+<a id="nestedatt--request_config--request_approval_config--approvers_stage_2"></a>
+### Nested Schema for `request_config.request_approval_config.approvers_stage_2`
+
+Optional:
+
+- `groups` (Attributes List) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--groups))
+- `users` (Attributes List) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--users))
+
+<a id="nestedatt--request_config--request_approval_config--approvers_stage_2--groups"></a>
+### Nested Schema for `request_config.request_approval_config.approvers_stage_2.users`
+
+Optional:
+
+- `app_id` (String) The ID of the app that owns this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
+
+Read-Only:
+
+- `description` (String) The description of this group.
+- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `name` (String) The name of this group.
+- `source_app_id` (String) The ID of the app that owns this group.
+
+
+<a id="nestedatt--request_config--request_approval_config--approvers_stage_2--users"></a>
+### Nested Schema for `request_config.request_approval_config.approvers_stage_2.users`
+
+Optional:
+
+- `id` (String) The ID of this user. Not Null
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
 
 
 

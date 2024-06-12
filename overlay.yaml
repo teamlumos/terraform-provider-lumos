@@ -6,6 +6,9 @@ actions:
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
+  - target: $["paths"]["/apps"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Apps#read"
   - target: $["paths"]["/apps/{app_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "App#update"
@@ -119,24 +122,29 @@ actions:
   - target: $["components"]["schemas"]["Page_Group_"]
     update:
       "x-speakeasy-entity": "Groups"
+  - target: $["components"]["schemas"]["Page_App_"]
+    update:
+      "x-speakeasy-entity": "Apps"
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
   - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  # Suppress computed diff for all RequestablePermission schemas
   - target: $["components"]["schemas"]["RequestablePermissionBase"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+      "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+      "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionInput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionOutput"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["id"]
-    update:
       "x-speakeasy-param-suppress-computed-diff": true
+  # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
+  - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
+    update:
+      "x-speakeasy-terraform-ignore": true
