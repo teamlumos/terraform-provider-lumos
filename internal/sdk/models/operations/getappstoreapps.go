@@ -9,13 +9,9 @@ import (
 )
 
 type GetAppStoreAppsRequest struct {
-	// Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included.
-	AppClassID *string `queryParam:"style=form,explode=true,name=app_class_id"`
-	// Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included.
-	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
 	// Filters apps by the ID of the app.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
-	// Filters apps by name.
+	// Search against name, app instance identifier, and app class ID.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
 	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
@@ -32,20 +28,6 @@ func (g *GetAppStoreAppsRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (o *GetAppStoreAppsRequest) GetAppClassID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppClassID
-}
-
-func (o *GetAppStoreAppsRequest) GetAppInstanceID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppInstanceID
 }
 
 func (o *GetAppStoreAppsRequest) GetAppID() *string {

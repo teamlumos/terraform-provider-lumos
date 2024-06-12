@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: c28c515e3f308ec4ceeeaa15176302e9
+  docChecksum: aab3f27f23227f29c7d725dba8765c9f
   docVersion: 0.1.0
-  speakeasyVersion: 1.300.1
-  generationVersion: 2.339.1
-  releaseVersion: 0.1.32
-  configChecksum: 4f93863dec1b8359d7ad3714ba1f0f1b
+  speakeasyVersion: 1.306.0
+  generationVersion: 2.340.3
+  releaseVersion: 0.1.39
+  configChecksum: 9084148fb1dc9e38586a2e82640b8f17
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.21.2
+    core: 3.21.3
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     unions: 2.81.14
@@ -220,6 +220,7 @@ generatedFiles:
   - internal/provider/types/requestable_permission_input_request_approval_config.go
   - internal/provider/types/requestable_permission_input_request_fulfillment_config.go
   - internal/provider/types/requestable_permission_input_request_config.go
+  - internal/provider/types/app.go
   - internal/provider/types/approver_output.go
   - internal/provider/types/request_approval_stage_output.go
   - internal/provider/types/request_approval_config.go
@@ -245,6 +246,9 @@ generatedFiles:
   - internal/provider/app_data_source.go
   - internal/provider/app_data_source_sdk.go
   - examples/data-sources/lumos_app/data-source.tf
+  - internal/provider/apps_data_source.go
+  - internal/provider/apps_data_source_sdk.go
+  - examples/data-sources/lumos_apps/data-source.tf
   - internal/provider/appstoreapp_data_source.go
   - internal/provider/appstoreapp_data_source_sdk.go
   - examples/data-sources/lumos_app_store_app/data-source.tf

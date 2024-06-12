@@ -49,11 +49,14 @@ type AppStoreAppResourceModel struct {
 	CustomRequestInstructions        types.String                               `tfsdk:"custom_request_instructions"`
 	ID                               types.String                               `tfsdk:"id"`
 	InstanceID                       types.String                               `tfsdk:"instance_id"`
+	LogoURL                          types.String                               `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AddAppToAppStoreInputProvisioning `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AddAppToAppStoreInputRequestFlow  `tfsdk:"request_flow"`
+	RequestInstructions              types.String                               `tfsdk:"request_instructions"`
 	Sources                          []types.String                             `tfsdk:"sources"`
 	Status                           types.String                               `tfsdk:"status"`
 	UserFriendlyLabel                types.String                               `tfsdk:"user_friendly_label"`
+	WebsiteURL                       types.String                               `tfsdk:"website_url"`
 }
 
 func (r *AppStoreAppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -95,6 +98,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The ID of the instance associated with this app.`,
+			},
+			"logo_url": schema.StringAttribute{
+				Computed:    true,
+				Description: `The URL of the logo of this app.`,
 			},
 			"provisioning": schema.SingleNestedAttribute{
 				Computed: true,
@@ -801,6 +808,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				},
 				Description: `Request flow configuration to request access to app. Requires replacement if changed. `,
 			},
+			"request_instructions": schema.StringAttribute{
+				Computed:    true,
+				Description: `The request instructions.`,
+			},
 			"sources": schema.ListAttribute{
 				Computed:    true,
 				ElementType: types.StringType,
@@ -822,6 +833,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-friendly label of this app.`,
+			},
+			"website_url": schema.StringAttribute{
+				Computed:    true,
+				Description: `The URL of the website of this app.`,
 			},
 		},
 	}
@@ -882,8 +897,8 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.AppStoreAppSettingsOutput == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.AppStoreAppSettingsOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedAppStoreAppSettingsOutput(res.AppStoreAppSettingsOutput)
@@ -908,8 +923,8 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if res1.AppStoreApp == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res1.RawResponse))
+	if !(res1.AppStoreApp != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
 	data.RefreshFromSharedAppStoreApp(res1.AppStoreApp)
@@ -961,8 +976,8 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.AppStoreApp == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
+	if !(res.AppStoreApp != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
 	data.RefreshFromSharedAppStoreApp(res.AppStoreApp)

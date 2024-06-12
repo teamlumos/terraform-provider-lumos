@@ -399,7 +399,7 @@ func (o *RequestablePermissionInputRequestConfig) GetRequestFulfillmentConfig() 
 
 type RequestablePermissionInput struct {
 	// The ID of the app associated with this requestable permission.
-	AppID *string `json:"app_id,omitempty"`
+	AppID string `json:"app_id"`
 	// The ID of the service associated with this requestable permission.
 	AppClassID *string `json:"app_class_id,omitempty"`
 	// Optionally, an app has an identifer associated with it's particular instance.
@@ -410,9 +410,9 @@ type RequestablePermissionInput struct {
 	RequestConfig *RequestablePermissionInputRequestConfig `json:"request_config,omitempty"`
 }
 
-func (o *RequestablePermissionInput) GetAppID() *string {
+func (o *RequestablePermissionInput) GetAppID() string {
 	if o == nil {
-		return nil
+		return ""
 	}
 	return o.AppID
 }

@@ -9,10 +9,6 @@ import (
 )
 
 type GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest struct {
-	// Filters requestable permissions by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.
-	AppClassID *string `queryParam:"style=form,explode=true,name=app_class_id"`
-	// Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.
-	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
 	// Filters requestable permissions by the ID of the app to which they belong.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
 	//     Searches permissions by any of the permission's group name,
@@ -37,20 +33,6 @@ func (g *GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest) U
 		return err
 	}
 	return nil
-}
-
-func (o *GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest) GetAppClassID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppClassID
-}
-
-func (o *GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest) GetAppInstanceID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppInstanceID
 }
 
 func (o *GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest) GetAppID() *string {

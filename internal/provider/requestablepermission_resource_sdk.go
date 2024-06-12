@@ -9,12 +9,7 @@ import (
 )
 
 func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput() *shared.RequestablePermissionInput {
-	appID := new(string)
-	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
-		*appID = r.AppID.ValueString()
-	} else {
-		appID = nil
-	}
+	appID := r.AppID.ValueString()
 	appClassID := new(string)
 	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
 		*appClassID = r.AppClassID.ValueString()

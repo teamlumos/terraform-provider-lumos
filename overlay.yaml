@@ -6,6 +6,9 @@ actions:
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
+  - target: $["paths"]["/apps"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Apps#read"
   - target: $["paths"]["/apps/{app_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "App#update"
@@ -119,6 +122,9 @@ actions:
   - target: $["components"]["schemas"]["Page_Group_"]
     update:
       "x-speakeasy-entity": "Groups"
+  - target: $["components"]["schemas"]["Page_App_"]
+    update:
+      "x-speakeasy-entity": "Apps"
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
