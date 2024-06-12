@@ -15,9 +15,9 @@ Users DataSource
 ```terraform
 data "lumos_users" "my_users" {
   exact_match = true
-  page        = 9
+  page        = 1
   search_term = "...my_search_term..."
-  size        = 1
+  size        = 7
 }
 ```
 

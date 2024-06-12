@@ -21,12 +21,12 @@
                 "operationId": "listApps",
                 "parameters": [
                     {
-                        "description": "Filters apps by name.",
+                        "description": "Search against name, app instance identifier, and app class ID.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name."
+                            "description": "Search against name, app instance identifier, and app class ID."
                         },
                         "name": "name_search",
                         "in": "query"
@@ -254,6 +254,120 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/App"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/apps/{app_id}/settings": {
+            "get": {
+                "tags": [
+                    "Core"
+                ],
+                "summary": "Get Appstore App Settings",
+                "description": "Get AppStore app settings.",
+                "operationId": "getAppSettings",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        },
+                        "name": "app_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingOutput"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Core"
+                ],
+                "summary": "Update Domain App Appstore Settings",
+                "description": "Update app settings.",
+                "operationId": "updateAppSettings",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        },
+                        "name": "app_id",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppSettingInput"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingOutput"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
                                 }
                             }
                         }
@@ -1034,28 +1148,6 @@
                 "operationId": "get_appstore_permissions_for_app_appstore_requestable_permissions_get",
                 "parameters": [
                     {
-                        "description": "Filters requestable permissions by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Class Id",
-                            "description": "Filters requestable permissions by the ID of the service they belong to (i.e. okta.com). This parameter also requires app_instance_id to be included."
-                        },
-                        "name": "app_class_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Instance Id",
-                            "description": "Filters requestable permissions by the ID of the instance (app_class_id) to which they belong. This parameter also requires app_class_id to be included."
-                        },
-                        "name": "app_instance_id",
-                        "in": "query"
-                    },
-                    {
                         "description": "Filters requestable permissions by the ID of the app to which they belong.",
                         "required": false,
                         "schema": {
@@ -1712,31 +1804,9 @@
                     "AppStore"
                 ],
                 "summary": "Get Appstore Apps",
-                "description": "List all AppStore apps. If supported app identifier filters are provided, will return only one app that matches provided filters.",
+                "description": "List all AppStore apps.",
                 "operationId": "getAppStoreApps",
                 "parameters": [
-                    {
-                        "description": "Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Class Id",
-                            "description": "Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included."
-                        },
-                        "name": "app_class_id",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included.",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "title": "App Instance Id",
-                            "description": "Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included."
-                        },
-                        "name": "app_instance_id",
-                        "in": "query"
-                    },
                     {
                         "description": "Filters apps by the ID of the app.",
                         "required": false,
@@ -1749,12 +1819,12 @@
                         "in": "query"
                     },
                     {
-                        "description": "Filters apps by name.",
+                        "description": "Search against name, app instance identifier, and app class ID.",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "title": "Name Search",
-                            "description": "Filters apps by name."
+                            "description": "Search against name, app instance identifier, and app class ID."
                         },
                         "name": "name_search",
                         "in": "query"
@@ -1769,6 +1839,18 @@
                             "default": false
                         },
                         "name": "exact_match",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Get all apps in the AppStore regardless of visibility. Only available to admins.",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "title": "All Visibilities",
+                            "description": "Get all apps in the AppStore regardless of visibility. Only available to admins.",
+                            "default": false
+                        },
+                        "name": "all_visibilities",
                         "in": "query"
                     },
                     {
@@ -3149,6 +3231,21 @@
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
                         "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of this app."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of this app."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -3217,7 +3314,8 @@
                         },
                         "type": "array",
                         "title": "Groups",
-                        "description": "Groups assigned as support request approvers."
+                        "description": "Groups assigned as support request approvers.",
+                        "default": []
                     },
                     "users": {
                         "items": {
@@ -3225,7 +3323,8 @@
                         },
                         "type": "array",
                         "title": "Users",
-                        "description": "Users assigned as support request approvers."
+                        "description": "Users assigned as support request approvers.",
+                        "default": []
                     }
                 },
                 "type": "object",
@@ -3272,6 +3371,21 @@
                         "maxLength": 8192,
                         "title": "Description",
                         "description": "The description of the app you're creating."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of the app you're creating."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of the app you're creating."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -3281,6 +3395,76 @@
                     "description"
                 ],
                 "title": "AppInputCreate"
+            },
+            "AppSettingInput": {
+                "properties": {
+                    "custom_request_instructions": {
+                        "type": "string",
+                        "title": "Custom Request Instructions",
+                        "description": "AppStore App instructions."
+                    },
+                    "request_flow": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput"
+                            }
+                        ],
+                        "title": "Request Flow",
+                        "description": "Request flow configuration to request access to app."
+                    },
+                    "provisioning": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput"
+                            }
+                        ],
+                        "title": "Provisioning",
+                        "description": "Provisioning flow configuration to request access to app."
+                    },
+                    "in_app_store": {
+                        "type": "boolean",
+                        "title": "In App Store",
+                        "description": "Whether the app is in the app store.",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "title": "AppSettingInput"
+            },
+            "AppSettingOutput": {
+                "properties": {
+                    "custom_request_instructions": {
+                        "type": "string",
+                        "title": "Custom Request Instructions",
+                        "description": "AppStore App instructions."
+                    },
+                    "request_flow": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput"
+                            }
+                        ],
+                        "title": "Request Flow",
+                        "description": "Request flow configuration to request access to app."
+                    },
+                    "provisioning": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningOutput"
+                            }
+                        ],
+                        "title": "Provisioning",
+                        "description": "Provisioning flow configuration to request access to app."
+                    },
+                    "in_app_store": {
+                        "type": "boolean",
+                        "title": "In App Store",
+                        "description": "Whether the app is in the app store.",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "title": "AppSettingOutput"
             },
             "AppStoreApp": {
                 "properties": {
@@ -3323,6 +3507,21 @@
                         "type": "boolean",
                         "title": "Allow Multiple Permission Selection",
                         "description": "Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions."
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "title": "Logo Url",
+                        "description": "The URL of the logo of this app."
+                    },
+                    "website_url": {
+                        "type": "string",
+                        "title": "Website Url",
+                        "description": "The URL of the website of this app."
+                    },
+                    "request_instructions": {
+                        "type": "string",
+                        "title": "Request Instructions",
+                        "description": "The request instructions."
                     }
                 },
                 "type": "object",
@@ -5050,6 +5249,24 @@
                         "title": "Custom Approval Message Override",
                         "description": "Indicates if custom_approval_message is overrided"
                     },
+                    "approvers": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppApproversInput"
+                            }
+                        ],
+                        "title": "Approvers",
+                        "description": "AppStore App approvers assigned."
+                    },
+                    "approvers_stage_2": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppApproversInput"
+                            }
+                        ],
+                        "title": "Approvers Stage 2",
+                        "description": "AppStore App stage 2 approvers assigned."
+                    },
                     "request_approval_stages": {
                         "items": {
                             "$ref": "#/components/schemas/RequestApprovalStageInput"
@@ -5092,6 +5309,24 @@
                         "type": "boolean",
                         "title": "Custom Approval Message Override",
                         "description": "Indicates if custom_approval_message is overrided"
+                    },
+                    "approvers": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppApproversOutput"
+                            }
+                        ],
+                        "title": "Approvers",
+                        "description": "AppStore App approvers assigned."
+                    },
+                    "approvers_stage_2": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AppApproversOutput"
+                            }
+                        ],
+                        "title": "Approvers Stage 2",
+                        "description": "AppStore App stage 2 approvers assigned."
                     },
                     "request_approval_stages": {
                         "items": {
@@ -5561,6 +5796,7 @@
                 },
                 "type": "object",
                 "required": [
+                    "app_id",
                     "label"
                 ],
                 "title": "RequestablePermissionInput"

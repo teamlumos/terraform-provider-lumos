@@ -1,3 +1,3 @@
 data "lumos_requestable_permission" "my_requestablepermission" {
-  id = "b6ba5575-613f-4827-b16a-e2047efc1ab3"
+  id = "6ba55756-13f8-4277-96ae-2047efc1ab3d"
 }

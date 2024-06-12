@@ -568,11 +568,14 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreApp(resp *shared.App
 		r.AppClassID = types.StringValue(resp.AppClassID)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
+		r.LogoURL = types.StringPointerValue(resp.LogoURL)
+		r.RequestInstructions = types.StringPointerValue(resp.RequestInstructions)
 		r.Sources = []types.String{}
 		for _, v := range resp.Sources {
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
 		r.Status = types.StringValue(string(resp.Status))
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
+		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}
 }

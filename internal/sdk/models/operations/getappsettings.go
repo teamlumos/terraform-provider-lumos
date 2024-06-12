@@ -7,26 +7,18 @@ import (
 	"net/http"
 )
 
-type UpdateAppRequest struct {
-	AppID          string                `pathParam:"style=simple,explode=false,name=app_id"`
-	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
+type GetAppSettingsRequest struct {
+	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
 }
 
-func (o *UpdateAppRequest) GetAppID() string {
+func (o *GetAppSettingsRequest) GetAppID() string {
 	if o == nil {
 		return ""
 	}
 	return o.AppID
 }
 
-func (o *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
-	if o == nil {
-		return shared.AppInputCreate{}
-	}
-	return o.AppInputCreate
-}
-
-type UpdateAppResponse struct {
+type GetAppSettingsResponse struct {
 	// HTTP response content type for this operation
 	ContentType string
 	// HTTP response status code for this operation
@@ -34,40 +26,40 @@ type UpdateAppResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	App *shared.App
+	AppSettingOutput *shared.AppSettingOutput
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *UpdateAppResponse) GetContentType() string {
+func (o *GetAppSettingsResponse) GetContentType() string {
 	if o == nil {
 		return ""
 	}
 	return o.ContentType
 }
 
-func (o *UpdateAppResponse) GetStatusCode() int {
+func (o *GetAppSettingsResponse) GetStatusCode() int {
 	if o == nil {
 		return 0
 	}
 	return o.StatusCode
 }
 
-func (o *UpdateAppResponse) GetRawResponse() *http.Response {
+func (o *GetAppSettingsResponse) GetRawResponse() *http.Response {
 	if o == nil {
 		return nil
 	}
 	return o.RawResponse
 }
 
-func (o *UpdateAppResponse) GetApp() *shared.App {
+func (o *GetAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
 	if o == nil {
 		return nil
 	}
-	return o.App
+	return o.AppSettingOutput
 }
 
-func (o *UpdateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+func (o *GetAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
 	if o == nil {
 		return nil
 	}

@@ -5,10 +5,11 @@ package types
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type RequestablePermissionInputRequestApprovalConfig struct {
-	CustomApprovalMessage         types.String                `tfsdk:"custom_approval_message"`
-	CustomApprovalMessageOverride types.Bool                  `tfsdk:"custom_approval_message_override"`
-	ManagerApproval               types.String                `tfsdk:"manager_approval"`
-	RequestApprovalConfigOverride types.Bool                  `tfsdk:"request_approval_config_override"`
-	RequestApprovalStages         []RequestApprovalStageInput `tfsdk:"request_approval_stages"`
-	RequireAdditionalApproval     types.Bool                  `tfsdk:"require_additional_approval"`
+	Approvers                     *AddAppToAppStoreInputAdmins `tfsdk:"approvers"`
+	ApproversStage2               *AddAppToAppStoreInputAdmins `tfsdk:"approvers_stage_2"`
+	CustomApprovalMessage         types.String                 `tfsdk:"custom_approval_message"`
+	CustomApprovalMessageOverride types.Bool                   `tfsdk:"custom_approval_message_override"`
+	ManagerApproval               types.String                 `tfsdk:"manager_approval"`
+	RequestApprovalConfigOverride types.Bool                   `tfsdk:"request_approval_config_override"`
+	RequireAdditionalApproval     types.Bool                   `tfsdk:"require_additional_approval"`
 }

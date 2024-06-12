@@ -9,18 +9,16 @@ import (
 )
 
 type GetAppStoreAppsRequest struct {
-	// Filters apps by the ID of the service (i.e. okta.com). This parameter also requires app_instance_id to be included.
-	AppClassID *string `queryParam:"style=form,explode=true,name=app_class_id"`
-	// Filters apps by the ID of the instance from the service (app_class_id) from the service.This parameter also requires app_class_id to be included.
-	AppInstanceID *string `queryParam:"style=form,explode=true,name=app_instance_id"`
 	// Filters apps by the ID of the app.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
-	// Filters apps by name.
+	// Search against name, app instance identifier, and app class ID.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
-	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
-	Page       *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size       *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
+	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Get all apps in the AppStore regardless of visibility. Only available to admins.
+	AllVisibilities *bool  `default:"false" queryParam:"style=form,explode=true,name=all_visibilities"`
+	Page            *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	Size            *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetAppStoreAppsRequest) MarshalJSON() ([]byte, error) {
@@ -32,20 +30,6 @@ func (g *GetAppStoreAppsRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (o *GetAppStoreAppsRequest) GetAppClassID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppClassID
-}
-
-func (o *GetAppStoreAppsRequest) GetAppInstanceID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppInstanceID
 }
 
 func (o *GetAppStoreAppsRequest) GetAppID() *string {
@@ -67,6 +51,13 @@ func (o *GetAppStoreAppsRequest) GetExactMatch() *bool {
 		return nil
 	}
 	return o.ExactMatch
+}
+
+func (o *GetAppStoreAppsRequest) GetAllVisibilities() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.AllVisibilities
 }
 
 func (o *GetAppStoreAppsRequest) GetPage() *int64 {
