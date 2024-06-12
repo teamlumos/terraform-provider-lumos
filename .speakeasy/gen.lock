@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: 755ba8874f55ca9a2e6660b31b211bf7
+  docChecksum: c0f75bdb12e93e2a24a95579bd259b27
   docVersion: 0.1.0
-  speakeasyVersion: 1.300.1
-  generationVersion: 2.339.1
-  releaseVersion: 0.1.31
-  configChecksum: 86d61053ab2752cf6ab01f64fef27c43
+  speakeasyVersion: 1.305.0
+  generationVersion: 2.340.3
+  releaseVersion: 0.1.33
+  configChecksum: cd8b96c768f3b383d7b4a25bf54122b8
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.21.2
+    core: 3.21.3
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     unions: 2.81.14
@@ -76,8 +76,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
