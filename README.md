@@ -12,54 +12,8 @@ To install this provider, copy and paste this code into your Terraform configura
 terraform {
   required_providers {
     lumos = {
-      source  = "speakeasy/lumos"
-      version = "0.0.1"
-    }
-  }
-}
-
-provider "lumos" {
-  # Configuration options
-}
-```
-<!-- End SDK <no value> -->
-
-<no value>
-<!-- Start SDK <no value> -->
-### Testing the provider locally
-
-Should you want to validate a change locally, the `--debug` flag allows you to execute the provider against a terraform instance locally.
-
-This also allows for debuggers (e.g. delve) to be attached to the provider.
-
-### Example
-
-```sh
-go run main.go --debug
-# Copy the TF_REATTACH_PROVIDERS env var
-# In a new terminal
-cd examples/your-example
-TF_REATTACH_PROVIDERS=... terraform init
-TF_REATTACH_PROVIDERS=... terraform apply
-```
-<!-- End SDK <no value> -->
-
-<no value>
-<!-- Start SDK <no value> -->
-
-<!-- End SDK <no value> -->
-
-<!-- Start SDK Installation [installation] -->
-## SDK Installation
-
-To install this provider, copy and paste this code into your Terraform configuration. Then, run `terraform init`.
-
-```hcl
-terraform {
-  required_providers {
-    lumos = {
       source  = "teamlumos/lumos"
-      version = "0.1.48"
+      version = "0.1.49"
     }
   }
 }
@@ -68,11 +22,10 @@ provider "lumos" {
   # Configuration options
 }
 ```
-<!-- End SDK Installation [installation] -->
+<!-- End SDK <no value> -->
 
-<!-- Start SDK Example Usage [usage] -->
-## SDK Example Usage
-
+<no value>
+<!-- Start SDK <no value> -->
 ### Testing the provider locally
 
 Should you want to validate a change locally, the `--debug` flag allows you to execute the provider against a terraform instance locally.
@@ -89,13 +42,12 @@ cd examples/your-example
 TF_REATTACH_PROVIDERS=... terraform init
 TF_REATTACH_PROVIDERS=... terraform apply
 ```
-<!-- End SDK Example Usage [usage] -->
+<!-- End SDK <no value> -->
 
-<!-- Start Available Resources and Operations [operations] -->
-## Available Resources and Operations
+<no value>
+<!-- Start SDK <no value> -->
 
-
-<!-- End Available Resources and Operations [operations] -->
+<!-- End SDK <no value> -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 

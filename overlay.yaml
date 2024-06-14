@@ -145,6 +145,9 @@ actions:
       "x-speakeasy-entity": "RequestablePermission"
       "x-speakeasy-param-suppress-computed-diff": true
   # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
+  - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
+    update:
+      "x-speakeasy-terraform-ignore": true
   - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
