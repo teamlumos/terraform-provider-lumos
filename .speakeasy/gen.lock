@@ -5,8 +5,9 @@ management:
   docVersion: 0.1.0
   speakeasyVersion: 1.308.1
   generationVersion: 2.342.6
-  releaseVersion: 0.1.49
-  configChecksum: e17039f811dbbdd2dabc858a32a15bdd
+  releaseVersion: 0.1.50
+  configChecksum: 6bb2513ec37056f13b9fa77c211452d9
+  repoURL: https://github.com/teamlumos/terraform-provider-lumos.git
 features:
   terraform:
     additionalDependencies: 0.1.0
