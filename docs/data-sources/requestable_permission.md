@@ -14,7 +14,7 @@ RequestablePermission DataSource
 
 ```terraform
 data "lumos_requestable_permission" "my_requestablepermission" {
-  id = "6ba55756-13f8-4277-96ae-2047efc1ab3d"
+  id = "d9dbcf60-79f0-481d-b3b3-6711acb4a4f9"
 }
 ```
 

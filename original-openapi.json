@@ -1144,6 +1144,7 @@
                     "AppStore"
                 ],
                 "summary": "Get Appstore Permissions For App",
+                "x-speakeasy-usage-example": true,
                 "description": "Get AppStore permissions for an application.",
                 "operationId": "get_appstore_permissions_for_app_appstore_requestable_permissions_get",
                 "parameters": [
@@ -5760,7 +5761,44 @@
                     "app_class_id",
                     "app_instance_id"
                 ],
-                "title": "RequestablePermissionBaseOutput"
+                "title": "RequestablePermissionBaseOutput",
+                "examples": [
+                    {
+                        "exampleResponse": {
+                            "summary": "test",
+                            "value": {
+                                "app_id": "74f2cbd3-9a72-43c3-8b93-4be7c17a57f4",
+                                "label": "PPPLoan",
+                                "request_config": {
+                                    "appstore_visibility": "VISIBLE",
+                                    "request_approval_config": {
+                                        "manager_approval": "NONE",
+                                        "request_approval_config_override": true,
+                                        "approvers": {
+                                            "users": [
+                                                {
+                                                    "id": "c25d43db-79a5-441b-adc4-6669f2ada22c"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "request_fulfillment_config": {
+                                        "time_based_access_override": true,
+                                        "time_based_access": [
+                                            "2 hours",
+                                            "4 hours",
+                                            "Unlimited"
+                                        ],
+                                        "provisioning_group": {
+                                            "integration_specific_id": "00gsdlfjsdlfj",
+                                            "app_id": "3694bce5-e121-4779-8342-0e617e40e90e"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "RequestablePermissionInput": {
                 "properties": {
@@ -5799,7 +5837,44 @@
                     "app_id",
                     "label"
                 ],
-                "title": "RequestablePermissionInput"
+                "title": "RequestablePermissionInput",
+                "examples": [
+                    {
+                        "exampleResponse": {
+                            "summary": "test",
+                            "value": {
+                                "app_id": "74f2cbd3-9a72-43c3-8b93-4be7c17a57f4",
+                                "label": "PPPLoan",
+                                "request_config": {
+                                    "appstore_visibility": "VISIBLE",
+                                    "request_approval_config": {
+                                        "manager_approval": "NONE",
+                                        "request_approval_config_override": true,
+                                        "approvers": {
+                                            "users": [
+                                                {
+                                                    "id": "c25d43db-79a5-441b-adc4-6669f2ada22c"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "request_fulfillment_config": {
+                                        "time_based_access_override": true,
+                                        "time_based_access": [
+                                            "2 hours",
+                                            "4 hours",
+                                            "Unlimited"
+                                        ],
+                                        "provisioning_group": {
+                                            "integration_specific_id": "00gsdlfjsdlfj",
+                                            "app_id": "3694bce5-e121-4779-8342-0e617e40e90e"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "RequestablePermissionInputUpdate": {
                 "properties": {
@@ -5889,7 +5964,44 @@
                     "app_instance_id",
                     "request_config"
                 ],
-                "title": "RequestablePermissionOutput"
+                "title": "RequestablePermissionOutput",
+                "examples": [
+                    {
+                        "exampleResponse": {
+                            "summary": "test",
+                            "value": {
+                                "app_id": "74f2cbd3-9a72-43c3-8b93-4be7c17a57f4",
+                                "label": "PPPLoan",
+                                "request_config": {
+                                    "appstore_visibility": "VISIBLE",
+                                    "request_approval_config": {
+                                        "manager_approval": "NONE",
+                                        "request_approval_config_override": true,
+                                        "approvers": {
+                                            "users": [
+                                                {
+                                                    "id": "c25d43db-79a5-441b-adc4-6669f2ada22c"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "request_fulfillment_config": {
+                                        "time_based_access_override": true,
+                                        "time_based_access": [
+                                            "2 hours",
+                                            "4 hours",
+                                            "Unlimited"
+                                        ],
+                                        "provisioning_group": {
+                                            "integration_specific_id": "00gsdlfjsdlfj",
+                                            "app_id": "3694bce5-e121-4779-8342-0e617e40e90e"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
             },
             "RunInfoStatus": {
                 "enum": [

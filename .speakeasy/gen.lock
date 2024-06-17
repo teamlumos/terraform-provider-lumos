@@ -1,18 +1,19 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: 3ea27728291eec020efeb5532892cbea
+  docChecksum: 7177117b34720d39eec15f8b1d2528b1
   docVersion: 0.1.0
   speakeasyVersion: 1.308.1
   generationVersion: 2.342.6
-  releaseVersion: 0.1.50
-  configChecksum: 6bb2513ec37056f13b9fa77c211452d9
+  releaseVersion: 0.2.0
+  configChecksum: 9b0f32ce31bb8fbc8f19515346e747fe
   repoURL: https://github.com/teamlumos/terraform-provider-lumos.git
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
     core: 3.21.3
+    examples: 2.81.5
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     unions: 2.81.15
