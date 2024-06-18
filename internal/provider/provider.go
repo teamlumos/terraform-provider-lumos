@@ -12,6 +12,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
+	"os"
 )
 
 var _ provider.Provider = &LumosProvider{}
@@ -75,7 +76,11 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	if !data.HTTPBearer.IsUnknown() && !data.HTTPBearer.IsNull() {
 		*httpBearer = data.HTTPBearer.ValueString()
 	} else {
-		httpBearer = nil
+		if len(os.Getenv("LUMOS_ACCESS_TOKEN")) > 0 {
+			*httpBearer = os.Getenv("LUMOS_ACCESS_TOKEN")
+		} else {
+			httpBearer = nil
+		}
 	}
 	security := shared.Security{
 		HTTPBearer: httpBearer,

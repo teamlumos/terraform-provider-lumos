@@ -5,8 +5,8 @@ management:
   docVersion: 0.1.0
   speakeasyVersion: 1.308.2
   generationVersion: 2.342.6
-  releaseVersion: 0.1.51
-  configChecksum: 462d6d89f455cc75ffc8aeaea3577147
+  releaseVersion: 0.1.52
+  configChecksum: f6559158454fbf5c8a2ca27db244ce8e
   repoURL: https://github.com/teamlumos/terraform-provider-lumos.git
 features:
   terraform:
@@ -79,8 +79,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
