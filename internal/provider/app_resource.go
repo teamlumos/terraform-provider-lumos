@@ -58,11 +58,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
+				Description: `Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the service associated with this app.`,
+				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"category": schema.StringAttribute{
 				Required:    true,
@@ -81,7 +81,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the instance associated with this app.`,
+				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
 			},
 			"logo_url": schema.StringAttribute{
 				Computed:    true,

@@ -28,16 +28,16 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 
 ### Optional
 
-- `custom_request_instructions` (String) AppStore App instructions. Requires replacement if changed.
+- `custom_request_instructions` (String) AppStore App instructions that are shown to the requester. Requires replacement if changed.
 - `provisioning` (Attributes) Provisioning flow configuration to request access to app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning))
 - `request_flow` (Attributes) Request flow configuration to request access to app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow))
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
-- `app_class_id` (String) The ID of the service associated with this app.
+- `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
+- `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
 - `id` (String) The ID of this app.
-- `instance_id` (String) The ID of the instance associated with this app.
+- `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
@@ -50,11 +50,11 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 
 Optional:
 
-- `access_removal_inline_webhook` (Attributes) An inactivity workflow can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
+- `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
 - `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.
-- `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
+- `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
 - `groups_provisioning` (String) An enumeration. Requires replacement if changed. ; must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]
-- `manual_steps_needed` (Boolean) If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.
+- `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.
 - `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
 - `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.
 
@@ -96,7 +96,7 @@ Optional:
 - `allowed_groups` (Attributes) The allowed groups associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
 - `approvers` (Attributes) AppStore App approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
-- `custom_approval_message` (String) During the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
+- `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
 - `discoverability` (String) An enumeration. Requires replacement if changed. ; must be one of ["FULL", "LIMITED", "NONE"]
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.
@@ -115,7 +115,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -124,7 +124,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_flow--admins--users"></a>
@@ -148,7 +148,7 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes List) The groups associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
+- `groups` (Attributes List) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
 - `type` (String) The type of this allowed groups config, can be all groups or specific. Requires replacement if changed. ; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>
@@ -156,7 +156,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -165,7 +165,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 
@@ -182,7 +182,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -191,7 +191,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_flow--approvers--users"></a>
@@ -223,7 +223,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -232,7 +232,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_flow--approvers_stage_2--users"></a>

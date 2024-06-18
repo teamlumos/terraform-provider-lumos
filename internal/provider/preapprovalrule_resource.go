@@ -127,7 +127,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						"app_id": schema.StringAttribute{
 							Computed:    true,
 							Optional:    true,
-							Description: `The ID of the app that owns this group.`,
+							Description: `The ID of the app that sources this group.`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -159,7 +159,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"source_app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that owns this group.`,
+							Description: `The ID of the app that sources this group.`,
 						},
 					},
 				},
@@ -175,7 +175,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							PlanModifiers: []planmodifier.String{
 								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 							},
-							Description: `The ID of the service associated with this requestable permission.`,
+							Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.`,
 						},
 						"app_id": schema.StringAttribute{
 							Computed: true,

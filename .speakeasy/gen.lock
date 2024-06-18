@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: 3ea27728291eec020efeb5532892cbea
+  docChecksum: 39bee9e338c7f35777d2b34d7242f19c
   docVersion: 0.1.0
-  speakeasyVersion: 1.308.1
+  speakeasyVersion: 1.308.2
   generationVersion: 2.342.6
-  releaseVersion: 0.1.50
-  configChecksum: 6bb2513ec37056f13b9fa77c211452d9
+  releaseVersion: 0.1.51
+  configChecksum: 462d6d89f455cc75ffc8aeaea3577147
   repoURL: https://github.com/teamlumos/terraform-provider-lumos.git
 features:
   terraform:
@@ -79,8 +79,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createfounddocumentmultipart.go
+  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go

@@ -62,7 +62,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			},
 			"integration_specific_id": schema.StringAttribute{
 				Optional:    true,
-				Description: `Filters groups by integration specific ID, e.g. the group's Okta ID`,
+				Description: `Filters groups by integration specific ID, e.g. the group's Okta ID.`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
@@ -70,7 +70,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					Attributes: map[string]schema.Attribute{
 						"app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that owns this group.`,
+							Description: `The ID of the app that sources this group.`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -94,7 +94,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"source_app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that owns this group.`,
+							Description: `The ID of the app that sources this group.`,
 						},
 					},
 				},

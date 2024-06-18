@@ -5,17 +5,17 @@ package shared
 type App struct {
 	// The ID of this app.
 	ID string `json:"id"`
-	// The ID of the service associated with this app.
+	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
 	AppClassID string `json:"app_class_id"`
-	// The ID of the instance associated with this app.
+	// The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 	InstanceID string `json:"instance_id"`
 	// The user-friendly label of this app.
 	UserFriendlyLabel string `json:"user_friendly_label"`
-	// The status of this app.
+	// The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
 	Status DomainAppStatus `json:"status"`
 	// The sources of this app.
 	Sources []DiscoverySource `json:"sources"`
-	// Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
+	// Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
 	// The URL of the logo of this app.
 	LogoURL *string `json:"logo_url,omitempty"`

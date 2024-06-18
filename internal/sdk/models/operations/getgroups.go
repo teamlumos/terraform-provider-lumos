@@ -9,7 +9,7 @@ import (
 )
 
 type GetGroupsRequest struct {
-	// Filters groups by integration specific ID, e.g. the group's Okta ID
+	// Filters groups by integration specific ID, e.g. the group's Okta ID.
 	IntegrationSpecificID *string `queryParam:"style=form,explode=true,name=integration_specific_id"`
 	// Filters groups by name.
 	Name *string `queryParam:"style=form,explode=true,name=name"`

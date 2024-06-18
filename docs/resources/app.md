@@ -40,10 +40,10 @@ resource "lumos_app" "my_app" {
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.
-- `app_class_id` (String) The ID of the service associated with this app.
+- `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
+- `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
 - `id` (String) The ID of this app.
-- `instance_id` (String) The ID of the instance associated with this app.
+- `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `sources` (List of String) The sources of this app.
 - `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.

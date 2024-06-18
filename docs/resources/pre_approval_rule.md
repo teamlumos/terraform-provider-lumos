@@ -59,7 +59,7 @@ Read-Only:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group.
+- `app_id` (String) The ID of the app that sources this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -68,7 +68,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--preapproved_permissions"></a>
@@ -80,7 +80,7 @@ Optional:
 
 Read-Only:
 
-- `app_class_id` (String) The ID of the service associated with this requestable permission.
+- `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 - `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission.
 - `label` (String) The label of this requestable permission.

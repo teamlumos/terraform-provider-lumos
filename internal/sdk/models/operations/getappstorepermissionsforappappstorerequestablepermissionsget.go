@@ -11,7 +11,7 @@ import (
 type GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest struct {
 	// Filters requestable permissions by the ID of the app to which they belong.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
-	//     Searches permissions by any of the permission's group name,
+	//     Searches permissions by the permission's group name,
 	//     request configuration name, or specific integration ID.
 	//
 	SearchTerm *string `queryParam:"style=form,explode=true,name=search_term"`

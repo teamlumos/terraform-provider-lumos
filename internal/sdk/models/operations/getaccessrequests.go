@@ -11,7 +11,7 @@ import (
 type GetAccessRequestsRequest struct {
 	// Filters requests by the ID of the target user.
 	TargetUserID *string `queryParam:"style=form,explode=true,name=target_user_id"`
-	// Filters requests by the ID of the requester user.
+	// Filters requests by the ID of the requesting user.
 	RequesterUserID *string `queryParam:"style=form,explode=true,name=requester_user_id"`
 	// Filters requests by the ID of the user.
 	UserID *string `queryParam:"style=form,explode=true,name=user_id"`

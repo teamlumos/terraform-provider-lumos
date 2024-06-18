@@ -66,7 +66,7 @@ func (e *RequestablePermissionOutputAllowedGroupsConfigType) UnmarshalJSON(data 
 type RequestablePermissionOutputAllowedGroups struct {
 	// The type of this allowed groups config, can be all groups or specific.
 	Type *RequestablePermissionOutputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
-	// The groups associated with this config.
+	// The groups allowed to request this permission.
 	Groups []Group `json:"groups,omitempty"`
 }
 
@@ -168,15 +168,15 @@ func (o *RequestablePermissionOutputApproversStage2) GetUsers() []User {
 
 // RequestApprovalConfig - A request approval config can be optionally associated with this config
 type RequestApprovalConfig struct {
-	// Indicates if approval flow is overrided
+	// Indicates if approval flow is overridden.
 	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// Manager approval can be configured as necessary to continue
 	ManagerApproval *ManagerApprovalOption `default:"NONE" json:"manager_approval"`
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
-	// During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.
+	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// Indicates if custom_approval_message is overrided
+	// Indicates if custom_approval_message is overridden.
 	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *RequestablePermissionOutputApprovers `json:"approvers,omitempty"`
@@ -284,7 +284,7 @@ func (e *RequestablePermissionOutputLifecycle) UnmarshalJSON(data []byte) error 
 type ProvisioningGroup struct {
 	// The ID of this group.
 	ID *string `json:"id,omitempty"`
-	// The ID of the app that owns this group.
+	// The ID of the app that sources this group.
 	AppID *string `json:"app_id,omitempty"`
 	// The ID of this group, specific to the integration.
 	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
@@ -294,7 +294,7 @@ type ProvisioningGroup struct {
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
 	GroupLifecycle *RequestablePermissionOutputLifecycle `default:"SYNCED" json:"group_lifecycle"`
-	// The ID of the app that owns this group.
+	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
 
@@ -406,7 +406,7 @@ type RequestFulfillmentConfig struct {
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
-	// Indicates if time based access is overrided
+	// Indicates if time based access is overriden.
 	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
 	// The provisioning group optionally assocated with this config.
 	ProvisioningGroup *ProvisioningGroup `json:"provisioning_group,omitempty"`
@@ -456,7 +456,7 @@ func (o *RequestFulfillmentConfig) GetProvisioningWebhook() *RequestablePermissi
 	return o.ProvisioningWebhook
 }
 
-// RequestablePermissionOutputAccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
+// RequestablePermissionOutputAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
 type RequestablePermissionOutputAccessRemovalInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
@@ -540,7 +540,7 @@ func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetDescripti
 type RequestConfig struct {
 	// The appstore visibility of this request config.
 	AppstoreVisibility *AppStoreVisibilityOption `default:"HIDDEN" json:"appstore_visibility"`
-	// Indicates if allowed groups is overrided
+	// Indicates if allowed groups is overriden from the app-level settings.
 	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
 	// The allowed groups config associated with this config.
 	AllowedGroups *RequestablePermissionOutputAllowedGroups `json:"allowed_groups,omitempty"`
@@ -548,7 +548,7 @@ type RequestConfig struct {
 	RequestApprovalConfig *RequestApprovalConfig `json:"request_approval_config,omitempty"`
 	// A request fulfillment config can be optionally associated with this config
 	RequestFulfillmentConfig *RequestFulfillmentConfig `json:"request_fulfillment_config,omitempty"`
-	// An inactivity workflow can be optionally associated with this config.
+	// A deprovisioning webhook can be optionally associated with this config.
 	AccessRemovalInlineWebhook *RequestablePermissionOutputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *RequestablePermissionOutputRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
@@ -623,7 +623,7 @@ type RequestablePermissionOutput struct {
 	Label string `json:"label"`
 	// The ID of the app associated with this requestable permission.
 	AppID string `json:"app_id"`
-	// The ID of the service associated with this requestable permission.
+	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 	AppClassID string `json:"app_class_id"`
 	// The ID of the instance associated with this requestable permission.
 	AppInstanceID string `json:"app_instance_id"`
