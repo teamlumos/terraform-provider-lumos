@@ -88,7 +88,7 @@ func (e *ApproverOutputLifecycle) UnmarshalJSON(data []byte) error {
 type ApproverOutputGroup struct {
 	// The ID of this group.
 	ID *string `json:"id,omitempty"`
-	// The ID of the app that owns this group.
+	// The ID of the app that sources this group.
 	AppID *string `json:"app_id,omitempty"`
 	// The ID of this group, specific to the integration.
 	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
@@ -98,7 +98,7 @@ type ApproverOutputGroup struct {
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
 	GroupLifecycle *ApproverOutputLifecycle `default:"SYNCED" json:"group_lifecycle"`
-	// The ID of the app that owns this group.
+	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
 

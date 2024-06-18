@@ -51,7 +51,7 @@ func (r *GroupDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the app that owns this group.`,
+				Description: `The ID of the app that sources this group.`,
 			},
 			"description": schema.StringAttribute{
 				Computed:    true,
@@ -78,7 +78,7 @@ func (r *GroupDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 			"source_app_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the app that owns this group.`,
+				Description: `The ID of the app that sources this group.`,
 			},
 		},
 	}

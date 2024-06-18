@@ -45,9 +45,9 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
 
 Optional:
 
-- `access_removal_inline_webhook` (Attributes) An inactivity workflow can be optionally associated with this config. (see [below for nested schema](#nestedatt--request_config--access_removal_inline_webhook))
-- `allowed_groups` (Attributes) The allowed groups associated with this config. (see [below for nested schema](#nestedatt--request_config--allowed_groups))
-- `allowed_groups_override` (Boolean) Indicates if allowed groups is overrided
+- `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--request_config--access_removal_inline_webhook))
+- `allowed_groups` (Attributes) Refers to which group(s) can make requests to this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups))
+- `allowed_groups_override` (Boolean) Indicates if allowed groups is overriden from the app-level settings.
 - `appstore_visibility` (String) The appstore visibility of this request config. must be one of ["HIDDEN", "VISIBLE"]; Default: "HIDDEN"
 - `request_approval_config` (Attributes) A request approval config can be optionally associated with this config (see [below for nested schema](#nestedatt--request_config--request_approval_config))
 - `request_fulfillment_config` (Attributes) A request fulfillment config can be optionally associated with this config (see [below for nested schema](#nestedatt--request_config--request_fulfillment_config))
@@ -72,7 +72,7 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes List) The groups associated with this config. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
+- `groups` (Attributes List) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
 - `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"
 
 <a id="nestedatt--request_config--allowed_groups--groups"></a>
@@ -80,7 +80,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group.
+- `app_id` (String) The ID of the app that sources this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -89,7 +89,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 
@@ -100,10 +100,10 @@ Optional:
 
 - `approvers` (Attributes) AppStore App approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
-- `custom_approval_message` (String) During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.
-- `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overrided
+- `custom_approval_message` (String) After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
+- `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
 - `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]; Default: "NONE"
-- `request_approval_config_override` (Boolean) Indicates if approval flow is overrided
+- `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
 <a id="nestedatt--request_config--request_approval_config--approvers"></a>
@@ -119,7 +119,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group.
+- `app_id` (String) The ID of the app that sources this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -128,7 +128,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_config--request_approval_config--approvers--users"></a>
@@ -160,7 +160,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group.
+- `app_id` (String) The ID of the app that sources this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -169,7 +169,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_config--request_approval_config--approvers_stage_2--users"></a>
@@ -199,14 +199,14 @@ Optional:
 - `provisioning_group` (Attributes) The provisioning group optionally associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_config--request_fulfillment_config--provisioning_group))
 - `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this config. (see [below for nested schema](#nestedatt--request_config--request_fulfillment_config--provisioning_webhook))
 - `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-- `time_based_access_override` (Boolean) Indicates if time based access is overrided
+- `time_based_access_override` (Boolean) Indicates if time based access is overriden.
 
 <a id="nestedatt--request_config--request_fulfillment_config--provisioning_group"></a>
 ### Nested Schema for `request_config.request_fulfillment_config.provisioning_group`
 
 Optional:
 
-- `app_id` (String) The ID of the app that owns this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -215,7 +215,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that owns this group.
+- `source_app_id` (String) The ID of the app that sources this group.
 
 
 <a id="nestedatt--request_config--request_fulfillment_config--provisioning_webhook"></a>

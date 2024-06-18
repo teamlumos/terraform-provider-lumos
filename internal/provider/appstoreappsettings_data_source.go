@@ -48,7 +48,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 		Attributes: map[string]schema.Attribute{
 			"custom_request_instructions": schema.StringAttribute{
 				Computed:    true,
-				Description: `AppStore App instructions.`,
+				Description: `AppStore App instructions that are shown to the requester.`,
 			},
 			"id": schema.StringAttribute{
 				Required: true,
@@ -76,7 +76,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `An inactivity workflow can be optionally associated with this config.`,
+						Description: `A deprovisioning webhook can be optionally associated with this config.`,
 					},
 					"allow_multiple_permission_selection": schema.BoolAttribute{
 						Computed:    true,
@@ -84,7 +84,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					},
 					"custom_provisioning_instructions": schema.StringAttribute{
 						Computed:    true,
-						Description: `Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.`,
+						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.`,
 					},
 					"groups_provisioning": schema.StringAttribute{
 						Computed:    true,
@@ -92,7 +92,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					},
 					"manual_steps_needed": schema.BoolAttribute{
 						Computed:    true,
-						Description: `If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.`,
+						Description: `If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.`,
 					},
 					"provisioning_webhook": schema.SingleNestedAttribute{
 						Computed: true,
@@ -136,7 +136,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -160,7 +160,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -206,7 +206,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -230,11 +230,11 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
-								Description: `The groups associated with this config.`,
+								Description: `The groups allowed to request this permission.`,
 							},
 							"type": schema.StringAttribute{
 								Computed:    true,
@@ -252,7 +252,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -276,7 +276,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -322,7 +322,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -346,7 +346,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -385,7 +385,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					},
 					"custom_approval_message": schema.StringAttribute{
 						Computed:    true,
-						Description: `During the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.`,
+						Description: `After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.`,
 					},
 					"discoverability": schema.StringAttribute{
 						Computed:    true,

@@ -51,7 +51,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 		Attributes: map[string]schema.Attribute{
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the service associated with this requestable permission.`,
+				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.`,
 			},
 			"app_id": schema.StringAttribute{
 				Computed:    true,
@@ -91,7 +91,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `An inactivity workflow can be optionally associated with this config.`,
+						Description: `A deprovisioning webhook can be optionally associated with this config.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
@@ -102,7 +102,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -126,11 +126,11 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
-								Description: `The groups associated with this config.`,
+								Description: `The groups allowed to request this permission.`,
 							},
 							"type": schema.StringAttribute{
 								Computed:    true,
@@ -141,7 +141,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 					},
 					"allowed_groups_override": schema.BoolAttribute{
 						Computed:    true,
-						Description: `Indicates if allowed groups is overrided`,
+						Description: `Indicates if allowed groups is overriden from the app-level settings.`,
 					},
 					"appstore_visibility": schema.StringAttribute{
 						Computed:    true,
@@ -159,7 +159,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that owns this group.`,
+													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
 													Computed:    true,
@@ -183,7 +183,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"source_app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that owns this group.`,
+													Description: `The ID of the app that sources this group.`,
 												},
 											},
 										},
@@ -229,7 +229,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that owns this group.`,
+													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
 													Computed:    true,
@@ -253,7 +253,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"source_app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that owns this group.`,
+													Description: `The ID of the app that sources this group.`,
 												},
 											},
 										},
@@ -292,11 +292,11 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"custom_approval_message": schema.StringAttribute{
 								Computed:    true,
-								Description: `During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.`,
+								Description: `After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.`,
 							},
 							"custom_approval_message_override": schema.BoolAttribute{
 								Computed:    true,
-								Description: `Indicates if custom_approval_message is overrided`,
+								Description: `Indicates if custom_approval_message is overridden.`,
 							},
 							"manager_approval": schema.StringAttribute{
 								Computed:    true,
@@ -304,7 +304,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"request_approval_config_override": schema.BoolAttribute{
 								Computed:    true,
-								Description: `Indicates if approval flow is overrided`,
+								Description: `Indicates if approval flow is overridden.`,
 							},
 							"require_additional_approval": schema.BoolAttribute{
 								Computed:    true,
@@ -329,7 +329,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 								Attributes: map[string]schema.Attribute{
 									"app_id": schema.StringAttribute{
 										Computed:    true,
-										Description: `The ID of the app that owns this group.`,
+										Description: `The ID of the app that sources this group.`,
 									},
 									"description": schema.StringAttribute{
 										Computed:    true,
@@ -353,7 +353,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 									},
 									"source_app_id": schema.StringAttribute{
 										Computed:    true,
-										Description: `The ID of the app that owns this group.`,
+										Description: `The ID of the app that sources this group.`,
 									},
 								},
 								Description: `The provisioning group optionally assocated with this config.`,
@@ -387,7 +387,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"time_based_access_override": schema.BoolAttribute{
 								Computed:    true,
-								Description: `Indicates if time based access is overrided`,
+								Description: `Indicates if time based access is overriden.`,
 							},
 						},
 						Description: `A request fulfillment config can be optionally associated with this config`,

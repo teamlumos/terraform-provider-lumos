@@ -67,7 +67,7 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 //	The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
 //	Our REST API provides a management interface for the AppStore and a read interface
 //	for the Lumos Core.
-//	Go to https://developers.lumos.com to see the complete documentation.
+//	Go to https://developers.lumos.com to see our complete documentation.
 type Lumos struct {
 	Core                *Core
 	AppStore            *AppStore

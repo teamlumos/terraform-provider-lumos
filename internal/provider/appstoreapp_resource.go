@@ -69,11 +69,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether the app is configured to allow multiple permissions to be requested at a time. This field will be removed in subsequent API versions.`,
+				Description: `Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the service associated with this app.`,
+				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"app_id": schema.StringAttribute{
 				PlanModifiers: []planmodifier.String{
@@ -89,7 +89,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Optional:    true,
-				Description: `AppStore App instructions. Requires replacement if changed. `,
+				Description: `AppStore App instructions that are shown to the requester. Requires replacement if changed. `,
 			},
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -97,7 +97,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the instance associated with this app.`,
+				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
 			},
 			"logo_url": schema.StringAttribute{
 				Computed:    true,
@@ -153,7 +153,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `An inactivity workflow can be optionally associated with this app. Requires replacement if changed. `,
+						Description: `A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed. `,
 					},
 					"allow_multiple_permission_selection": schema.BoolAttribute{
 						Computed: true,
@@ -171,7 +171,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
 						Optional:    true,
-						Description: `Only Available if manual steps is active. During the provisioning step, send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed. `,
+						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed. `,
 					},
 					"groups_provisioning": schema.StringAttribute{
 						Computed: true,
@@ -196,7 +196,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
 						Optional:    true,
-						Description: `If enabled, Lumos will reach out to the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed. `,
+						Description: `If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed. `,
 					},
 					"provisioning_webhook": schema.SingleNestedAttribute{
 						Computed: true,
@@ -287,7 +287,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
 											Optional:    true,
-											Description: `The ID of the app that owns this group. Requires replacement if changed. `,
+											Description: `The ID of the app that sources this group. Requires replacement if changed. `,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -327,7 +327,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -409,7 +409,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
 											Optional:    true,
-											Description: `The ID of the app that owns this group. Requires replacement if changed. `,
+											Description: `The ID of the app that sources this group. Requires replacement if changed. `,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -449,11 +449,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
-								Description: `The groups associated with this config. Requires replacement if changed. `,
+								Description: `The groups allowed to request this permission. Requires replacement if changed. `,
 							},
 							"type": schema.StringAttribute{
 								Computed: true,
@@ -498,7 +498,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
 											Optional:    true,
-											Description: `The ID of the app that owns this group. Requires replacement if changed. `,
+											Description: `The ID of the app that sources this group. Requires replacement if changed. `,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -538,7 +538,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -620,7 +620,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
 											Optional:    true,
-											Description: `The ID of the app that owns this group. Requires replacement if changed. `,
+											Description: `The ID of the app that sources this group. Requires replacement if changed. `,
 										},
 										"description": schema.StringAttribute{
 											Computed:    true,
@@ -660,7 +660,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"source_app_id": schema.StringAttribute{
 											Computed:    true,
-											Description: `The ID of the app that owns this group.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 									},
 								},
@@ -725,7 +725,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
 						Optional:    true,
-						Description: `During the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed. `,
+						Description: `After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed. `,
 					},
 					"discoverability": schema.StringAttribute{
 						Computed: true,

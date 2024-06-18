@@ -133,7 +133,7 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 }
 
 // CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost - Create Appstore Requestable Permission
-// **Creates a permission attached to an App in the AppStore.**
+// **Create a permission attached to an App in the AppStore.**
 //
 // *Required fields:*
 // - app-identifier. The App should be identified either by app_id or app_class_id + app_instance_id.
@@ -459,7 +459,7 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 // All fields present in the payload will override the permission's data.
 // Any missing fields will be disregarded.
 //
-//	Non updatable fields for now:
+//	Non-updatable fields for now:
 //	    request_config -> request_fulfillment_config -> provisioning_group
 func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx context.Context, request operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) (*operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse, error) {
 	hookCtx := hooks.HookContext{
@@ -674,7 +674,7 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 }
 
 // CreatePreApprovalRuleAppstorePreApprovalRulesPost - Create Pre Approval Rule
-// Creates a pre-approval rule attached to an App in the AppStore.
+// Create a pre-approval rule attached to an App in the AppStore.
 func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context.Context, request shared.PreApprovalRuleInput) (*operations.CreatePreApprovalRuleAppstorePreApprovalRulesPostResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,

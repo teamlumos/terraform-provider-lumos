@@ -62,11 +62,11 @@ func (e *RequestablePermissionInputUpdateAllowedGroupsConfigType) UnmarshalJSON(
 	}
 }
 
-// RequestablePermissionInputUpdateAllowedGroups - The allowed groups associated with this config.
+// RequestablePermissionInputUpdateAllowedGroups - Refers to which group(s) can make requests to this permission.
 type RequestablePermissionInputUpdateAllowedGroups struct {
 	// The type of this allowed groups config, can be all groups or specific.
 	Type *RequestablePermissionInputUpdateAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
-	// The groups associated with this config.
+	// The groups allowed to request this permission.
 	Groups []BaseGroup `json:"groups,omitempty"`
 }
 
@@ -168,15 +168,15 @@ func (o *RequestablePermissionInputUpdateApproversStage2) GetUsers() []BaseUser 
 
 // RequestablePermissionInputUpdateRequestApprovalConfig - A request approval config can be optionally associated with this config
 type RequestablePermissionInputUpdateRequestApprovalConfig struct {
-	// Indicates if approval flow is overrided
+	// Indicates if approval flow is overridden.
 	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// Manager approval can be configured as necessary to continue
 	ManagerApproval *RequestablePermissionInputUpdateManagerApprovalOption `default:"NONE" json:"manager_approval"`
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
-	// During the approval step, send a custom message to requesters. Note that the Permission level approval message will override the App level approval message. Markdown for links and text formatting is supported.
+	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// Indicates if custom_approval_message is overrided
+	// Indicates if custom_approval_message is overridden.
 	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *RequestablePermissionInputUpdateApprovers `json:"approvers,omitempty"`
@@ -253,7 +253,7 @@ func (o *RequestablePermissionInputUpdateRequestApprovalConfig) GetRequestApprov
 	return o.RequestApprovalStages
 }
 
-// RequestablePermissionInputUpdateAccessRemovalInlineWebhook - An inactivity workflow can be optionally associated with this config.
+// RequestablePermissionInputUpdateAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
 type RequestablePermissionInputUpdateAccessRemovalInlineWebhook struct {
 	// The ID of this inline webhook.
 	ID string `json:"id"`
@@ -300,7 +300,7 @@ type RequestablePermissionInputUpdateRequestFulfillmentConfig struct {
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
-	// Indicates if time based access is overrided
+	// Indicates if time based access is overriden.
 	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
 	// The provisioning webhook optionally associated with this config.
 	ProvisioningWebhook *RequestablePermissionInputUpdateProvisioningWebhook `json:"provisioning_webhook,omitempty"`
@@ -345,13 +345,13 @@ func (o *RequestablePermissionInputUpdateRequestFulfillmentConfig) GetProvisioni
 type RequestablePermissionInputUpdateRequestConfig struct {
 	// The appstore visibility of this request config.
 	AppstoreVisibility *RequestablePermissionInputUpdateAppStoreVisibilityOption `default:"HIDDEN" json:"appstore_visibility"`
-	// Indicates if allowed groups is overrided
+	// Indicates if allowed groups is overriden from the app-level settings.
 	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
-	// The allowed groups associated with this config.
+	// Refers to which group(s) can make requests to this permission.
 	AllowedGroups *RequestablePermissionInputUpdateAllowedGroups `json:"allowed_groups,omitempty"`
 	// A request approval config can be optionally associated with this config
 	RequestApprovalConfig *RequestablePermissionInputUpdateRequestApprovalConfig `json:"request_approval_config,omitempty"`
-	// An inactivity workflow can be optionally associated with this config.
+	// A deprovisioning webhook can be optionally associated with this config.
 	AccessRemovalInlineWebhook *RequestablePermissionInputUpdateAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *RequestablePermissionInputUpdateRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
