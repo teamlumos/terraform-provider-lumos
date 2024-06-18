@@ -12,11 +12,13 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: true
 terraform:
-  version: 0.1.51
+  version: 0.1.52
   additionalDataSources: []
   additionalDependencies: {}
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
   author: teamlumos
-  environmentVariables: []
+  environmentVariables:
+    - env: LUMOS_ACCESS_TOKEN
+      providerAttribute: http_bearer
   packageName: lumos
