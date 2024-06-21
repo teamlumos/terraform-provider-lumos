@@ -1,20 +1,21 @@
 lockVersion: 2.0.0
 id: 2fefd62a-b026-4ac1-8a29-5c2cb97292ce
 management:
-  docChecksum: 39bee9e338c7f35777d2b34d7242f19c
+  docChecksum: dc78310a434b870f54ed5a17e80b77cc
   docVersion: 0.1.0
-  speakeasyVersion: 1.308.2
-  generationVersion: 2.342.6
-  releaseVersion: 0.1.52
-  configChecksum: f6559158454fbf5c8a2ca27db244ce8e
+  speakeasyVersion: 1.314.1
+  generationVersion: 2.349.6
+  releaseVersion: 0.2.0
+  configChecksum: f9464bd0af55fe1119f3979bde7d6827
   repoURL: https://github.com/teamlumos/terraform-provider-lumos.git
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.21.3
+    core: 3.21.4
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
+    retries: 2.81.1
     unions: 2.81.15
 generatedFiles:
   - internal/sdk/core.go
@@ -165,6 +166,7 @@ generatedFiles:
   - internal/sdk/models/shared/airbasepurchaserequestevent.go
   - internal/sdk/models/shared/security.go
   - internal/sdk/.gitignore
+  - internal/sdk/models/operations/options.go
   - internal/sdk/.gitattributes
   - internal/sdk/internal/hooks/registration.go
   - internal/sdk/internal/hooks/hooks.go
