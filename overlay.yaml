@@ -3,6 +3,21 @@ info:
   title: Overlay original-openapi.json => openapi.json
   version: 0.0.0
 actions:
+  - target: $
+    update:
+      "x-speakeasy-retries":
+        {
+          "strategy": "backoff",
+          "backoff":
+            {
+              "initialInterval": 500,
+              "maxInterval": 30000,
+              "maxElapsedTime": 60000,
+              "exponent": 1.5,
+            },
+          "statusCodes": ["5XX"],
+          "retryConnectionErrors": true,
+        }
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
