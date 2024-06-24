@@ -16,7 +16,7 @@ Apps DataSource
 data "lumos_apps" "my_apps" {
   exact_match = false
   name_search = "...my_name_search..."
-  page        = 1
+  page        = 4
   size        = 6
 }
 ```

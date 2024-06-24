@@ -62,17 +62,16 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 	return ServerList[c.ServerIndex], nil
 }
 
-// Lumos - Lumos:
+// Lumos - Lumos:     The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
 //
-//	The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
 //	Our REST API provides a management interface for the AppStore and a read interface
 //	for the Lumos Core.
 //	Go to https://developers.lumos.com to see our complete documentation.
 type Lumos struct {
 	Core                *Core
 	AppStore            *AppStore
-	VendorManagement    *VendorManagement
 	Meta                *Meta
+	VendorManagement    *VendorManagement
 	IntegrationWebhooks *IntegrationWebhooks
 
 	sdkConfiguration sdkConfiguration
@@ -170,9 +169,9 @@ func New(opts ...SDKOption) *Lumos {
 
 	sdk.AppStore = newAppStore(sdk.sdkConfiguration)
 
-	sdk.VendorManagement = newVendorManagement(sdk.sdkConfiguration)
-
 	sdk.Meta = newMeta(sdk.sdkConfiguration)
+
+	sdk.VendorManagement = newVendorManagement(sdk.sdkConfiguration)
 
 	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk.sdkConfiguration)
 

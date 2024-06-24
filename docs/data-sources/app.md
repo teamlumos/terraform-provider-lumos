@@ -14,7 +14,7 @@ App DataSource
 
 ```terraform
 data "lumos_app" "my_app" {
-  id = "9232d259-b0ac-4589-917f-afa4f89362b5"
+  id = "badd3923-8576-4e90-a0d0-22ab47bbd04e"
 }
 ```
 

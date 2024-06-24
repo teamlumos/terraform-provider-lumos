@@ -3,8 +3,7 @@
 page_title: "lumos Provider"
 subcategory: ""
 description: |-
-  Lumos:
-      The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
+  Lumos:     The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
       Our REST API provides a management interface for the AppStore and a read interface
       for the Lumos Core.
       Go to https://developers.lumos.com to see our complete documentation.
@@ -12,8 +11,7 @@ description: |-
 
 # lumos Provider
 
-Lumos: 
-    The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
+Lumos:     The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
     Our REST API provides a management interface for the AppStore and a read interface
     for the Lumos Core.
     Go to https://developers.lumos.com to see our complete documentation.
@@ -25,7 +23,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.2.0"
+      version = "0.2.1"
     }
   }
 }

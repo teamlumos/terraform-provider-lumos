@@ -8,6 +8,175 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+// AccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
+type AccessRemovalInlineWebhook struct {
+	// The description of this inline webhook.
+	Description *string `json:"description,omitempty"`
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
+}
+
+func (o *AccessRemovalInlineWebhook) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
+}
+
+func (o *AccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *AccessRemovalInlineWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *AccessRemovalInlineWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+// ProvisioningWebhook - The provisioning webhook optionally associated with this config.
+type ProvisioningWebhook struct {
+	// The description of this inline webhook.
+	Description *string `json:"description,omitempty"`
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
+}
+
+func (o *ProvisioningWebhook) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
+}
+
+func (o *ProvisioningWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *ProvisioningWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *ProvisioningWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
+// Provisioning flow configuration to request access to app.
+type Provisioning struct {
+	// A deprovisioning webhook can be optionally associated with this config.
+	AccessRemovalInlineWebhook *AccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
+	// Whether the app is configured to allow users to request multiple permissions in a single request
+	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
+	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
+	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
+	// If enabled, Approvers must choose a group to provision the user to for access requests.
+	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
+	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
+	// The provisioning webhook optionally associated with this config.
+	ProvisioningWebhook *ProvisioningWebhook `json:"provisioning_webhook,omitempty"`
+	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+}
+
+func (o *Provisioning) GetAccessRemovalInlineWebhook() *AccessRemovalInlineWebhook {
+	if o == nil {
+		return nil
+	}
+	return o.AccessRemovalInlineWebhook
+}
+
+func (o *Provisioning) GetAllowMultiplePermissionSelection() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.AllowMultiplePermissionSelection
+}
+
+func (o *Provisioning) GetCustomProvisioningInstructions() *string {
+	if o == nil {
+		return nil
+	}
+	return o.CustomProvisioningInstructions
+}
+
+func (o *Provisioning) GetGroupsProvisioning() *GroupProvisioningOption {
+	if o == nil {
+		return nil
+	}
+	return o.GroupsProvisioning
+}
+
+func (o *Provisioning) GetManualStepsNeeded() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.ManualStepsNeeded
+}
+
+func (o *Provisioning) GetProvisioningWebhook() *ProvisioningWebhook {
+	if o == nil {
+		return nil
+	}
+	return o.ProvisioningWebhook
+}
+
+func (o *Provisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if o == nil {
+		return nil
+	}
+	return o.TimeBasedAccess
+}
+
+// Admins - AppStore App admins assigned.
+type Admins struct {
+	// Groups assigned as app admins.
+	Groups []Group `json:"groups,omitempty"`
+	// Users assigned as app admins.
+	Users []User `json:"users,omitempty"`
+}
+
+func (o *Admins) GetGroups() []Group {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *Admins) GetUsers() []User {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
 // AllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
 type AllowedGroupsConfigType string
 
@@ -37,10 +206,10 @@ func (e *AllowedGroupsConfigType) UnmarshalJSON(data []byte) error {
 
 // AllowedGroups - The allowed groups config associated with this config.
 type AllowedGroups struct {
-	// The type of this allowed groups config, can be all groups or specific.
-	Type *AllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups allowed to request this permission.
 	Groups []Group `json:"groups,omitempty"`
+	// The type of this allowed groups config, can be all groups or specific.
+	Type *AllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 }
 
 func (a AllowedGroups) MarshalJSON() ([]byte, error) {
@@ -54,18 +223,18 @@ func (a *AllowedGroups) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *AllowedGroups) GetType() *AllowedGroupsConfigType {
-	if o == nil {
-		return nil
-	}
-	return o.Type
-}
-
 func (o *AllowedGroups) GetGroups() []Group {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
+}
+
+func (o *AllowedGroups) GetType() *AllowedGroupsConfigType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
 
 // Approvers - AppStore App approvers assigned.
@@ -112,59 +281,16 @@ func (o *ApproversStage2) GetUsers() []User {
 	return o.Users
 }
 
-// Admins - AppStore App admins assigned.
-type Admins struct {
-	// Groups assigned as app admins.
-	Groups []Group `json:"groups,omitempty"`
-	// Users assigned as app admins.
-	Users []User `json:"users,omitempty"`
-}
-
-func (o *Admins) GetGroups() []Group {
-	if o == nil {
-		return nil
-	}
-	return o.Groups
-}
-
-func (o *Admins) GetUsers() []User {
-	if o == nil {
-		return nil
-	}
-	return o.Users
-}
-
 // RequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
 type RequestValidationInlineWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
 	// The description of this inline webhook.
 	Description *string `json:"description,omitempty"`
-}
-
-func (o *RequestValidationInlineWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *RequestValidationInlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *RequestValidationInlineWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
 }
 
 func (o *RequestValidationInlineWebhook) GetDescription() *string {
@@ -174,54 +300,54 @@ func (o *RequestValidationInlineWebhook) GetDescription() *string {
 	return o.Description
 }
 
+func (o *RequestValidationInlineWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *RequestValidationInlineWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *RequestValidationInlineWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
 // RequestFlow - Request flow configuration to request access to app.
 type RequestFlow struct {
-	// AppStore App visibility.
-	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
-	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
-	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
-	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
-	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
-	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	// AppStore App admins assigned.
+	Admins *Admins `json:"admins,omitempty"`
 	// The allowed groups config associated with this config.
 	AllowedGroups *AllowedGroups `json:"allowed_groups,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *Approvers `json:"approvers,omitempty"`
 	// AppStore App stage 2 approvers assigned.
 	ApproversStage2 *ApproversStage2 `json:"approvers_stage_2,omitempty"`
-	// AppStore App admins assigned.
-	Admins *Admins `json:"admins,omitempty"`
+	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
+	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
+	// AppStore App visibility.
+	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *RequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
+	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
 }
 
-func (o *RequestFlow) GetDiscoverability() *AppStoreVisibility {
+func (o *RequestFlow) GetAdmins() *Admins {
 	if o == nil {
 		return nil
 	}
-	return o.Discoverability
-}
-
-func (o *RequestFlow) GetCustomApprovalMessage() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomApprovalMessage
-}
-
-func (o *RequestFlow) GetRequireManagerApproval() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequireManagerApproval
-}
-
-func (o *RequestFlow) GetRequireAdditionalApproval() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequireAdditionalApproval
+	return o.Admins
 }
 
 func (o *RequestFlow) GetAllowedGroups() *AllowedGroups {
@@ -245,11 +371,18 @@ func (o *RequestFlow) GetApproversStage2() *ApproversStage2 {
 	return o.ApproversStage2
 }
 
-func (o *RequestFlow) GetAdmins() *Admins {
+func (o *RequestFlow) GetCustomApprovalMessage() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Admins
+	return o.CustomApprovalMessage
+}
+
+func (o *RequestFlow) GetDiscoverability() *AppStoreVisibility {
+	if o == nil {
+		return nil
+	}
+	return o.Discoverability
 }
 
 func (o *RequestFlow) GetRequestValidationInlineWebhook() *RequestValidationInlineWebhook {
@@ -259,162 +392,29 @@ func (o *RequestFlow) GetRequestValidationInlineWebhook() *RequestValidationInli
 	return o.RequestValidationInlineWebhook
 }
 
-// ProvisioningWebhook - The provisioning webhook optionally associated with this config.
-type ProvisioningWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
-	// The description of this inline webhook.
-	Description *string `json:"description,omitempty"`
-}
-
-func (o *ProvisioningWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *ProvisioningWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *ProvisioningWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *ProvisioningWebhook) GetDescription() *string {
+func (o *RequestFlow) GetRequireAdditionalApproval() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.Description
+	return o.RequireAdditionalApproval
 }
 
-// AccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
-type AccessRemovalInlineWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
-	// The description of this inline webhook.
-	Description *string `json:"description,omitempty"`
-}
-
-func (o *AccessRemovalInlineWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *AccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *AccessRemovalInlineWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *AccessRemovalInlineWebhook) GetDescription() *string {
+func (o *RequestFlow) GetRequireManagerApproval() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.Description
-}
-
-// Provisioning flow configuration to request access to app.
-type Provisioning struct {
-	// If enabled, Approvers must choose a group to provision the user to for access requests.
-	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
-	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
-	// Whether the app is configured to allow users to request multiple permissions in a single request
-	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
-	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
-	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
-	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
-	// The provisioning webhook optionally associated with this config.
-	ProvisioningWebhook *ProvisioningWebhook `json:"provisioning_webhook,omitempty"`
-	// A deprovisioning webhook can be optionally associated with this config.
-	AccessRemovalInlineWebhook *AccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
-}
-
-func (o *Provisioning) GetGroupsProvisioning() *GroupProvisioningOption {
-	if o == nil {
-		return nil
-	}
-	return o.GroupsProvisioning
-}
-
-func (o *Provisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
-		return nil
-	}
-	return o.TimeBasedAccess
-}
-
-func (o *Provisioning) GetAllowMultiplePermissionSelection() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.AllowMultiplePermissionSelection
-}
-
-func (o *Provisioning) GetManualStepsNeeded() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.ManualStepsNeeded
-}
-
-func (o *Provisioning) GetCustomProvisioningInstructions() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomProvisioningInstructions
-}
-
-func (o *Provisioning) GetProvisioningWebhook() *ProvisioningWebhook {
-	if o == nil {
-		return nil
-	}
-	return o.ProvisioningWebhook
-}
-
-func (o *Provisioning) GetAccessRemovalInlineWebhook() *AccessRemovalInlineWebhook {
-	if o == nil {
-		return nil
-	}
-	return o.AccessRemovalInlineWebhook
+	return o.RequireManagerApproval
 }
 
 type AppSettingOutput struct {
 	// AppStore App instructions that are shown to the requester.
 	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
-	// Request flow configuration to request access to app.
-	RequestFlow *RequestFlow `json:"request_flow,omitempty"`
-	// Provisioning flow configuration to request access to app.
-	Provisioning *Provisioning `json:"provisioning,omitempty"`
 	// Whether the app is in the app store.
 	InAppStore *bool `default:"false" json:"in_app_store"`
+	// Provisioning flow configuration to request access to app.
+	Provisioning *Provisioning `json:"provisioning,omitempty"`
+	// Request flow configuration to request access to app.
+	RequestFlow *RequestFlow `json:"request_flow,omitempty"`
 }
 
 func (a AppSettingOutput) MarshalJSON() ([]byte, error) {
@@ -435,11 +435,11 @@ func (o *AppSettingOutput) GetCustomRequestInstructions() *string {
 	return o.CustomRequestInstructions
 }
 
-func (o *AppSettingOutput) GetRequestFlow() *RequestFlow {
+func (o *AppSettingOutput) GetInAppStore() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.RequestFlow
+	return o.InAppStore
 }
 
 func (o *AppSettingOutput) GetProvisioning() *Provisioning {
@@ -449,9 +449,9 @@ func (o *AppSettingOutput) GetProvisioning() *Provisioning {
 	return o.Provisioning
 }
 
-func (o *AppSettingOutput) GetInAppStore() *bool {
+func (o *AppSettingOutput) GetRequestFlow() *RequestFlow {
 	if o == nil {
 		return nil
 	}
-	return o.InAppStore
+	return o.RequestFlow
 }
