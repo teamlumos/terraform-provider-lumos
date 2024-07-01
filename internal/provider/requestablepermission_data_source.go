@@ -62,7 +62,8 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 				Description: `The ID of the instance associated with this requestable permission.`,
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Computed:    true,
+				Description: `The ID of this requestable permission.`,
 			},
 			"label": schema.StringAttribute{
 				Computed:    true,
@@ -153,7 +154,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							"approvers": schema.SingleNestedAttribute{
 								Computed: true,
 								Attributes: map[string]schema.Attribute{
-									"groups": schema.ListNestedAttribute{
+									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -189,7 +190,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 										},
 										Description: `Groups assigned as support request approvers.`,
 									},
-									"users": schema.ListNestedAttribute{
+									"users": schema.SetNestedAttribute{
 										Computed: true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -223,7 +224,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							"approvers_stage_2": schema.SingleNestedAttribute{
 								Computed: true,
 								Attributes: map[string]schema.Attribute{
-									"groups": schema.ListNestedAttribute{
+									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{
@@ -259,7 +260,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 										},
 										Description: `Groups assigned as support request approvers.`,
 									},
-									"users": schema.ListNestedAttribute{
+									"users": schema.SetNestedAttribute{
 										Computed: true,
 										NestedObject: schema.NestedAttributeObject{
 											Attributes: map[string]schema.Attribute{

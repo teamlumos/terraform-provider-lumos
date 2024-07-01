@@ -7,19 +7,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
-// Vendor - The vendor in which the agreement is created for
-type Vendor struct {
-	// A user friendly name for the vendor
-	Name string `json:"name"`
-}
-
-func (o *Vendor) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
 // TotalContractCost - The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
 type TotalContractCost struct {
 	// The currency in which this cost is stored
@@ -42,21 +29,34 @@ func (o *TotalContractCost) GetValue() int64 {
 	return o.Value
 }
 
+// VendorAgreementVendor - The vendor in which the agreement is created for
+type VendorAgreementVendor struct {
+	// A user friendly name for the vendor
+	Name string `json:"name"`
+}
+
+func (o *VendorAgreementVendor) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
 type VendorAgreement struct {
-	// A unique identifier for this Vendor Agreement
-	ID string `json:"id"`
-	// The vendor in which the agreement is created for
-	Vendor Vendor `json:"vendor"`
-	// The start of the current term
-	StartDate types.Date `json:"start_date"`
 	// The end of the current term
 	EndDate types.Date `json:"end_date"`
-	// The date by which the vendor must be notified if you want to terminate the agreement
-	OptOutDate types.Date `json:"opt_out_date"`
-	// The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
-	TotalContractCost TotalContractCost `json:"total_contract_cost"`
+	// A unique identifier for this Vendor Agreement
+	ID string `json:"id"`
 	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
 	LineItems []LineItem `json:"line_items"`
+	// The date by which the vendor must be notified if you want to terminate the agreement
+	OptOutDate types.Date `json:"opt_out_date"`
+	// The start of the current term
+	StartDate types.Date `json:"start_date"`
+	// The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
+	TotalContractCost TotalContractCost `json:"total_contract_cost"`
+	// The vendor in which the agreement is created for
+	Vendor VendorAgreementVendor `json:"vendor"`
 }
 
 func (v VendorAgreement) MarshalJSON() ([]byte, error) {
@@ -70,6 +70,13 @@ func (v *VendorAgreement) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (o *VendorAgreement) GetEndDate() types.Date {
+	if o == nil {
+		return types.Date{}
+	}
+	return o.EndDate
+}
+
 func (o *VendorAgreement) GetID() string {
 	if o == nil {
 		return ""
@@ -77,25 +84,11 @@ func (o *VendorAgreement) GetID() string {
 	return o.ID
 }
 
-func (o *VendorAgreement) GetVendor() Vendor {
+func (o *VendorAgreement) GetLineItems() []LineItem {
 	if o == nil {
-		return Vendor{}
+		return []LineItem{}
 	}
-	return o.Vendor
-}
-
-func (o *VendorAgreement) GetStartDate() types.Date {
-	if o == nil {
-		return types.Date{}
-	}
-	return o.StartDate
-}
-
-func (o *VendorAgreement) GetEndDate() types.Date {
-	if o == nil {
-		return types.Date{}
-	}
-	return o.EndDate
+	return o.LineItems
 }
 
 func (o *VendorAgreement) GetOptOutDate() types.Date {
@@ -105,6 +98,13 @@ func (o *VendorAgreement) GetOptOutDate() types.Date {
 	return o.OptOutDate
 }
 
+func (o *VendorAgreement) GetStartDate() types.Date {
+	if o == nil {
+		return types.Date{}
+	}
+	return o.StartDate
+}
+
 func (o *VendorAgreement) GetTotalContractCost() TotalContractCost {
 	if o == nil {
 		return TotalContractCost{}
@@ -112,9 +112,9 @@ func (o *VendorAgreement) GetTotalContractCost() TotalContractCost {
 	return o.TotalContractCost
 }
 
-func (o *VendorAgreement) GetLineItems() []LineItem {
+func (o *VendorAgreement) GetVendor() VendorAgreementVendor {
 	if o == nil {
-		return []LineItem{}
+		return VendorAgreementVendor{}
 	}
-	return o.LineItems
+	return o.Vendor
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/hooks"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"net/http"
 	"time"
 )
@@ -50,7 +51,7 @@ type sdkConfiguration struct {
 	SDKVersion        string
 	GenVersion        string
 	UserAgent         string
-	RetryConfig       *utils.RetryConfig
+	RetryConfig       *retry.Config
 	Hooks             *hooks.Hooks
 }
 
@@ -62,17 +63,16 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 	return ServerList[c.ServerIndex], nil
 }
 
-// Lumos - Lumos:
+// Lumos - Lumos:     The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
 //
-//	The Lumos API gives you the building blocks to administer and extend Lumos programmatically.
 //	Our REST API provides a management interface for the AppStore and a read interface
 //	for the Lumos Core.
 //	Go to https://developers.lumos.com to see our complete documentation.
 type Lumos struct {
 	Core                *Core
 	AppStore            *AppStore
-	VendorManagement    *VendorManagement
 	Meta                *Meta
+	VendorManagement    *VendorManagement
 	IntegrationWebhooks *IntegrationWebhooks
 
 	sdkConfiguration sdkConfiguration
@@ -132,7 +132,7 @@ func WithSecuritySource(security func(context.Context) (shared.Security, error))
 	}
 }
 
-func WithRetryConfig(retryConfig utils.RetryConfig) SDKOption {
+func WithRetryConfig(retryConfig retry.Config) SDKOption {
 	return func(sdk *Lumos) {
 		sdk.sdkConfiguration.RetryConfig = &retryConfig
 	}
@@ -145,8 +145,8 @@ func New(opts ...SDKOption) *Lumos {
 			Language:          "go",
 			OpenAPIDocVersion: "0.1.0",
 			SDKVersion:        "0.0.1",
-			GenVersion:        "2.349.6",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.349.6 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			GenVersion:        "2.359.0",
+			UserAgent:         "speakeasy-sdk/go 0.0.1 2.359.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			Hooks:             hooks.New(),
 		},
 	}
@@ -170,9 +170,9 @@ func New(opts ...SDKOption) *Lumos {
 
 	sdk.AppStore = newAppStore(sdk.sdkConfiguration)
 
-	sdk.VendorManagement = newVendorManagement(sdk.sdkConfiguration)
-
 	sdk.Meta = newMeta(sdk.sdkConfiguration)
+
+	sdk.VendorManagement = newVendorManagement(sdk.sdkConfiguration)
 
 	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk.sdkConfiguration)
 

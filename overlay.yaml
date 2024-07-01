@@ -39,15 +39,9 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
     update:
       "x-speakeasy-entity-operation": "AppStoreAppSettings#update"
-  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]["parameters"][0]
-    update:
-      "x-speakeasy-match": "id"
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppStoreAppSettings#read"
-  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
-    update:
-      "x-speakeasy-match": "id"
   - target: $["paths"]["/users"]["get"]
     update:
       "x-speakeasy-entity-operation": "Users#read"
@@ -150,14 +144,42 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionBase"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_instance_id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_instance_id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionInput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  # Suppress computed diff for groups
+  - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
   - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
@@ -166,3 +188,16 @@ actions:
   - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
+  # ...
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["users"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
+    update:
+      "format": "set"

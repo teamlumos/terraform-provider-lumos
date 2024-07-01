@@ -7,8 +7,8 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 type AddAppToAppStoreInputRequestFlow struct {
 	Admins                         *AddAppToAppStoreInputAdmins                     `tfsdk:"admins"`
 	AllowedGroups                  *AddAppToAppStoreInputAllowedGroups              `tfsdk:"allowed_groups"`
-	Approvers                      *AddAppToAppStoreInputAdmins                     `tfsdk:"approvers"`
-	ApproversStage2                *AddAppToAppStoreInputAdmins                     `tfsdk:"approvers_stage_2"`
+	Approvers                      *AddAppToAppStoreInputApprovers                  `tfsdk:"approvers"`
+	ApproversStage2                *AddAppToAppStoreInputApprovers                  `tfsdk:"approvers_stage_2"`
 	CustomApprovalMessage          types.String                                     `tfsdk:"custom_approval_message"`
 	Discoverability                types.String                                     `tfsdk:"discoverability"`
 	RequestValidationInlineWebhook *AddAppToAppStoreInputAccessRemovalInlineWebhook `tfsdk:"request_validation_inline_webhook"`

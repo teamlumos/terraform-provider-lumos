@@ -151,7 +151,7 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			if resp.RequestFlow.Approvers == nil {
 				r.RequestFlow.Approvers = nil
 			} else {
-				r.RequestFlow.Approvers = &tfTypes.AddAppToAppStoreInputAdmins{}
+				r.RequestFlow.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
 				r.RequestFlow.Approvers.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.Approvers.Groups) > len(resp.RequestFlow.Approvers.Groups) {
 					r.RequestFlow.Approvers.Groups = r.RequestFlow.Approvers.Groups[:len(resp.RequestFlow.Approvers.Groups)]
@@ -210,7 +210,7 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			if resp.RequestFlow.ApproversStage2 == nil {
 				r.RequestFlow.ApproversStage2 = nil
 			} else {
-				r.RequestFlow.ApproversStage2 = &tfTypes.AddAppToAppStoreInputAdmins{}
+				r.RequestFlow.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
 				r.RequestFlow.ApproversStage2.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.ApproversStage2.Groups) > len(resp.RequestFlow.ApproversStage2.Groups) {
 					r.RequestFlow.ApproversStage2.Groups = r.RequestFlow.ApproversStage2.Groups[:len(resp.RequestFlow.ApproversStage2.Groups)]

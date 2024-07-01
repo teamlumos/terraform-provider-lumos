@@ -11,6 +11,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/errors"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"io"
 	"net/http"
 	"net/url"
@@ -67,9 +68,9 @@ func (s *Meta) LumosArt(ctx context.Context, opts ...operations.Option) (*operat
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -194,9 +195,9 @@ func (s *Meta) LumosLivenessCheck(ctx context.Context, opts ...operations.Option
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
