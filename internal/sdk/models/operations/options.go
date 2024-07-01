@@ -5,6 +5,7 @@ package operations
 import (
 	"errors"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 )
 
 var ErrUnsupportedOption = errors.New("unsupported option")
@@ -28,7 +29,7 @@ func (e AcceptHeaderEnum) ToPointer() *AcceptHeaderEnum {
 
 type Options struct {
 	ServerURL            *string
-	Retries              *utils.RetryConfig
+	Retries              *retry.Config
 	AcceptHeaderOverride *AcceptHeaderEnum
 }
 
@@ -63,7 +64,7 @@ func WithTemplatedServerURL(serverURL string, params map[string]string) Option {
 }
 
 // WithRetries allows customizing the default retry configuration.
-func WithRetries(config utils.RetryConfig) Option {
+func WithRetries(config retry.Config) Option {
 	return func(opts *Options, supportedOptions ...string) error {
 		if !utils.Contains(supportedOptions, SupportedOptionRetries) {
 			return ErrUnsupportedOption

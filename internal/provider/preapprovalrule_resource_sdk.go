@@ -9,25 +9,28 @@ import (
 )
 
 func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput() *shared.PreApprovalRuleInput {
-	justification := r.Justification.ValueString()
-	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
-	for _, timeBasedAccessItem := range r.TimeBasedAccess {
-		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
-	}
 	appID := r.AppID.ValueString()
+	justification := r.Justification.ValueString()
+	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
+	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
+		id := preapprovalWebhooksItem.ID.ValueString()
+		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
+			ID: id,
+		})
+	}
 	var preapprovedGroups []shared.BaseGroup = []shared.BaseGroup{}
 	for _, preapprovedGroupsItem := range r.PreapprovedGroups {
-		id := new(string)
-		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
-			*id = preapprovedGroupsItem.ID.ValueString()
-		} else {
-			id = nil
-		}
 		appId1 := new(string)
 		if !preapprovedGroupsItem.AppID.IsUnknown() && !preapprovedGroupsItem.AppID.IsNull() {
 			*appId1 = preapprovedGroupsItem.AppID.ValueString()
 		} else {
 			appId1 = nil
+		}
+		id1 := new(string)
+		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
+			*id1 = preapprovedGroupsItem.ID.ValueString()
+		} else {
+			id1 = nil
 		}
 		integrationSpecificID := new(string)
 		if !preapprovedGroupsItem.IntegrationSpecificID.IsUnknown() && !preapprovedGroupsItem.IntegrationSpecificID.IsNull() {
@@ -36,37 +39,34 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput() *shared.Pr
 			integrationSpecificID = nil
 		}
 		preapprovedGroups = append(preapprovedGroups, shared.BaseGroup{
-			ID:                    id,
 			AppID:                 appId1,
+			ID:                    id1,
 			IntegrationSpecificID: integrationSpecificID,
 		})
 	}
 	var preapprovedPermissions []shared.RequestablePermissionBase = []shared.RequestablePermissionBase{}
 	for _, preapprovedPermissionsItem := range r.PreapprovedPermissions {
-		id1 := new(string)
+		id2 := new(string)
 		if !preapprovedPermissionsItem.ID.IsUnknown() && !preapprovedPermissionsItem.ID.IsNull() {
-			*id1 = preapprovedPermissionsItem.ID.ValueString()
+			*id2 = preapprovedPermissionsItem.ID.ValueString()
 		} else {
-			id1 = nil
+			id2 = nil
 		}
 		preapprovedPermissions = append(preapprovedPermissions, shared.RequestablePermissionBase{
-			ID: id1,
-		})
-	}
-	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
-	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
-		id2 := preapprovalWebhooksItem.ID.ValueString()
-		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
 		})
 	}
+	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
+	for _, timeBasedAccessItem := range r.TimeBasedAccess {
+		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+	}
 	out := shared.PreApprovalRuleInput{
-		Justification:          justification,
-		TimeBasedAccess:        timeBasedAccess,
 		AppID:                  appID,
+		Justification:          justification,
+		PreapprovalWebhooks:    preapprovalWebhooks,
 		PreapprovedGroups:      preapprovedGroups,
 		PreapprovedPermissions: preapprovedPermissions,
-		PreapprovalWebhooks:    preapprovalWebhooks,
+		TimeBasedAccess:        timeBasedAccess,
 	}
 	return &out
 }
@@ -162,23 +162,26 @@ func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(re
 
 func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput() *shared.PreApprovalRuleUpdateInput {
 	justification := r.Justification.ValueString()
-	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
-	for _, timeBasedAccessItem := range r.TimeBasedAccess {
-		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
+	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
+		id := preapprovalWebhooksItem.ID.ValueString()
+		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
+			ID: id,
+		})
 	}
 	var preapprovedGroups []shared.BaseGroup = []shared.BaseGroup{}
 	for _, preapprovedGroupsItem := range r.PreapprovedGroups {
-		id := new(string)
-		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
-			*id = preapprovedGroupsItem.ID.ValueString()
-		} else {
-			id = nil
-		}
 		appID := new(string)
 		if !preapprovedGroupsItem.AppID.IsUnknown() && !preapprovedGroupsItem.AppID.IsNull() {
 			*appID = preapprovedGroupsItem.AppID.ValueString()
 		} else {
 			appID = nil
+		}
+		id1 := new(string)
+		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
+			*id1 = preapprovedGroupsItem.ID.ValueString()
+		} else {
+			id1 = nil
 		}
 		integrationSpecificID := new(string)
 		if !preapprovedGroupsItem.IntegrationSpecificID.IsUnknown() && !preapprovedGroupsItem.IntegrationSpecificID.IsNull() {
@@ -187,36 +190,33 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput() *sha
 			integrationSpecificID = nil
 		}
 		preapprovedGroups = append(preapprovedGroups, shared.BaseGroup{
-			ID:                    id,
 			AppID:                 appID,
+			ID:                    id1,
 			IntegrationSpecificID: integrationSpecificID,
 		})
 	}
 	var preapprovedPermissions []shared.RequestablePermissionBase = []shared.RequestablePermissionBase{}
 	for _, preapprovedPermissionsItem := range r.PreapprovedPermissions {
-		id1 := new(string)
+		id2 := new(string)
 		if !preapprovedPermissionsItem.ID.IsUnknown() && !preapprovedPermissionsItem.ID.IsNull() {
-			*id1 = preapprovedPermissionsItem.ID.ValueString()
+			*id2 = preapprovedPermissionsItem.ID.ValueString()
 		} else {
-			id1 = nil
+			id2 = nil
 		}
 		preapprovedPermissions = append(preapprovedPermissions, shared.RequestablePermissionBase{
-			ID: id1,
-		})
-	}
-	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
-	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
-		id2 := preapprovalWebhooksItem.ID.ValueString()
-		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
 		})
 	}
+	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
+	for _, timeBasedAccessItem := range r.TimeBasedAccess {
+		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+	}
 	out := shared.PreApprovalRuleUpdateInput{
 		Justification:          justification,
-		TimeBasedAccess:        timeBasedAccess,
+		PreapprovalWebhooks:    preapprovalWebhooks,
 		PreapprovedGroups:      preapprovedGroups,
 		PreapprovedPermissions: preapprovedPermissions,
-		PreapprovalWebhooks:    preapprovalWebhooks,
+		TimeBasedAccess:        timeBasedAccess,
 	}
 	return &out
 }
