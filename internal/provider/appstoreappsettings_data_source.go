@@ -29,8 +29,8 @@ type AppStoreAppSettingsDataSource struct {
 
 // AppStoreAppSettingsDataSourceModel describes the data model.
 type AppStoreAppSettingsDataSourceModel struct {
+	AppID                     types.String                               `tfsdk:"app_id"`
 	CustomRequestInstructions types.String                               `tfsdk:"custom_request_instructions"`
-	ID                        types.String                               `tfsdk:"id"`
 	Provisioning              *tfTypes.AddAppToAppStoreInputProvisioning `tfsdk:"provisioning"`
 	RequestFlow               *tfTypes.AddAppToAppStoreInputRequestFlow  `tfsdk:"request_flow"`
 }
@@ -46,12 +46,12 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 		MarkdownDescription: "AppStoreAppSettings DataSource",
 
 		Attributes: map[string]schema.Attribute{
+			"app_id": schema.StringAttribute{
+				Required: true,
+			},
 			"custom_request_instructions": schema.StringAttribute{
 				Computed:    true,
 				Description: `AppStore App instructions that are shown to the requester.`,
-			},
-			"id": schema.StringAttribute{
-				Required: true,
 			},
 			"provisioning": schema.SingleNestedAttribute{
 				Computed: true,
@@ -466,7 +466,7 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	appID := data.ID.ValueString()
+	appID := data.AppID.ValueString()
 	request := operations.GetAppStoreAppSettingsRequest{
 		AppID: appID,
 	}

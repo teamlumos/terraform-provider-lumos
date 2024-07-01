@@ -144,7 +144,10 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							},
 						},
 						"id": schema.StringAttribute{
-							Computed:    true,
+							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 							Optional:    true,
 							Description: `The ID of this group.`,
 						},

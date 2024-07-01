@@ -14,7 +14,7 @@ RequestablePermission DataSource
 
 ```terraform
 data "lumos_requestable_permission" "my_requestablepermission" {
-  id = "6ba55756-13f8-4277-96ae-2047efc1ab3d"
+  permission_id = "...my_permission_id..."
 }
 ```
 
@@ -26,7 +26,7 @@ data "lumos_requestable_permission" "my_requestablepermission" {
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 - `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission.
-- `id` (String) The ID of this resource.
+- `id` (String) The ID of this requestable permission.
 - `label` (String) The label of this requestable permission.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--request_config))
 - `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
