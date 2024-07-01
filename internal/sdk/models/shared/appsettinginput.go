@@ -8,6 +8,121 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+// AppSettingInputAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this app.
+type AppSettingInputAccessRemovalInlineWebhook struct {
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+}
+
+func (o *AppSettingInputAccessRemovalInlineWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+// AppSettingInputProvisioningWebhook - The provisioning webhook optionally associated with this app.
+type AppSettingInputProvisioningWebhook struct {
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+}
+
+func (o *AppSettingInputProvisioningWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+// AppSettingInputProvisioning - Provisioning flow configuration to request access to app.
+type AppSettingInputProvisioning struct {
+	// A deprovisioning webhook can be optionally associated with this app.
+	AccessRemovalInlineWebhook *AppSettingInputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
+	// Whether the app is configured to allow users to request multiple permissions in a single request
+	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
+	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
+	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
+	// If enabled, Approvers must choose a group to provision the user to for access requests.
+	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
+	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
+	// The provisioning webhook optionally associated with this app.
+	ProvisioningWebhook *AppSettingInputProvisioningWebhook `json:"provisioning_webhook,omitempty"`
+	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+}
+
+func (o *AppSettingInputProvisioning) GetAccessRemovalInlineWebhook() *AppSettingInputAccessRemovalInlineWebhook {
+	if o == nil {
+		return nil
+	}
+	return o.AccessRemovalInlineWebhook
+}
+
+func (o *AppSettingInputProvisioning) GetAllowMultiplePermissionSelection() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.AllowMultiplePermissionSelection
+}
+
+func (o *AppSettingInputProvisioning) GetCustomProvisioningInstructions() *string {
+	if o == nil {
+		return nil
+	}
+	return o.CustomProvisioningInstructions
+}
+
+func (o *AppSettingInputProvisioning) GetGroupsProvisioning() *GroupProvisioningOption {
+	if o == nil {
+		return nil
+	}
+	return o.GroupsProvisioning
+}
+
+func (o *AppSettingInputProvisioning) GetManualStepsNeeded() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.ManualStepsNeeded
+}
+
+func (o *AppSettingInputProvisioning) GetProvisioningWebhook() *AppSettingInputProvisioningWebhook {
+	if o == nil {
+		return nil
+	}
+	return o.ProvisioningWebhook
+}
+
+func (o *AppSettingInputProvisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if o == nil {
+		return nil
+	}
+	return o.TimeBasedAccess
+}
+
+// AppSettingInputAdmins - AppStore App admins assigned.
+type AppSettingInputAdmins struct {
+	// Groups assigned as app admins.
+	Groups []BaseGroup `json:"groups,omitempty"`
+	// Users assigned as app admins.
+	Users []BaseUser `json:"users,omitempty"`
+}
+
+func (o *AppSettingInputAdmins) GetGroups() []BaseGroup {
+	if o == nil {
+		return nil
+	}
+	return o.Groups
+}
+
+func (o *AppSettingInputAdmins) GetUsers() []BaseUser {
+	if o == nil {
+		return nil
+	}
+	return o.Users
+}
+
 // AppSettingInputAllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
 type AppSettingInputAllowedGroupsConfigType string
 
@@ -37,10 +152,10 @@ func (e *AppSettingInputAllowedGroupsConfigType) UnmarshalJSON(data []byte) erro
 
 // AppSettingInputAllowedGroups - The allowed groups associated with this config.
 type AppSettingInputAllowedGroups struct {
-	// The type of this allowed groups config, can be all groups or specific.
-	Type *AppSettingInputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups allowed to request this permission.
 	Groups []BaseGroup `json:"groups,omitempty"`
+	// The type of this allowed groups config, can be all groups or specific.
+	Type *AppSettingInputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 }
 
 func (a AppSettingInputAllowedGroups) MarshalJSON() ([]byte, error) {
@@ -54,18 +169,18 @@ func (a *AppSettingInputAllowedGroups) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *AppSettingInputAllowedGroups) GetType() *AppSettingInputAllowedGroupsConfigType {
-	if o == nil {
-		return nil
-	}
-	return o.Type
-}
-
 func (o *AppSettingInputAllowedGroups) GetGroups() []BaseGroup {
 	if o == nil {
 		return nil
 	}
 	return o.Groups
+}
+
+func (o *AppSettingInputAllowedGroups) GetType() *AppSettingInputAllowedGroupsConfigType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }
 
 // AppSettingInputApprovers - AppStore App approvers assigned.
@@ -112,28 +227,6 @@ func (o *AppSettingInputApproversStage2) GetUsers() []BaseUser {
 	return o.Users
 }
 
-// AppSettingInputAdmins - AppStore App admins assigned.
-type AppSettingInputAdmins struct {
-	// Groups assigned as app admins.
-	Groups []BaseGroup `json:"groups,omitempty"`
-	// Users assigned as app admins.
-	Users []BaseUser `json:"users,omitempty"`
-}
-
-func (o *AppSettingInputAdmins) GetGroups() []BaseGroup {
-	if o == nil {
-		return nil
-	}
-	return o.Groups
-}
-
-func (o *AppSettingInputAdmins) GetUsers() []BaseUser {
-	if o == nil {
-		return nil
-	}
-	return o.Users
-}
-
 // AppSettingInputRequestValidationInlineWebhook - A request validation webhook can be optionally associated with this app.
 type AppSettingInputRequestValidationInlineWebhook struct {
 	// The ID of this inline webhook.
@@ -149,52 +242,31 @@ func (o *AppSettingInputRequestValidationInlineWebhook) GetID() string {
 
 // AppSettingInputRequestFlow - Request flow configuration to request access to app.
 type AppSettingInputRequestFlow struct {
-	// AppStore App visibility.
-	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
-	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
-	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
-	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
-	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
-	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	// AppStore App admins assigned.
+	Admins *AppSettingInputAdmins `json:"admins,omitempty"`
 	// The allowed groups associated with this config.
 	AllowedGroups *AppSettingInputAllowedGroups `json:"allowed_groups,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *AppSettingInputApprovers `json:"approvers,omitempty"`
 	// AppStore App stage 2 approvers assigned.
 	ApproversStage2 *AppSettingInputApproversStage2 `json:"approvers_stage_2,omitempty"`
-	// AppStore App admins assigned.
-	Admins *AppSettingInputAdmins `json:"admins,omitempty"`
+	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
+	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
+	// AppStore App visibility.
+	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
 	// A request validation webhook can be optionally associated with this app.
 	RequestValidationInlineWebhook *AppSettingInputRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
+	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
 }
 
-func (o *AppSettingInputRequestFlow) GetDiscoverability() *AppStoreVisibility {
+func (o *AppSettingInputRequestFlow) GetAdmins() *AppSettingInputAdmins {
 	if o == nil {
 		return nil
 	}
-	return o.Discoverability
-}
-
-func (o *AppSettingInputRequestFlow) GetCustomApprovalMessage() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomApprovalMessage
-}
-
-func (o *AppSettingInputRequestFlow) GetRequireManagerApproval() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequireManagerApproval
-}
-
-func (o *AppSettingInputRequestFlow) GetRequireAdditionalApproval() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequireAdditionalApproval
+	return o.Admins
 }
 
 func (o *AppSettingInputRequestFlow) GetAllowedGroups() *AppSettingInputAllowedGroups {
@@ -218,11 +290,18 @@ func (o *AppSettingInputRequestFlow) GetApproversStage2() *AppSettingInputApprov
 	return o.ApproversStage2
 }
 
-func (o *AppSettingInputRequestFlow) GetAdmins() *AppSettingInputAdmins {
+func (o *AppSettingInputRequestFlow) GetCustomApprovalMessage() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Admins
+	return o.CustomApprovalMessage
+}
+
+func (o *AppSettingInputRequestFlow) GetDiscoverability() *AppStoreVisibility {
+	if o == nil {
+		return nil
+	}
+	return o.Discoverability
 }
 
 func (o *AppSettingInputRequestFlow) GetRequestValidationInlineWebhook() *AppSettingInputRequestValidationInlineWebhook {
@@ -232,108 +311,29 @@ func (o *AppSettingInputRequestFlow) GetRequestValidationInlineWebhook() *AppSet
 	return o.RequestValidationInlineWebhook
 }
 
-// AppSettingInputProvisioningWebhook - The provisioning webhook optionally associated with this app.
-type AppSettingInputProvisioningWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-}
-
-func (o *AppSettingInputProvisioningWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-// AppSettingInputAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this app.
-type AppSettingInputAccessRemovalInlineWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-}
-
-func (o *AppSettingInputAccessRemovalInlineWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-// AppSettingInputProvisioning - Provisioning flow configuration to request access to app.
-type AppSettingInputProvisioning struct {
-	// If enabled, Approvers must choose a group to provision the user to for access requests.
-	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
-	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
-	// Whether the app is configured to allow users to request multiple permissions in a single request
-	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
-	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
-	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
-	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
-	// The provisioning webhook optionally associated with this app.
-	ProvisioningWebhook *AppSettingInputProvisioningWebhook `json:"provisioning_webhook,omitempty"`
-	// A deprovisioning webhook can be optionally associated with this app.
-	AccessRemovalInlineWebhook *AppSettingInputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
-}
-
-func (o *AppSettingInputProvisioning) GetGroupsProvisioning() *GroupProvisioningOption {
+func (o *AppSettingInputRequestFlow) GetRequireAdditionalApproval() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.GroupsProvisioning
+	return o.RequireAdditionalApproval
 }
 
-func (o *AppSettingInputProvisioning) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (o *AppSettingInputRequestFlow) GetRequireManagerApproval() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
-}
-
-func (o *AppSettingInputProvisioning) GetAllowMultiplePermissionSelection() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.AllowMultiplePermissionSelection
-}
-
-func (o *AppSettingInputProvisioning) GetManualStepsNeeded() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.ManualStepsNeeded
-}
-
-func (o *AppSettingInputProvisioning) GetCustomProvisioningInstructions() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomProvisioningInstructions
-}
-
-func (o *AppSettingInputProvisioning) GetProvisioningWebhook() *AppSettingInputProvisioningWebhook {
-	if o == nil {
-		return nil
-	}
-	return o.ProvisioningWebhook
-}
-
-func (o *AppSettingInputProvisioning) GetAccessRemovalInlineWebhook() *AppSettingInputAccessRemovalInlineWebhook {
-	if o == nil {
-		return nil
-	}
-	return o.AccessRemovalInlineWebhook
+	return o.RequireManagerApproval
 }
 
 type AppSettingInput struct {
 	// AppStore App instructions that are shown to the requester.
 	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
-	// Request flow configuration to request access to app.
-	RequestFlow *AppSettingInputRequestFlow `json:"request_flow,omitempty"`
-	// Provisioning flow configuration to request access to app.
-	Provisioning *AppSettingInputProvisioning `json:"provisioning,omitempty"`
 	// Whether the app is in the app store.
 	InAppStore *bool `default:"false" json:"in_app_store"`
+	// Provisioning flow configuration to request access to app.
+	Provisioning *AppSettingInputProvisioning `json:"provisioning,omitempty"`
+	// Request flow configuration to request access to app.
+	RequestFlow *AppSettingInputRequestFlow `json:"request_flow,omitempty"`
 }
 
 func (a AppSettingInput) MarshalJSON() ([]byte, error) {
@@ -354,11 +354,11 @@ func (o *AppSettingInput) GetCustomRequestInstructions() *string {
 	return o.CustomRequestInstructions
 }
 
-func (o *AppSettingInput) GetRequestFlow() *AppSettingInputRequestFlow {
+func (o *AppSettingInput) GetInAppStore() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.RequestFlow
+	return o.InAppStore
 }
 
 func (o *AppSettingInput) GetProvisioning() *AppSettingInputProvisioning {
@@ -368,9 +368,9 @@ func (o *AppSettingInput) GetProvisioning() *AppSettingInputProvisioning {
 	return o.Provisioning
 }
 
-func (o *AppSettingInput) GetInAppStore() *bool {
+func (o *AppSettingInput) GetRequestFlow() *AppSettingInputRequestFlow {
 	if o == nil {
 		return nil
 	}
-	return o.InAppStore
+	return o.RequestFlow
 }

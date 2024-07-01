@@ -4,10 +4,10 @@ package shared
 
 type PageApp struct {
 	Items []App  `json:"items"`
-	Total *int64 `json:"total,omitempty"`
 	Page  *int64 `json:"page,omitempty"`
-	Size  *int64 `json:"size,omitempty"`
 	Pages *int64 `json:"pages,omitempty"`
+	Size  *int64 `json:"size,omitempty"`
+	Total *int64 `json:"total,omitempty"`
 }
 
 func (o *PageApp) GetItems() []App {
@@ -17,18 +17,18 @@ func (o *PageApp) GetItems() []App {
 	return o.Items
 }
 
-func (o *PageApp) GetTotal() *int64 {
-	if o == nil {
-		return nil
-	}
-	return o.Total
-}
-
 func (o *PageApp) GetPage() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Page
+}
+
+func (o *PageApp) GetPages() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.Pages
 }
 
 func (o *PageApp) GetSize() *int64 {
@@ -38,9 +38,9 @@ func (o *PageApp) GetSize() *int64 {
 	return o.Size
 }
 
-func (o *PageApp) GetPages() *int64 {
+func (o *PageApp) GetTotal() *int64 {
 	if o == nil {
 		return nil
 	}
-	return o.Pages
+	return o.Total
 }

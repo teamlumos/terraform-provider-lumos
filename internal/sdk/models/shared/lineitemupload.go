@@ -2,22 +2,22 @@
 
 package shared
 
-// LineItemUploadUnitCost - The unit cost of this line item
-type LineItemUploadUnitCost struct {
+// UnitCost - The unit cost of this line item
+type UnitCost struct {
 	// The currency in which this cost is stored
 	Currency *string `json:"currency,omitempty"`
 	// The quantity of the cost in terms of the specified currency
 	Value int64 `json:"value"`
 }
 
-func (o *LineItemUploadUnitCost) GetCurrency() *string {
+func (o *UnitCost) GetCurrency() *string {
 	if o == nil {
 		return nil
 	}
 	return o.Currency
 }
 
-func (o *LineItemUploadUnitCost) GetValue() int64 {
+func (o *UnitCost) GetValue() int64 {
 	if o == nil {
 		return 0
 	}
@@ -30,7 +30,7 @@ type LineItemUpload struct {
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
 	// The unit cost of this line item
-	UnitCost LineItemUploadUnitCost `json:"unit_cost"`
+	UnitCost UnitCost `json:"unit_cost"`
 }
 
 func (o *LineItemUpload) GetName() string {
@@ -47,9 +47,9 @@ func (o *LineItemUpload) GetQuantity() int64 {
 	return o.Quantity
 }
 
-func (o *LineItemUpload) GetUnitCost() LineItemUploadUnitCost {
+func (o *LineItemUpload) GetUnitCost() UnitCost {
 	if o == nil {
-		return LineItemUploadUnitCost{}
+		return UnitCost{}
 	}
 	return o.UnitCost
 }
