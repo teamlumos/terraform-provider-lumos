@@ -8,31 +8,44 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// AppStoreVisibilityOption - The appstore visibility of this request config.
-type AppStoreVisibilityOption string
-
-const (
-	AppStoreVisibilityOptionHidden  AppStoreVisibilityOption = "HIDDEN"
-	AppStoreVisibilityOptionVisible AppStoreVisibilityOption = "VISIBLE"
-)
-
-func (e AppStoreVisibilityOption) ToPointer() *AppStoreVisibilityOption {
-	return &e
+// RequestablePermissionOutputAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
+type RequestablePermissionOutputAccessRemovalInlineWebhook struct {
+	// The description of this inline webhook.
+	Description *string `json:"description,omitempty"`
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
 }
-func (e *AppStoreVisibilityOption) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "HIDDEN":
-		fallthrough
-	case "VISIBLE":
-		*e = AppStoreVisibilityOption(v)
+
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetDescription() *string {
+	if o == nil {
 		return nil
-	default:
-		return fmt.Errorf("invalid value for AppStoreVisibilityOption: %v", v)
 	}
+	return o.Description
+}
+
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
 }
 
 // RequestablePermissionOutputAllowedGroupsConfigType - The type of this allowed groups config, can be all groups or specific.
@@ -64,10 +77,10 @@ func (e *RequestablePermissionOutputAllowedGroupsConfigType) UnmarshalJSON(data 
 
 // RequestablePermissionOutputAllowedGroups - The allowed groups config associated with this config.
 type RequestablePermissionOutputAllowedGroups struct {
-	// The type of this allowed groups config, can be all groups or specific.
-	Type *RequestablePermissionOutputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups allowed to request this permission.
 	Groups []Group `json:"groups,omitempty"`
+	// The type of this allowed groups config, can be all groups or specific.
+	Type *RequestablePermissionOutputAllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 }
 
 func (r RequestablePermissionOutputAllowedGroups) MarshalJSON() ([]byte, error) {
@@ -81,13 +94,6 @@ func (r *RequestablePermissionOutputAllowedGroups) UnmarshalJSON(data []byte) er
 	return nil
 }
 
-func (o *RequestablePermissionOutputAllowedGroups) GetType() *RequestablePermissionOutputAllowedGroupsConfigType {
-	if o == nil {
-		return nil
-	}
-	return o.Type
-}
-
 func (o *RequestablePermissionOutputAllowedGroups) GetGroups() []Group {
 	if o == nil {
 		return nil
@@ -95,30 +101,37 @@ func (o *RequestablePermissionOutputAllowedGroups) GetGroups() []Group {
 	return o.Groups
 }
 
-// ManagerApprovalOption - Manager approval can be configured as necessary to continue
-type ManagerApprovalOption string
+func (o *RequestablePermissionOutputAllowedGroups) GetType() *RequestablePermissionOutputAllowedGroupsConfigType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
+}
+
+// AppStoreVisibilityOption - The appstore visibility of this request config.
+type AppStoreVisibilityOption string
 
 const (
-	ManagerApprovalOptionNone            ManagerApprovalOption = "NONE"
-	ManagerApprovalOptionInitialApproval ManagerApprovalOption = "INITIAL_APPROVAL"
+	AppStoreVisibilityOptionHidden  AppStoreVisibilityOption = "HIDDEN"
+	AppStoreVisibilityOptionVisible AppStoreVisibilityOption = "VISIBLE"
 )
 
-func (e ManagerApprovalOption) ToPointer() *ManagerApprovalOption {
+func (e AppStoreVisibilityOption) ToPointer() *AppStoreVisibilityOption {
 	return &e
 }
-func (e *ManagerApprovalOption) UnmarshalJSON(data []byte) error {
+func (e *AppStoreVisibilityOption) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
-	case "NONE":
+	case "HIDDEN":
 		fallthrough
-	case "INITIAL_APPROVAL":
-		*e = ManagerApprovalOption(v)
+	case "VISIBLE":
+		*e = AppStoreVisibilityOption(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for ManagerApprovalOption: %v", v)
+		return fmt.Errorf("invalid value for AppStoreVisibilityOption: %v", v)
 	}
 }
 
@@ -166,24 +179,51 @@ func (o *RequestablePermissionOutputApproversStage2) GetUsers() []User {
 	return o.Users
 }
 
+// ManagerApprovalOption - Manager approval can be configured as necessary to continue
+type ManagerApprovalOption string
+
+const (
+	ManagerApprovalOptionNone            ManagerApprovalOption = "NONE"
+	ManagerApprovalOptionInitialApproval ManagerApprovalOption = "INITIAL_APPROVAL"
+)
+
+func (e ManagerApprovalOption) ToPointer() *ManagerApprovalOption {
+	return &e
+}
+func (e *ManagerApprovalOption) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "NONE":
+		fallthrough
+	case "INITIAL_APPROVAL":
+		*e = ManagerApprovalOption(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ManagerApprovalOption: %v", v)
+	}
+}
+
 // RequestApprovalConfig - A request approval config can be optionally associated with this config
 type RequestApprovalConfig struct {
-	// Indicates if approval flow is overridden.
-	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
-	// Manager approval can be configured as necessary to continue
-	ManagerApproval *ManagerApprovalOption `default:"NONE" json:"manager_approval"`
-	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
-	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
-	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
-	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// Indicates if custom_approval_message is overridden.
-	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *RequestablePermissionOutputApprovers `json:"approvers,omitempty"`
 	// AppStore App stage 2 approvers assigned.
 	ApproversStage2 *RequestablePermissionOutputApproversStage2 `json:"approvers_stage_2,omitempty"`
+	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
+	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
+	// Indicates if custom_approval_message is overridden.
+	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
+	// Manager approval can be configured as necessary to continue
+	ManagerApproval *ManagerApprovalOption `default:"NONE" json:"manager_approval"`
+	// Indicates if approval flow is overridden.
+	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages,omitempty"`
+	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 }
 
 func (r RequestApprovalConfig) MarshalJSON() ([]byte, error) {
@@ -195,41 +235,6 @@ func (r *RequestApprovalConfig) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (o *RequestApprovalConfig) GetRequestApprovalConfigOverride() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequestApprovalConfigOverride
-}
-
-func (o *RequestApprovalConfig) GetManagerApproval() *ManagerApprovalOption {
-	if o == nil {
-		return nil
-	}
-	return o.ManagerApproval
-}
-
-func (o *RequestApprovalConfig) GetRequireAdditionalApproval() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.RequireAdditionalApproval
-}
-
-func (o *RequestApprovalConfig) GetCustomApprovalMessage() *string {
-	if o == nil {
-		return nil
-	}
-	return o.CustomApprovalMessage
-}
-
-func (o *RequestApprovalConfig) GetCustomApprovalMessageOverride() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.CustomApprovalMessageOverride
 }
 
 func (o *RequestApprovalConfig) GetApprovers() *RequestablePermissionOutputApprovers {
@@ -246,11 +251,46 @@ func (o *RequestApprovalConfig) GetApproversStage2() *RequestablePermissionOutpu
 	return o.ApproversStage2
 }
 
+func (o *RequestApprovalConfig) GetCustomApprovalMessage() *string {
+	if o == nil {
+		return nil
+	}
+	return o.CustomApprovalMessage
+}
+
+func (o *RequestApprovalConfig) GetCustomApprovalMessageOverride() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.CustomApprovalMessageOverride
+}
+
+func (o *RequestApprovalConfig) GetManagerApproval() *ManagerApprovalOption {
+	if o == nil {
+		return nil
+	}
+	return o.ManagerApproval
+}
+
+func (o *RequestApprovalConfig) GetRequestApprovalConfigOverride() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.RequestApprovalConfigOverride
+}
+
 func (o *RequestApprovalConfig) GetRequestApprovalStages() []RequestApprovalStageOutput {
 	if o == nil {
 		return nil
 	}
 	return o.RequestApprovalStages
+}
+
+func (o *RequestApprovalConfig) GetRequireAdditionalApproval() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.RequireAdditionalApproval
 }
 
 // RequestablePermissionOutputLifecycle - The lifecycle of this group.
@@ -282,18 +322,18 @@ func (e *RequestablePermissionOutputLifecycle) UnmarshalJSON(data []byte) error 
 
 // ProvisioningGroup - The provisioning group optionally assocated with this config.
 type ProvisioningGroup struct {
-	// The ID of this group.
-	ID *string `json:"id,omitempty"`
 	// The ID of the app that sources this group.
 	AppID *string `json:"app_id,omitempty"`
-	// The ID of this group, specific to the integration.
-	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
-	// The name of this group.
-	Name *string `json:"name,omitempty"`
 	// The description of this group.
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
 	GroupLifecycle *RequestablePermissionOutputLifecycle `default:"SYNCED" json:"group_lifecycle"`
+	// The ID of this group.
+	ID *string `json:"id,omitempty"`
+	// The ID of this group, specific to the integration.
+	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
+	// The name of this group.
+	Name *string `json:"name,omitempty"`
 	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
@@ -309,32 +349,11 @@ func (p *ProvisioningGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *ProvisioningGroup) GetID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ID
-}
-
 func (o *ProvisioningGroup) GetAppID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.AppID
-}
-
-func (o *ProvisioningGroup) GetIntegrationSpecificID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.IntegrationSpecificID
-}
-
-func (o *ProvisioningGroup) GetName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Name
 }
 
 func (o *ProvisioningGroup) GetDescription() *string {
@@ -351,6 +370,27 @@ func (o *ProvisioningGroup) GetGroupLifecycle() *RequestablePermissionOutputLife
 	return o.GroupLifecycle
 }
 
+func (o *ProvisioningGroup) GetID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ID
+}
+
+func (o *ProvisioningGroup) GetIntegrationSpecificID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.IntegrationSpecificID
+}
+
+func (o *ProvisioningGroup) GetName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Name
+}
+
 func (o *ProvisioningGroup) GetSourceAppID() *string {
 	if o == nil {
 		return nil
@@ -360,35 +400,14 @@ func (o *ProvisioningGroup) GetSourceAppID() *string {
 
 // RequestablePermissionOutputProvisioningWebhook - The provisioning webhook optionally associated with this config.
 type RequestablePermissionOutputProvisioningWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
 	// The description of this inline webhook.
 	Description *string `json:"description,omitempty"`
-}
-
-func (o *RequestablePermissionOutputProvisioningWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *RequestablePermissionOutputProvisioningWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *RequestablePermissionOutputProvisioningWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
 }
 
 func (o *RequestablePermissionOutputProvisioningWebhook) GetDescription() *string {
@@ -398,27 +417,41 @@ func (o *RequestablePermissionOutputProvisioningWebhook) GetDescription() *strin
 	return o.Description
 }
 
+func (o *RequestablePermissionOutputProvisioningWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *RequestablePermissionOutputProvisioningWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *RequestablePermissionOutputProvisioningWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
 // RequestFulfillmentConfig - A request fulfillment config can be optionally associated with this config
 type RequestFulfillmentConfig struct {
-	// Whether manual steps are needed.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// The manual instructions that go along.
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
-	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
-	// Indicates if time based access is overriden.
-	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
+	// Whether manual steps are needed.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// The provisioning group optionally assocated with this config.
 	ProvisioningGroup *ProvisioningGroup `json:"provisioning_group,omitempty"`
 	// The provisioning webhook optionally associated with this config.
 	ProvisioningWebhook *RequestablePermissionOutputProvisioningWebhook `json:"provisioning_webhook,omitempty"`
-}
-
-func (o *RequestFulfillmentConfig) GetManualStepsNeeded() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.ManualStepsNeeded
+	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	// Indicates if time based access is overriden.
+	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
 }
 
 func (o *RequestFulfillmentConfig) GetManualInstructions() *string {
@@ -428,18 +461,11 @@ func (o *RequestFulfillmentConfig) GetManualInstructions() *string {
 	return o.ManualInstructions
 }
 
-func (o *RequestFulfillmentConfig) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (o *RequestFulfillmentConfig) GetManualStepsNeeded() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
-}
-
-func (o *RequestFulfillmentConfig) GetTimeBasedAccessOverride() *bool {
-	if o == nil {
-		return nil
-	}
-	return o.TimeBasedAccessOverride
+	return o.ManualStepsNeeded
 }
 
 func (o *RequestFulfillmentConfig) GetProvisioningGroup() *ProvisioningGroup {
@@ -456,77 +482,30 @@ func (o *RequestFulfillmentConfig) GetProvisioningWebhook() *RequestablePermissi
 	return o.ProvisioningWebhook
 }
 
-// RequestablePermissionOutputAccessRemovalInlineWebhook - A deprovisioning webhook can be optionally associated with this config.
-type RequestablePermissionOutputAccessRemovalInlineWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
-	// The description of this inline webhook.
-	Description *string `json:"description,omitempty"`
-}
-
-func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-func (o *RequestablePermissionOutputAccessRemovalInlineWebhook) GetDescription() *string {
+func (o *RequestFulfillmentConfig) GetTimeBasedAccess() []TimeBasedAccessOptions {
 	if o == nil {
 		return nil
 	}
-	return o.Description
+	return o.TimeBasedAccess
+}
+
+func (o *RequestFulfillmentConfig) GetTimeBasedAccessOverride() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.TimeBasedAccessOverride
 }
 
 // RequestablePermissionOutputRequestValidationInlineWebhook - A request validation webhook can be optionally associated with this config.
 type RequestablePermissionOutputRequestValidationInlineWebhook struct {
-	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
-	// The name of this inline webhook.
-	Name string `json:"name"`
 	// The description of this inline webhook.
 	Description *string `json:"description,omitempty"`
-}
-
-func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
-}
-
-func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
+	// The ID of this inline webhook.
+	ID string `json:"id"`
+	// The name of this inline webhook.
+	Name string `json:"name"`
 }
 
 func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetDescription() *string {
@@ -536,20 +515,41 @@ func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetDescripti
 	return o.Description
 }
 
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *RequestablePermissionOutputRequestValidationInlineWebhook) GetName() string {
+	if o == nil {
+		return ""
+	}
+	return o.Name
+}
+
 // RequestConfig - The request config associated with this requestable permission.
 type RequestConfig struct {
-	// The appstore visibility of this request config.
-	AppstoreVisibility *AppStoreVisibilityOption `default:"HIDDEN" json:"appstore_visibility"`
-	// Indicates if allowed groups is overriden from the app-level settings.
-	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
+	// A deprovisioning webhook can be optionally associated with this config.
+	AccessRemovalInlineWebhook *RequestablePermissionOutputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// The allowed groups config associated with this config.
 	AllowedGroups *RequestablePermissionOutputAllowedGroups `json:"allowed_groups,omitempty"`
+	// Indicates if allowed groups is overriden from the app-level settings.
+	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
+	// The appstore visibility of this request config.
+	AppstoreVisibility *AppStoreVisibilityOption `default:"HIDDEN" json:"appstore_visibility"`
 	// A request approval config can be optionally associated with this config
 	RequestApprovalConfig *RequestApprovalConfig `json:"request_approval_config,omitempty"`
 	// A request fulfillment config can be optionally associated with this config
 	RequestFulfillmentConfig *RequestFulfillmentConfig `json:"request_fulfillment_config,omitempty"`
-	// A deprovisioning webhook can be optionally associated with this config.
-	AccessRemovalInlineWebhook *RequestablePermissionOutputAccessRemovalInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *RequestablePermissionOutputRequestValidationInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
@@ -565,11 +565,18 @@ func (r *RequestConfig) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *RequestConfig) GetAppstoreVisibility() *AppStoreVisibilityOption {
+func (o *RequestConfig) GetAccessRemovalInlineWebhook() *RequestablePermissionOutputAccessRemovalInlineWebhook {
 	if o == nil {
 		return nil
 	}
-	return o.AppstoreVisibility
+	return o.AccessRemovalInlineWebhook
+}
+
+func (o *RequestConfig) GetAllowedGroups() *RequestablePermissionOutputAllowedGroups {
+	if o == nil {
+		return nil
+	}
+	return o.AllowedGroups
 }
 
 func (o *RequestConfig) GetAllowedGroupsOverride() *bool {
@@ -579,11 +586,11 @@ func (o *RequestConfig) GetAllowedGroupsOverride() *bool {
 	return o.AllowedGroupsOverride
 }
 
-func (o *RequestConfig) GetAllowedGroups() *RequestablePermissionOutputAllowedGroups {
+func (o *RequestConfig) GetAppstoreVisibility() *AppStoreVisibilityOption {
 	if o == nil {
 		return nil
 	}
-	return o.AllowedGroups
+	return o.AppstoreVisibility
 }
 
 func (o *RequestConfig) GetRequestApprovalConfig() *RequestApprovalConfig {
@@ -600,13 +607,6 @@ func (o *RequestConfig) GetRequestFulfillmentConfig() *RequestFulfillmentConfig 
 	return o.RequestFulfillmentConfig
 }
 
-func (o *RequestConfig) GetAccessRemovalInlineWebhook() *RequestablePermissionOutputAccessRemovalInlineWebhook {
-	if o == nil {
-		return nil
-	}
-	return o.AccessRemovalInlineWebhook
-}
-
 func (o *RequestConfig) GetRequestValidationInlineWebhook() *RequestablePermissionOutputRequestValidationInlineWebhook {
 	if o == nil {
 		return nil
@@ -615,48 +615,20 @@ func (o *RequestConfig) GetRequestValidationInlineWebhook() *RequestablePermissi
 }
 
 type RequestablePermissionOutput struct {
-	// The ID of this requestable permission.
-	ID *string `json:"id,omitempty"`
-	// The type of this requestable permission.
-	Type *PermissionType `json:"type,omitempty"`
-	// The label of this requestable permission.
-	Label string `json:"label"`
-	// The ID of the app associated with this requestable permission.
-	AppID string `json:"app_id"`
 	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 	AppClassID string `json:"app_class_id"`
+	// The ID of the app associated with this requestable permission.
+	AppID string `json:"app_id"`
 	// The ID of the instance associated with this requestable permission.
 	AppInstanceID string `json:"app_instance_id"`
+	// The ID of this requestable permission.
+	ID *string `json:"id,omitempty"`
+	// The label of this requestable permission.
+	Label string `json:"label"`
 	// The request config associated with this requestable permission.
 	RequestConfig RequestConfig `json:"request_config"`
-}
-
-func (o *RequestablePermissionOutput) GetID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ID
-}
-
-func (o *RequestablePermissionOutput) GetType() *PermissionType {
-	if o == nil {
-		return nil
-	}
-	return o.Type
-}
-
-func (o *RequestablePermissionOutput) GetLabel() string {
-	if o == nil {
-		return ""
-	}
-	return o.Label
-}
-
-func (o *RequestablePermissionOutput) GetAppID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppID
+	// The type of this requestable permission.
+	Type *PermissionType `json:"type,omitempty"`
 }
 
 func (o *RequestablePermissionOutput) GetAppClassID() string {
@@ -666,6 +638,13 @@ func (o *RequestablePermissionOutput) GetAppClassID() string {
 	return o.AppClassID
 }
 
+func (o *RequestablePermissionOutput) GetAppID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppID
+}
+
 func (o *RequestablePermissionOutput) GetAppInstanceID() string {
 	if o == nil {
 		return ""
@@ -673,9 +652,30 @@ func (o *RequestablePermissionOutput) GetAppInstanceID() string {
 	return o.AppInstanceID
 }
 
+func (o *RequestablePermissionOutput) GetID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.ID
+}
+
+func (o *RequestablePermissionOutput) GetLabel() string {
+	if o == nil {
+		return ""
+	}
+	return o.Label
+}
+
 func (o *RequestablePermissionOutput) GetRequestConfig() RequestConfig {
 	if o == nil {
 		return RequestConfig{}
 	}
 	return o.RequestConfig
+}
+
+func (o *RequestablePermissionOutput) GetType() *PermissionType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
 }

@@ -10,11 +10,25 @@ type Data struct {
 // for each. We are using `dict` here to be permissive to other webhook events (so we can warn if
 // the customer misconfigures for a different webhook), and we actually only use 2 fields from it.
 type AirbasePurchaseRequestEvent struct {
+	CreatedDate string `json:"created_date"`
+	Data        Data   `json:"data"`
 	ID          string `json:"id"`
 	Object      string `json:"object"`
 	Type        string `json:"type"`
-	CreatedDate string `json:"created_date"`
-	Data        Data   `json:"data"`
+}
+
+func (o *AirbasePurchaseRequestEvent) GetCreatedDate() string {
+	if o == nil {
+		return ""
+	}
+	return o.CreatedDate
+}
+
+func (o *AirbasePurchaseRequestEvent) GetData() Data {
+	if o == nil {
+		return Data{}
+	}
+	return o.Data
 }
 
 func (o *AirbasePurchaseRequestEvent) GetID() string {
@@ -36,18 +50,4 @@ func (o *AirbasePurchaseRequestEvent) GetType() string {
 		return ""
 	}
 	return o.Type
-}
-
-func (o *AirbasePurchaseRequestEvent) GetCreatedDate() string {
-	if o == nil {
-		return ""
-	}
-	return o.CreatedDate
-}
-
-func (o *AirbasePurchaseRequestEvent) GetData() Data {
-	if o == nil {
-		return Data{}
-	}
-	return o.Data
 }

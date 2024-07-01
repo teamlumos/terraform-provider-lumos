@@ -24,13 +24,13 @@ func (o *PerMonth) GetValue() int64 {
 	return o.Value
 }
 
-// UnitCost - The unit cost of this line item
-type UnitCost struct {
+// LineItemUnitCost - The unit cost of this line item
+type LineItemUnitCost struct {
 	// The per unit cost associated with this line item, amortized to the cost per month
 	PerMonth PerMonth `json:"per_month"`
 }
 
-func (o *UnitCost) GetPerMonth() PerMonth {
+func (o *LineItemUnitCost) GetPerMonth() PerMonth {
 	if o == nil {
 		return PerMonth{}
 	}
@@ -40,12 +40,12 @@ func (o *UnitCost) GetPerMonth() PerMonth {
 type LineItem struct {
 	// The name of the line item as stored in Lumos
 	Name string `json:"name"`
-	// The type of purchase that this line item refers to
-	Type string `json:"type"`
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
+	// The type of purchase that this line item refers to
+	Type string `json:"type"`
 	// The unit cost of this line item
-	UnitCost UnitCost `json:"unit_cost"`
+	UnitCost LineItemUnitCost `json:"unit_cost"`
 }
 
 func (o *LineItem) GetName() string {
@@ -55,13 +55,6 @@ func (o *LineItem) GetName() string {
 	return o.Name
 }
 
-func (o *LineItem) GetType() string {
-	if o == nil {
-		return ""
-	}
-	return o.Type
-}
-
 func (o *LineItem) GetQuantity() int64 {
 	if o == nil {
 		return 0
@@ -69,9 +62,16 @@ func (o *LineItem) GetQuantity() int64 {
 	return o.Quantity
 }
 
-func (o *LineItem) GetUnitCost() UnitCost {
+func (o *LineItem) GetType() string {
 	if o == nil {
-		return UnitCost{}
+		return ""
+	}
+	return o.Type
+}
+
+func (o *LineItem) GetUnitCost() LineItemUnitCost {
+	if o == nil {
+		return LineItemUnitCost{}
 	}
 	return o.UnitCost
 }

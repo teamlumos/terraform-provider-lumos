@@ -62,7 +62,8 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 				Description: `The ID of the instance associated with this requestable permission.`,
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Computed:    true,
+				Description: `The ID of this requestable permission.`,
 			},
 			"label": schema.StringAttribute{
 				Computed:    true,

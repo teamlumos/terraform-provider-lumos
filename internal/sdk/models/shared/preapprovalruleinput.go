@@ -3,18 +3,25 @@
 package shared
 
 type PreApprovalRuleInput struct {
-	// The justification of this preapproval rule.
-	Justification string `json:"justification"`
-	// Preapproval rule time access length,
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
 	// The ID of the app associated with this pre-approval rule.
 	AppID string `json:"app_id"`
+	// The justification of this preapproval rule.
+	Justification string `json:"justification"`
+	// The preapproval webhooks of this preapproval rule.
+	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
 	// The preapproved groups of this preapproval rule.
 	PreapprovedGroups []BaseGroup `json:"preapproved_groups,omitempty"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions,omitempty"`
-	// The preapproval webhooks of this preapproval rule.
-	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
+	// Preapproval rule time access length,
+	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+}
+
+func (o *PreApprovalRuleInput) GetAppID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppID
 }
 
 func (o *PreApprovalRuleInput) GetJustification() string {
@@ -24,18 +31,11 @@ func (o *PreApprovalRuleInput) GetJustification() string {
 	return o.Justification
 }
 
-func (o *PreApprovalRuleInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (o *PreApprovalRuleInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
 	if o == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
-}
-
-func (o *PreApprovalRuleInput) GetAppID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppID
+	return o.PreapprovalWebhooks
 }
 
 func (o *PreApprovalRuleInput) GetPreapprovedGroups() []BaseGroup {
@@ -52,9 +52,9 @@ func (o *PreApprovalRuleInput) GetPreapprovedPermissions() []RequestablePermissi
 	return o.PreapprovedPermissions
 }
 
-func (o *PreApprovalRuleInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
+func (o *PreApprovalRuleInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
 	if o == nil {
 		return nil
 	}
-	return o.PreapprovalWebhooks
+	return o.TimeBasedAccess
 }

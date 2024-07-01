@@ -9,23 +9,16 @@ import (
 
 // RequesterUser - The user who requested access. It's possible for one user to request access on another's behalf.
 type RequesterUser struct {
-	// The ID of this user.
-	ID string `json:"id"`
 	// The email of this user.
 	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
+	// The given name of this user.
+	GivenName *string `json:"given_name,omitempty"`
+	// The ID of this user.
+	ID string `json:"id"`
 	// The status of this user.
 	Status *UserLifecycleStatus `json:"status,omitempty"`
-}
-
-func (o *RequesterUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
 }
 
 func (o *RequesterUser) GetEmail() *string {
@@ -35,6 +28,13 @@ func (o *RequesterUser) GetEmail() *string {
 	return o.Email
 }
 
+func (o *RequesterUser) GetFamilyName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.FamilyName
+}
+
 func (o *RequesterUser) GetGivenName() *string {
 	if o == nil {
 		return nil
@@ -42,11 +42,11 @@ func (o *RequesterUser) GetGivenName() *string {
 	return o.GivenName
 }
 
-func (o *RequesterUser) GetFamilyName() *string {
+func (o *RequesterUser) GetID() string {
 	if o == nil {
-		return nil
+		return ""
 	}
-	return o.FamilyName
+	return o.ID
 }
 
 func (o *RequesterUser) GetStatus() *UserLifecycleStatus {
@@ -58,23 +58,16 @@ func (o *RequesterUser) GetStatus() *UserLifecycleStatus {
 
 // TargetUser - The user the request is for.
 type TargetUser struct {
-	// The ID of this user.
-	ID string `json:"id"`
 	// The email of this user.
 	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
+	// The given name of this user.
+	GivenName *string `json:"given_name,omitempty"`
+	// The ID of this user.
+	ID string `json:"id"`
 	// The status of this user.
 	Status *UserLifecycleStatus `json:"status,omitempty"`
-}
-
-func (o *TargetUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
 }
 
 func (o *TargetUser) GetEmail() *string {
@@ -84,6 +77,13 @@ func (o *TargetUser) GetEmail() *string {
 	return o.Email
 }
 
+func (o *TargetUser) GetFamilyName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.FamilyName
+}
+
 func (o *TargetUser) GetGivenName() *string {
 	if o == nil {
 		return nil
@@ -91,11 +91,11 @@ func (o *TargetUser) GetGivenName() *string {
 	return o.GivenName
 }
 
-func (o *TargetUser) GetFamilyName() *string {
+func (o *TargetUser) GetID() string {
 	if o == nil {
-		return nil
+		return ""
 	}
-	return o.FamilyName
+	return o.ID
 }
 
 func (o *TargetUser) GetStatus() *UserLifecycleStatus {
@@ -107,24 +107,24 @@ func (o *TargetUser) GetStatus() *UserLifecycleStatus {
 
 // AccessRequest - API version of DomainAppSupportRequest.
 type AccessRequest struct {
-	// The ID of the access request.
-	ID string `json:"id"`
 	// The ID of the app the request is for.
 	AppID string `json:"app_id"`
 	// The name of the app the request is for.
-	AppName string `json:"app_name"`
-	// The user who requested access. It's possible for one user to request access on another's behalf.
-	RequesterUser RequesterUser `json:"requester_user"`
-	// The user the request is for.
-	TargetUser    TargetUser `json:"target_user"`
-	SupporterUser *User      `json:"supporter_user,omitempty"`
-	// The current status of the request.
-	Status SupportRequestStatus `json:"status"`
+	AppName   string     `json:"app_name"`
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	// The ID of the access request.
+	ID string `json:"id"`
 	// The reason the user wrote for putting the access request into the given state.
 	Notes                  map[string]string             `json:"notes,omitempty"`
-	ExpiresAt              *time.Time                    `json:"expires_at,omitempty"`
 	RequestablePermissions []RequestablePermissionOutput `json:"requestable_permissions,omitempty"`
 	RequestedAt            *time.Time                    `json:"requested_at,omitempty"`
+	// The user who requested access. It's possible for one user to request access on another's behalf.
+	RequesterUser RequesterUser `json:"requester_user"`
+	// The current status of the request.
+	Status        SupportRequestStatus `json:"status"`
+	SupporterUser *User                `json:"supporter_user,omitempty"`
+	// The user the request is for.
+	TargetUser TargetUser `json:"target_user"`
 }
 
 func (a AccessRequest) MarshalJSON() ([]byte, error) {
@@ -136,13 +136,6 @@ func (a *AccessRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (o *AccessRequest) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
 }
 
 func (o *AccessRequest) GetAppID() string {
@@ -159,32 +152,18 @@ func (o *AccessRequest) GetAppName() string {
 	return o.AppName
 }
 
-func (o *AccessRequest) GetRequesterUser() RequesterUser {
-	if o == nil {
-		return RequesterUser{}
-	}
-	return o.RequesterUser
-}
-
-func (o *AccessRequest) GetTargetUser() TargetUser {
-	if o == nil {
-		return TargetUser{}
-	}
-	return o.TargetUser
-}
-
-func (o *AccessRequest) GetSupporterUser() *User {
+func (o *AccessRequest) GetExpiresAt() *time.Time {
 	if o == nil {
 		return nil
 	}
-	return o.SupporterUser
+	return o.ExpiresAt
 }
 
-func (o *AccessRequest) GetStatus() SupportRequestStatus {
+func (o *AccessRequest) GetID() string {
 	if o == nil {
-		return SupportRequestStatus("")
+		return ""
 	}
-	return o.Status
+	return o.ID
 }
 
 func (o *AccessRequest) GetNotes() map[string]string {
@@ -192,13 +171,6 @@ func (o *AccessRequest) GetNotes() map[string]string {
 		return nil
 	}
 	return o.Notes
-}
-
-func (o *AccessRequest) GetExpiresAt() *time.Time {
-	if o == nil {
-		return nil
-	}
-	return o.ExpiresAt
 }
 
 func (o *AccessRequest) GetRequestablePermissions() []RequestablePermissionOutput {
@@ -213,4 +185,32 @@ func (o *AccessRequest) GetRequestedAt() *time.Time {
 		return nil
 	}
 	return o.RequestedAt
+}
+
+func (o *AccessRequest) GetRequesterUser() RequesterUser {
+	if o == nil {
+		return RequesterUser{}
+	}
+	return o.RequesterUser
+}
+
+func (o *AccessRequest) GetStatus() SupportRequestStatus {
+	if o == nil {
+		return SupportRequestStatus("")
+	}
+	return o.Status
+}
+
+func (o *AccessRequest) GetSupporterUser() *User {
+	if o == nil {
+		return nil
+	}
+	return o.SupporterUser
+}
+
+func (o *AccessRequest) GetTargetUser() TargetUser {
+	if o == nil {
+		return TargetUser{}
+	}
+	return o.TargetUser
 }

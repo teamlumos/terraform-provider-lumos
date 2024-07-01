@@ -27,10 +27,10 @@ func (o *LineItemInputUnitCost) GetValue() float64 {
 type LineItemInput struct {
 	// The name of the line item as stored in Lumos
 	Name string `json:"name"`
-	// The type of purchase that this line item refers to
-	Type string `json:"type"`
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
+	// The type of purchase that this line item refers to
+	Type string `json:"type"`
 	// The per-unit cost of the line item
 	UnitCost LineItemInputUnitCost `json:"unit_cost"`
 }
@@ -42,18 +42,18 @@ func (o *LineItemInput) GetName() string {
 	return o.Name
 }
 
-func (o *LineItemInput) GetType() string {
-	if o == nil {
-		return ""
-	}
-	return o.Type
-}
-
 func (o *LineItemInput) GetQuantity() int64 {
 	if o == nil {
 		return 0
 	}
 	return o.Quantity
+}
+
+func (o *LineItemInput) GetType() string {
+	if o == nil {
+		return ""
+	}
+	return o.Type
 }
 
 func (o *LineItemInput) GetUnitCost() LineItemInputUnitCost {
