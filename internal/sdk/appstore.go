@@ -12,6 +12,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/errors"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"io"
 	"net/http"
 	"net/url"
@@ -74,9 +75,9 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -220,9 +221,9 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -366,9 +367,9 @@ func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetA
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -512,9 +513,9 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -660,9 +661,9 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -802,9 +803,9 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -944,9 +945,9 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1086,9 +1087,9 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1234,9 +1235,9 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1380,9 +1381,9 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1528,9 +1529,9 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1670,9 +1671,9 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1801,9 +1802,9 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -1952,9 +1953,9 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -2098,9 +2099,9 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -2264,9 +2265,9 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -2408,9 +2409,9 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -2539,9 +2540,9 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
@@ -2693,9 +2694,9 @@ func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermiss
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,

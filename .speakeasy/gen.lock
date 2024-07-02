@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: f7d2874dd2941028123f449663b76ad6
+  docChecksum: 5f533108d23a57cbc2001637f0e4896f
   docVersion: 0.1.0
-  speakeasyVersion: 1.322.4
-  generationVersion: 2.355.2
-  releaseVersion: 0.3.0
-  configChecksum: b503d10b8a0c214fdfd822cb8c4552cc
+  speakeasyVersion: 1.326.0
+  generationVersion: 2.359.0
+  releaseVersion: 0.4.2
+  configChecksum: 83d1c30c84338fb9cb98ac3bde324008
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.22.0
+    core: 3.23.0
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     retries: 2.81.1
@@ -24,6 +24,7 @@ generatedFiles:
   - internal/sdk/integrationwebhooks.go
   - internal/sdk/lumos.go
   - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/retry/config.go
   - internal/sdk/types/bigint.go
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go

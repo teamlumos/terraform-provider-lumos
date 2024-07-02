@@ -144,14 +144,38 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionBase"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_instance_id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_instance_id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionInput"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
+    update:
       "x-speakeasy-param-suppress-computed-diff": true
   # Suppress computed diff for groups
   - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
@@ -164,3 +188,10 @@ actions:
   - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
+  # ...
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["properties"]["request_approval_config"]["approvers"]["users"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["properties"]["request_approval_config"]["approvers"]["groups"]
+    update:
+      "format": "set"

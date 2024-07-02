@@ -8,6 +8,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/hooks"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"net/http"
 	"time"
 )
@@ -50,7 +51,7 @@ type sdkConfiguration struct {
 	SDKVersion        string
 	GenVersion        string
 	UserAgent         string
-	RetryConfig       *utils.RetryConfig
+	RetryConfig       *retry.Config
 	Hooks             *hooks.Hooks
 }
 
@@ -131,7 +132,7 @@ func WithSecuritySource(security func(context.Context) (shared.Security, error))
 	}
 }
 
-func WithRetryConfig(retryConfig utils.RetryConfig) SDKOption {
+func WithRetryConfig(retryConfig retry.Config) SDKOption {
 	return func(sdk *Lumos) {
 		sdk.sdkConfiguration.RetryConfig = &retryConfig
 	}
@@ -144,8 +145,8 @@ func New(opts ...SDKOption) *Lumos {
 			Language:          "go",
 			OpenAPIDocVersion: "0.1.0",
 			SDKVersion:        "0.0.1",
-			GenVersion:        "2.355.2",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.355.2 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			GenVersion:        "2.359.0",
+			UserAgent:         "speakeasy-sdk/go 0.0.1 2.359.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			Hooks:             hooks.New(),
 		},
 	}

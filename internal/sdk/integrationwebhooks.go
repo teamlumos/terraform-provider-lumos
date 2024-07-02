@@ -12,6 +12,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/errors"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"io"
 	"net/http"
 )
@@ -73,9 +74,9 @@ func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, 
 	retryConfig := o.Retries
 	if retryConfig == nil {
 		if globalRetryConfig == nil {
-			retryConfig = &utils.RetryConfig{
+			retryConfig = &retry.Config{
 				Strategy: "backoff",
-				Backoff: &utils.BackoffStrategy{
+				Backoff: &retry.BackoffStrategy{
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
