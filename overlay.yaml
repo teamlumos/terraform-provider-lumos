@@ -42,6 +42,12 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppStoreAppSettings#read"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/users"]["get"]
     update:
       "x-speakeasy-entity-operation": "Users#read"
