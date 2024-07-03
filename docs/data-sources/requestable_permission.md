@@ -14,7 +14,7 @@ RequestablePermission DataSource
 
 ```terraform
 data "lumos_requestable_permission" "my_requestablepermission" {
-  permission_id = "...my_permission_id..."
+  id = "d39948da-9690-4a77-b8cc-63d4de7a4893"
 }
 ```
 
@@ -26,7 +26,7 @@ data "lumos_requestable_permission" "my_requestablepermission" {
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 - `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission.
-- `id` (String) The ID of this requestable permission.
+- `id` (String) The ID of this resource.
 - `label` (String) The label of this requestable permission.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--request_config))
 - `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
@@ -60,7 +60,7 @@ Read-Only:
 
 Read-Only:
 
-- `groups` (Attributes List) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
+- `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
 - `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
 
 <a id="nestedatt--request_config--allowed_groups--groups"></a>

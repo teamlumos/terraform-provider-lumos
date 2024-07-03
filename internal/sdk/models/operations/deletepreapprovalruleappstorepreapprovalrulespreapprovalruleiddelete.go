@@ -8,14 +8,14 @@ import (
 )
 
 type DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest struct {
-	PreApprovalRuleID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
+	ID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest) GetPreApprovalRuleID() string {
+func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
-	return o.PreApprovalRuleID
+	return o.ID
 }
 
 type DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse struct {

@@ -29,13 +29,13 @@ actions:
       "x-speakeasy-entity-operation": "App#update"
   - target: $["paths"]["/apps/{app_id}"]["patch"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/apps/{app_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "App#read"
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
     update:
       "x-speakeasy-entity-operation": "AppStoreAppSettings#update"
@@ -62,19 +62,19 @@ actions:
       "x-speakeasy-entity-operation": "RequestablePermission#read"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["get"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "RequestablePermission#delete"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["delete"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "RequestablePermission#update"
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["patch"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/pre_approval_rules"]["post"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#create"
@@ -83,13 +83,13 @@ actions:
       "x-speakeasy-entity-operation": "PreApprovalRule#delete"
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#update"
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["parameters"][0]
     update:
-      "x-speakeasy-match": "id"
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#create"
@@ -188,7 +188,7 @@ actions:
   - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
-  # ...
+  # ensure that ordering does not matter for approver groups/users
   - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
     update:
       "format": "set"
@@ -199,5 +199,12 @@ actions:
     update:
       "format": "set"
   - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
+    update:
+      "format": "set"
+  # ensure that ordering does not matter for allowed groups
+  - target: $["components"]["schemas"]["AllowedGroupsConfigInput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AllowedGroupsConfigOutput"]["properties"]["groups"]
     update:
       "format": "set"

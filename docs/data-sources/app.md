@@ -14,7 +14,7 @@ App DataSource
 
 ```terraform
 data "lumos_app" "my_app" {
-  app_id = "...my_app_id..."
+  id = "badd3923-8576-4e90-a0d0-22ab47bbd04e"
 }
 ```
 
@@ -25,7 +25,7 @@ data "lumos_app" "my_app" {
 
 - `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
-- `id` (String) The ID of this app.
+- `id` (String) The ID of this resource.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.

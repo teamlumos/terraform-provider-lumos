@@ -8,15 +8,15 @@ import (
 )
 
 type UpdateAppRequest struct {
-	AppID          string                `pathParam:"style=simple,explode=false,name=app_id"`
+	ID             string                `pathParam:"style=simple,explode=false,name=app_id"`
 	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
 }
 
-func (o *UpdateAppRequest) GetAppID() string {
+func (o *UpdateAppRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
-	return o.AppID
+	return o.ID
 }
 
 func (o *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {

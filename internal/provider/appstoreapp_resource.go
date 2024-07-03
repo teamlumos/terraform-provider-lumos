@@ -395,11 +395,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									setplanmodifier.RequiresReplaceIfConfigured(),
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{

@@ -200,7 +200,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{

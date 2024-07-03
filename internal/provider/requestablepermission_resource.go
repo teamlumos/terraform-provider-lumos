@@ -128,7 +128,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 						Computed: true,
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
@@ -715,9 +715,9 @@ func (r *RequestablePermissionResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	permissionID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		PermissionID: permissionID,
+		ID: id,
 	}
 	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, request)
 	if err != nil {
@@ -763,10 +763,10 @@ func (r *RequestablePermissionResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	permissionID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	requestablePermissionInputUpdate := *data.ToSharedRequestablePermissionInputUpdate()
 	request := operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest{
-		PermissionID:                     permissionID,
+		ID:                               id,
 		RequestablePermissionInputUpdate: requestablePermissionInputUpdate,
 	}
 	res, err := r.client.AppStore.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx, request)
@@ -814,9 +814,9 @@ func (r *RequestablePermissionResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	permissionID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest{
-		PermissionID: permissionID,
+		ID: id,
 	}
 	res, err := r.client.AppStore.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete(ctx, request)
 	if err != nil {
@@ -838,5 +838,5 @@ func (r *RequestablePermissionResource) Delete(ctx context.Context, req resource
 }
 
 func (r *RequestablePermissionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id").AtName("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

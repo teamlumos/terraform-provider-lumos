@@ -8,15 +8,15 @@ import (
 )
 
 type UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest struct {
-	PreApprovalRuleID          string                            `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
+	ID                         string                            `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
 	PreApprovalRuleUpdateInput shared.PreApprovalRuleUpdateInput `request:"mediaType=application/json"`
 }
 
-func (o *UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest) GetPreApprovalRuleID() string {
+func (o *UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
-	return o.PreApprovalRuleID
+	return o.ID
 }
 
 func (o *UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest) GetPreApprovalRuleUpdateInput() shared.PreApprovalRuleUpdateInput {
