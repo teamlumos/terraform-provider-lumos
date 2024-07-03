@@ -1,3 +1,3 @@
 data "lumos_app_store_app_settings" "my_appstoreappsettings" {
-  app_id = "...my_app_id..."
+  id = "2cafe2be-d399-448d-a969-0a77f8cc63d4"
 }
