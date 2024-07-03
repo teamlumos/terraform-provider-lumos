@@ -189,9 +189,9 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 	data.RefreshFromSharedApp(res.App)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	appID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request1 := operations.GetAppRequest{
-		AppID: appID,
+		ID: id,
 	}
 	res1, err := r.client.Core.GetApp(ctx, request1)
 	if err != nil {
@@ -238,9 +238,9 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		return
 	}
 
-	appID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.GetAppRequest{
-		AppID: appID,
+		ID: id,
 	}
 	res, err := r.client.Core.GetApp(ctx, request)
 	if err != nil {
@@ -286,10 +286,10 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	appID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	appInputCreate := *data.ToSharedAppInputCreate()
 	request := operations.UpdateAppRequest{
-		AppID:          appID,
+		ID:             id,
 		AppInputCreate: appInputCreate,
 	}
 	res, err := r.client.Core.UpdateApp(ctx, request)
@@ -314,9 +314,9 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	}
 	data.RefreshFromSharedApp(res.App)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	appId1 := data.ID.ValueString()
+	id1 := data.ID.ValueString()
 	request1 := operations.GetAppRequest{
-		AppID: appId1,
+		ID: id1,
 	}
 	res1, err := r.client.Core.GetApp(ctx, request1)
 	if err != nil {
@@ -367,5 +367,5 @@ func (r *AppResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 }
 
 func (r *AppResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id").AtName("id"), req.ID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

@@ -3,5 +3,4 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
   app_id          = "...my_app_id..."
   app_instance_id = "...my_app_instance_id..."
   label           = "...my_label..."
-  permission_id   = "...my_permission_id..."
 }

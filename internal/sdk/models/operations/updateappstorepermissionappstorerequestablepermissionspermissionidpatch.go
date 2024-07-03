@@ -8,15 +8,15 @@ import (
 )
 
 type UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest struct {
-	PermissionID                     string                                  `pathParam:"style=simple,explode=false,name=permission_id"`
+	ID                               string                                  `pathParam:"style=simple,explode=false,name=permission_id"`
 	RequestablePermissionInputUpdate shared.RequestablePermissionInputUpdate `request:"mediaType=application/json"`
 }
 
-func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetPermissionID() string {
+func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
-	return o.PermissionID
+	return o.ID
 }
 
 func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetRequestablePermissionInputUpdate() shared.RequestablePermissionInputUpdate {

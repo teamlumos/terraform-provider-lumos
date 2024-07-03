@@ -62,8 +62,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 				Description: `The ID of the instance associated with this requestable permission.`,
 			},
 			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: `The ID of this requestable permission.`,
+				Required: true,
 			},
 			"label": schema.StringAttribute{
 				Computed:    true,
@@ -97,7 +96,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
@@ -464,9 +463,9 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	permissionID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		PermissionID: permissionID,
+		ID: id,
 	}
 	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, request)
 	if err != nil {

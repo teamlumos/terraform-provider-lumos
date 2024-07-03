@@ -148,7 +148,7 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes List) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
+- `groups` (Attributes Set) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
 - `type` (String) The type of this allowed groups config, can be all groups or specific. Requires replacement if changed. ; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>

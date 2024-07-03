@@ -331,10 +331,10 @@ func (r *PreApprovalRuleResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	preApprovalRuleID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	preApprovalRuleUpdateInput := *data.ToSharedPreApprovalRuleUpdateInput()
 	request := operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest{
-		PreApprovalRuleID:          preApprovalRuleID,
+		ID:                         id,
 		PreApprovalRuleUpdateInput: preApprovalRuleUpdateInput,
 	}
 	res, err := r.client.AppStore.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatch(ctx, request)
@@ -382,9 +382,9 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	preApprovalRuleID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
-		PreApprovalRuleID: preApprovalRuleID,
+		ID: id,
 	}
 	res, err := r.client.AppStore.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx, request)
 	if err != nil {

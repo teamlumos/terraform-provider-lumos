@@ -18,7 +18,6 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
   app_id          = "...my_app_id..."
   app_instance_id = "...my_app_instance_id..."
   label           = "...my_label..."
-  permission_id   = "...my_permission_id..."
 }
 ```
 
@@ -73,7 +72,7 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes List) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
+- `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
 - `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"
 
 <a id="nestedatt--request_config--allowed_groups--groups"></a>

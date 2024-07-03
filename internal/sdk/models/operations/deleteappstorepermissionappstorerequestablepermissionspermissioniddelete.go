@@ -8,14 +8,14 @@ import (
 )
 
 type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest struct {
-	PermissionID string `pathParam:"style=simple,explode=false,name=permission_id"`
+	ID string `pathParam:"style=simple,explode=false,name=permission_id"`
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest) GetPermissionID() string {
+func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest) GetID() string {
 	if o == nil {
 		return ""
 	}
-	return o.PermissionID
+	return o.ID
 }
 
 type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse struct {

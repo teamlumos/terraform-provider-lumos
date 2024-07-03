@@ -60,8 +60,7 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: `The ID of this app.`,
+				Required: true,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -134,9 +133,9 @@ func (r *AppDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	appID := data.ID.ValueString()
+	id := data.ID.ValueString()
 	request := operations.GetAppRequest{
-		AppID: appID,
+		ID: id,
 	}
 	res, err := r.client.Core.GetApp(ctx, request)
 	if err != nil {
