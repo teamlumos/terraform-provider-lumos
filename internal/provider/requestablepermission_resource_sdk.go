@@ -369,7 +369,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.RequestApprovalConfig.Approvers == nil {
 				r.RequestConfig.RequestApprovalConfig.Approvers = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AddAppToAppStoreInputAdmins{}
+				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) > len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups)]
@@ -428,7 +428,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AddAppToAppStoreInputAdmins{}
+				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) > len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups)]

@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 5f533108d23a57cbc2001637f0e4896f
+  docChecksum: 47a8e0c38aef678b4bd22e62b835f7f6
   docVersion: 0.1.0
   speakeasyVersion: 1.326.0
   generationVersion: 2.359.0
-  releaseVersion: 0.4.2
-  configChecksum: 83d1c30c84338fb9cb98ac3bde324008
+  releaseVersion: 0.9.0
+  configChecksum: 4be0e73d736a91b4450810af1508b18d
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -15,6 +15,7 @@ features:
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     retries: 2.81.1
+    sets: 0.1.2
     unions: 2.81.15
 generatedFiles:
   - internal/sdk/core.go
@@ -220,6 +221,7 @@ generatedFiles:
   - internal/provider/types/user.go
   - internal/provider/types/add_app_to_app_store_input_admins.go
   - internal/provider/types/add_app_to_app_store_input_allowed_groups.go
+  - internal/provider/types/add_app_to_app_store_input_approvers.go
   - internal/provider/types/add_app_to_app_store_input_request_flow.go
   - internal/provider/types/requestable_permission_base.go
   - internal/provider/types/requestable_permission_input_request_approval_config.go

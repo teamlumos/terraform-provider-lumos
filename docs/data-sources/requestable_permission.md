@@ -96,8 +96,8 @@ Read-Only:
 
 Read-Only:
 
-- `groups` (Attributes List) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--groups))
-- `users` (Attributes List) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--users))
 
 <a id="nestedatt--request_config--request_approval_config--approvers--groups"></a>
 ### Nested Schema for `request_config.request_approval_config.approvers.users`
@@ -131,8 +131,8 @@ Read-Only:
 
 Read-Only:
 
-- `groups` (Attributes List) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--groups))
-- `users` (Attributes List) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--users))
 
 <a id="nestedatt--request_config--request_approval_config--approvers_stage_2--groups"></a>
 ### Nested Schema for `request_config.request_approval_config.approvers_stage_2.users`

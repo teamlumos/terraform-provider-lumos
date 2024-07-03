@@ -189,9 +189,15 @@ actions:
     update:
       "x-speakeasy-terraform-ignore": true
   # ...
-  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["properties"]["request_approval_config"]["approvers"]["users"]
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
     update:
       "format": "set"
-  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["request_config"]["properties"]["request_approval_config"]["approvers"]["groups"]
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["users"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
     update:
       "format": "set"

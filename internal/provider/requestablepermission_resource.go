@@ -217,7 +217,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								Computed: true,
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"groups": schema.ListNestedAttribute{
+									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
@@ -266,7 +266,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										},
 										Description: `Groups assigned as support request approvers.`,
 									},
-									"users": schema.ListNestedAttribute{
+									"users": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
@@ -314,7 +314,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								Computed: true,
 								Optional: true,
 								Attributes: map[string]schema.Attribute{
-									"groups": schema.ListNestedAttribute{
+									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
@@ -363,7 +363,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										},
 										Description: `Groups assigned as support request approvers.`,
 									},
-									"users": schema.ListNestedAttribute{
+									"users": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
 										NestedObject: schema.NestedAttributeObject{

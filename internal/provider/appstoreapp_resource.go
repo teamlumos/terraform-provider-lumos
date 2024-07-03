@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -21,6 +22,7 @@ import (
 	speakeasy_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
 	speakeasy_listplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/listplanmodifier"
 	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
+	speakeasy_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
@@ -482,11 +484,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									setplanmodifier.RequiresReplaceIfConfigured(),
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
@@ -544,11 +546,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 								Description: `Groups assigned as support request approvers. Requires replacement if changed. `,
 							},
-							"users": schema.ListNestedAttribute{
+							"users": schema.SetNestedAttribute{
 								Computed: true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									setplanmodifier.RequiresReplaceIfConfigured(),
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
@@ -604,11 +606,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									setplanmodifier.RequiresReplaceIfConfigured(),
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
@@ -666,11 +668,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 								Description: `Groups assigned as support request approvers. Requires replacement if changed. `,
 							},
-							"users": schema.ListNestedAttribute{
+							"users": schema.SetNestedAttribute{
 								Computed: true,
-								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									setplanmodifier.RequiresReplaceIfConfigured(),
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
