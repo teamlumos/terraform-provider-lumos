@@ -150,6 +150,9 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionBase"]
     update:
       "x-speakeasy-entity": "RequestablePermission"
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]
+    update:
+      "x-speakeasy-entity": "RequestablePermission"
   - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
@@ -183,6 +186,32 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  # Ensure that we send raw null for attributes which can be overwritten
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]["properties"]["request_config"]["properties"]["approvers"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]["properties"]["request_config"]["properties"]["manager_approval"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]["properties"]["request_config"]["approvers"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]["properties"]["request_config"]["manager_approval"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  # Ensure that we send raw null for attributes which can be overwritten
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["request_config"]["properties"]["approvers"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["request_config"]["properties"]["manager_approval"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["request_config"]["approvers"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["request_config"]["manager_approval"]
+    update:
+      "x-speakeasy-terraform-plan-only": true
   # Suppress computed diff for groups
   - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
     update:

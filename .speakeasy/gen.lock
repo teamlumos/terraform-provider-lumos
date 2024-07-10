@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 0b760bd7a1a414324e09b8d43068be63
+  docChecksum: cca3d76ddc5ed0d912881826e42fc075
   docVersion: 0.1.0
-  speakeasyVersion: 1.326.0
-  generationVersion: 2.359.0
-  releaseVersion: 0.10.2
-  configChecksum: b8d870e15325dbcf1a4eb94ef4cbb6ee
+  speakeasyVersion: 1.330.1
+  generationVersion: 2.364.1
+  releaseVersion: 0.10.3
+  configChecksum: 5256868909dd42463ff54ec74f560565
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.23.0
+    core: 3.23.5
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     nameOverrides: 2.81.2
@@ -21,8 +21,8 @@ features:
 generatedFiles:
   - internal/sdk/core.go
   - internal/sdk/appstore.go
-  - internal/sdk/meta.go
   - internal/sdk/vendormanagement.go
+  - internal/sdk/meta.go
   - internal/sdk/integrationwebhooks.go
   - internal/sdk/lumos.go
   - internal/sdk/models/errors/sdkerror.go
@@ -42,129 +42,130 @@ generatedFiles:
   - internal/sdk/internal/utils/retries.go
   - internal/sdk/internal/utils/security.go
   - internal/sdk/internal/utils/utils.go
-  - internal/sdk/models/operations/getaccounts.go
-  - internal/sdk/models/operations/postaccounts.go
-  - internal/sdk/models/operations/getuploadjobstate.go
-  - internal/sdk/models/operations/getactivitylogs.go
-  - internal/sdk/models/operations/activityrecords.go
-  - internal/sdk/models/operations/getactivityrecordsjobstate.go
   - internal/sdk/models/operations/listapps.go
   - internal/sdk/models/operations/createapp.go
+  - internal/sdk/models/operations/getappcategories.go
   - internal/sdk/models/operations/getapp.go
   - internal/sdk/models/operations/updateapp.go
   - internal/sdk/models/operations/getappsettings.go
   - internal/sdk/models/operations/updateappsettings.go
-  - internal/sdk/models/operations/getappcategories.go
-  - internal/sdk/models/operations/getgroups.go
-  - internal/sdk/models/operations/getgroup.go
-  - internal/sdk/models/operations/getgroupmembership.go
-  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
+  - internal/sdk/models/operations/currentuser.go
   - internal/sdk/models/operations/listusers.go
   - internal/sdk/models/operations/getuser.go
-  - internal/sdk/models/operations/currentuser.go
-  - internal/sdk/models/operations/createaccessrequest.go
-  - internal/sdk/models/operations/getaccessrequests.go
-  - internal/sdk/models/operations/getaccessrequest.go
-  - internal/sdk/models/operations/getappstoreapps.go
-  - internal/sdk/models/operations/addapptoappstore.go
-  - internal/sdk/models/operations/removeappfromappstore.go
-  - internal/sdk/models/operations/getappstoreapp.go
-  - internal/sdk/models/operations/getappstoreappsettings.go
-  - internal/sdk/models/operations/updateappstoreappsettings.go
-  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
-  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
-  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
-  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
-  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
+  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
+  - internal/sdk/models/operations/getaccounts.go
+  - internal/sdk/models/operations/getgroupmembership.go
+  - internal/sdk/models/operations/getgroup.go
+  - internal/sdk/models/operations/getgroups.go
+  - internal/sdk/models/operations/getuploadjobstate.go
+  - internal/sdk/models/operations/getactivitylogs.go
+  - internal/sdk/models/operations/postaccounts.go
+  - internal/sdk/models/operations/activityrecords.go
+  - internal/sdk/models/operations/getactivityrecordsjobstate.go
   - internal/sdk/models/operations/getappstorepermissionsforappappstorerequestablepermissionsget.go
   - internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go
-  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
   - internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go
+  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
   - internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go
-  - internal/sdk/models/operations/lumosart.go
-  - internal/sdk/models/operations/lumoslivenesscheck.go
+  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
+  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
+  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
+  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
+  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
+  - internal/sdk/models/operations/getappstoreappsettings.go
+  - internal/sdk/models/operations/updateappstoreappsettings.go
+  - internal/sdk/models/operations/getappstoreapps.go
+  - internal/sdk/models/operations/addapptoappstore.go
+  - internal/sdk/models/operations/getappstoreapp.go
+  - internal/sdk/models/operations/removeappfromappstore.go
+  - internal/sdk/models/operations/createaccessrequest.go
+  - internal/sdk/models/operations/getaccessrequest.go
+  - internal/sdk/models/operations/getaccessrequests.go
+  - internal/sdk/models/operations/listvendoragreements.go
   - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
-  - internal/sdk/models/operations/listvendoragreements.go
+  - internal/sdk/models/operations/lumosart.go
+  - internal/sdk/models/operations/lumoslivenesscheck.go
   - internal/sdk/models/operations/processairbasemilestoneevent.go
   - internal/sdk/models/shared/httpvalidationerror.go
   - internal/sdk/models/shared/validationerror.go
+  - internal/sdk/models/shared/pageapp.go
+  - internal/sdk/models/shared/app.go
+  - internal/sdk/models/shared/discoverysource.go
+  - internal/sdk/models/shared/domainappstatus.go
+  - internal/sdk/models/shared/appinputcreate.go
+  - internal/sdk/models/shared/appsettingoutput.go
+  - internal/sdk/models/shared/inlinewebhooktype.go
+  - internal/sdk/models/shared/timebasedaccessoptions.go
+  - internal/sdk/models/shared/groupprovisioningoption.go
+  - internal/sdk/models/shared/user.go
+  - internal/sdk/models/shared/userlifecyclestatus.go
+  - internal/sdk/models/shared/group.go
+  - internal/sdk/models/shared/appstorevisibility.go
+  - internal/sdk/models/shared/appsettinginput.go
+  - internal/sdk/models/shared/baseuser.go
+  - internal/sdk/models/shared/basegroup.go
+  - internal/sdk/models/shared/pageuser.go
+  - internal/sdk/models/shared/inlinewebhook.go
   - internal/sdk/models/shared/pageaccount.go
   - internal/sdk/models/shared/account.go
   - internal/sdk/models/shared/accounttype.go
+  - internal/sdk/models/shared/pagegroup.go
   - internal/sdk/models/shared/jobstateoutput.go
   - internal/sdk/models/shared/flowstate.go
-  - internal/sdk/models/shared/accountsuploadinput.go
-  - internal/sdk/models/shared/accountinput.go
-  - internal/sdk/models/shared/accountlifecyclestatus.go
-  - internal/sdk/models/shared/permissioninput.go
-  - internal/sdk/models/shared/attributeinput.go
   - internal/sdk/models/shared/limitoffsetpageactivitylog.go
   - internal/sdk/models/shared/links.go
   - internal/sdk/models/shared/activitylog.go
+  - internal/sdk/models/shared/accountsuploadinput.go
+  - internal/sdk/models/shared/accountinput.go
+  - internal/sdk/models/shared/attributeinput.go
+  - internal/sdk/models/shared/permissioninput.go
+  - internal/sdk/models/shared/accountlifecyclestatus.go
   - internal/sdk/models/shared/activityrecordoutput.go
   - internal/sdk/models/shared/runinfostatus.go
   - internal/sdk/models/shared/activityrecordinput.go
   - internal/sdk/models/shared/activityrecord.go
   - internal/sdk/models/shared/activityrecordeventtype.go
   - internal/sdk/models/shared/synctaskoutput.go
-  - internal/sdk/models/shared/pageapp.go
-  - internal/sdk/models/shared/app.go
-  - internal/sdk/models/shared/domainappstatus.go
-  - internal/sdk/models/shared/discoverysource.go
-  - internal/sdk/models/shared/appinputcreate.go
-  - internal/sdk/models/shared/appsettingoutput.go
-  - internal/sdk/models/shared/inlinewebhooktype.go
-  - internal/sdk/models/shared/appstorevisibility.go
-  - internal/sdk/models/shared/user.go
-  - internal/sdk/models/shared/userlifecyclestatus.go
-  - internal/sdk/models/shared/group.go
-  - internal/sdk/models/shared/timebasedaccessoptions.go
-  - internal/sdk/models/shared/groupprovisioningoption.go
-  - internal/sdk/models/shared/appsettinginput.go
-  - internal/sdk/models/shared/baseuser.go
-  - internal/sdk/models/shared/basegroup.go
-  - internal/sdk/models/shared/pagegroup.go
-  - internal/sdk/models/shared/pageuser.go
-  - internal/sdk/models/shared/inlinewebhook.go
-  - internal/sdk/models/shared/accessrequest.go
-  - internal/sdk/models/shared/supportrequeststatus.go
+  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
   - internal/sdk/models/shared/requestablepermissionoutput.go
-  - internal/sdk/models/shared/permissiontype.go
   - internal/sdk/models/shared/requestapprovalstageoutput.go
   - internal/sdk/models/shared/approveroutput.go
   - internal/sdk/models/shared/approvertype.go
-  - internal/sdk/models/shared/createaccessrequestinput.go
-  - internal/sdk/models/shared/pageaccessrequest.go
-  - internal/sdk/models/shared/pageappstoreapp.go
-  - internal/sdk/models/shared/appstoreapp.go
-  - internal/sdk/models/shared/appstoreappsettingsoutput.go
-  - internal/sdk/models/shared/addapptoappstoreinput.go
-  - internal/sdk/models/shared/appstoreappsettingsinput.go
-  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
-  - internal/sdk/models/shared/preapprovalruleoutput.go
-  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
-  - internal/sdk/models/shared/preapprovalruleinput.go
-  - internal/sdk/models/shared/requestablepermissionbase.go
-  - internal/sdk/models/shared/baseinlinewebhook.go
-  - internal/sdk/models/shared/preapprovalruleupdateinput.go
-  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
+  - internal/sdk/models/shared/managerapprovaloption.go
+  - internal/sdk/models/shared/permissiontype.go
   - internal/sdk/models/shared/requestablepermissioninput.go
   - internal/sdk/models/shared/requestapprovalstageinput.go
   - internal/sdk/models/shared/approverinput.go
   - internal/sdk/models/shared/requestablepermissioninputupdate.go
+  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
+  - internal/sdk/models/shared/preapprovalruleoutput.go
+  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
+  - internal/sdk/models/shared/preapprovalruleinput.go
+  - internal/sdk/models/shared/baseinlinewebhook.go
+  - internal/sdk/models/shared/requestablepermissionbase.go
+  - internal/sdk/models/shared/preapprovalruleupdateinput.go
+  - internal/sdk/models/shared/appstoreappsettingsoutput.go
+  - internal/sdk/models/shared/appstoreappsettingsinput.go
+  - internal/sdk/models/shared/pageappstoreapp.go
+  - internal/sdk/models/shared/appstoreapp.go
+  - internal/sdk/models/shared/addapptoappstoreinput.go
+  - internal/sdk/models/shared/accessrequest.go
+  - internal/sdk/models/shared/supportrequeststatus.go
+  - internal/sdk/models/shared/createaccessrequestinput.go
+  - internal/sdk/models/shared/pageaccessrequest.go
+  - internal/sdk/models/shared/pagevendoragreement.go
+  - internal/sdk/models/shared/vendoragreement.go
+  - internal/sdk/models/shared/lineitem.go
   - internal/sdk/models/shared/founddocumentsupload.go
   - internal/sdk/models/shared/lineitemupload.go
   - internal/sdk/models/shared/fileupload.go
   - internal/sdk/models/shared/fileuploadtype.go
   - internal/sdk/models/shared/orderinput.go
-  - internal/sdk/models/shared/lineiteminput.go
   - internal/sdk/models/shared/ordercustomattribute.go
   - internal/sdk/models/shared/ordercustomattributetype.go
-  - internal/sdk/models/shared/pagevendoragreement.go
-  - internal/sdk/models/shared/vendoragreement.go
-  - internal/sdk/models/shared/lineitem.go
+  - internal/sdk/models/shared/lineiteminput.go
   - internal/sdk/models/shared/airbasepurchaserequestevent.go
   - internal/sdk/models/shared/security.go
   - internal/sdk/.gitignore

@@ -300,7 +300,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"manager_approval": schema.StringAttribute{
 								Computed:    true,
-								Description: `Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]`,
+								Description: `An enumeration. must be one of ["NONE", "INITIAL_APPROVAL"]`,
 							},
 							"request_approval_config_override": schema.BoolAttribute{
 								Computed:    true,

@@ -3,31 +3,31 @@
 package shared
 
 type AccountInput struct {
-	// The attributes of the account.
-	Attributes []AttributeInput `json:"attributes,omitempty"`
+	// A unique identifier for this account, such as an account ID or email.
+	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty"`
+	// The last name of the user.
+	LastName *string `json:"last_name,omitempty"`
 	// The datetime of last activity of the user.
 	LastActivity *string `json:"last_activity,omitempty"`
 	// The datetime of last login of the user.
 	LastLogin *string `json:"last_login,omitempty"`
-	// The last name of the user.
-	LastName *string `json:"last_name,omitempty"`
-	// The permissions of the account.
-	Permissions []PermissionInput `json:"permissions,omitempty"`
 	// The status of the account.
 	Status *AccountLifecycleStatus `json:"status,omitempty"`
-	// The stable identifier of this account.
-	UniqueIdentifier string `json:"unique_identifier"`
+	// The permissions of the account.
+	Permissions []PermissionInput `json:"permissions,omitempty"`
+	// The attributes of the account.
+	Attributes []AttributeInput `json:"attributes,omitempty"`
 }
 
-func (o *AccountInput) GetAttributes() []AttributeInput {
+func (o *AccountInput) GetUniqueIdentifier() string {
 	if o == nil {
-		return nil
+		return ""
 	}
-	return o.Attributes
+	return o.UniqueIdentifier
 }
 
 func (o *AccountInput) GetEmail() *string {
@@ -44,6 +44,13 @@ func (o *AccountInput) GetFirstName() *string {
 	return o.FirstName
 }
 
+func (o *AccountInput) GetLastName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.LastName
+}
+
 func (o *AccountInput) GetLastActivity() *string {
 	if o == nil {
 		return nil
@@ -58,11 +65,11 @@ func (o *AccountInput) GetLastLogin() *string {
 	return o.LastLogin
 }
 
-func (o *AccountInput) GetLastName() *string {
+func (o *AccountInput) GetStatus() *AccountLifecycleStatus {
 	if o == nil {
 		return nil
 	}
-	return o.LastName
+	return o.Status
 }
 
 func (o *AccountInput) GetPermissions() []PermissionInput {
@@ -72,16 +79,9 @@ func (o *AccountInput) GetPermissions() []PermissionInput {
 	return o.Permissions
 }
 
-func (o *AccountInput) GetStatus() *AccountLifecycleStatus {
+func (o *AccountInput) GetAttributes() []AttributeInput {
 	if o == nil {
 		return nil
 	}
-	return o.Status
-}
-
-func (o *AccountInput) GetUniqueIdentifier() string {
-	if o == nil {
-		return ""
-	}
-	return o.UniqueIdentifier
+	return o.Attributes
 }

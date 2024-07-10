@@ -420,8 +420,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							"manager_approval": schema.StringAttribute{
 								Computed:    true,
 								Optional:    true,
-								Default:     stringdefault.StaticString("NONE"),
-								Description: `Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]; Default: "NONE"`,
+								Description: `An enumeration. must be one of ["NONE", "INITIAL_APPROVAL"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"NONE",

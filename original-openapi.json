@@ -2759,7 +2759,7 @@
                     "unique_identifier": {
                         "type": "string",
                         "title": "Unique Identifier",
-                        "description": "The stable identifier of this account."
+                        "description": "A unique identifier for this account, such as an account ID or email."
                     },
                     "email": {
                         "type": "string",
@@ -4075,7 +4075,7 @@
                     "access_length": {
                         "type": "string",
                         "title": "Access Length",
-                        "description": "Once granted, how long the access should last. Omit for permanent access."
+                        "description": "Once granted, how long the access should last. Omit for permanent access. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and permissions."
                     },
                     "requestable_permission_ids": {
                         "items": {
@@ -5231,8 +5231,7 @@
                                 "$ref": "#/components/schemas/ManagerApprovalOption"
                             }
                         ],
-                        "description": "Manager approval can be configured as necessary to continue",
-                        "default": "NONE"
+                        "description": "Manager approval can be configured as necessary to continue"
                     },
                     "require_additional_approval": {
                         "type": "boolean",
@@ -5292,8 +5291,7 @@
                                 "$ref": "#/components/schemas/ManagerApprovalOption"
                             }
                         ],
-                        "description": "Manager approval can be configured as necessary to continue",
-                        "default": "NONE"
+                        "description": "Manager approval can be configured as necessary to continue"
                     },
                     "require_additional_approval": {
                         "type": "boolean",
@@ -5334,10 +5332,7 @@
                         },
                         "type": "array",
                         "title": "Request Approval Stages",
-                        "description": "The stages of this request approval.",
-                        "default": [
-                            {}
-                        ]
+                        "description": "The stages of this request approval."
                     }
                 },
                 "type": "object",
@@ -5538,12 +5533,7 @@
                         ],
                         "title": "Request Approval Config",
                         "description": "A request approval config can be optionally associated with this config",
-                        "default": {
-                            "manager_approval": "NONE",
-                            "request_approval_stages": [
-                                {}
-                            ]
-                        }
+                        "default": {}
                     },
                     "request_fulfillment_config": {
                         "allOf": [

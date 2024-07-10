@@ -102,7 +102,7 @@ Optional:
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
-- `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]; Default: "NONE"
+- `manager_approval` (String) An enumeration. must be one of ["NONE", "INITIAL_APPROVAL"]
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
