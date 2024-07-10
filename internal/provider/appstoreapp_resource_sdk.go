@@ -9,84 +9,59 @@ import (
 )
 
 func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAppToAppStoreInput {
-	appID := r.AppID.ValueString()
 	customRequestInstructions := new(string)
 	if !r.CustomRequestInstructions.IsUnknown() && !r.CustomRequestInstructions.IsNull() {
 		*customRequestInstructions = r.CustomRequestInstructions.ValueString()
 	} else {
 		customRequestInstructions = nil
 	}
-	var provisioning *shared.AddAppToAppStoreInputProvisioning
-	if r.Provisioning != nil {
-		var accessRemovalInlineWebhook *shared.AddAppToAppStoreInputAccessRemovalInlineWebhook
-		if r.Provisioning.AccessRemovalInlineWebhook != nil {
-			id := r.Provisioning.AccessRemovalInlineWebhook.ID.ValueString()
-			accessRemovalInlineWebhook = &shared.AddAppToAppStoreInputAccessRemovalInlineWebhook{
-				ID: id,
-			}
-		}
-		allowMultiplePermissionSelection := new(bool)
-		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {
-			*allowMultiplePermissionSelection = r.Provisioning.AllowMultiplePermissionSelection.ValueBool()
-		} else {
-			allowMultiplePermissionSelection = nil
-		}
-		customProvisioningInstructions := new(string)
-		if !r.Provisioning.CustomProvisioningInstructions.IsUnknown() && !r.Provisioning.CustomProvisioningInstructions.IsNull() {
-			*customProvisioningInstructions = r.Provisioning.CustomProvisioningInstructions.ValueString()
-		} else {
-			customProvisioningInstructions = nil
-		}
-		groupsProvisioning := new(shared.GroupProvisioningOption)
-		if !r.Provisioning.GroupsProvisioning.IsUnknown() && !r.Provisioning.GroupsProvisioning.IsNull() {
-			*groupsProvisioning = shared.GroupProvisioningOption(r.Provisioning.GroupsProvisioning.ValueString())
-		} else {
-			groupsProvisioning = nil
-		}
-		manualStepsNeeded := new(bool)
-		if !r.Provisioning.ManualStepsNeeded.IsUnknown() && !r.Provisioning.ManualStepsNeeded.IsNull() {
-			*manualStepsNeeded = r.Provisioning.ManualStepsNeeded.ValueBool()
-		} else {
-			manualStepsNeeded = nil
-		}
-		var provisioningWebhook *shared.AddAppToAppStoreInputProvisioningWebhook
-		if r.Provisioning.ProvisioningWebhook != nil {
-			id1 := r.Provisioning.ProvisioningWebhook.ID.ValueString()
-			provisioningWebhook = &shared.AddAppToAppStoreInputProvisioningWebhook{
-				ID: id1,
-			}
-		}
-		var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
-		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
-			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
-		}
-		provisioning = &shared.AddAppToAppStoreInputProvisioning{
-			AccessRemovalInlineWebhook:       accessRemovalInlineWebhook,
-			AllowMultiplePermissionSelection: allowMultiplePermissionSelection,
-			CustomProvisioningInstructions:   customProvisioningInstructions,
-			GroupsProvisioning:               groupsProvisioning,
-			ManualStepsNeeded:                manualStepsNeeded,
-			ProvisioningWebhook:              provisioningWebhook,
-			TimeBasedAccess:                  timeBasedAccess,
-		}
-	}
 	var requestFlow *shared.AddAppToAppStoreInputRequestFlow
 	if r.RequestFlow != nil {
-		var admins *shared.AddAppToAppStoreInputAdmins
-		if r.RequestFlow.Admins != nil {
+		discoverability := new(shared.AppStoreVisibility)
+		if !r.RequestFlow.Discoverability.IsUnknown() && !r.RequestFlow.Discoverability.IsNull() {
+			*discoverability = shared.AppStoreVisibility(r.RequestFlow.Discoverability.ValueString())
+		} else {
+			discoverability = nil
+		}
+		customApprovalMessage := new(string)
+		if !r.RequestFlow.CustomApprovalMessage.IsUnknown() && !r.RequestFlow.CustomApprovalMessage.IsNull() {
+			*customApprovalMessage = r.RequestFlow.CustomApprovalMessage.ValueString()
+		} else {
+			customApprovalMessage = nil
+		}
+		requireManagerApproval := new(bool)
+		if !r.RequestFlow.RequireManagerApproval.IsUnknown() && !r.RequestFlow.RequireManagerApproval.IsNull() {
+			*requireManagerApproval = r.RequestFlow.RequireManagerApproval.ValueBool()
+		} else {
+			requireManagerApproval = nil
+		}
+		requireAdditionalApproval := new(bool)
+		if !r.RequestFlow.RequireAdditionalApproval.IsUnknown() && !r.RequestFlow.RequireAdditionalApproval.IsNull() {
+			*requireAdditionalApproval = r.RequestFlow.RequireAdditionalApproval.ValueBool()
+		} else {
+			requireAdditionalApproval = nil
+		}
+		var allowedGroups *shared.AddAppToAppStoreInputAllowedGroups
+		if r.RequestFlow.AllowedGroups != nil {
+			typeVar := new(shared.AddAppToAppStoreInputAllowedGroupsConfigType)
+			if !r.RequestFlow.AllowedGroups.Type.IsUnknown() && !r.RequestFlow.AllowedGroups.Type.IsNull() {
+				*typeVar = shared.AddAppToAppStoreInputAllowedGroupsConfigType(r.RequestFlow.AllowedGroups.Type.ValueString())
+			} else {
+				typeVar = nil
+			}
 			var groups []shared.BaseGroup = []shared.BaseGroup{}
-			for _, groupsItem := range r.RequestFlow.Admins.Groups {
-				appId1 := new(string)
-				if !groupsItem.AppID.IsUnknown() && !groupsItem.AppID.IsNull() {
-					*appId1 = groupsItem.AppID.ValueString()
-				} else {
-					appId1 = nil
-				}
-				id2 := new(string)
+			for _, groupsItem := range r.RequestFlow.AllowedGroups.Groups {
+				id := new(string)
 				if !groupsItem.ID.IsUnknown() && !groupsItem.ID.IsNull() {
-					*id2 = groupsItem.ID.ValueString()
+					*id = groupsItem.ID.ValueString()
 				} else {
-					id2 = nil
+					id = nil
+				}
+				appID := new(string)
+				if !groupsItem.AppID.IsUnknown() && !groupsItem.AppID.IsNull() {
+					*appID = groupsItem.AppID.ValueString()
+				} else {
+					appID = nil
 				}
 				integrationSpecificID := new(string)
 				if !groupsItem.IntegrationSpecificID.IsUnknown() && !groupsItem.IntegrationSpecificID.IsNull() {
@@ -95,38 +70,31 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					integrationSpecificID = nil
 				}
 				groups = append(groups, shared.BaseGroup{
-					AppID:                 appId1,
-					ID:                    id2,
+					ID:                    id,
+					AppID:                 appID,
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			var users []shared.BaseUser = []shared.BaseUser{}
-			for _, usersItem := range r.RequestFlow.Admins.Users {
-				id3 := usersItem.ID.ValueString()
-				users = append(users, shared.BaseUser{
-					ID: id3,
-				})
-			}
-			admins = &shared.AddAppToAppStoreInputAdmins{
+			allowedGroups = &shared.AddAppToAppStoreInputAllowedGroups{
+				Type:   typeVar,
 				Groups: groups,
-				Users:  users,
 			}
 		}
-		var allowedGroups *shared.AddAppToAppStoreInputAllowedGroups
-		if r.RequestFlow.AllowedGroups != nil {
+		var approvers *shared.AddAppToAppStoreInputApprovers
+		if r.RequestFlow.Approvers != nil {
 			var groups1 []shared.BaseGroup = []shared.BaseGroup{}
-			for _, groupsItem1 := range r.RequestFlow.AllowedGroups.Groups {
-				appId2 := new(string)
-				if !groupsItem1.AppID.IsUnknown() && !groupsItem1.AppID.IsNull() {
-					*appId2 = groupsItem1.AppID.ValueString()
-				} else {
-					appId2 = nil
-				}
-				id4 := new(string)
+			for _, groupsItem1 := range r.RequestFlow.Approvers.Groups {
+				id1 := new(string)
 				if !groupsItem1.ID.IsUnknown() && !groupsItem1.ID.IsNull() {
-					*id4 = groupsItem1.ID.ValueString()
+					*id1 = groupsItem1.ID.ValueString()
 				} else {
-					id4 = nil
+					id1 = nil
+				}
+				appId1 := new(string)
+				if !groupsItem1.AppID.IsUnknown() && !groupsItem1.AppID.IsNull() {
+					*appId1 = groupsItem1.AppID.ValueString()
+				} else {
+					appId1 = nil
 				}
 				integrationSpecificId1 := new(string)
 				if !groupsItem1.IntegrationSpecificID.IsUnknown() && !groupsItem1.IntegrationSpecificID.IsNull() {
@@ -135,37 +103,38 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					integrationSpecificId1 = nil
 				}
 				groups1 = append(groups1, shared.BaseGroup{
-					AppID:                 appId2,
-					ID:                    id4,
+					ID:                    id1,
+					AppID:                 appId1,
 					IntegrationSpecificID: integrationSpecificId1,
 				})
 			}
-			typeVar := new(shared.AddAppToAppStoreInputAllowedGroupsConfigType)
-			if !r.RequestFlow.AllowedGroups.Type.IsUnknown() && !r.RequestFlow.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.AddAppToAppStoreInputAllowedGroupsConfigType(r.RequestFlow.AllowedGroups.Type.ValueString())
-			} else {
-				typeVar = nil
+			var users []shared.BaseUser = []shared.BaseUser{}
+			for _, usersItem := range r.RequestFlow.Approvers.Users {
+				id2 := usersItem.ID.ValueString()
+				users = append(users, shared.BaseUser{
+					ID: id2,
+				})
 			}
-			allowedGroups = &shared.AddAppToAppStoreInputAllowedGroups{
+			approvers = &shared.AddAppToAppStoreInputApprovers{
 				Groups: groups1,
-				Type:   typeVar,
+				Users:  users,
 			}
 		}
-		var approvers *shared.AddAppToAppStoreInputApprovers
-		if r.RequestFlow.Approvers != nil {
+		var approversStage2 *shared.AddAppToAppStoreInputApproversStage2
+		if r.RequestFlow.ApproversStage2 != nil {
 			var groups2 []shared.BaseGroup = []shared.BaseGroup{}
-			for _, groupsItem2 := range r.RequestFlow.Approvers.Groups {
-				appId3 := new(string)
-				if !groupsItem2.AppID.IsUnknown() && !groupsItem2.AppID.IsNull() {
-					*appId3 = groupsItem2.AppID.ValueString()
-				} else {
-					appId3 = nil
-				}
-				id5 := new(string)
+			for _, groupsItem2 := range r.RequestFlow.ApproversStage2.Groups {
+				id3 := new(string)
 				if !groupsItem2.ID.IsUnknown() && !groupsItem2.ID.IsNull() {
-					*id5 = groupsItem2.ID.ValueString()
+					*id3 = groupsItem2.ID.ValueString()
 				} else {
-					id5 = nil
+					id3 = nil
+				}
+				appId2 := new(string)
+				if !groupsItem2.AppID.IsUnknown() && !groupsItem2.AppID.IsNull() {
+					*appId2 = groupsItem2.AppID.ValueString()
+				} else {
+					appId2 = nil
 				}
 				integrationSpecificId2 := new(string)
 				if !groupsItem2.IntegrationSpecificID.IsUnknown() && !groupsItem2.IntegrationSpecificID.IsNull() {
@@ -174,38 +143,38 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					integrationSpecificId2 = nil
 				}
 				groups2 = append(groups2, shared.BaseGroup{
-					AppID:                 appId3,
-					ID:                    id5,
+					ID:                    id3,
+					AppID:                 appId2,
 					IntegrationSpecificID: integrationSpecificId2,
 				})
 			}
 			var users1 []shared.BaseUser = []shared.BaseUser{}
-			for _, usersItem1 := range r.RequestFlow.Approvers.Users {
-				id6 := usersItem1.ID.ValueString()
+			for _, usersItem1 := range r.RequestFlow.ApproversStage2.Users {
+				id4 := usersItem1.ID.ValueString()
 				users1 = append(users1, shared.BaseUser{
-					ID: id6,
+					ID: id4,
 				})
 			}
-			approvers = &shared.AddAppToAppStoreInputApprovers{
+			approversStage2 = &shared.AddAppToAppStoreInputApproversStage2{
 				Groups: groups2,
 				Users:  users1,
 			}
 		}
-		var approversStage2 *shared.AddAppToAppStoreInputApproversStage2
-		if r.RequestFlow.ApproversStage2 != nil {
+		var admins *shared.AddAppToAppStoreInputAdmins
+		if r.RequestFlow.Admins != nil {
 			var groups3 []shared.BaseGroup = []shared.BaseGroup{}
-			for _, groupsItem3 := range r.RequestFlow.ApproversStage2.Groups {
-				appId4 := new(string)
-				if !groupsItem3.AppID.IsUnknown() && !groupsItem3.AppID.IsNull() {
-					*appId4 = groupsItem3.AppID.ValueString()
-				} else {
-					appId4 = nil
-				}
-				id7 := new(string)
+			for _, groupsItem3 := range r.RequestFlow.Admins.Groups {
+				id5 := new(string)
 				if !groupsItem3.ID.IsUnknown() && !groupsItem3.ID.IsNull() {
-					*id7 = groupsItem3.ID.ValueString()
+					*id5 = groupsItem3.ID.ValueString()
 				} else {
-					id7 = nil
+					id5 = nil
+				}
+				appId3 := new(string)
+				if !groupsItem3.AppID.IsUnknown() && !groupsItem3.AppID.IsNull() {
+					*appId3 = groupsItem3.AppID.ValueString()
+				} else {
+					appId3 = nil
 				}
 				integrationSpecificId3 := new(string)
 				if !groupsItem3.IntegrationSpecificID.IsUnknown() && !groupsItem3.IntegrationSpecificID.IsNull() {
@@ -214,71 +183,102 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					integrationSpecificId3 = nil
 				}
 				groups3 = append(groups3, shared.BaseGroup{
-					AppID:                 appId4,
-					ID:                    id7,
+					ID:                    id5,
+					AppID:                 appId3,
 					IntegrationSpecificID: integrationSpecificId3,
 				})
 			}
 			var users2 []shared.BaseUser = []shared.BaseUser{}
-			for _, usersItem2 := range r.RequestFlow.ApproversStage2.Users {
-				id8 := usersItem2.ID.ValueString()
+			for _, usersItem2 := range r.RequestFlow.Admins.Users {
+				id6 := usersItem2.ID.ValueString()
 				users2 = append(users2, shared.BaseUser{
-					ID: id8,
+					ID: id6,
 				})
 			}
-			approversStage2 = &shared.AddAppToAppStoreInputApproversStage2{
+			admins = &shared.AddAppToAppStoreInputAdmins{
 				Groups: groups3,
 				Users:  users2,
 			}
 		}
-		customApprovalMessage := new(string)
-		if !r.RequestFlow.CustomApprovalMessage.IsUnknown() && !r.RequestFlow.CustomApprovalMessage.IsNull() {
-			*customApprovalMessage = r.RequestFlow.CustomApprovalMessage.ValueString()
-		} else {
-			customApprovalMessage = nil
-		}
-		discoverability := new(shared.AppStoreVisibility)
-		if !r.RequestFlow.Discoverability.IsUnknown() && !r.RequestFlow.Discoverability.IsNull() {
-			*discoverability = shared.AppStoreVisibility(r.RequestFlow.Discoverability.ValueString())
-		} else {
-			discoverability = nil
-		}
 		var requestValidationInlineWebhook *shared.AddAppToAppStoreInputRequestValidationInlineWebhook
 		if r.RequestFlow.RequestValidationInlineWebhook != nil {
-			id9 := r.RequestFlow.RequestValidationInlineWebhook.ID.ValueString()
+			id7 := r.RequestFlow.RequestValidationInlineWebhook.ID.ValueString()
 			requestValidationInlineWebhook = &shared.AddAppToAppStoreInputRequestValidationInlineWebhook{
-				ID: id9,
+				ID: id7,
 			}
 		}
-		requireAdditionalApproval := new(bool)
-		if !r.RequestFlow.RequireAdditionalApproval.IsUnknown() && !r.RequestFlow.RequireAdditionalApproval.IsNull() {
-			*requireAdditionalApproval = r.RequestFlow.RequireAdditionalApproval.ValueBool()
-		} else {
-			requireAdditionalApproval = nil
-		}
-		requireManagerApproval := new(bool)
-		if !r.RequestFlow.RequireManagerApproval.IsUnknown() && !r.RequestFlow.RequireManagerApproval.IsNull() {
-			*requireManagerApproval = r.RequestFlow.RequireManagerApproval.ValueBool()
-		} else {
-			requireManagerApproval = nil
-		}
 		requestFlow = &shared.AddAppToAppStoreInputRequestFlow{
-			Admins:                         admins,
+			Discoverability:                discoverability,
+			CustomApprovalMessage:          customApprovalMessage,
+			RequireManagerApproval:         requireManagerApproval,
+			RequireAdditionalApproval:      requireAdditionalApproval,
 			AllowedGroups:                  allowedGroups,
 			Approvers:                      approvers,
 			ApproversStage2:                approversStage2,
-			CustomApprovalMessage:          customApprovalMessage,
-			Discoverability:                discoverability,
+			Admins:                         admins,
 			RequestValidationInlineWebhook: requestValidationInlineWebhook,
-			RequireAdditionalApproval:      requireAdditionalApproval,
-			RequireManagerApproval:         requireManagerApproval,
 		}
 	}
+	var provisioning *shared.AddAppToAppStoreInputProvisioning
+	if r.Provisioning != nil {
+		groupsProvisioning := new(shared.GroupProvisioningOption)
+		if !r.Provisioning.GroupsProvisioning.IsUnknown() && !r.Provisioning.GroupsProvisioning.IsNull() {
+			*groupsProvisioning = shared.GroupProvisioningOption(r.Provisioning.GroupsProvisioning.ValueString())
+		} else {
+			groupsProvisioning = nil
+		}
+		var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
+		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
+			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+		}
+		allowMultiplePermissionSelection := new(bool)
+		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {
+			*allowMultiplePermissionSelection = r.Provisioning.AllowMultiplePermissionSelection.ValueBool()
+		} else {
+			allowMultiplePermissionSelection = nil
+		}
+		manualStepsNeeded := new(bool)
+		if !r.Provisioning.ManualStepsNeeded.IsUnknown() && !r.Provisioning.ManualStepsNeeded.IsNull() {
+			*manualStepsNeeded = r.Provisioning.ManualStepsNeeded.ValueBool()
+		} else {
+			manualStepsNeeded = nil
+		}
+		customProvisioningInstructions := new(string)
+		if !r.Provisioning.CustomProvisioningInstructions.IsUnknown() && !r.Provisioning.CustomProvisioningInstructions.IsNull() {
+			*customProvisioningInstructions = r.Provisioning.CustomProvisioningInstructions.ValueString()
+		} else {
+			customProvisioningInstructions = nil
+		}
+		var provisioningWebhook *shared.AddAppToAppStoreInputProvisioningWebhook
+		if r.Provisioning.ProvisioningWebhook != nil {
+			id8 := r.Provisioning.ProvisioningWebhook.ID.ValueString()
+			provisioningWebhook = &shared.AddAppToAppStoreInputProvisioningWebhook{
+				ID: id8,
+			}
+		}
+		var accessRemovalInlineWebhook *shared.AddAppToAppStoreInputAccessRemovalInlineWebhook
+		if r.Provisioning.AccessRemovalInlineWebhook != nil {
+			id9 := r.Provisioning.AccessRemovalInlineWebhook.ID.ValueString()
+			accessRemovalInlineWebhook = &shared.AddAppToAppStoreInputAccessRemovalInlineWebhook{
+				ID: id9,
+			}
+		}
+		provisioning = &shared.AddAppToAppStoreInputProvisioning{
+			GroupsProvisioning:               groupsProvisioning,
+			TimeBasedAccess:                  timeBasedAccess,
+			AllowMultiplePermissionSelection: allowMultiplePermissionSelection,
+			ManualStepsNeeded:                manualStepsNeeded,
+			CustomProvisioningInstructions:   customProvisioningInstructions,
+			ProvisioningWebhook:              provisioningWebhook,
+			AccessRemovalInlineWebhook:       accessRemovalInlineWebhook,
+		}
+	}
+	appId4 := r.AppID.ValueString()
 	out := shared.AddAppToAppStoreInput{
-		AppID:                     appID,
 		CustomRequestInstructions: customRequestInstructions,
-		Provisioning:              provisioning,
 		RequestFlow:               requestFlow,
+		Provisioning:              provisioning,
+		AppID:                     appId4,
 	}
 	return &out
 }

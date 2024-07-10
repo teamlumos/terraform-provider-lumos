@@ -9,3 +9,13 @@ Based on:
 - [terraform v0.1.50] .
 ### Releases
 - [Terraform v0.1.50] https://registry.terraform.io/providers/teamlumos/lumos/0.1.50 - .
+
+## 2024-07-10 00:20:56
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.330.0 (2.361.10) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [terraform v0.10.3] .
+### Releases
+- [Terraform v0.10.3] https://registry.terraform.io/providers/teamlumos/lumos/0.10.3 - .
