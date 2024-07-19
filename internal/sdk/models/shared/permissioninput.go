@@ -3,19 +3,19 @@
 package shared
 
 type PermissionInput struct {
-	// The name of the permission.
-	Name *string `json:"name,omitempty"`
-	// The type of the permission.
-	Type *string `json:"type,omitempty"`
 	// The unique identifier of the permission.
 	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
+	// The type of the permission.
+	Type *string `json:"type,omitempty"`
+	// The name of the permission.
+	Name *string `json:"name,omitempty"`
 }
 
-func (o *PermissionInput) GetName() *string {
+func (o *PermissionInput) GetUniqueIdentifier() *string {
 	if o == nil {
 		return nil
 	}
-	return o.Name
+	return o.UniqueIdentifier
 }
 
 func (o *PermissionInput) GetType() *string {
@@ -25,9 +25,9 @@ func (o *PermissionInput) GetType() *string {
 	return o.Type
 }
 
-func (o *PermissionInput) GetUniqueIdentifier() *string {
+func (o *PermissionInput) GetName() *string {
 	if o == nil {
 		return nil
 	}
-	return o.UniqueIdentifier
+	return o.Name
 }

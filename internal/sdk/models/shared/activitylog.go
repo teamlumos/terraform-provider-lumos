@@ -7,25 +7,25 @@ import (
 	"time"
 )
 
+type Targets struct {
+}
+
 type Actor struct {
 }
 
 type EventMetadata struct {
 }
 
-type Targets struct {
-}
-
 // ActivityLog - API version of SIEMEvent
 type ActivityLog struct {
-	Actor                 Actor         `json:"actor"`
-	EventBeganAt          time.Time     `json:"event_began_at"`
 	EventHash             string        `json:"event_hash"`
-	EventMetadata         EventMetadata `json:"event_metadata"`
 	EventType             string        `json:"event_type"`
 	EventTypeUserFriendly string        `json:"event_type_user_friendly"`
 	Outcome               string        `json:"outcome"`
 	Targets               []Targets     `json:"targets"`
+	Actor                 Actor         `json:"actor"`
+	EventBeganAt          time.Time     `json:"event_began_at"`
+	EventMetadata         EventMetadata `json:"event_metadata"`
 }
 
 func (a ActivityLog) MarshalJSON() ([]byte, error) {
@@ -39,32 +39,11 @@ func (a *ActivityLog) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *ActivityLog) GetActor() Actor {
-	if o == nil {
-		return Actor{}
-	}
-	return o.Actor
-}
-
-func (o *ActivityLog) GetEventBeganAt() time.Time {
-	if o == nil {
-		return time.Time{}
-	}
-	return o.EventBeganAt
-}
-
 func (o *ActivityLog) GetEventHash() string {
 	if o == nil {
 		return ""
 	}
 	return o.EventHash
-}
-
-func (o *ActivityLog) GetEventMetadata() EventMetadata {
-	if o == nil {
-		return EventMetadata{}
-	}
-	return o.EventMetadata
 }
 
 func (o *ActivityLog) GetEventType() string {
@@ -93,4 +72,25 @@ func (o *ActivityLog) GetTargets() []Targets {
 		return []Targets{}
 	}
 	return o.Targets
+}
+
+func (o *ActivityLog) GetActor() Actor {
+	if o == nil {
+		return Actor{}
+	}
+	return o.Actor
+}
+
+func (o *ActivityLog) GetEventBeganAt() time.Time {
+	if o == nil {
+		return time.Time{}
+	}
+	return o.EventBeganAt
+}
+
+func (o *ActivityLog) GetEventMetadata() EventMetadata {
+	if o == nil {
+		return EventMetadata{}
+	}
+	return o.EventMetadata
 }

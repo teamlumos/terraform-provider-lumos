@@ -4,10 +4,10 @@ package shared
 
 type PageRequestablePermissionOutput struct {
 	Items []RequestablePermissionOutput `json:"items"`
-	Page  *int64                        `json:"page,omitempty"`
-	Pages *int64                        `json:"pages,omitempty"`
-	Size  *int64                        `json:"size,omitempty"`
 	Total *int64                        `json:"total,omitempty"`
+	Page  *int64                        `json:"page,omitempty"`
+	Size  *int64                        `json:"size,omitempty"`
+	Pages *int64                        `json:"pages,omitempty"`
 }
 
 func (o *PageRequestablePermissionOutput) GetItems() []RequestablePermissionOutput {
@@ -17,18 +17,18 @@ func (o *PageRequestablePermissionOutput) GetItems() []RequestablePermissionOutp
 	return o.Items
 }
 
+func (o *PageRequestablePermissionOutput) GetTotal() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.Total
+}
+
 func (o *PageRequestablePermissionOutput) GetPage() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Page
-}
-
-func (o *PageRequestablePermissionOutput) GetPages() *int64 {
-	if o == nil {
-		return nil
-	}
-	return o.Pages
 }
 
 func (o *PageRequestablePermissionOutput) GetSize() *int64 {
@@ -38,9 +38,9 @@ func (o *PageRequestablePermissionOutput) GetSize() *int64 {
 	return o.Size
 }
 
-func (o *PageRequestablePermissionOutput) GetTotal() *int64 {
+func (o *PageRequestablePermissionOutput) GetPages() *int64 {
 	if o == nil {
 		return nil
 	}
-	return o.Total
+	return o.Pages
 }
