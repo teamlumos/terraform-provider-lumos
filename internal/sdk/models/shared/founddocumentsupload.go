@@ -25,64 +25,22 @@ func (o *TotalCost) GetValue() int64 {
 }
 
 type FoundDocumentsUpload struct {
-	// The end of the vendor agreement
-	EndDate *string `json:"end_date,omitempty"`
-	// A list of URLs that resolve to files that should be attached to the Found Document
-	Files []FileUpload `json:"files"`
-	// The line items on the contract
-	LineItems []LineItemUpload `json:"line_items,omitempty"`
-	// By passing the ID of an application within Lumos, it will appear as if this Found Document was sourced from that app
-	SourceAppID *string `json:"source_app_id,omitempty"`
-	// The start of the vendor agreement
-	StartDate *string `json:"start_date,omitempty"`
-	// The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
-	TotalCost *TotalCost `json:"total_cost,omitempty"`
 	// A value that can be used to uniquely identify this contract (e.g. PO number, file name, etc)
 	UniqueIdentifier string `json:"unique_identifier"`
+	// A list of URLs that resolve to files that should be attached to the Found Document
+	Files []FileUpload `json:"files"`
 	// The name of the vendor that this document is for
 	VendorName *string `json:"vendor_name,omitempty"`
-}
-
-func (o *FoundDocumentsUpload) GetEndDate() *string {
-	if o == nil {
-		return nil
-	}
-	return o.EndDate
-}
-
-func (o *FoundDocumentsUpload) GetFiles() []FileUpload {
-	if o == nil {
-		return []FileUpload{}
-	}
-	return o.Files
-}
-
-func (o *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
-	if o == nil {
-		return nil
-	}
-	return o.LineItems
-}
-
-func (o *FoundDocumentsUpload) GetSourceAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.SourceAppID
-}
-
-func (o *FoundDocumentsUpload) GetStartDate() *string {
-	if o == nil {
-		return nil
-	}
-	return o.StartDate
-}
-
-func (o *FoundDocumentsUpload) GetTotalCost() *TotalCost {
-	if o == nil {
-		return nil
-	}
-	return o.TotalCost
+	// The start of the vendor agreement
+	StartDate *string `json:"start_date,omitempty"`
+	// The end of the vendor agreement
+	EndDate *string `json:"end_date,omitempty"`
+	// By passing the ID of an application within Lumos, it will appear as if this Found Document was sourced from that app
+	SourceAppID *string `json:"source_app_id,omitempty"`
+	// The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
+	TotalCost *TotalCost `json:"total_cost,omitempty"`
+	// The line items on the contract
+	LineItems []LineItemUpload `json:"line_items,omitempty"`
 }
 
 func (o *FoundDocumentsUpload) GetUniqueIdentifier() string {
@@ -92,9 +50,51 @@ func (o *FoundDocumentsUpload) GetUniqueIdentifier() string {
 	return o.UniqueIdentifier
 }
 
+func (o *FoundDocumentsUpload) GetFiles() []FileUpload {
+	if o == nil {
+		return []FileUpload{}
+	}
+	return o.Files
+}
+
 func (o *FoundDocumentsUpload) GetVendorName() *string {
 	if o == nil {
 		return nil
 	}
 	return o.VendorName
+}
+
+func (o *FoundDocumentsUpload) GetStartDate() *string {
+	if o == nil {
+		return nil
+	}
+	return o.StartDate
+}
+
+func (o *FoundDocumentsUpload) GetEndDate() *string {
+	if o == nil {
+		return nil
+	}
+	return o.EndDate
+}
+
+func (o *FoundDocumentsUpload) GetSourceAppID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.SourceAppID
+}
+
+func (o *FoundDocumentsUpload) GetTotalCost() *TotalCost {
+	if o == nil {
+		return nil
+	}
+	return o.TotalCost
+}
+
+func (o *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
+	if o == nil {
+		return nil
+	}
+	return o.LineItems
 }

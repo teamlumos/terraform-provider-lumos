@@ -4,10 +4,10 @@ package shared
 
 type PagePreApprovalRuleOutput struct {
 	Items []PreApprovalRuleOutput `json:"items"`
-	Page  *int64                  `json:"page,omitempty"`
-	Pages *int64                  `json:"pages,omitempty"`
-	Size  *int64                  `json:"size,omitempty"`
 	Total *int64                  `json:"total,omitempty"`
+	Page  *int64                  `json:"page,omitempty"`
+	Size  *int64                  `json:"size,omitempty"`
+	Pages *int64                  `json:"pages,omitempty"`
 }
 
 func (o *PagePreApprovalRuleOutput) GetItems() []PreApprovalRuleOutput {
@@ -17,18 +17,18 @@ func (o *PagePreApprovalRuleOutput) GetItems() []PreApprovalRuleOutput {
 	return o.Items
 }
 
+func (o *PagePreApprovalRuleOutput) GetTotal() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.Total
+}
+
 func (o *PagePreApprovalRuleOutput) GetPage() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Page
-}
-
-func (o *PagePreApprovalRuleOutput) GetPages() *int64 {
-	if o == nil {
-		return nil
-	}
-	return o.Pages
 }
 
 func (o *PagePreApprovalRuleOutput) GetSize() *int64 {
@@ -38,9 +38,9 @@ func (o *PagePreApprovalRuleOutput) GetSize() *int64 {
 	return o.Size
 }
 
-func (o *PagePreApprovalRuleOutput) GetTotal() *int64 {
+func (o *PagePreApprovalRuleOutput) GetPages() *int64 {
 	if o == nil {
 		return nil
 	}
-	return o.Total
+	return o.Pages
 }

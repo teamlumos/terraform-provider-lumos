@@ -3,40 +3,26 @@
 package shared
 
 type AppStoreApp struct {
-	// Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
-	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
-	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
-	AppClassID string `json:"app_class_id"`
 	// The ID of this app.
 	ID string `json:"id"`
+	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
+	AppClassID string `json:"app_class_id"`
 	// The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 	InstanceID string `json:"instance_id"`
-	// The URL of the logo of this app.
-	LogoURL *string `json:"logo_url,omitempty"`
-	// The request instructions.
-	RequestInstructions *string `json:"request_instructions,omitempty"`
-	// The sources of this app.
-	Sources []DiscoverySource `json:"sources"`
-	// The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
-	Status DomainAppStatus `json:"status"`
 	// The user-friendly label of this app.
 	UserFriendlyLabel string `json:"user_friendly_label"`
+	// The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
+	Status DomainAppStatus `json:"status"`
+	// The sources of this app.
+	Sources []DiscoverySource `json:"sources"`
+	// Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
+	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
+	// The URL of the logo of this app.
+	LogoURL *string `json:"logo_url,omitempty"`
 	// The URL of the website of this app.
 	WebsiteURL *string `json:"website_url,omitempty"`
-}
-
-func (o *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
-	if o == nil {
-		return false
-	}
-	return o.AllowMultiplePermissionSelection
-}
-
-func (o *AppStoreApp) GetAppClassID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppClassID
+	// The request instructions.
+	RequestInstructions *string `json:"request_instructions,omitempty"`
 }
 
 func (o *AppStoreApp) GetID() string {
@@ -46,39 +32,18 @@ func (o *AppStoreApp) GetID() string {
 	return o.ID
 }
 
+func (o *AppStoreApp) GetAppClassID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppClassID
+}
+
 func (o *AppStoreApp) GetInstanceID() string {
 	if o == nil {
 		return ""
 	}
 	return o.InstanceID
-}
-
-func (o *AppStoreApp) GetLogoURL() *string {
-	if o == nil {
-		return nil
-	}
-	return o.LogoURL
-}
-
-func (o *AppStoreApp) GetRequestInstructions() *string {
-	if o == nil {
-		return nil
-	}
-	return o.RequestInstructions
-}
-
-func (o *AppStoreApp) GetSources() []DiscoverySource {
-	if o == nil {
-		return []DiscoverySource{}
-	}
-	return o.Sources
-}
-
-func (o *AppStoreApp) GetStatus() DomainAppStatus {
-	if o == nil {
-		return DomainAppStatus("")
-	}
-	return o.Status
 }
 
 func (o *AppStoreApp) GetUserFriendlyLabel() string {
@@ -88,9 +53,44 @@ func (o *AppStoreApp) GetUserFriendlyLabel() string {
 	return o.UserFriendlyLabel
 }
 
+func (o *AppStoreApp) GetStatus() DomainAppStatus {
+	if o == nil {
+		return DomainAppStatus("")
+	}
+	return o.Status
+}
+
+func (o *AppStoreApp) GetSources() []DiscoverySource {
+	if o == nil {
+		return []DiscoverySource{}
+	}
+	return o.Sources
+}
+
+func (o *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
+	if o == nil {
+		return false
+	}
+	return o.AllowMultiplePermissionSelection
+}
+
+func (o *AppStoreApp) GetLogoURL() *string {
+	if o == nil {
+		return nil
+	}
+	return o.LogoURL
+}
+
 func (o *AppStoreApp) GetWebsiteURL() *string {
 	if o == nil {
 		return nil
 	}
 	return o.WebsiteURL
+}
+
+func (o *AppStoreApp) GetRequestInstructions() *string {
+	if o == nil {
+		return nil
+	}
+	return o.RequestInstructions
 }
