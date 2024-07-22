@@ -71,6 +71,9 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"description": schema.StringAttribute{
 				Required:    true,
 				Description: `The description of the app you're creating.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(8192),
+				},
 			},
 			"id": schema.StringAttribute{
 				Computed: true,

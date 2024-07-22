@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
+	"time"
 )
 
 var ErrUnsupportedOption = errors.New("unsupported option")
@@ -13,7 +14,9 @@ var ErrUnsupportedOption = errors.New("unsupported option")
 const (
 	SupportedOptionServerURL            = "serverURL"
 	SupportedOptionRetries              = "retries"
+	SupportedOptionTimeout              = "timeout"
 	SupportedOptionAcceptHeaderOverride = "acceptHeaderOverride"
+	SupportedOptionURLOverride          = "urlOverride"
 )
 
 type AcceptHeaderEnum string
@@ -30,7 +33,9 @@ func (e AcceptHeaderEnum) ToPointer() *AcceptHeaderEnum {
 type Options struct {
 	ServerURL            *string
 	Retries              *retry.Config
+	Timeout              *time.Duration
 	AcceptHeaderOverride *AcceptHeaderEnum
+	URLOverride          *string
 }
 
 type Option func(*Options, ...string) error
@@ -75,6 +80,18 @@ func WithRetries(config retry.Config) Option {
 	}
 }
 
+// WithOperationTimeout allows setting the request timeout applied for an operation.
+func WithOperationTimeout(timeout time.Duration) Option {
+	return func(opts *Options, supportedOptions ...string) error {
+		if !utils.Contains(supportedOptions, SupportedOptionRetries) {
+			return ErrUnsupportedOption
+		}
+
+		opts.Timeout = &timeout
+		return nil
+	}
+}
+
 func WithAcceptHeaderOverride(acceptHeaderOverride AcceptHeaderEnum) Option {
 	return func(opts *Options, supportedOptions ...string) error {
 		if !utils.Contains(supportedOptions, SupportedOptionAcceptHeaderOverride) {
@@ -82,6 +99,18 @@ func WithAcceptHeaderOverride(acceptHeaderOverride AcceptHeaderEnum) Option {
 		}
 
 		opts.AcceptHeaderOverride = &acceptHeaderOverride
+		return nil
+	}
+}
+
+// WithURLOverride allows overriding the URL.
+func WithURLOverride(urlOverride string) Option {
+	return func(opts *Options, supportedOptions ...string) error {
+		if !utils.Contains(supportedOptions, SupportedOptionURLOverride) {
+			return ErrUnsupportedOption
+		}
+
+		opts.URLOverride = &urlOverride
 		return nil
 	}
 }

@@ -3,39 +3,18 @@
 package shared
 
 type RequestablePermissionBaseOutput struct {
-	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
-	AppClassID string `json:"app_class_id"`
-	// The ID of the app associated with this requestable permission.
-	AppID string `json:"app_id"`
-	// The ID of the instance associated with this requestable permission.
-	AppInstanceID string `json:"app_instance_id"`
 	// The ID of this requestable permission.
 	ID *string `json:"id,omitempty"`
-	// The label of this requestable permission.
-	Label string `json:"label"`
 	// The type of this requestable permission.
 	Type *PermissionType `json:"type,omitempty"`
-}
-
-func (o *RequestablePermissionBaseOutput) GetAppClassID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppClassID
-}
-
-func (o *RequestablePermissionBaseOutput) GetAppID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppID
-}
-
-func (o *RequestablePermissionBaseOutput) GetAppInstanceID() string {
-	if o == nil {
-		return ""
-	}
-	return o.AppInstanceID
+	// The label of this requestable permission.
+	Label string `json:"label"`
+	// The ID of the app associated with this requestable permission.
+	AppID string `json:"app_id"`
+	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
+	AppClassID string `json:"app_class_id"`
+	// The ID of the instance associated with this requestable permission.
+	AppInstanceID string `json:"app_instance_id"`
 }
 
 func (o *RequestablePermissionBaseOutput) GetID() *string {
@@ -45,6 +24,13 @@ func (o *RequestablePermissionBaseOutput) GetID() *string {
 	return o.ID
 }
 
+func (o *RequestablePermissionBaseOutput) GetType() *PermissionType {
+	if o == nil {
+		return nil
+	}
+	return o.Type
+}
+
 func (o *RequestablePermissionBaseOutput) GetLabel() string {
 	if o == nil {
 		return ""
@@ -52,9 +38,23 @@ func (o *RequestablePermissionBaseOutput) GetLabel() string {
 	return o.Label
 }
 
-func (o *RequestablePermissionBaseOutput) GetType() *PermissionType {
+func (o *RequestablePermissionBaseOutput) GetAppID() string {
 	if o == nil {
-		return nil
+		return ""
 	}
-	return o.Type
+	return o.AppID
+}
+
+func (o *RequestablePermissionBaseOutput) GetAppClassID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppClassID
+}
+
+func (o *RequestablePermissionBaseOutput) GetAppInstanceID() string {
+	if o == nil {
+		return ""
+	}
+	return o.AppInstanceID
 }
