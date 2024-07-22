@@ -8,6 +8,55 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+// ApproverOutputUser - Optionally, the approver can be a user.
+type ApproverOutputUser struct {
+	// The ID of this user.
+	ID string `json:"id"`
+	// The email of this user.
+	Email *string `json:"email,omitempty"`
+	// The given name of this user.
+	GivenName *string `json:"given_name,omitempty"`
+	// The family name of this user.
+	FamilyName *string `json:"family_name,omitempty"`
+	// The status of this user.
+	Status *UserLifecycleStatus `json:"status,omitempty"`
+}
+
+func (o *ApproverOutputUser) GetID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ID
+}
+
+func (o *ApproverOutputUser) GetEmail() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Email
+}
+
+func (o *ApproverOutputUser) GetGivenName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.GivenName
+}
+
+func (o *ApproverOutputUser) GetFamilyName() *string {
+	if o == nil {
+		return nil
+	}
+	return o.FamilyName
+}
+
+func (o *ApproverOutputUser) GetStatus() *UserLifecycleStatus {
+	if o == nil {
+		return nil
+	}
+	return o.Status
+}
+
 // ApproverOutputLifecycle - The lifecycle of this group.
 type ApproverOutputLifecycle string
 
@@ -37,18 +86,18 @@ func (e *ApproverOutputLifecycle) UnmarshalJSON(data []byte) error {
 
 // ApproverOutputGroup - Optionally, the approver can be a group.
 type ApproverOutputGroup struct {
-	// The ID of the app that sources this group.
-	AppID *string `json:"app_id,omitempty"`
-	// The description of this group.
-	Description *string `json:"description,omitempty"`
-	// The lifecycle of this group.
-	GroupLifecycle *ApproverOutputLifecycle `default:"SYNCED" json:"group_lifecycle"`
 	// The ID of this group.
 	ID *string `json:"id,omitempty"`
+	// The ID of the app that sources this group.
+	AppID *string `json:"app_id,omitempty"`
 	// The ID of this group, specific to the integration.
 	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
 	// The name of this group.
 	Name *string `json:"name,omitempty"`
+	// The description of this group.
+	Description *string `json:"description,omitempty"`
+	// The lifecycle of this group.
+	GroupLifecycle *ApproverOutputLifecycle `default:"SYNCED" json:"group_lifecycle"`
 	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
@@ -64,32 +113,18 @@ func (a *ApproverOutputGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *ApproverOutputGroup) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-func (o *ApproverOutputGroup) GetDescription() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Description
-}
-
-func (o *ApproverOutputGroup) GetGroupLifecycle() *ApproverOutputLifecycle {
-	if o == nil {
-		return nil
-	}
-	return o.GroupLifecycle
-}
-
 func (o *ApproverOutputGroup) GetID() *string {
 	if o == nil {
 		return nil
 	}
 	return o.ID
+}
+
+func (o *ApproverOutputGroup) GetAppID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.AppID
 }
 
 func (o *ApproverOutputGroup) GetIntegrationSpecificID() *string {
@@ -106,6 +141,20 @@ func (o *ApproverOutputGroup) GetName() *string {
 	return o.Name
 }
 
+func (o *ApproverOutputGroup) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
+}
+
+func (o *ApproverOutputGroup) GetGroupLifecycle() *ApproverOutputLifecycle {
+	if o == nil {
+		return nil
+	}
+	return o.GroupLifecycle
+}
+
 func (o *ApproverOutputGroup) GetSourceAppID() *string {
 	if o == nil {
 		return nil
@@ -113,69 +162,13 @@ func (o *ApproverOutputGroup) GetSourceAppID() *string {
 	return o.SourceAppID
 }
 
-// ApproverOutputUser - Optionally, the approver can be a user.
-type ApproverOutputUser struct {
-	// The email of this user.
-	Email *string `json:"email,omitempty"`
-	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
-	// The ID of this user.
-	ID string `json:"id"`
-	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
-}
-
-func (o *ApproverOutputUser) GetEmail() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Email
-}
-
-func (o *ApproverOutputUser) GetFamilyName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.FamilyName
-}
-
-func (o *ApproverOutputUser) GetGivenName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.GivenName
-}
-
-func (o *ApproverOutputUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *ApproverOutputUser) GetStatus() *UserLifecycleStatus {
-	if o == nil {
-		return nil
-	}
-	return o.Status
-}
-
 type ApproverOutput struct {
-	// Optionally, the approver can be a group.
-	Group *ApproverOutputGroup `json:"group,omitempty"`
 	// The type of this approver.
 	Type ApproverType `json:"type"`
 	// Optionally, the approver can be a user.
 	User *ApproverOutputUser `json:"user,omitempty"`
-}
-
-func (o *ApproverOutput) GetGroup() *ApproverOutputGroup {
-	if o == nil {
-		return nil
-	}
-	return o.Group
+	// Optionally, the approver can be a group.
+	Group *ApproverOutputGroup `json:"group,omitempty"`
 }
 
 func (o *ApproverOutput) GetType() ApproverType {
@@ -190,4 +183,11 @@ func (o *ApproverOutput) GetUser() *ApproverOutputUser {
 		return nil
 	}
 	return o.User
+}
+
+func (o *ApproverOutput) GetGroup() *ApproverOutputGroup {
+	if o == nil {
+		return nil
+	}
+	return o.Group
 }

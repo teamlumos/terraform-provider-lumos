@@ -3,28 +3,14 @@
 package shared
 
 type InlineWebhook struct {
-	// The description of this inline webhook.
-	Description *string `json:"description,omitempty"`
-	// The type of this inline webhook.
-	HookType InlineWebhookType `json:"hook_type"`
 	// The ID of this inline webhook.
 	ID string `json:"id"`
+	// The type of this inline webhook.
+	HookType InlineWebhookType `json:"hook_type"`
 	// The name of this inline webhook.
 	Name string `json:"name"`
-}
-
-func (o *InlineWebhook) GetDescription() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Description
-}
-
-func (o *InlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
-		return InlineWebhookType("")
-	}
-	return o.HookType
+	// The description of this inline webhook.
+	Description *string `json:"description,omitempty"`
 }
 
 func (o *InlineWebhook) GetID() string {
@@ -34,9 +20,23 @@ func (o *InlineWebhook) GetID() string {
 	return o.ID
 }
 
+func (o *InlineWebhook) GetHookType() InlineWebhookType {
+	if o == nil {
+		return InlineWebhookType("")
+	}
+	return o.HookType
+}
+
 func (o *InlineWebhook) GetName() string {
 	if o == nil {
 		return ""
 	}
 	return o.Name
+}
+
+func (o *InlineWebhook) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
 }

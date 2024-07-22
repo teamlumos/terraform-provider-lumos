@@ -4,10 +4,10 @@ package shared
 
 type PageAccessRequest struct {
 	Items []AccessRequest `json:"items"`
-	Page  *int64          `json:"page,omitempty"`
-	Pages *int64          `json:"pages,omitempty"`
-	Size  *int64          `json:"size,omitempty"`
 	Total *int64          `json:"total,omitempty"`
+	Page  *int64          `json:"page,omitempty"`
+	Size  *int64          `json:"size,omitempty"`
+	Pages *int64          `json:"pages,omitempty"`
 }
 
 func (o *PageAccessRequest) GetItems() []AccessRequest {
@@ -17,18 +17,18 @@ func (o *PageAccessRequest) GetItems() []AccessRequest {
 	return o.Items
 }
 
+func (o *PageAccessRequest) GetTotal() *int64 {
+	if o == nil {
+		return nil
+	}
+	return o.Total
+}
+
 func (o *PageAccessRequest) GetPage() *int64 {
 	if o == nil {
 		return nil
 	}
 	return o.Page
-}
-
-func (o *PageAccessRequest) GetPages() *int64 {
-	if o == nil {
-		return nil
-	}
-	return o.Pages
 }
 
 func (o *PageAccessRequest) GetSize() *int64 {
@@ -38,9 +38,9 @@ func (o *PageAccessRequest) GetSize() *int64 {
 	return o.Size
 }
 
-func (o *PageAccessRequest) GetTotal() *int64 {
+func (o *PageAccessRequest) GetPages() *int64 {
 	if o == nil {
 		return nil
 	}
-	return o.Total
+	return o.Pages
 }
