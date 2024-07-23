@@ -8,6 +8,7 @@ import (
 )
 
 func (r *AppResourceModel) ToSharedAppInputCreate() *shared.AppInputCreate {
+	name := r.Name.ValueString()
 	category := r.Category.ValueString()
 	description := r.Description.ValueString()
 	logoURL := new(string)
@@ -16,26 +17,25 @@ func (r *AppResourceModel) ToSharedAppInputCreate() *shared.AppInputCreate {
 	} else {
 		logoURL = nil
 	}
-	name := r.Name.ValueString()
-	requestInstructions := new(string)
-	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
-		*requestInstructions = r.RequestInstructions.ValueString()
-	} else {
-		requestInstructions = nil
-	}
 	websiteURL := new(string)
 	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
 		*websiteURL = r.WebsiteURL.ValueString()
 	} else {
 		websiteURL = nil
 	}
+	requestInstructions := new(string)
+	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
+		*requestInstructions = r.RequestInstructions.ValueString()
+	} else {
+		requestInstructions = nil
+	}
 	out := shared.AppInputCreate{
+		Name:                name,
 		Category:            category,
 		Description:         description,
 		LogoURL:             logoURL,
-		Name:                name,
-		RequestInstructions: requestInstructions,
 		WebsiteURL:          websiteURL,
+		RequestInstructions: requestInstructions,
 	}
 	return &out
 }

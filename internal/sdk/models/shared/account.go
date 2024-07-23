@@ -3,21 +3,14 @@
 package shared
 
 type Account struct {
-	// The type of this account.
-	AccountType AccountType `json:"account_type"`
 	// The ID of the app that owns this account.
 	AppID string `json:"app_id"`
-	// The email of this account.
-	Email *string `json:"email,omitempty"`
 	// The stable identifier of this account.
 	UniqueIdentifier string `json:"unique_identifier"`
-}
-
-func (o *Account) GetAccountType() AccountType {
-	if o == nil {
-		return AccountType("")
-	}
-	return o.AccountType
+	// The type of this account.
+	AccountType AccountType `json:"account_type"`
+	// The email of this account.
+	Email *string `json:"email,omitempty"`
 }
 
 func (o *Account) GetAppID() string {
@@ -27,16 +20,23 @@ func (o *Account) GetAppID() string {
 	return o.AppID
 }
 
-func (o *Account) GetEmail() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Email
-}
-
 func (o *Account) GetUniqueIdentifier() string {
 	if o == nil {
 		return ""
 	}
 	return o.UniqueIdentifier
+}
+
+func (o *Account) GetAccountType() AccountType {
+	if o == nil {
+		return AccountType("")
+	}
+	return o.AccountType
+}
+
+func (o *Account) GetEmail() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Email
 }
