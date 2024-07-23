@@ -21,11 +21,12 @@ func (i *RequestablePermissionsHook) SDKInit(baseURL string, client HTTPClient) 
 
 func (i *RequestablePermissionsHook) BeforeRequest(hookCtx BeforeRequestContext, req *http.Request) (*http.Request, error) {
 	// modify the request object before it is sent, such as adding headers or query parameters or return an error to stop the request from being sent
-	if strings.Contains(req.RequestURI, "requestable_permissions") {
+	if strings.Contains(req.URL.String(), "requestable_permissions") {
 		q := req.URL.Query()
 		q.Add("include_inherited_configs", "false")
 		req.URL.RawQuery = q.Encode()
 	}
+
 	return req, nil
 }
 
