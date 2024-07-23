@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: ebb42a82cf1c9b5728c5d151dd80b432
+  docChecksum: b7a8a59b29109e23c1c6ff6e5695b967
   docVersion: 0.1.0
-  speakeasyVersion: 1.345.0
-  generationVersion: 2.378.0
-  releaseVersion: 0.11.0
-  configChecksum: 45f97d4e47919ba826304be5157c7d38
+  speakeasyVersion: 1.345.4
+  generationVersion: 2.378.3
+  releaseVersion: 0.11.2
+  configChecksum: 290c9f591c39e4f069d20493f47ebc69
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.24.1
+    core: 3.24.2
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     nameOverrides: 2.81.2
@@ -82,8 +82,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
@@ -244,6 +244,7 @@ generatedFiles:
   - internal/provider/preapprovalrule_resource.go
   - internal/provider/preapprovalrule_resource_sdk.go
   - examples/resources/lumos_pre_approval_rule/resource.tf
+  - internal/planmodifiers/objectplanmodifier/request_config_input_create_modifier.go
   - examples/resources/lumos_requestable_permission/import.sh
   - internal/provider/requestablepermission_resource.go
   - internal/provider/requestablepermission_resource_sdk.go

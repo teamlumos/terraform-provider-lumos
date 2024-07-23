@@ -187,6 +187,9 @@ actions:
   - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+    update:
+      "x-speakeasy-plan-modifiers": "RequestConfigInputModifier"
   # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
   - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
     update:
