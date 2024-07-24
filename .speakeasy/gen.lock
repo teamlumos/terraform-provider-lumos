@@ -244,6 +244,7 @@ generatedFiles:
   - internal/provider/preapprovalrule_resource.go
   - internal/provider/preapprovalrule_resource_sdk.go
   - examples/resources/lumos_pre_approval_rule/resource.tf
+  - internal/validators/objectvalidators/request_config_input_validator.go
   - examples/resources/lumos_requestable_permission/import.sh
   - internal/provider/requestablepermission_resource.go
   - internal/provider/requestablepermission_resource_sdk.go
