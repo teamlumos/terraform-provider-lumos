@@ -224,3 +224,9 @@ actions:
   - target: $["components"]["schemas"]["Page_RequestablePermissionOutput_"]
     update:
       "x-speakeasy-entity": "RequestablePermissions"
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+    update:
+      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
+  - target: $["components"]["schemas"]["RequestConfigInputUpdate"]
+    update:
+      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
