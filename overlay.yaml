@@ -146,35 +146,16 @@ actions:
   - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
-  # Suppress computed diff for all RequestablePermission schemas
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_class_id"]
+
+  # Suppress Computed Diff for Permissions
+  # See https://lumos-app.slack.com/archives/C075PHWEN1Z/p1721757223429329 for full context
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_instance_id"]
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_class_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_instance_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["id"]
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["type"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
@@ -183,17 +164,15 @@ actions:
   - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
-  # Suppress computed diff for groups
-  - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
+
+  # Permissions - request_approval_stages is deprecated 
   - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
   - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
     update:
       "x-speakeasy-terraform-ignore": true
+
   # ensure that ordering does not matter for approver groups/users
   - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
     update:
@@ -207,6 +186,7 @@ actions:
   - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
     update:
       "format": "set"
+
   # ensure that ordering does not matter for allowed groups
   - target: $["components"]["schemas"]["AllowedGroupsConfigInput"]["properties"]["groups"]
     update:
