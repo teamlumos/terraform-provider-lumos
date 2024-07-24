@@ -29,7 +29,7 @@ data "lumos_requestable_permission" "my_requestablepermission" {
 - `id` (String) The ID of this resource.
 - `label` (String) The label of this requestable permission.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--request_config))
-- `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
+- `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]
 
 <a id="nestedatt--request_config"></a>
 ### Nested Schema for `request_config`

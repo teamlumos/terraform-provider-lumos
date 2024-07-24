@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: ebb42a82cf1c9b5728c5d151dd80b432
+  docChecksum: ae54a8f60d54db7feac6e297918eb7c3
   docVersion: 0.1.0
-  speakeasyVersion: 1.345.0
-  generationVersion: 2.378.0
-  releaseVersion: 0.11.0
-  configChecksum: 45f97d4e47919ba826304be5157c7d38
+  speakeasyVersion: 1.345.4
+  generationVersion: 2.378.3
+  releaseVersion: 0.11.1
+  configChecksum: e056bb491e83f440b6cd30efa08e52ac
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.24.1
+    core: 3.24.2
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     nameOverrides: 2.81.2
@@ -82,8 +82,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
@@ -133,7 +133,6 @@ generatedFiles:
   - internal/sdk/models/shared/requestapprovalstageoutput.go
   - internal/sdk/models/shared/approveroutput.go
   - internal/sdk/models/shared/approvertype.go
-  - internal/sdk/models/shared/permissiontype.go
   - internal/sdk/models/shared/requestablepermissioninput.go
   - internal/sdk/models/shared/requestapprovalstageinput.go
   - internal/sdk/models/shared/approverinput.go
@@ -141,6 +140,7 @@ generatedFiles:
   - internal/sdk/models/shared/pagepreapprovalruleoutput.go
   - internal/sdk/models/shared/preapprovalruleoutput.go
   - internal/sdk/models/shared/requestablepermissionbaseoutput.go
+  - internal/sdk/models/shared/permissiontype.go
   - internal/sdk/models/shared/preapprovalruleinput.go
   - internal/sdk/models/shared/baseinlinewebhook.go
   - internal/sdk/models/shared/requestablepermissionbase.go

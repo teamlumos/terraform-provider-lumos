@@ -144,10 +144,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							},
 						},
 						"id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Optional:    true,
 							Description: `The ID of this group.`,
 						},
@@ -174,10 +171,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"app_class_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.`,
 						},
 						"app_id": schema.StringAttribute{
@@ -185,17 +179,11 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The ID of the app associated with this requestable permission.`,
 						},
 						"app_instance_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The ID of the instance associated with this requestable permission.`,
 						},
 						"id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Optional:    true,
 							Description: `The ID of this requestable permission.`,
 						},
