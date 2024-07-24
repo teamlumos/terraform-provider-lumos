@@ -6,6 +6,9 @@ import (
 	"context"
 
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"fmt"
+    "github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 )
 
 var _ validator.Object = ObjectRequestConfigInputValidatorValidator{}
@@ -14,7 +17,7 @@ type ObjectRequestConfigInputValidatorValidator struct{}
 
 // Description describes the validation in plain text formatting.
 func (v ObjectRequestConfigInputValidatorValidator) Description(_ context.Context) string {
-	return "TODO: add validator description"
+	return "Validates the request config input object to ensure override settings are not in conflict with populated fields"
 }
 
 // MarkdownDescription describes the validation in Markdown formatting.
@@ -24,6 +27,89 @@ func (v ObjectRequestConfigInputValidatorValidator) MarkdownDescription(ctx cont
 
 // Validate performs the validation.
 func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, resp *validator.ObjectResponse) {
+	requestConfig := tfTypes.RequestablePermissionInputRequestConfig{}
+	req.ConfigValue.As(ctx, &requestConfig, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})
+
+	// Check that none of the overrides are false or null with corresponding fields populated,
+	// and that none of the overrides are true without values poplated
+	if requestConfig.AllowedGroupsOverride.ValueBool() == true {
+		if requestConfig.AllowedGroups == nil {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid allowed groups",
+				fmt.Sprintf("`allowed_groups_override` is true but `allowed_groups` are not populated"),
+			)
+		}
+	} else if requestConfig.AllowedGroups != nil {
+		resp.Diagnostics.AddAttributeError(
+			req.Path,
+			"Invalid allowed groups",
+			fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` are populated (%s)", requestConfig.AllowedGroupsOverride.String(), requestConfig.AllowedGroups),
+		)
+	}
+
+	if requestConfig.RequestApprovalConfig != nil {
+		if requestConfig.RequestApprovalConfig.CustomApprovalMessageOverride.ValueBool() == true {
+			if requestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
+				resp.Diagnostics.AddAttributeError(
+					req.Path,
+					"Invalid custom approval message",
+					fmt.Sprintf("`custom_approval_message_override` is true but `custom_approval_message` is not populated"),
+				)
+			}
+		} else if !requestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid custom approval message",
+				fmt.Sprintf("`custom_approval_message_override` is %s but `custom_approval_message` is populated (%s)",
+					requestConfig.RequestApprovalConfig.CustomApprovalMessageOverride.String(),
+					requestConfig.RequestApprovalConfig.CustomApprovalMessage.String()),
+			)
+		}
+		
+		if requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool() == true {
+			if (requestConfig.RequestApprovalConfig.Approvers == nil || requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
+				resp.Diagnostics.AddAttributeError(
+					req.Path,
+					"Invalid request approval config",
+					fmt.Sprintf("`request_approval_config_override` is true but `approvers` or `manager_approval` are not populated"),
+				)
+			}
+		} else if (requestConfig.RequestApprovalConfig.Approvers != nil || !requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid request approval config",
+				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` or `manager_approval` are populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
+			)
+		}
+	
+		if requestConfig.RequestApprovalConfig.Approvers == nil && requestConfig.RequestApprovalConfig.ApproversStage2 != nil {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid approvers",
+				fmt.Sprintf("`approvers` is not populated but `approvers_stage_2`is populated (%s)", requestConfig.RequestApprovalConfig.ApproversStage2),
+			)
+		}
+	}
+	
+
+	if requestConfig.RequestFulfillmentConfig != nil {
+		if requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.ValueBool() == true {
+			if requestConfig.RequestFulfillmentConfig.TimeBasedAccess == nil {
+				resp.Diagnostics.AddAttributeError(
+					req.Path,
+					"Invalid time based access",
+					fmt.Sprintf("`time_based_access_override` is true but `time_based_access` is not populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
+				)
+			}
+		} else if requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+			resp.Diagnostics.AddAttributeError(
+				req.Path,
+				"Invalid time based access",
+				fmt.Sprintf("`time_based_access_override` is %s but `time_based_access` is populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.String(), requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
+			)
+		}
+	}
 }
 
 func RequestConfigInputValidator() validator.Object {
