@@ -3,6 +3,7 @@ info:
   title: Overlay original-openapi.json => openapi.json
   version: 0.0.0
 actions:
+  # HTTP exponential backoff retries
   - target: $
     update:
       "x-speakeasy-retries":
@@ -18,6 +19,8 @@ actions:
           "statusCodes": ["5XX"],
           "retryConnectionErrors": true,
         }
+
+  # Apps
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
@@ -36,6 +39,8 @@ actions:
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
+
+  # App Settings
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
     update:
       "x-speakeasy-entity-operation": "AppStoreAppSettings#update"
@@ -48,18 +53,46 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
+
+  # Users
   - target: $["paths"]["/users"]["get"]
     update:
       "x-speakeasy-entity-operation": "Users#read"
   - target: $["paths"]["/users/{user_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "User#read"
+
+  # Groups
   - target: $["paths"]["/groups/{group_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "Group#read"
   - target: $["paths"]["/groups"]["get"]
     update:
       "x-speakeasy-entity-operation": "Groups#read"
+
+  # Groups - ensure that ordering does not matter for allowed groups
+  - target: $["components"]["schemas"]["AllowedGroupsConfigInput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AllowedGroupsConfigOutput"]["properties"]["groups"]
+    update:
+      "format": "set"
+
+  # Groups - ensure that ordering does not matter for approver groups/users
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["users"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
+    update:
+      "format": "set"
+
+  # Requestable Permissions
   - target: $["paths"]["/appstore/requestable_permissions"]["post"]
     update:
       "x-speakeasy-entity-operation": "RequestablePermission#create"
@@ -81,6 +114,34 @@ actions:
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["patch"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
+
+  # Requestable Permissions Suppress Computed Diff
+  # See https://lumos-app.slack.com/archives/C075PHWEN1Z/p1721757223429329 for full context
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]["properties"]["type"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+
+  # Requestable Permissions - request_approval_stages is deprecated
+  - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
+    update:
+      "x-speakeasy-terraform-ignore": true
+  - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
+    update:
+      "x-speakeasy-terraform-ignore": true
+
+  # Pre Approval Rules
   - target: $["paths"]["/appstore/pre_approval_rules"]["post"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#create"
@@ -96,6 +157,11 @@ actions:
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["patch"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+
+  # AppStore Apps
   - target: $["paths"]["/appstore/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#create"
@@ -105,12 +171,8 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#delete"
-  - target: $["components"]["schemas"]["Account"]["properties"]["unique_identifier"]["description"]
-    update: "The stable identifier of this account."
-  - target: $["components"]["schemas"]["Account"]["properties"]["account_type"]["description"]
-    update: "The type of this account."
-  - target: $["components"]["schemas"]["Account"]["properties"]["user_id"]
-    remove: true
+
+  # Apps
   - target: $["components"]["schemas"]["App"]
     update:
       "x-speakeasy-entity": "App"
@@ -120,97 +182,23 @@ actions:
   - target: $["components"]["schemas"]["AppInputCreate"]
     update:
       "x-speakeasy-entity": "App"
+
+  # AppStore Apps
   - target: $["components"]["schemas"]["AppStoreApp"]
     update:
       "x-speakeasy-entity": "AppStoreApp"
-  - target: $["components"]["schemas"]["CreateAccessRequestInput"]["properties"]["note"]["description"]
-    update: "Why the user needs access."
-  - target: $["components"]["schemas"]["CreateAccessRequestInput"]["properties"]["expiration_in_seconds"]["description"]
-    update: "Once granted, how long the access should last. Omit for permanent access."
-  - target: $["components"]["schemas"]["CreateAccessRequestInput"]["properties"]["business_justification"]
-    remove: true
-  - target: $["components"]["schemas"]["CreateAccessRequestInput"]["properties"]["access_length"]
-    remove: true
-  - target: $["components"]["schemas"]["CreateAccessRequestInput"]["required"]
-    update:
-      - "note"
+
+  # Groups
   - target: $["components"]["schemas"]["Page_Group_"]
     update:
       "x-speakeasy-entity": "Groups"
+
+  # Apps
   - target: $["components"]["schemas"]["Page_App_"]
     update:
       "x-speakeasy-entity": "Apps"
+
+  # Users
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
-  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  # Suppress computed diff for all RequestablePermission schemas
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_class_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBase"]["properties"]["app_instance_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_class_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]["properties"]["app_instance_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]
-    update:
-      "x-speakeasy-entity": "RequestablePermission"
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_class_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["RequestablePermissionInput"]["properties"]["app_instance_id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  # Suppress computed diff for groups
-  - target: $["components"]["schemas"]["BaseGroup"]["properties"]["id"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
-  # request_approval_stages is being sunsetted (sunset? sunsote?) and is only being kept in the API for backwards compatibility
-  - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
-    update:
-      "x-speakeasy-terraform-ignore": true
-  - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]["properties"]["request_approval_stages"]
-    update:
-      "x-speakeasy-terraform-ignore": true
-  # ensure that ordering does not matter for approver groups/users
-  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["groups"]
-    update:
-      "format": "set"
-  - target: $["components"]["schemas"]["AppApproversInput"]["properties"]["users"]
-    update:
-      "format": "set"
-  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["groups"]
-    update:
-      "format": "set"
-  - target: $["components"]["schemas"]["AppApproversOutput"]["properties"]["users"]
-    update:
-      "format": "set"
-  # ensure that ordering does not matter for allowed groups
-  - target: $["components"]["schemas"]["AllowedGroupsConfigInput"]["properties"]["groups"]
-    update:
-      "format": "set"
-  - target: $["components"]["schemas"]["AllowedGroupsConfigOutput"]["properties"]["groups"]
-    update:
-      "format": "set"
