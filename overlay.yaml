@@ -115,6 +115,14 @@ actions:
     update:
       "x-speakeasy-name-override": "id"
 
+  # Requestable Permission - Request Config Validation
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+    update:
+      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
+  - target: $["components"]["schemas"]["RequestConfigInputUpdate"]
+    update:
+      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
+
   # Requestable Permissions Suppress Computed Diff
   # See https://lumos-app.slack.com/archives/C075PHWEN1Z/p1721757223429329 for full context
   - target: $["components"]["schemas"]["RequestConfigInputCreate"]

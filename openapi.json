@@ -2304,6 +2304,18 @@
 						"in": "query"
 					},
 					{
+						"description": "Sort access requests ascending (ASC) or descending (DESC) by created date.",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"title": "Sort",
+							"description": "Sort access requests ascending (ASC) or descending (DESC) by created date.",
+							"default": "ASC"
+						},
+						"name": "sort",
+						"in": "query"
+					},
+					{
 						"required": false,
 						"schema": {
 							"type": "integer",
@@ -2892,7 +2904,9 @@
 						"type": "array",
 						"title": "Permissions",
 						"description": "The permissions of the account.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"attributes": {
 						"items": {
@@ -2901,7 +2915,9 @@
 						"type": "array",
 						"title": "Attributes",
 						"description": "The attributes of the account.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -2947,7 +2963,9 @@
 						"type": "array",
 						"title": "Accounts",
 						"description": "Accounts to upload.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"app_id": {
 						"type": "string",
@@ -3266,7 +3284,9 @@
 						"type": "array",
 						"title": "Groups",
 						"description": "The groups allowed to request this permission.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -3382,7 +3402,9 @@
 						"type": "array",
 						"title": "Groups",
 						"description": "Groups assigned as app admins.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"users": {
 						"items": {
@@ -3391,7 +3413,9 @@
 						"type": "array",
 						"title": "Users",
 						"description": "Users assigned as app admins.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -3406,7 +3430,9 @@
 						"type": "array",
 						"title": "Groups",
 						"description": "Groups assigned as support request approvers.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"users": {
 						"items": {
@@ -3415,7 +3441,9 @@
 						"type": "array",
 						"title": "Users",
 						"description": "Users assigned as support request approvers.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -3430,7 +3458,9 @@
 						"type": "array",
 						"title": "Groups",
 						"description": "Groups assigned as support request approvers.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"users": {
 						"items": {
@@ -3439,7 +3469,9 @@
 						"type": "array",
 						"title": "Users",
 						"description": "Users assigned as support request approvers.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -3949,7 +3981,9 @@
 						],
 						"title": "Admins",
 						"description": "AppStore App admins assigned.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"request_validation_inline_webhook": {
 						"allOf": [
@@ -5179,7 +5213,9 @@
 						"type": "array",
 						"title": "Preapproved Groups",
 						"description": "The preapproved groups of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproved_permissions": {
 						"items": {
@@ -5188,7 +5224,9 @@
 						"type": "array",
 						"title": "Preapproved Permissions",
 						"description": "The preapproved permissions of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproval_webhooks": {
 						"items": {
@@ -5197,7 +5235,9 @@
 						"type": "array",
 						"title": "Preapproval Webhooks",
 						"description": "The preapproval webhooks of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -5248,7 +5288,9 @@
 						"type": "array",
 						"title": "Preapproved Groups",
 						"description": "The preapproved groups of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproved_permissions": {
 						"items": {
@@ -5257,7 +5299,9 @@
 						"type": "array",
 						"title": "Preapproved Permissions",
 						"description": "The preapproved permissions of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproval_webhooks": {
 						"items": {
@@ -5266,7 +5310,9 @@
 						"type": "array",
 						"title": "Preapproval Webhooks",
 						"description": "The preapproval webhooks of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
@@ -5299,7 +5345,9 @@
 						"type": "array",
 						"title": "Preapproved Groups",
 						"description": "The preapproved groups of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproved_permissions": {
 						"items": {
@@ -5308,7 +5356,9 @@
 						"type": "array",
 						"title": "Preapproved Permissions",
 						"description": "The preapproved permissions of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					},
 					"preapproval_webhooks": {
 						"items": {
@@ -5317,7 +5367,9 @@
 						"type": "array",
 						"title": "Preapproval Webhooks",
 						"description": "The preapproval webhooks of this preapproval rule.",
-						"default": []
+						"default": [
+
+						]
 					}
 				},
 				"type": "object",
