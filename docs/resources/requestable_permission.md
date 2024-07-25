@@ -13,11 +13,35 @@ RequestablePermission Resource
 ## Example Usage
 
 ```terraform
-resource "lumos_requestable_permission" "my_requestablepermission" {
-  app_class_id    = "...my_app_class_id..."
-  app_id          = "...my_app_id..."
-  app_instance_id = "...my_app_instance_id..."
-  label           = "...my_label..."
+resource "lumos_requestable_permission" "test_provisioning_group" {
+  app_id = "b4bb7f9c-e287-4cda-878d-8638a85206f9"
+  label  = "test_provisioning_group"
+  request_config = {
+    appstore_visibility = "VISIBLE"
+    request_approval_config = {
+      manager_approval                 = "INITIAL_APPROVAL"
+      request_approval_config_override = true
+      approvers = {
+        groups = []
+        users  = [{ id = data.lumos_users.albus.items[0].id }]
+      }
+      approvers_stage_2 = {
+        groups = []
+        users  = [{ id = data.lumos_users.bella.items[0].id }]
+      }
+
+      custom_approval_message          = "Test"
+      custom_approval_message_override = true
+    }
+    request_fulfillment_config = {
+      time_based_access_options  = ["4 hours"]
+      time_based_access_override = true
+      provisioning_group = {
+        app_id                  = "dd68df37-55b1-ccfd-d82c-f5fd5af8c676"
+        integration_specific_id = "00gh1qldohd1QYpF3697"
+      }
+    }
+  }
 }
 ```
 
