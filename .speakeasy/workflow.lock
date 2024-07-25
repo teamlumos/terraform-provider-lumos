@@ -2,16 +2,16 @@ speakeasyVersion: 1.346.0
 sources:
     FastAPI:
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:2e19e7afd58189dbd92f226533dc317054ec7dd397b683789763c7e9d9145b9c
-        sourceBlobDigest: sha256:eb8fa2d5641aae62ece949de8b50009890f1291f3ede5cc363e21255ee3b59bb
+        sourceRevisionDigest: sha256:95f1a9d4214aff72dbd9f4c975675e3e5073456608c100949d7609bcb6605612
+        sourceBlobDigest: sha256:93164701c3f09f91baa3c6e12d6d1f635931336515976d784dffd662e91c91d1
         tags:
             - latest
 targets:
     lumos-terraform-provider-target:
         source: FastAPI
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:2e19e7afd58189dbd92f226533dc317054ec7dd397b683789763c7e9d9145b9c
-        sourceBlobDigest: sha256:eb8fa2d5641aae62ece949de8b50009890f1291f3ede5cc363e21255ee3b59bb
+        sourceRevisionDigest: sha256:95f1a9d4214aff72dbd9f4c975675e3e5073456608c100949d7609bcb6605612
+        sourceBlobDigest: sha256:93164701c3f09f91baa3c6e12d6d1f635931336515976d784dffd662e91c91d1
         outLocation: /Users/ethanzh/terraform-provider-lumos
 workflow:
     workflowVersion: 1.0.0

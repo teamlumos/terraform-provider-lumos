@@ -3,6 +3,10 @@ info:
   title: Overlay original-openapi.json => openapi.json
   version: 0.0.0
 actions:
+  # Update README description
+  - target: $["info"]["description"]
+    update: "The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules"
+
   # HTTP exponential backoff retries
   - target: $
     update:
