@@ -8,6 +8,33 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+// RequestablePermissionOutputPermissionType - The type of this requestable permission.
+type RequestablePermissionOutputPermissionType string
+
+const (
+	RequestablePermissionOutputPermissionTypeSynced RequestablePermissionOutputPermissionType = "SYNCED"
+	RequestablePermissionOutputPermissionTypeNative RequestablePermissionOutputPermissionType = "NATIVE"
+)
+
+func (e RequestablePermissionOutputPermissionType) ToPointer() *RequestablePermissionOutputPermissionType {
+	return &e
+}
+func (e *RequestablePermissionOutputPermissionType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "SYNCED":
+		fallthrough
+	case "NATIVE":
+		*e = RequestablePermissionOutputPermissionType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for RequestablePermissionOutputPermissionType: %v", v)
+	}
+}
+
 // AppStoreVisibilityOption - The appstore visibility of this request config.
 type AppStoreVisibilityOption string
 
@@ -618,7 +645,7 @@ type RequestablePermissionOutput struct {
 	// The ID of this requestable permission.
 	ID *string `json:"id,omitempty"`
 	// The type of this requestable permission.
-	Type *PermissionType `json:"type,omitempty"`
+	Type *RequestablePermissionOutputPermissionType `json:"type,omitempty"`
 	// The label of this requestable permission.
 	Label string `json:"label"`
 	// The ID of the app associated with this requestable permission.
@@ -638,7 +665,7 @@ func (o *RequestablePermissionOutput) GetID() *string {
 	return o.ID
 }
 
-func (o *RequestablePermissionOutput) GetType() *PermissionType {
+func (o *RequestablePermissionOutput) GetType() *RequestablePermissionOutputPermissionType {
 	if o == nil {
 		return nil
 	}
