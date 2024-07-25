@@ -24,11 +24,6 @@ func (v ObjectRequestConfigInputValidatorValidator) MarkdownDescription(ctx cont
 
 // Validate performs the validation.
 func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, resp *validator.ObjectResponse) {
-	resp.Diagnostics.AddAttributeError(
-		req.Path,
-		"TODO: implement objectvalidator RequestConfigInputValidator logic",
-		req.Path.String()+": "+v.Description(ctx),
-	)
 }
 
 func RequestConfigInputValidator() validator.Object {
