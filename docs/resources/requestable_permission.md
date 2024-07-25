@@ -38,7 +38,7 @@ resource "lumos_requestable_permission" "my_requestablepermission" {
 ### Read-Only
 
 - `id` (String) The ID of this requestable permission.
-- `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
+- `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]
 
 <a id="nestedatt--request_config"></a>
 ### Nested Schema for `request_config`

@@ -5,12 +5,14 @@ package shared
 type Account struct {
 	// The ID of the app that owns this account.
 	AppID string `json:"app_id"`
-	// The stable identifier of this account.
+	// The stable identifier of this account from the associated service.
 	UniqueIdentifier string `json:"unique_identifier"`
-	// The type of this account.
+	// The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP).
 	AccountType AccountType `json:"account_type"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`
+	// The ID of the user associated with this account.
+	UserID *string `json:"user_id,omitempty"`
 }
 
 func (o *Account) GetAppID() string {
@@ -39,4 +41,11 @@ func (o *Account) GetEmail() *string {
 		return nil
 	}
 	return o.Email
+}
+
+func (o *Account) GetUserID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.UserID
 }

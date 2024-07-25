@@ -6,10 +6,14 @@ type CreateAccessRequestInput struct {
 	AppID string `json:"app_id"`
 	// User to request access for. If omitted, request for the current user.
 	TargetUserID *string `json:"target_user_id,omitempty"`
+	// [Deprecated - use business_justification] Why the user needs access.
+	Note *string `json:"note,omitempty"`
 	// Why the user needs access.
-	Note string `json:"note"`
-	// Once granted, how long the access should last. Omit for permanent access.
+	BusinessJustification *string `json:"business_justification,omitempty"`
+	// [Deprecated, use access_length] Once granted, how long the access should last. Omit for permanent access.
 	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitempty"`
+	// Once granted, how long the access should last. Omit for permanent access.
+	AccessLength *string `json:"access_length,omitempty"`
 	// The IDs of the requestable permissions the user is requesting access to. Omit this to just request access to the app.
 	RequestablePermissionIds []string `json:"requestable_permission_ids,omitempty"`
 }
@@ -28,11 +32,18 @@ func (o *CreateAccessRequestInput) GetTargetUserID() *string {
 	return o.TargetUserID
 }
 
-func (o *CreateAccessRequestInput) GetNote() string {
+func (o *CreateAccessRequestInput) GetNote() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Note
+}
+
+func (o *CreateAccessRequestInput) GetBusinessJustification() *string {
+	if o == nil {
+		return nil
+	}
+	return o.BusinessJustification
 }
 
 func (o *CreateAccessRequestInput) GetExpirationInSeconds() *int64 {
@@ -40,6 +51,13 @@ func (o *CreateAccessRequestInput) GetExpirationInSeconds() *int64 {
 		return nil
 	}
 	return o.ExpirationInSeconds
+}
+
+func (o *CreateAccessRequestInput) GetAccessLength() *string {
+	if o == nil {
+		return nil
+	}
+	return o.AccessLength
 }
 
 func (o *CreateAccessRequestInput) GetRequestablePermissionIds() []string {

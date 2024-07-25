@@ -419,7 +419,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 			},
 			"type": schema.StringAttribute{
 				Computed:    true,
-				Description: `An enumeration. must be one of ["SYNCED", "NATIVE"]`,
+				Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
 			},
 		},
 	}
