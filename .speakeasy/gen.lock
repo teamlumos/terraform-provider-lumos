@@ -1,17 +1,17 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: b5ff7e04881e6dc316ec3ab98f14184a
+  docChecksum: b23cc0b4d3e94a7da0550bf603db9f93
   docVersion: 0.1.0
-  speakeasyVersion: 1.345.4
-  generationVersion: 2.378.3
-  releaseVersion: 0.11.3
-  configChecksum: b0dd6d13f863d9f4a63ab2e5e77c8393
+  speakeasyVersion: 1.346.0
+  generationVersion: 2.379.3
+  releaseVersion: 0.11.5
+  configChecksum: 8b95beda9d9acb60509a780c0c539177
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.24.2
+    core: 3.24.3
     globalSecurity: 2.81.6
     globalServerURLs: 2.82.1
     nameOverrides: 2.81.2
@@ -230,6 +230,7 @@ generatedFiles:
   - internal/provider/types/requestable_permission_input_request_fulfillment_config.go
   - internal/provider/types/requestable_permission_input_request_config.go
   - internal/provider/types/app.go
+  - internal/provider/types/requestable_permission_output.go
   - USAGE.md
   - internal/provider/provider.go
   - examples/provider/provider.tf
@@ -270,6 +271,9 @@ generatedFiles:
   - internal/provider/requestablepermission_data_source.go
   - internal/provider/requestablepermission_data_source_sdk.go
   - examples/data-sources/lumos_requestable_permission/data-source.tf
+  - internal/provider/requestablepermissions_data_source.go
+  - internal/provider/requestablepermissions_data_source_sdk.go
+  - examples/data-sources/lumos_requestable_permissions/data-source.tf
   - internal/provider/user_data_source.go
   - internal/provider/user_data_source_sdk.go
   - examples/data-sources/lumos_user/data-source.tf
