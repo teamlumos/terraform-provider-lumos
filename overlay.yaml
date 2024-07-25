@@ -141,6 +141,11 @@ actions:
     update:
       "x-speakeasy-param-suppress-computed-diff": true
 
+  # Bulk data source
+  - target: $["paths"]["/appstore/requestable_permissions"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "RequestablePermissions#read"
+
   # Requestable Permissions - request_approval_stages is deprecated
   - target: $["components"]["schemas"]["RequestApprovalConfigInput"]["properties"]["request_approval_stages"]
     update:
@@ -210,3 +215,8 @@ actions:
   - target: $["components"]["schemas"]["Page_User_"]
     update:
       "x-speakeasy-entity": "Users"
+
+  # Requestable Permissions
+  - target: $["components"]["schemas"]["Page_RequestablePermissionOutput_"]
+    update:
+      "x-speakeasy-entity": "RequestablePermissions"
