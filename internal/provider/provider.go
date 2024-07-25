@@ -37,12 +37,7 @@ func (p *LumosProvider) Metadata(ctx context.Context, req provider.MetadataReque
 
 func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: `Lumos: ` + "\n" +
-			`    The Lumos API gives you the building blocks to administer and extend Lumos programmatically.` + "\n" +
-			`    Our REST API provides a management interface for the AppStore and a read interface` + "\n" +
-			`    for the Lumos Core.` + "\n" +
-			`    Go to https://developers.lumos.com to see our complete documentation.` + "\n" +
-			``,
+		Description: `Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules`,
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				MarkdownDescription: "Server URL (defaults to https://api.lumos.com)",
