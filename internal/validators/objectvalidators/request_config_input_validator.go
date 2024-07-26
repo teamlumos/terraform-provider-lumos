@@ -4,7 +4,7 @@ package objectvalidators
 
 import (
 	"context"
-
+	"strings"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"fmt"
     "github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -12,6 +12,23 @@ import (
 )
 
 var _ validator.Object = ObjectRequestConfigInputValidatorValidator{}
+
+// a set of possible TBA options
+var timeBasedAccessOptions = []string{
+	"Unlimited",
+	"2 hours",
+	"4 hours",
+	"8 hours",
+	"12 hours",
+	"24 hours",
+	"72 hours", 
+	"1 day",
+	"3 days",
+	"7 days",
+	"14 days",
+	"30 days", 
+	"90 days",
+}
 
 type ObjectRequestConfigInputValidatorValidator struct{}
 
@@ -95,13 +112,31 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 
 	if requestConfig.RequestFulfillmentConfig != nil {
 		if requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.ValueBool() == true {
-			if requestConfig.RequestFulfillmentConfig.TimeBasedAccess == nil {
+			if requestConfig.RequestFulfillmentConfig.TimeBasedAccess == nil || len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess) == 0 {
 				resp.Diagnostics.AddAttributeError(
 					req.Path,
 					"Invalid time based access",
 					fmt.Sprintf("`time_based_access_override` is true but `time_based_access` is not populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
 				)
 			}
+			for i := 0; i < len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess); i++ {
+				opt := requestConfig.RequestFulfillmentConfig.TimeBasedAccess[i].ValueString()
+				matchFound := false
+				for j := 0; j < len(timeBasedAccessOptions); j++ {
+					if opt == timeBasedAccessOptions[j] {
+						matchFound = true
+						break
+					}
+				}
+
+				if !matchFound {
+					resp.Diagnostics.AddAttributeError(
+						req.Path,
+						"Invalid time based access option",
+						fmt.Sprintf("`time_based_access` contains an invalid option (%s). All possible values (may or may not be configured for application): %s", opt, strings.Join(timeBasedAccessOptions, ", ")),
+					)
+				}
+			} 
 		} else if requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
 			resp.Diagnostics.AddAttributeError(
 				req.Path,
