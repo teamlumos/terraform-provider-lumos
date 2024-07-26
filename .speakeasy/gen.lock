@@ -3,10 +3,10 @@ id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
   docChecksum: 8c43483effe5dc326d375dcc864b71eb
   docVersion: 0.1.0
-  speakeasyVersion: 1.346.0
-  generationVersion: 2.379.3
-  releaseVersion: 0.3.2
-  configChecksum: 4090fca91cae4786cdcbfd8ba0a2499d
+  speakeasyVersion: 1.346.1
+  generationVersion: 2.379.5
+  releaseVersion: 0.3.4
+  configChecksum: bb3fc521263bc33092b9acd6b612cfea
 features:
   terraform:
     additionalDependencies: 0.1.0

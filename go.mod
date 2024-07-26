@@ -2,7 +2,7 @@ module github.com/teamlumos/terraform-provider-lumos
 
 go 1.21
 
-toolchain go1.22.3
+toolchain go1.22.5
 
 require (
 	github.com/cenkalti/backoff/v4 v4.2.0
