@@ -319,7 +319,9 @@ func (r *PreApprovalRuleResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	preApprovalRuleUpdateInput := *data.ToSharedPreApprovalRuleUpdateInput()
 	request := operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest{
 		ID:                         id,
@@ -370,7 +372,9 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
 		ID: id,
 	}

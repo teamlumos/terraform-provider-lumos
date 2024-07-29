@@ -463,7 +463,9 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
 		ID: id,
 	}

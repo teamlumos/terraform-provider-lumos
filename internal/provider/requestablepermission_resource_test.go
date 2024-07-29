@@ -54,7 +54,7 @@ func TestAccPermissionResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test" {
+				resource "lumos_requestable_permission" "test_manager_approval" {
 					app_id      = "%s"
 					label       = "Permission Label"
 					request_config = {
@@ -71,7 +71,7 @@ func TestAccPermissionResource(t *testing.T) {
 			},
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test" {
+				resource "lumos_requestable_permission" "test_approvers" {
 					app_id      = "%s"
 					label       = "Permission Label"
 					request_config = {
@@ -106,7 +106,7 @@ func TestAccPermissionResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test" {
+				resource "lumos_requestable_permission" "test_allowed_groups" {
 					app_id      = "%s"
 					label       = "Permission Label"
 					request_config = {

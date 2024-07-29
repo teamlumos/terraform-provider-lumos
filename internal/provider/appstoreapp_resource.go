@@ -905,7 +905,9 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 	}
 	data.RefreshFromSharedAppStoreAppSettingsOutput(res.AppStoreAppSettingsOutput)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	appID := data.AppID.ValueString()
+	var appID string
+	appID = data.AppID.ValueString()
+
 	request1 := operations.GetAppStoreAppRequest{
 		AppID: appID,
 	}
@@ -954,7 +956,9 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	appID := data.AppID.ValueString()
+	var appID string
+	appID = data.AppID.ValueString()
+
 	request := operations.GetAppStoreAppRequest{
 		AppID: appID,
 	}
@@ -1026,7 +1030,9 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	appID := data.AppID.ValueString()
+	var appID string
+	appID = data.AppID.ValueString()
+
 	request := operations.RemoveAppFromAppStoreRequest{
 		AppID: appID,
 	}

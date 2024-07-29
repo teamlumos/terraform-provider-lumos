@@ -192,7 +192,9 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 	data.RefreshFromSharedApp(res.App)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request1 := operations.GetAppRequest{
 		ID: id,
 	}
@@ -241,7 +243,9 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.GetAppRequest{
 		ID: id,
 	}
@@ -289,7 +293,9 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	appInputCreate := *data.ToSharedAppInputCreate()
 	request := operations.UpdateAppRequest{
 		ID:             id,
@@ -317,7 +323,9 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	}
 	data.RefreshFromSharedApp(res.App)
 	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	id1 := data.ID.ValueString()
+	var id1 string
+	id1 = data.ID.ValueString()
+
 	request1 := operations.GetAppRequest{
 		ID: id1,
 	}

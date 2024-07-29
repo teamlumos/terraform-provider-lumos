@@ -9,12 +9,16 @@ import (
 )
 
 func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput() *shared.PreApprovalRuleInput {
-	justification := r.Justification.ValueString()
+	var justification string
+	justification = r.Justification.ValueString()
+
 	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
 	for _, timeBasedAccessItem := range r.TimeBasedAccess {
 		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
 	}
-	appID := r.AppID.ValueString()
+	var appID string
+	appID = r.AppID.ValueString()
+
 	var preapprovedGroups []shared.BaseGroup = []shared.BaseGroup{}
 	for _, preapprovedGroupsItem := range r.PreapprovedGroups {
 		id := new(string)
@@ -55,7 +59,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput() *shared.Pr
 	}
 	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
 	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
-		id2 := preapprovalWebhooksItem.ID.ValueString()
+		var id2 string
+		id2 = preapprovalWebhooksItem.ID.ValueString()
+
 		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
 		})
@@ -161,7 +167,9 @@ func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(re
 }
 
 func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput() *shared.PreApprovalRuleUpdateInput {
-	justification := r.Justification.ValueString()
+	var justification string
+	justification = r.Justification.ValueString()
+
 	var timeBasedAccess []shared.TimeBasedAccessOptions = []shared.TimeBasedAccessOptions{}
 	for _, timeBasedAccessItem := range r.TimeBasedAccess {
 		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
@@ -206,7 +214,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput() *sha
 	}
 	var preapprovalWebhooks []shared.BaseInlineWebhook = []shared.BaseInlineWebhook{}
 	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
-		id2 := preapprovalWebhooksItem.ID.ValueString()
+		var id2 string
+		id2 = preapprovalWebhooksItem.ID.ValueString()
+
 		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
 		})

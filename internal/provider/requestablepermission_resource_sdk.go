@@ -9,7 +9,9 @@ import (
 )
 
 func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput() *shared.RequestablePermissionInput {
-	appID := r.AppID.ValueString()
+	var appID string
+	appID = r.AppID.ValueString()
+
 	appClassID := new(string)
 	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
 		*appClassID = r.AppClassID.ValueString()
@@ -22,7 +24,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 	} else {
 		appInstanceID = nil
 	}
-	label := r.Label.ValueString()
+	var label string
+	label = r.Label.ValueString()
+
 	var requestConfig *shared.RequestablePermissionInputRequestConfig
 	if r.RequestConfig != nil {
 		appstoreVisibility := new(shared.RequestablePermissionInputAppStoreVisibilityOption)
@@ -138,7 +142,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 				}
 				var users []shared.BaseUser = []shared.BaseUser{}
 				for _, usersItem := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
-					id2 := usersItem.ID.ValueString()
+					var id2 string
+					id2 = usersItem.ID.ValueString()
+
 					users = append(users, shared.BaseUser{
 						ID: id2,
 					})
@@ -178,7 +184,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 				}
 				var users1 []shared.BaseUser = []shared.BaseUser{}
 				for _, usersItem1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-					id4 := usersItem1.ID.ValueString()
+					var id4 string
+					id4 = usersItem1.ID.ValueString()
+
 					users1 = append(users1, shared.BaseUser{
 						ID: id4,
 					})
@@ -200,14 +208,18 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 		}
 		var accessRemovalInlineWebhook *shared.RequestablePermissionInputAccessRemovalInlineWebhook
 		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
-			id5 := r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+			var id5 string
+			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+
 			accessRemovalInlineWebhook = &shared.RequestablePermissionInputAccessRemovalInlineWebhook{
 				ID: id5,
 			}
 		}
 		var requestValidationInlineWebhook *shared.RequestablePermissionInputRequestValidationInlineWebhook
 		if r.RequestConfig.RequestValidationInlineWebhook != nil {
-			id6 := r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+			var id6 string
+			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+
 			requestValidationInlineWebhook = &shared.RequestablePermissionInputRequestValidationInlineWebhook{
 				ID: id6,
 			}
@@ -264,7 +276,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			}
 			var provisioningWebhook *shared.RequestablePermissionInputProvisioningWebhook
 			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
-				id8 := r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+				var id8 string
+				id8 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+
 				provisioningWebhook = &shared.RequestablePermissionInputProvisioningWebhook{
 					ID: id8,
 				}
@@ -688,7 +702,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 				}
 				var users []shared.BaseUser = []shared.BaseUser{}
 				for _, usersItem := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
-					id2 := usersItem.ID.ValueString()
+					var id2 string
+					id2 = usersItem.ID.ValueString()
+
 					users = append(users, shared.BaseUser{
 						ID: id2,
 					})
@@ -728,7 +744,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 				}
 				var users1 []shared.BaseUser = []shared.BaseUser{}
 				for _, usersItem1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-					id4 := usersItem1.ID.ValueString()
+					var id4 string
+					id4 = usersItem1.ID.ValueString()
+
 					users1 = append(users1, shared.BaseUser{
 						ID: id4,
 					})
@@ -750,14 +768,18 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 		}
 		var accessRemovalInlineWebhook *shared.RequestablePermissionInputUpdateAccessRemovalInlineWebhook
 		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
-			id5 := r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+			var id5 string
+			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+
 			accessRemovalInlineWebhook = &shared.RequestablePermissionInputUpdateAccessRemovalInlineWebhook{
 				ID: id5,
 			}
 		}
 		var requestValidationInlineWebhook *shared.RequestablePermissionInputUpdateRequestValidationInlineWebhook
 		if r.RequestConfig.RequestValidationInlineWebhook != nil {
-			id6 := r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+			var id6 string
+			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+
 			requestValidationInlineWebhook = &shared.RequestablePermissionInputUpdateRequestValidationInlineWebhook{
 				ID: id6,
 			}
@@ -788,7 +810,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			}
 			var provisioningWebhook *shared.RequestablePermissionInputUpdateProvisioningWebhook
 			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
-				id7 := r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+				var id7 string
+				id7 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+
 				provisioningWebhook = &shared.RequestablePermissionInputUpdateProvisioningWebhook{
 					ID: id7,
 				}

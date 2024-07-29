@@ -110,7 +110,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			}
 			var users []shared.BaseUser = []shared.BaseUser{}
 			for _, usersItem := range r.RequestFlow.Approvers.Users {
-				id2 := usersItem.ID.ValueString()
+				var id2 string
+				id2 = usersItem.ID.ValueString()
+
 				users = append(users, shared.BaseUser{
 					ID: id2,
 				})
@@ -150,7 +152,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			}
 			var users1 []shared.BaseUser = []shared.BaseUser{}
 			for _, usersItem1 := range r.RequestFlow.ApproversStage2.Users {
-				id4 := usersItem1.ID.ValueString()
+				var id4 string
+				id4 = usersItem1.ID.ValueString()
+
 				users1 = append(users1, shared.BaseUser{
 					ID: id4,
 				})
@@ -190,7 +194,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			}
 			var users2 []shared.BaseUser = []shared.BaseUser{}
 			for _, usersItem2 := range r.RequestFlow.Admins.Users {
-				id6 := usersItem2.ID.ValueString()
+				var id6 string
+				id6 = usersItem2.ID.ValueString()
+
 				users2 = append(users2, shared.BaseUser{
 					ID: id6,
 				})
@@ -202,7 +208,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 		}
 		var requestValidationInlineWebhook *shared.AddAppToAppStoreInputRequestValidationInlineWebhook
 		if r.RequestFlow.RequestValidationInlineWebhook != nil {
-			id7 := r.RequestFlow.RequestValidationInlineWebhook.ID.ValueString()
+			var id7 string
+			id7 = r.RequestFlow.RequestValidationInlineWebhook.ID.ValueString()
+
 			requestValidationInlineWebhook = &shared.AddAppToAppStoreInputRequestValidationInlineWebhook{
 				ID: id7,
 			}
@@ -251,14 +259,18 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 		}
 		var provisioningWebhook *shared.AddAppToAppStoreInputProvisioningWebhook
 		if r.Provisioning.ProvisioningWebhook != nil {
-			id8 := r.Provisioning.ProvisioningWebhook.ID.ValueString()
+			var id8 string
+			id8 = r.Provisioning.ProvisioningWebhook.ID.ValueString()
+
 			provisioningWebhook = &shared.AddAppToAppStoreInputProvisioningWebhook{
 				ID: id8,
 			}
 		}
 		var accessRemovalInlineWebhook *shared.AddAppToAppStoreInputAccessRemovalInlineWebhook
 		if r.Provisioning.AccessRemovalInlineWebhook != nil {
-			id9 := r.Provisioning.AccessRemovalInlineWebhook.ID.ValueString()
+			var id9 string
+			id9 = r.Provisioning.AccessRemovalInlineWebhook.ID.ValueString()
+
 			accessRemovalInlineWebhook = &shared.AddAppToAppStoreInputAccessRemovalInlineWebhook{
 				ID: id9,
 			}
@@ -273,7 +285,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			AccessRemovalInlineWebhook:       accessRemovalInlineWebhook,
 		}
 	}
-	appId4 := r.AppID.ValueString()
+	var appId4 string
+	appId4 = r.AppID.ValueString()
+
 	out := shared.AddAppToAppStoreInput{
 		CustomRequestInstructions: customRequestInstructions,
 		RequestFlow:               requestFlow,

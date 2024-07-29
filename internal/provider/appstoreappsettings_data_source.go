@@ -466,7 +466,9 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.GetAppStoreAppSettingsRequest{
 		ID: id,
 	}
