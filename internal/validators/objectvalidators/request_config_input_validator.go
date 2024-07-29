@@ -50,19 +50,11 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 	// Check that none of the overrides are false or null with corresponding fields populated,
 	// and that none of the overrides are true without values poplated
 	if requestConfig.AllowedGroupsOverride.ValueBool() == true {
-		if requestConfig.AllowedGroups == nil {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
-				"Invalid allowed groups",
-				fmt.Sprintf("`allowed_groups_override` is true but `allowed_groups` are not populated"),
-			)
+		if !AllowedGroupsIsPopulated(requestConfig.AllowedGroups) {
+			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", "`allowed_groups_override` is true but `allowed_groups` are not populated")
 		}
-	} else if requestConfig.AllowedGroups != nil {
-		resp.Diagnostics.AddAttributeError(
-			req.Path,
-			"Invalid allowed groups",
-			fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` are populated (%s)", requestConfig.AllowedGroupsOverride.String(), requestConfig.AllowedGroups),
-		)
+	} else if AllowedGroupsIsPopulated(requestConfig.AllowedGroups) {
+		AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` are populated (%s)", requestConfig.AllowedGroupsOverride.String(), requestConfig.AllowedGroups))
 	}
 
 	if requestConfig.RequestApprovalConfig != nil {
@@ -75,8 +67,8 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 				)
 			}
 		} else if !requestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
+			AddAttributeErrorToResp(resp,
+				req,
 				"Invalid custom approval message",
 				fmt.Sprintf("`custom_approval_message_override` is %s but `custom_approval_message` is populated (%s)",
 					requestConfig.RequestApprovalConfig.CustomApprovalMessageOverride.String(),
@@ -85,24 +77,27 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 		}
 		
 		if requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool() == true {
-			if (requestConfig.RequestApprovalConfig.Approvers == nil || requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
-				resp.Diagnostics.AddAttributeError(
-					req.Path,
+			if (!ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers) || requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
+				AddAttributeErrorToResp(resp,
+					req,
 					"Invalid request approval config",
-					fmt.Sprintf("`request_approval_config_override` is true but `approvers` or `manager_approval` are not populated"),
+					"`request_approval_config_override` is true but `approvers` and/or `manager_approval` are not populated",
 				)
 			}
-		} else if (requestConfig.RequestApprovalConfig.Approvers != nil || !requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
+		} else if (ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers))	{
+			AddAttributeErrorToResp(resp, req, 
 				"Invalid request approval config",
-				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` or `manager_approval` are populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
+				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` are populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
+			)
+		} else if (!requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
+			AddAttributeErrorToResp(resp, req, 
+				"Invalid request approval config",
+				fmt.Sprintf("`request_approval_config_override` is %s but `manager_approval` is populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
 			)
 		}
 	
-		if requestConfig.RequestApprovalConfig.Approvers == nil && requestConfig.RequestApprovalConfig.ApproversStage2 != nil {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
+		if !ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers) && ApproversIsPopulated(requestConfig.RequestApprovalConfig.ApproversStage2) {
+			AddAttributeErrorToResp(resp, req, 
 				"Invalid approvers",
 				fmt.Sprintf("`approvers` is not populated but `approvers_stage_2`is populated (%s)", requestConfig.RequestApprovalConfig.ApproversStage2),
 			)
@@ -113,8 +108,7 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 	if requestConfig.RequestFulfillmentConfig != nil {
 		if requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.ValueBool() == true {
 			if requestConfig.RequestFulfillmentConfig.TimeBasedAccess == nil || len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess) == 0 {
-				resp.Diagnostics.AddAttributeError(
-					req.Path,
+				AddAttributeErrorToResp(resp, req, 
 					"Invalid time based access",
 					fmt.Sprintf("`time_based_access_override` is true but `time_based_access` is not populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
 				)
@@ -130,21 +124,43 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 				}
 
 				if !matchFound {
-					resp.Diagnostics.AddAttributeError(
-						req.Path,
+					AddAttributeErrorToResp(resp, req, 
 						"Invalid time based access option",
 						fmt.Sprintf("`time_based_access` contains an invalid option (%s). All possible values (may or may not be configured for application): %s", opt, strings.Join(timeBasedAccessOptions, ", ")),
 					)
 				}
 			} 
 		} else if requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
-			resp.Diagnostics.AddAttributeError(
-				req.Path,
+			AddAttributeErrorToResp(resp, req, 
 				"Invalid time based access",
 				fmt.Sprintf("`time_based_access_override` is %s but `time_based_access` is populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.String(), requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
 			)
 		}
 	}
+}
+
+func ApproversIsPopulated(approvers *tfTypes.AddAppToAppStoreInputApprovers) bool {
+	if approvers == nil {
+		return false
+	}
+
+	if approvers.Users != nil && len(approvers.Users) > 0 {
+		return true
+	}
+
+	return approvers.Groups != nil && len(approvers.Groups) > 0
+}
+
+func AllowedGroupsIsPopulated(approvers *tfTypes.AddAppToAppStoreInputAllowedGroups) bool {
+	if approvers == nil {
+		return false
+	}
+
+	return approvers.Groups != nil && len(approvers.Groups) > 0
+}
+
+func AddAttributeErrorToResp(resp *validator.ObjectResponse, req validator.ObjectRequest, attrName string, errMsg string) {
+	resp.Diagnostics.AddAttributeError(req.Path, attrName, errMsg)
 }
 
 func RequestConfigInputValidator() validator.Object {
