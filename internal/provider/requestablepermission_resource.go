@@ -926,7 +926,9 @@ func (r *RequestablePermissionResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
 		ID: id,
 	}
@@ -974,7 +976,9 @@ func (r *RequestablePermissionResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	requestablePermissionInputUpdate := *data.ToSharedRequestablePermissionInputUpdate()
 	request := operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest{
 		ID:                               id,
@@ -1025,7 +1029,9 @@ func (r *RequestablePermissionResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest{
 		ID: id,
 	}

@@ -138,7 +138,9 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	appID := data.AppID.ValueString()
+	var appID string
+	appID = data.AppID.ValueString()
+
 	request := operations.GetAppStoreAppRequest{
 		AppID: appID,
 	}

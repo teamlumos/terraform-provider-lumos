@@ -122,7 +122,9 @@ func (r *GroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	groupID := data.GroupID.ValueString()
+	var groupID string
+	groupID = data.GroupID.ValueString()
+
 	request := operations.GetGroupRequest{
 		GroupID: groupID,
 	}

@@ -133,7 +133,9 @@ func (r *AppDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 		return
 	}
 
-	id := data.ID.ValueString()
+	var id string
+	id = data.ID.ValueString()
+
 	request := operations.GetAppRequest{
 		ID: id,
 	}

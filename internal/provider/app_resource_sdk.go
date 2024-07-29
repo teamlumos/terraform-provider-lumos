@@ -8,9 +8,15 @@ import (
 )
 
 func (r *AppResourceModel) ToSharedAppInputCreate() *shared.AppInputCreate {
-	name := r.Name.ValueString()
-	category := r.Category.ValueString()
-	description := r.Description.ValueString()
+	var name string
+	name = r.Name.ValueString()
+
+	var category string
+	category = r.Category.ValueString()
+
+	var description string
+	description = r.Description.ValueString()
+
 	logoURL := new(string)
 	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
 		*logoURL = r.LogoURL.ValueString()

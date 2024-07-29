@@ -112,7 +112,9 @@ func (r *UserDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	userID := data.UserID.ValueString()
+	var userID string
+	userID = data.UserID.ValueString()
+
 	request := operations.GetUserRequest{
 		UserID: userID,
 	}
