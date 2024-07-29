@@ -41,3 +41,15 @@ func TestGetApp(t *testing.T) {
 		t.Fatalf(`client.AppStore.GetAppStoreApp(%s) = %v, %v`, appId, response, err)
 	}
 }
+
+func TestCreateApp(t *testing.T) {
+	client, ctx := GetNewClient(t)
+	response, err := client.Core.CreateApp(ctx, shared.AppInputCreate{
+		Name:        "Terraform Testing - Create app",
+		Description: "Terraform Testing Description",
+		Category:    "Developers",
+	})
+	if err != nil || response == nil {
+		t.Fatalf(`client.Core.CreateApp() was unsuccessful, %v, %v`, response, err)
+	}
+}
