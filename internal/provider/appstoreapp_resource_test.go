@@ -16,9 +16,12 @@ func TestAccAppStoreAppResource(t *testing.T) {
 			{
 				Config: providerConfig() + fmt.Sprintf(`
 				resource "lumos_app" "test_app" {
-					name        = "Terraform Testing - Appstore app"
-					description = "Terraform Testing Description"
-					category    = "Developers"
+					name                 = "Terraform Testing - Appstore app"
+					description          = "Terraform Testing Description"
+					category             = "Developers"
+					website_url          = "https://www.example.com"
+					logo_url             = "https://www.example.com/logo.png"
+					request_instructions = "Custom request instructions"
 				}
 				resource "lumos_app_store_app" "test_app_store_app" {
 					app_id        = lumos_app.test_app.id
