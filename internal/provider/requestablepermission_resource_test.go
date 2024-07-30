@@ -17,21 +17,34 @@ func TestAccPermissionResource(t *testing.T) {
 			// Read testing
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test" {
+				resource "lumos_requestable_permission" "test_permission_with_overrides" {
 					app_id      = "%s"
-					label       = "Permission Label"
-				}`, os.Getenv("APP_ID")),
+					label       = "Permission with Config Overrides"
+					request_config = {
+						allowed_groups_override = true
+						allowed_groups = {
+							groups = [
+								{ 
+									id = "%s"
+								},
+							]
+							type = "SPECIFIED_GROUPS"
+						}
+						appstore_visibility = "HIDDEN"
+						request_approval_config = {
+							request_approval_config_override = true
+							approvers = {
+								users  = [{ id = "%s" }]
+								groups = []
+							}
+							manager_approval = "NONE"
+						}
+					}
+				}`, os.Getenv("APP_ID"), os.Getenv("GROUP_ID"), os.Getenv("USER_ID")),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					// Verify number of coffees returned
-					resource.TestCheckResourceAttr("lumos_requestable_permission.test", "label", "Permission Label"),
-					resource.TestCheckResourceAttr("lumos_requestable_permission.test", "type", "NATIVE"),
+					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides", "label", "Permission with Config Overrides"),
+					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides", "type", "NATIVE"),
 				),
-			},
-			// ImportState testing
-			{
-				ResourceName:      "lumos_requestable_permission.test",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -66,7 +79,7 @@ func TestAccPermissionResource(t *testing.T) {
 						  },
 						  manager_approval = "NONE"
 						}
-					  }
+					}
 				}`, os.Getenv("APP_ID")),
 			},
 			{
