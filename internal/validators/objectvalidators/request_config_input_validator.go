@@ -49,17 +49,14 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 
 	// Check that none of the overrides are false or null with corresponding fields populated,
 	// and that none of the overrides are true without values poplated
-	allowedGroupsPopulatedProperly, errorMessage := AllowedGroupsIsPopulatedProperly(requestConfig.AllowedGroups)
-	if requestConfig.AllowedGroupsOverride.ValueBool() == true {
-		if !allowedGroupsPopulatedProperly {
-			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is true but %s", errorMessage))
+	allowedGroupsPopulated, allowedGroupsPopulatedProperly, errorMessage := AllowedGroupsIsPopulatedProperly(requestConfig.AllowedGroups)
+	if requestConfig.AllowedGroupsOverride.ValueBool() == false {
+		if allowedGroupsPopulated {
+			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` is populated", requestConfig.AllowedGroupsOverride.String()))
 		}
-	} else if allowedGroupsPopulatedProperly {
-		AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `%s", requestConfig.AllowedGroupsOverride.String(), errorMessage))
-	}
-
-	if !allowedGroupsPopulatedProperly {
-		AddAttributeErrorToResp(resp, req, "Invalid allowed groups", errorMessage)
+	} else if !allowedGroupsPopulatedProperly {
+		// allowed_groups_override is true
+		AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is true but `%s", errorMessage))
 	}
 	
 	if requestConfig.RequestApprovalConfig != nil {
@@ -156,31 +153,33 @@ func ApproversIsPopulated(approvers *tfTypes.AddAppToAppStoreInputApprovers) boo
 	return approvers.Groups != nil && len(approvers.Groups) > 0
 }
 
-func AllowedGroupsIsPopulatedProperly(allowedGroups *tfTypes.AddAppToAppStoreInputAllowedGroups) (bool, string) {
+// first bool indicates if its populated
+// second bool indicate if its *properly* populated
+func AllowedGroupsIsPopulatedProperly(allowedGroups *tfTypes.AddAppToAppStoreInputAllowedGroups) (bool, bool, string) {
 	if allowedGroups == nil {
-		return false, "`allowed_groups` is not populated"
+		return false, false, "`allowed_groups` is not populated"
 	}
 
 	if allowedGroups.Type.IsNull() {
-		return false, "`allowed_groups` type is not populated"
+		return true, false, "`allowed_groups` type is not populated"
 	}
 
     if allowedGroups.Type.ValueString() != "ALL_GROUPS" && allowedGroups.Type.ValueString() != "SPECIFIED_GROUPS" {
-		return false, fmt.Sprintf("`allowed_groups` type is invalid (%s)", allowedGroups.Type.ValueString())
+		return true, false, fmt.Sprintf("`allowed_groups` type is invalid (%s)", allowedGroups.Type.ValueString())
 	}
 
 	if allowedGroups.Type.ValueString() == "ALL_GROUPS" {
-		return true, ""
+		return true, true, ""
 	}
 
 	if allowedGroups.Groups != nil && len(allowedGroups.Groups) > 0 {
 		if allowedGroups.Type.ValueString() != "SPECIFIED_GROUPS" {
-			return false, "`allowed_groups` type is not populated properly for the groups specified"
+			return true, false, "`allowed_groups` type is not populated properly for the groups specified"
 		}
-		return true, ""
+		return true, true, ""
 	}
 
-	return false, fmt.Sprintf("`allowed_groups` groups are not populated (%s)", allowedGroups.Groups)
+	return true, false, fmt.Sprintf("`allowed_groups` groups are not populated (%s)", allowedGroups.Groups)
 }
 
 func AddAttributeErrorToResp(resp *validator.ObjectResponse, req validator.ObjectRequest, attrName string, errMsg string) {
