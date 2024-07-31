@@ -44,10 +44,6 @@ func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 				Optional:            true,
 				Required:            false,
 			},
-			"http_bearer": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
-			},
 		},
 	}
 }

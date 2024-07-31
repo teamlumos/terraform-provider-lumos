@@ -100,7 +100,7 @@ Read-Only:
 - `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers--users))
 
 <a id="nestedatt--request_config--request_approval_config--approvers--groups"></a>
-### Nested Schema for `request_config.request_approval_config.approvers.users`
+### Nested Schema for `request_config.request_approval_config.approvers.groups`
 
 Read-Only:
 
@@ -135,7 +135,7 @@ Read-Only:
 - `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2--users))
 
 <a id="nestedatt--request_config--request_approval_config--approvers_stage_2--groups"></a>
-### Nested Schema for `request_config.request_approval_config.approvers_stage_2.users`
+### Nested Schema for `request_config.request_approval_config.approvers_stage_2.groups`
 
 Read-Only:
 
@@ -209,5 +209,3 @@ Read-Only:
 - `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
-
-

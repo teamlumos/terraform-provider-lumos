@@ -17,7 +17,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.3.5"
+      version = "0.3.6"
     }
   }
 }
@@ -32,5 +32,4 @@ provider "lumos" {
 
 ### Optional
 
-- `http_bearer` (String, Sensitive)
 - `server_url` (String) Server URL (defaults to https://api.lumos.com)

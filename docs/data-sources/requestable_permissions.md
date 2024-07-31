@@ -88,7 +88,7 @@ Read-Only:
 - `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
 
 <a id="nestedatt--items--request_config--allowed_groups--groups"></a>
-### Nested Schema for `items.request_config.allowed_groups.type`
+### Nested Schema for `items.request_config.allowed_groups.groups`
 
 Read-Only:
 
@@ -116,15 +116,15 @@ Read-Only:
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
 <a id="nestedatt--items--request_config--request_approval_config--approvers"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval`
+### Nested Schema for `items.request_config.request_approval_config.approvers`
 
 Read-Only:
 
-- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--require_additional_approval--groups))
-- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--require_additional_approval--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--approvers--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--approvers--users))
 
-<a id="nestedatt--items--request_config--request_approval_config--require_additional_approval--groups"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval.groups`
+<a id="nestedatt--items--request_config--request_approval_config--approvers--groups"></a>
+### Nested Schema for `items.request_config.request_approval_config.approvers.groups`
 
 Read-Only:
 
@@ -137,8 +137,8 @@ Read-Only:
 - `source_app_id` (String) The ID of the app that sources this group.
 
 
-<a id="nestedatt--items--request_config--request_approval_config--require_additional_approval--users"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval.users`
+<a id="nestedatt--items--request_config--request_approval_config--approvers--users"></a>
+### Nested Schema for `items.request_config.request_approval_config.approvers.users`
 
 Read-Only:
 
@@ -151,15 +151,15 @@ Read-Only:
 
 
 <a id="nestedatt--items--request_config--request_approval_config--approvers_stage_2"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval`
+### Nested Schema for `items.request_config.request_approval_config.approvers_stage_2`
 
 Read-Only:
 
-- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--require_additional_approval--groups))
-- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--require_additional_approval--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--approvers_stage_2--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--approvers_stage_2--users))
 
-<a id="nestedatt--items--request_config--request_approval_config--require_additional_approval--groups"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval.groups`
+<a id="nestedatt--items--request_config--request_approval_config--approvers_stage_2--groups"></a>
+### Nested Schema for `items.request_config.request_approval_config.approvers_stage_2.groups`
 
 Read-Only:
 
@@ -172,8 +172,8 @@ Read-Only:
 - `source_app_id` (String) The ID of the app that sources this group.
 
 
-<a id="nestedatt--items--request_config--request_approval_config--require_additional_approval--users"></a>
-### Nested Schema for `items.request_config.request_approval_config.require_additional_approval.users`
+<a id="nestedatt--items--request_config--request_approval_config--approvers_stage_2--users"></a>
+### Nested Schema for `items.request_config.request_approval_config.approvers_stage_2.users`
 
 Read-Only:
 
@@ -199,7 +199,7 @@ Read-Only:
 - `time_based_access_override` (Boolean) Indicates if time based access is overriden.
 
 <a id="nestedatt--items--request_config--request_fulfillment_config--provisioning_group"></a>
-### Nested Schema for `items.request_config.request_fulfillment_config.time_based_access_override`
+### Nested Schema for `items.request_config.request_fulfillment_config.provisioning_group`
 
 Read-Only:
 
@@ -213,7 +213,7 @@ Read-Only:
 
 
 <a id="nestedatt--items--request_config--request_fulfillment_config--provisioning_webhook"></a>
-### Nested Schema for `items.request_config.request_fulfillment_config.time_based_access_override`
+### Nested Schema for `items.request_config.request_fulfillment_config.provisioning_webhook`
 
 Read-Only:
 
@@ -233,5 +233,3 @@ Read-Only:
 - `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
-
-

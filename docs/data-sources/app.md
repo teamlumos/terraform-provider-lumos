@@ -33,5 +33,3 @@ data "lumos_app" "my_app" {
 - `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
-
-

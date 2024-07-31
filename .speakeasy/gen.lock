@@ -3,10 +3,10 @@ id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
   docChecksum: 8c43483effe5dc326d375dcc864b71eb
   docVersion: 0.1.0
-  speakeasyVersion: 1.348.1
-  generationVersion: 2.380.1
-  releaseVersion: 0.3.5
-  configChecksum: 2355869d6feca2f294719e185a21ef63
+  speakeasyVersion: 1.349.0
+  generationVersion: 2.382.0
+  releaseVersion: 0.3.6
+  configChecksum: dfed9eadcaaea2390ca7e4450a6e8fdb
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -82,8 +82,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createfounddocumentmultipart.go
+  - internal/sdk/models/operations/createfounddocumentjson.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
