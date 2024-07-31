@@ -93,6 +93,20 @@ func TestAccPermissionResource(t *testing.T) {
 					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides_3", "type", "NATIVE"),
 				),
 			},
+			{
+				Config: providerConfig() + fmt.Sprintf(`
+				resource "lumos_requestable_permission" "test_permission_with_no_overrides_1" {
+					app_id      = "%s"
+					label       = "Permission with No Config Overrides 1"
+					request_config = {
+						appstore_visibility = "HIDDEN"
+					}
+				}`, os.Getenv("APP_ID")),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_no_overrides_1", "label", "Permission with No Config Overrides 1"),
+					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_no_overrides_1", "type", "NATIVE"),
+				),
+			},
 		},
 	})
 
