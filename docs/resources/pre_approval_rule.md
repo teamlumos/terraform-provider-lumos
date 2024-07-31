@@ -85,5 +85,3 @@ Read-Only:
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission.
 - `label` (String) The label of this requestable permission.
 - `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
-
-

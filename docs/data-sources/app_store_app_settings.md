@@ -216,5 +216,3 @@ Read-Only:
 - `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
-
-

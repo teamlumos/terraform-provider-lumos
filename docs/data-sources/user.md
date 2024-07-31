@@ -32,5 +32,3 @@ data "lumos_user" "my_user" {
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
 - `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
-
-

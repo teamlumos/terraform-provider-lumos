@@ -34,5 +34,3 @@ data "lumos_group" "my_group" {
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
-
-

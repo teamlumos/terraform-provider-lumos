@@ -4,37 +4,17 @@ package objectvalidators
 
 import (
 	"context"
-	"strings"
+
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"fmt"
-    "github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 )
 
 var _ validator.Object = ObjectRequestConfigInputValidatorValidator{}
-
-// a set of possible TBA options
-var timeBasedAccessOptions = []string{
-	"Unlimited",
-	"2 hours",
-	"4 hours",
-	"8 hours",
-	"12 hours",
-	"24 hours",
-	"72 hours", 
-	"1 day",
-	"3 days",
-	"7 days",
-	"14 days",
-	"30 days", 
-	"90 days",
-}
 
 type ObjectRequestConfigInputValidatorValidator struct{}
 
 // Description describes the validation in plain text formatting.
 func (v ObjectRequestConfigInputValidatorValidator) Description(_ context.Context) string {
-	return "Validates the request config input object to ensure override settings are not in conflict with populated fields"
+	return "TODO: add validator description"
 }
 
 // MarkdownDescription describes the validation in Markdown formatting.
@@ -44,123 +24,11 @@ func (v ObjectRequestConfigInputValidatorValidator) MarkdownDescription(ctx cont
 
 // Validate performs the validation.
 func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, resp *validator.ObjectResponse) {
-	requestConfig := tfTypes.RequestablePermissionInputRequestConfig{}
-	req.ConfigValue.As(ctx, &requestConfig, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})
-
-	// Check that none of the overrides are false or null with corresponding fields populated,
-	// and that none of the overrides are true without values poplated
-	if requestConfig.AllowedGroupsOverride.ValueBool() == true {
-		if !AllowedGroupsIsPopulated(requestConfig.AllowedGroups) {
-			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", "`allowed_groups_override` is true but `allowed_groups` are not populated")
-		}
-	} else if AllowedGroupsIsPopulated(requestConfig.AllowedGroups) {
-		AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` are populated (%s)", requestConfig.AllowedGroupsOverride.String(), requestConfig.AllowedGroups))
-	}
-
-	if requestConfig.RequestApprovalConfig != nil {
-		if requestConfig.RequestApprovalConfig.CustomApprovalMessageOverride.ValueBool() == true {
-			if requestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
-				resp.Diagnostics.AddAttributeError(
-					req.Path,
-					"Invalid custom approval message",
-					fmt.Sprintf("`custom_approval_message_override` is true but `custom_approval_message` is not populated"),
-				)
-			}
-		} else if !requestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
-			AddAttributeErrorToResp(resp,
-				req,
-				"Invalid custom approval message",
-				fmt.Sprintf("`custom_approval_message_override` is %s but `custom_approval_message` is populated (%s)",
-					requestConfig.RequestApprovalConfig.CustomApprovalMessageOverride.String(),
-					requestConfig.RequestApprovalConfig.CustomApprovalMessage.String()),
-			)
-		}
-		
-		if requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool() == true {
-			if (!ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers) || requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
-				AddAttributeErrorToResp(resp,
-					req,
-					"Invalid request approval config",
-					"`request_approval_config_override` is true but `approvers` and/or `manager_approval` are not populated",
-				)
-			}
-		} else if (ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers))	{
-			AddAttributeErrorToResp(resp, req, 
-				"Invalid request approval config",
-				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` are populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
-			)
-		} else if (!requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
-			AddAttributeErrorToResp(resp, req, 
-				"Invalid request approval config",
-				fmt.Sprintf("`request_approval_config_override` is %s but `manager_approval` is populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
-			)
-		}
-	
-		if !ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers) && ApproversIsPopulated(requestConfig.RequestApprovalConfig.ApproversStage2) {
-			AddAttributeErrorToResp(resp, req, 
-				"Invalid approvers",
-				fmt.Sprintf("`approvers` is not populated but `approvers_stage_2`is populated (%s)", requestConfig.RequestApprovalConfig.ApproversStage2),
-			)
-		}
-	}
-	
-
-	if requestConfig.RequestFulfillmentConfig != nil {
-		if requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.ValueBool() == true {
-			if requestConfig.RequestFulfillmentConfig.TimeBasedAccess == nil || len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess) == 0 {
-				AddAttributeErrorToResp(resp, req, 
-					"Invalid time based access",
-					fmt.Sprintf("`time_based_access_override` is true but `time_based_access` is not populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
-				)
-			}
-			for i := 0; i < len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess); i++ {
-				opt := requestConfig.RequestFulfillmentConfig.TimeBasedAccess[i].ValueString()
-				matchFound := false
-				for j := 0; j < len(timeBasedAccessOptions); j++ {
-					if opt == timeBasedAccessOptions[j] {
-						matchFound = true
-						break
-					}
-				}
-
-				if !matchFound {
-					AddAttributeErrorToResp(resp, req, 
-						"Invalid time based access option",
-						fmt.Sprintf("`time_based_access` contains an invalid option (%s). All possible values (may or may not be configured for application): %s", opt, strings.Join(timeBasedAccessOptions, ", ")),
-					)
-				}
-			} 
-		} else if requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
-			AddAttributeErrorToResp(resp, req, 
-				"Invalid time based access",
-				fmt.Sprintf("`time_based_access_override` is %s but `time_based_access` is populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.String(), requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
-			)
-		}
-	}
-}
-
-func ApproversIsPopulated(approvers *tfTypes.AddAppToAppStoreInputApprovers) bool {
-	if approvers == nil {
-		return false
-	}
-
-	if approvers.Users != nil && len(approvers.Users) > 0 {
-		return true
-	}
-
-	return approvers.Groups != nil && len(approvers.Groups) > 0
-}
-
-func AllowedGroupsIsPopulated(approvers *tfTypes.AddAppToAppStoreInputAllowedGroups) bool {
-	if approvers == nil {
-		return false
-	}
-
-	return approvers.Groups != nil && len(approvers.Groups) > 0
-}
-
-func AddAttributeErrorToResp(resp *validator.ObjectResponse, req validator.ObjectRequest, attrName string, errMsg string) {
-	resp.Diagnostics.AddAttributeError(req.Path, attrName, errMsg)
+	resp.Diagnostics.AddAttributeError(
+		req.Path,
+		"TODO: implement objectvalidator RequestConfigInputValidator logic",
+		req.Path.String()+": "+v.Description(ctx),
+	)
 }
 
 func RequestConfigInputValidator() validator.Object {

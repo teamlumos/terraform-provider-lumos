@@ -17,9 +17,6 @@ import (
 )
 
 func debugResponse(response *http.Response) string {
-	if v := response.Request.Header.Get("Authorization"); v != "" {
-		response.Request.Header.Set("Authorization", "(sensitive)")
-	}
 	dumpReq, err := httputil.DumpRequest(response.Request, true)
 	if err != nil {
 		dumpReq, err = httputil.DumpRequest(response.Request, false)
