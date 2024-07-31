@@ -1,37 +1,110 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+name: CI
 
-name: Test
+# This setup assumes that you run the unit tests with code coverage in the same
+# workflow that will also print the coverage report as comment to the pull request. 
+# Therefore, you need to trigger this workflow when a pull request is (re)opened or
+# when new code is pushed to the branch of the pull request. In addition, you also
+# need to trigger this workflow when new code is pushed to the main branch because 
+# we need to upload the code coverage results as artifact for the main branch as
+# well since it will be the baseline code coverage.
+# 
+# We do not want to trigger the workflow for pushes to *any* branch because this
+# would trigger our jobs twice on pull requests (once from "push" event and once
+# from "pull_request->synchronize")
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The exact version of the go-coverage-report toolgit  to use.'
+        required: true
+        default: "v1.0.2"
 
-on: pull_request
+      sha256sum:
+        description: 'Optional SHA256 checksum of the tarball when downloading the go-coverage-report binary.'
+        required: false
+
+      coverage-artifact-name:
+        description: 'The name of the artifact containing the code coverage results.'
+        required: true
+        default: "code-coverage"
+
+      coverage-file-name:
+        description: 'The name of the file containing the code coverage results.'
+        required: true
+        default: "coverage.txt"
+
+      root-package:
+        description: |
+          The Go import path of the tested repository to add as a prefix to all paths of the
+          changed files. This is useful to map the changed files (e.g., ["foo/my_file.go"]
+          to their coverage profile which uses the full package name to identify the files
+          (e.g., "github.com/fgrosse/example/foo/my_file.go"). Note that currently, 
+          packages with a different name than their directory are not supported.
+        required: false
+        default: "github.com/teamlumos/terraform-provider-lumos"
+
+      trim:
+        description: 'Trim a prefix in the "Impacted Packages" column of the markdown report.'
+        required: false
+
+      skip-comment:
+        description: |
+          Skip creating or updating the pull request comment. This may be useful when you want
+          to generate the coverage report and modify it in your own scripts.
+        required: false
+        default: 'false'
 
 jobs:
-
-  test:
+  unit_tests:
+    name: "Unit tests"
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: stable
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ^1.22
 
-    - name: Build
-      run: go build -v ./...
+      # When you execute your unit tests, make sure to use the "-coverprofile" flag to write a 
+      # coverage profile to a file. You will need the name of the file (e.g. "coverage.txt")
+      # in the next step as well as the next job.
+      - name: Test
+        run: go test -v -cover -coverprofile=coverage.txt ./...
+        env:
+          LUMOS_API_TOKEN: ${{ secrets.LUMOS_API_TOKEN }}
+          LUMOS_API_URL: ${{ vars.LUMOS_API_URL }}
+          TF_ACC: 1
+          APP_ID: ${{ vars.APP_ID }}
+          APP_NAME: ${{ vars.APP_NAME }}
+          GROUP_ID: ${{ vars.GROUP_ID }}
+          GROUP_NAME: ${{ vars.GROUP_NAME }}
+          USER_EMAIL: ${{ vars.USER_EMAIL }}
+          USER_ID: ${{ vars.USER_ID }}
+          PERMISSION_ID: ${{ vars.PERMISSION_ID }}
 
-    - name: Test
-      run: go test -v ./...
-      env:
-        LUMOS_API_TOKEN: ${{ secrets.LUMOS_API_TOKEN }}
-        LUMOS_API_URL: ${{ vars.LUMOS_API_URL }}
-        TF_ACC: 1
-        APP_ID: ${{ vars.APP_ID }}
-        APP_NAME: ${{ vars.APP_NAME }}
-        GROUP_ID: ${{ vars.GROUP_ID }}
-        GROUP_NAME: ${{ vars.GROUP_NAME }}
-        USER_EMAIL: ${{ vars.USER_EMAIL }}
-        USER_ID: ${{ vars.USER_ID }}
-        PERMISSION_ID: ${{ vars.PERMISSION_ID }}
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage.txt # Make sure to use the same file name you chose for the "-coverprofile" in the "Test" step
 
-
+  code_coverage:
+    name: "Code coverage report"
+    if: github.event_name == 'pull_request' # Do not run when workflow is triggered by push to main branch
+    runs-on: ubuntu-latest
+    needs: unit_tests # Depends on the artifact uploaded by the "unit_tests" job
+    permissions:
+      contents:      read  # to download code coverage results from unit_tests job
+      pull-requests: write # write permission needed to comment on PR
+    steps:
+      - uses: fgrosse/go-coverage-report@v1.0.2 # Consider using a Git revision for maximum security
+        with:
+          coverage-artifact-name: "code-coverage" # can be omitted if you used this default value
+          coverage-file-name: "coverage.txt" # can be omitted if you used this default value
