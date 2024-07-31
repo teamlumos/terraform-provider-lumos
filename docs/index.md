@@ -31,5 +31,5 @@ provider "lumos" {
 ## Schema
 
 ### Optional
-
+- `http_bearer` (String, Sensitive)
 - `server_url` (String) Server URL (defaults to https://api.lumos.com)
