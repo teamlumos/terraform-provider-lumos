@@ -5,8 +5,8 @@ management:
   docVersion: 0.1.0
   speakeasyVersion: 1.349.0
   generationVersion: 2.382.0
-  releaseVersion: 0.3.6
-  configChecksum: dfed9eadcaaea2390ca7e4450a6e8fdb
+  releaseVersion: 0.3.7
+  configChecksum: aaca070cf7e6d4af763172c770962fca
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -82,8 +82,8 @@ generatedFiles:
   - internal/sdk/models/operations/getaccessrequest.go
   - internal/sdk/models/operations/getaccessrequests.go
   - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
   - internal/sdk/models/operations/createorder.go
   - internal/sdk/models/operations/lumosart.go
   - internal/sdk/models/operations/lumoslivenesscheck.go
@@ -170,7 +170,6 @@ generatedFiles:
   - internal/sdk/.gitignore
   - internal/sdk/models/operations/options.go
   - internal/sdk/.gitattributes
-  - internal/sdk/internal/hooks/registration.go
   - internal/sdk/internal/hooks/hooks.go
   - internal/sdk/CONTRIBUTING.md
   - examples/README.md
@@ -245,11 +244,9 @@ generatedFiles:
   - internal/provider/preapprovalrule_resource.go
   - internal/provider/preapprovalrule_resource_sdk.go
   - examples/resources/lumos_pre_approval_rule/resource.tf
-  - internal/validators/objectvalidators/request_config_input_validator.go
   - examples/resources/lumos_requestable_permission/import.sh
   - internal/provider/requestablepermission_resource.go
   - internal/provider/requestablepermission_resource_sdk.go
-  - examples/resources/lumos_requestable_permission/resource.tf
   - internal/provider/app_data_source.go
   - internal/provider/app_data_source_sdk.go
   - examples/data-sources/lumos_app/data-source.tf
