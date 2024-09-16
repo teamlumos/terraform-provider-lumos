@@ -3,9 +3,41 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
+
+type CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest struct {
+	// Include inherited configurations from parent app.
+	IncludeInheritedConfigs    *bool                             `default:"true" queryParam:"style=form,explode=true,name=include_inherited_configs"`
+	RequestablePermissionInput shared.RequestablePermissionInput `request:"mediaType=application/json"`
+}
+
+func (c CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, false); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (o *CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest) GetIncludeInheritedConfigs() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.IncludeInheritedConfigs
+}
+
+func (o *CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest) GetRequestablePermissionInput() shared.RequestablePermissionInput {
+	if o == nil {
+		return shared.RequestablePermissionInput{}
+	}
+	return o.RequestablePermissionInput
+}
 
 type CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostResponse struct {
 	// HTTP response content type for this operation

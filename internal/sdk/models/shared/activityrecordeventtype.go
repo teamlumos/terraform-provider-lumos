@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// ActivityRecordEventType - An enumeration.
 type ActivityRecordEventType string
 
 const (

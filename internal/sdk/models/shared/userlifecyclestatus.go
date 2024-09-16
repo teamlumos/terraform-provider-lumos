@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// UserLifecycleStatus - An enumeration.
 type UserLifecycleStatus string
 
 const (

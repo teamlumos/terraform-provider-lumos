@@ -84,12 +84,12 @@ func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(re
 		r.AppInstanceID = types.StringValue(resp.AppInstanceID)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.Justification = types.StringValue(resp.Justification)
-		r.PreapprovalWebhooks = []tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+		r.PreapprovalWebhooks = []tfTypes.BaseInlineWebhook{}
 		if len(r.PreapprovalWebhooks) > len(resp.PreapprovalWebhooks) {
 			r.PreapprovalWebhooks = r.PreapprovalWebhooks[:len(resp.PreapprovalWebhooks)]
 		}
 		for preapprovalWebhooksCount, preapprovalWebhooksItem := range resp.PreapprovalWebhooks {
-			var preapprovalWebhooks1 tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook
+			var preapprovalWebhooks1 tfTypes.BaseInlineWebhook
 			preapprovalWebhooks1.Description = types.StringPointerValue(preapprovalWebhooksItem.Description)
 			preapprovalWebhooks1.HookType = types.StringValue(string(preapprovalWebhooksItem.HookType))
 			preapprovalWebhooks1.ID = types.StringValue(preapprovalWebhooksItem.ID)

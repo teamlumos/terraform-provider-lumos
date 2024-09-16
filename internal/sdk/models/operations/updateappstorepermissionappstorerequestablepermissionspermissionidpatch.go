@@ -3,13 +3,27 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
 type UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest struct {
-	ID                               string                                  `pathParam:"style=simple,explode=false,name=permission_id"`
+	ID string `pathParam:"style=simple,explode=false,name=permission_id"`
+	// Include inherited configurations from parent app.
+	IncludeInheritedConfigs          *bool                                   `default:"true" queryParam:"style=form,explode=true,name=include_inherited_configs"`
 	RequestablePermissionInputUpdate shared.RequestablePermissionInputUpdate `request:"mediaType=application/json"`
+}
+
+func (u UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetID() string {
@@ -17,6 +31,13 @@ func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch
 		return ""
 	}
 	return o.ID
+}
+
+func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetIncludeInheritedConfigs() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.IncludeInheritedConfigs
 }
 
 func (o *UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest) GetRequestablePermissionInputUpdate() shared.RequestablePermissionInputUpdate {

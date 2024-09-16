@@ -4,9 +4,9 @@ package shared
 
 type LimitOffsetPageActivityLog struct {
 	Items  []ActivityLog `json:"items"`
-	Total  *int64        `json:"total,omitempty"`
-	Limit  *int64        `json:"limit,omitempty"`
-	Offset *int64        `json:"offset,omitempty"`
+	Total  *int64        `json:"total"`
+	Limit  *int64        `json:"limit"`
+	Offset *int64        `json:"offset"`
 	Links  Links         `json:"links"`
 }
 

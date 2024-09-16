@@ -14,7 +14,7 @@ AppStoreAppSettings DataSource
 
 ```terraform
 data "lumos_app_store_app_settings" "my_appstoreappsettings" {
-  id = "2afd9232-720d-468f-846b-d9cdb3faf8ec"
+  id = "...my_id..."
 }
 ```
 
@@ -36,7 +36,7 @@ Read-Only:
 - `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
 - `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request
 - `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
-- `groups_provisioning` (String) An enumeration. must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]
+- `groups_provisioning` (String) If enabled, Approvers must choose a group to provision the user to for access requests.
 - `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
 - `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this config. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
 - `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
@@ -47,7 +47,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -58,7 +58,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -74,7 +74,7 @@ Read-Only:
 - `approvers` (Attributes) AppStore App approvers assigned. (see [below for nested schema](#nestedatt--request_flow--approvers))
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
-- `discoverability` (String) An enumeration. must be one of ["FULL", "LIMITED", "NONE"]
+- `discoverability` (String) AppStore App visibility.
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
@@ -94,7 +94,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -110,7 +110,7 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -120,7 +120,7 @@ Read-Only:
 Read-Only:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
+- `type` (String) The type of this allowed groups config, can be all groups or specific.
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>
 ### Nested Schema for `request_flow.allowed_groups.groups`
@@ -129,7 +129,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -152,7 +152,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -168,7 +168,7 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -187,7 +187,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -203,7 +203,7 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -213,6 +213,6 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.

@@ -3,11 +3,11 @@
 package shared
 
 type Links struct {
-	First *string `json:"first,omitempty"`
-	Last  *string `json:"last,omitempty"`
-	Self  *string `json:"self,omitempty"`
-	Next  *string `json:"next,omitempty"`
-	Prev  *string `json:"prev,omitempty"`
+	First *string `json:"first"`
+	Last  *string `json:"last"`
+	Self  *string `json:"self"`
+	Next  *string `json:"next"`
+	Prev  *string `json:"prev"`
 }
 
 func (o *Links) GetFirst() *string {

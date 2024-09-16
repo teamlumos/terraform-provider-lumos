@@ -18,7 +18,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		if resp.RequestConfig.AccessRemovalInlineWebhook == nil {
 			r.RequestConfig.AccessRemovalInlineWebhook = nil
 		} else {
-			r.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+			r.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
 			r.RequestConfig.AccessRemovalInlineWebhook.Description = types.StringPointerValue(resp.RequestConfig.AccessRemovalInlineWebhook.Description)
 			r.RequestConfig.AccessRemovalInlineWebhook.HookType = types.StringValue(string(resp.RequestConfig.AccessRemovalInlineWebhook.HookType))
 			r.RequestConfig.AccessRemovalInlineWebhook.ID = types.StringValue(resp.RequestConfig.AccessRemovalInlineWebhook.ID)
@@ -27,7 +27,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		if resp.RequestConfig.AllowedGroups == nil {
 			r.RequestConfig.AllowedGroups = nil
 		} else {
-			r.RequestConfig.AllowedGroups = &tfTypes.AddAppToAppStoreInputAllowedGroups{}
+			r.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 			r.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 			if len(r.RequestConfig.AllowedGroups.Groups) > len(resp.RequestConfig.AllowedGroups.Groups) {
 				r.RequestConfig.AllowedGroups.Groups = r.RequestConfig.AllowedGroups.Groups[:len(resp.RequestConfig.AllowedGroups.Groups)]
@@ -72,11 +72,11 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		if resp.RequestConfig.RequestApprovalConfig == nil {
 			r.RequestConfig.RequestApprovalConfig = nil
 		} else {
-			r.RequestConfig.RequestApprovalConfig = &tfTypes.RequestablePermissionInputRequestApprovalConfig{}
+			r.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigOutput{}
 			if resp.RequestConfig.RequestApprovalConfig.Approvers == nil {
 				r.RequestConfig.RequestApprovalConfig.Approvers = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) > len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups)]
@@ -135,7 +135,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) > len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups)]
@@ -204,7 +204,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		if resp.RequestConfig.RequestFulfillmentConfig == nil {
 			r.RequestConfig.RequestFulfillmentConfig = nil
 		} else {
-			r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestablePermissionInputRequestFulfillmentConfig{}
+			r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
 			r.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 			r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
 			if resp.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {
@@ -226,7 +226,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			if resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook == nil {
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = nil
 			} else {
-				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description = types.StringPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description)
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType = types.StringValue(string(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType))
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
@@ -241,7 +241,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		if resp.RequestConfig.RequestValidationInlineWebhook == nil {
 			r.RequestConfig.RequestValidationInlineWebhook = nil
 		} else {
-			r.RequestConfig.RequestValidationInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+			r.RequestConfig.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
 			r.RequestConfig.RequestValidationInlineWebhook.Description = types.StringPointerValue(resp.RequestConfig.RequestValidationInlineWebhook.Description)
 			r.RequestConfig.RequestValidationInlineWebhook.HookType = types.StringValue(string(resp.RequestConfig.RequestValidationInlineWebhook.HookType))
 			r.RequestConfig.RequestValidationInlineWebhook.ID = types.StringValue(resp.RequestConfig.RequestValidationInlineWebhook.ID)

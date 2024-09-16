@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// InlineWebhookType - An enumeration.
 type InlineWebhookType string
 
 const (

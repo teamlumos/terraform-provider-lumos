@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// RunInfoStatus - An enumeration.
 type RunInfoStatus string
 
 const (

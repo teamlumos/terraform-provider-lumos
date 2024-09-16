@@ -16,9 +16,11 @@ type GetAppStoreAppsRequest struct {
 	// Search filter should be an exact match.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	// Get all apps in the AppStore regardless of visibility. Only available to admins.
-	AllVisibilities *bool  `default:"false" queryParam:"style=form,explode=true,name=all_visibilities"`
-	Page            *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size            *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
+	AllVisibilities *bool `default:"false" queryParam:"style=form,explode=true,name=all_visibilities"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetAppStoreAppsRequest) MarshalJSON() ([]byte, error) {

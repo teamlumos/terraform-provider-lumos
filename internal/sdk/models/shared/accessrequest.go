@@ -7,104 +7,6 @@ import (
 	"time"
 )
 
-// RequesterUser - The user who requested access. It's possible for one user to request access on another's behalf.
-type RequesterUser struct {
-	// The ID of this user.
-	ID string `json:"id"`
-	// The email of this user.
-	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
-	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
-	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
-}
-
-func (o *RequesterUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *RequesterUser) GetEmail() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Email
-}
-
-func (o *RequesterUser) GetGivenName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.GivenName
-}
-
-func (o *RequesterUser) GetFamilyName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.FamilyName
-}
-
-func (o *RequesterUser) GetStatus() *UserLifecycleStatus {
-	if o == nil {
-		return nil
-	}
-	return o.Status
-}
-
-// TargetUser - The user the request is for.
-type TargetUser struct {
-	// The ID of this user.
-	ID string `json:"id"`
-	// The email of this user.
-	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
-	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
-	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
-}
-
-func (o *TargetUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-func (o *TargetUser) GetEmail() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Email
-}
-
-func (o *TargetUser) GetGivenName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.GivenName
-}
-
-func (o *TargetUser) GetFamilyName() *string {
-	if o == nil {
-		return nil
-	}
-	return o.FamilyName
-}
-
-func (o *TargetUser) GetStatus() *UserLifecycleStatus {
-	if o == nil {
-		return nil
-	}
-	return o.Status
-}
-
 // AccessRequest - API version of DomainAppSupportRequest.
 type AccessRequest struct {
 	// The ID of the access request.
@@ -114,10 +16,10 @@ type AccessRequest struct {
 	// The name of the app the request is for.
 	AppName string `json:"app_name"`
 	// The user who requested access. It's possible for one user to request access on another's behalf.
-	RequesterUser RequesterUser `json:"requester_user"`
+	RequesterUser User `json:"requester_user"`
 	// The user the request is for.
-	TargetUser    TargetUser `json:"target_user"`
-	SupporterUser *User      `json:"supporter_user,omitempty"`
+	TargetUser    User  `json:"target_user"`
+	SupporterUser *User `json:"supporter_user,omitempty"`
 	// The current status of the request.
 	Status SupportRequestStatus `json:"status"`
 	// The reason the user wrote for putting the access request into the given state.
@@ -159,16 +61,16 @@ func (o *AccessRequest) GetAppName() string {
 	return o.AppName
 }
 
-func (o *AccessRequest) GetRequesterUser() RequesterUser {
+func (o *AccessRequest) GetRequesterUser() User {
 	if o == nil {
-		return RequesterUser{}
+		return User{}
 	}
 	return o.RequesterUser
 }
 
-func (o *AccessRequest) GetTargetUser() TargetUser {
+func (o *AccessRequest) GetTargetUser() User {
 	if o == nil {
-		return TargetUser{}
+		return User{}
 	}
 	return o.TargetUser
 }

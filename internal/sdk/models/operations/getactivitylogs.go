@@ -6,13 +6,16 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
+	"time"
 )
 
 type GetActivityLogsRequest struct {
-	Since  *string `queryParam:"style=form,explode=true,name=since"`
-	Until  *string `queryParam:"style=form,explode=true,name=until"`
-	Limit  *int64  `default:"50" queryParam:"style=form,explode=true,name=limit"`
-	Offset *int64  `default:"0" queryParam:"style=form,explode=true,name=offset"`
+	Since *time.Time `queryParam:"style=form,explode=true,name=since"`
+	Until *time.Time `queryParam:"style=form,explode=true,name=until"`
+	// Page size limit
+	Limit *int64 `default:"50" queryParam:"style=form,explode=true,name=limit"`
+	// Page offset
+	Offset *int64 `default:"0" queryParam:"style=form,explode=true,name=offset"`
 }
 
 func (g GetActivityLogsRequest) MarshalJSON() ([]byte, error) {
@@ -26,14 +29,14 @@ func (g *GetActivityLogsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *GetActivityLogsRequest) GetSince() *string {
+func (o *GetActivityLogsRequest) GetSince() *time.Time {
 	if o == nil {
 		return nil
 	}
 	return o.Since
 }
 
-func (o *GetActivityLogsRequest) GetUntil() *string {
+func (o *GetActivityLogsRequest) GetUntil() *time.Time {
 	if o == nil {
 		return nil
 	}

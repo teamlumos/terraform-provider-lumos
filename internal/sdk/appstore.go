@@ -28,12 +28,231 @@ func newAppStore(sdkConfig sdkConfiguration) *AppStore {
 	}
 }
 
-// GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet - Get Appstore Permissions For App
+// GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGet - Get Appstore Permissions For App
 // Get AppStore permissions for an application.
-func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet(ctx context.Context, request operations.GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetResponse, error) {
+func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGet(ctx context.Context, request operations.GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGetResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "get_appstore_permissions_for_app_appstore_requestable_permissions_get",
+		OperationID:    "get_appstore_permissions_for_app_appstore_apps__app_id__requestable_permissions_get",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/apps/{app_id}/requestable_permissions", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGetResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.PageRequestablePermissionOutput
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.PageRequestablePermissionOutput = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// GetAppstorePermissionsAppstoreRequestablePermissionsGet - Get Appstore Permissions
+// Get AppStore permissions for an application.
+func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx context.Context, request operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "get_appstore_permissions_appstore_requestable_permissions_get",
 		OAuth2Scopes:   []string{},
 		SecuritySource: s.sdkConfiguration.Security,
 	}
@@ -173,23 +392,31 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 		}
 	}
 
-	res := &operations.GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetResponse{
+	res := &operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PageRequestablePermissionOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -197,11 +424,21 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 
 			res.PageRequestablePermissionOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -209,9 +446,19 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -239,7 +486,7 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet
 //   - manual_steps_needed: false
 //
 // - All other fields will have null values by default.
-func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost(ctx context.Context, request shared.RequestablePermissionInput, opts ...operations.Option) (*operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostResponse, error) {
+func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost(ctx context.Context, request operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest, opts ...operations.Option) (*operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
 		OperationID:    "create_appstore_requestable_permission_appstore_requestable_permissions_post",
@@ -265,7 +512,7 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
 
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "RequestablePermissionInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -288,6 +535,10 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 	req.Header.Set("Content-Type", reqContentType)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err
@@ -390,17 +641,25 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.RequestablePermissionOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -408,11 +667,21 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 
 			res.RequestablePermissionOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -420,9 +689,19 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -475,6 +754,10 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err
@@ -577,17 +860,25 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.RequestablePermissionOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -595,11 +886,23 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 
 			res.RequestablePermissionOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
+		fallthrough
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -607,9 +910,250 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch - Update Appstore Permission
+// **Update an AppStore permission.**
+//
+// All fields present in the payload will override the permission's data.
+// Any missing fields will be disregarded.
+//
+//	Non-updatable fields for now:
+//	    request_config -> request_fulfillment_config -> provisioning_group
+func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx context.Context, request operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest, opts ...operations.Option) (*operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "update_appstore_permission_appstore_requestable_permissions__permission_id__patch",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/requestable_permissions/{permission_id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "RequestablePermissionInputUpdate", "json", `request:"mediaType=application/json"`)
+	if err != nil {
+		return nil, err
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "PATCH", opURL, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+	req.Header.Set("Content-Type", reqContentType)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.RequestablePermissionOutput
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.RequestablePermissionOutput = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -766,18 +1310,26 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 204:
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -785,208 +1337,19 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 
 			res.HTTPValidationError = &out
 		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-// UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch - Update Appstore Permission
-// **Update an AppStore permission.**
-//
-// All fields present in the payload will override the permission's data.
-// Any missing fields will be disregarded.
-//
-//	Non-updatable fields for now:
-//	    request_config -> request_fulfillment_config -> provisioning_group
-func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx context.Context, request operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest, opts ...operations.Option) (*operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse, error) {
-	hookCtx := hooks.HookContext{
-		Context:        ctx,
-		OperationID:    "update_appstore_permission_appstore_requestable_permissions__permission_id__patch",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
-	}
-
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/requestable_permissions/{permission_id}", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "RequestablePermissionInputUpdate", "json", `request:"mediaType=application/json"`)
-	if err != nil {
-		return nil, err
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "PATCH", opURL, bodyReader)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-	req.Header.Set("Content-Type", reqContentType)
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 500,
-					MaxInterval:     30000,
-					Exponent:        1.5,
-					MaxElapsedTime:  60000,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"5XX",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil {
-				copyBody, err := req.GetBody()
-				if err != nil {
-					return nil, err
-				}
-				req.Body = copyBody
-			}
-
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				return nil, backoff.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			rawBody, err := getRawBody()
 			if err != nil {
 				return nil, err
 			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+	default:
+		rawBody, err := getRawBody()
 		if err != nil {
 			return nil, err
 		}
 
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.RequestablePermissionOutput
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.RequestablePermissionOutput = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 422:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.HTTPValidationError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.HTTPValidationError = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -1145,17 +1508,25 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PagePreApprovalRuleOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1163,11 +1534,21 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 
 			res.PagePreApprovalRuleOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1175,9 +1556,19 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -1338,17 +1729,25 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PreApprovalRuleOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1356,11 +1755,21 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 
 			res.PreApprovalRuleOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1368,9 +1777,19 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -1525,17 +1944,25 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PreApprovalRuleOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1543,11 +1970,21 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 
 			res.PreApprovalRuleOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1555,185 +1992,19 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 
 			res.HTTPValidationError = &out
 		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-// DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete - Delete Pre Approval Rule
-// Delete a pre-approval rule by ID.
-func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx context.Context, request operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest, opts ...operations.Option) (*operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse, error) {
-	hookCtx := hooks.HookContext{
-		Context:        ctx,
-		OperationID:    "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
-	}
-
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/pre_approval_rules/{pre_approval_rule_id}", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 500,
-					MaxInterval:     30000,
-					Exponent:        1.5,
-					MaxElapsedTime:  60000,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"5XX",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil {
-				copyBody, err := req.GetBody()
-				if err != nil {
-					return nil, err
-				}
-				req.Body = copyBody
-			}
-
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				return nil, backoff.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			rawBody, err := getRawBody()
 			if err != nil {
 				return nil, err
 			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+	default:
+		rawBody, err := getRawBody()
 		if err != nil {
 			return nil, err
 		}
 
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
-
-	switch {
-	case httpRes.StatusCode == 204:
-	case httpRes.StatusCode == 422:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.HTTPValidationError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.HTTPValidationError = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -1897,17 +2168,25 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PreApprovalRuleOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1915,11 +2194,21 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 
 			res.PreApprovalRuleOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -1927,9 +2216,213 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete - Delete Pre Approval Rule
+// Delete a pre-approval rule by ID.
+func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx context.Context, request operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest, opts ...operations.Option) (*operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/pre_approval_rules/{pre_approval_rule_id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 204:
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -2084,17 +2577,25 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.AppStoreAppSettingsOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2102,11 +2603,21 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 
 			res.AppStoreAppSettingsOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2114,9 +2625,19 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -2277,17 +2798,25 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.AppStoreAppSettingsOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2295,11 +2824,21 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 
 			res.AppStoreAppSettingsOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2307,200 +2846,19 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 
 			res.HTTPValidationError = &out
 		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-// GetAppStoreApps - Get Appstore Apps
-// List all AppStore apps.
-func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAppStoreAppsRequest, opts ...operations.Option) (*operations.GetAppStoreAppsResponse, error) {
-	hookCtx := hooks.HookContext{
-		Context:        ctx,
-		OperationID:    "getAppStoreApps",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
-	}
-
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := url.JoinPath(baseURL, "/appstore/apps")
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
-		return nil, fmt.Errorf("error populating query params: %w", err)
-	}
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 500,
-					MaxInterval:     30000,
-					Exponent:        1.5,
-					MaxElapsedTime:  60000,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"5XX",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil {
-				copyBody, err := req.GetBody()
-				if err != nil {
-					return nil, err
-				}
-				req.Body = copyBody
-			}
-
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				return nil, backoff.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			rawBody, err := getRawBody()
 			if err != nil {
 				return nil, err
 			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+	default:
+		rawBody, err := getRawBody()
 		if err != nil {
 			return nil, err
 		}
 
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.GetAppStoreAppsResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.PageAppStoreApp
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.PageAppStoreApp = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 422:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.HTTPValidationError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.HTTPValidationError = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -2661,17 +3019,25 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.AppStoreAppSettingsOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2679,11 +3045,21 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 
 			res.AppStoreAppSettingsOutput = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2691,9 +3067,19 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -2701,12 +3087,12 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 
 }
 
-// GetAppStoreApp - Get Appstore App
-// Get AppStore app.
-func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetAppStoreAppRequest, opts ...operations.Option) (*operations.GetAppStoreAppResponse, error) {
+// GetAppStoreApps - Get Appstore Apps
+// List all AppStore apps.
+func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAppStoreAppsRequest, opts ...operations.Option) (*operations.GetAppStoreAppsResponse, error) {
 	hookCtx := hooks.HookContext{
 		Context:        ctx,
-		OperationID:    "getAppStoreApp",
+		OperationID:    "getAppStoreApps",
 		OAuth2Scopes:   []string{},
 		SecuritySource: s.sdkConfiguration.Security,
 	}
@@ -2724,7 +3110,7 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 	}
 
 	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/apps/{app_id}", request, nil)
+	opURL, err := url.JoinPath(baseURL, "/appstore/apps")
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -2746,6 +3132,10 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err
@@ -2842,35 +3232,53 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 		}
 	}
 
-	res := &operations.GetAppStoreAppResponse{
+	res := &operations.GetAppStoreAppsResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.AppStoreApp
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.PageAppStoreApp
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.AppStoreApp = &out
+			res.PageAppStoreApp = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -2878,9 +3286,19 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -3035,17 +3453,25 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out any
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3053,11 +3479,21 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 
 			res.Any = out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3065,9 +3501,647 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// GetAppStoreApp - Get Appstore App
+// Get AppStore app.
+func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetAppStoreAppRequest, opts ...operations.Option) (*operations.GetAppStoreAppResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "getAppStoreApp",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/apps/{app_id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.GetAppStoreAppResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.AppStoreApp
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.AppStoreApp = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// GetAccessRequest - Get Access Request
+// Get access request by ID.
+func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetAccessRequestRequest, opts ...operations.Option) (*operations.GetAccessRequestResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "getAccessRequest",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/access_requests/{id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.GetAccessRequestResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.AccessRequest
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.AccessRequest = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// CancelAccessRequest - Cancel Access Request
+// Cancel an access request.
+func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.CancelAccessRequestRequest, opts ...operations.Option) (*operations.CancelAccessRequestResponse, error) {
+	hookCtx := hooks.HookContext{
+		Context:        ctx,
+		OperationID:    "cancelAccessRequest",
+		OAuth2Scopes:   []string{},
+		SecuritySource: s.sdkConfiguration.Security,
+	}
+
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/access_requests/{id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil {
+				copyBody, err := req.GetBody()
+				if err != nil {
+					return nil, err
+				}
+				req.Body = copyBody
+			}
+
+			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				return nil, backoff.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.CancelAccessRequestResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
+	}
+
+	switch {
+	case httpRes.StatusCode == 204:
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -3228,17 +4302,25 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 201:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out []shared.AccessRequest
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3246,11 +4328,21 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 
 			res.ResponseCreateaccessrequest = out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3258,200 +4350,19 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 
 			res.HTTPValidationError = &out
 		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
-		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
-	}
-
-	return res, nil
-
-}
-
-// GetAccessRequest - Get Access Request
-// Get access request by ID.
-func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetAccessRequestRequest, opts ...operations.Option) (*operations.GetAccessRequestResponse, error) {
-	hookCtx := hooks.HookContext{
-		Context:        ctx,
-		OperationID:    "getAccessRequest",
-		OAuth2Scopes:   []string{},
-		SecuritySource: s.sdkConfiguration.Security,
-	}
-
-	o := operations.Options{}
-	supportedOptions := []string{
-		operations.SupportedOptionRetries,
-		operations.SupportedOptionTimeout,
-	}
-
-	for _, opt := range opts {
-		if err := opt(&o, supportedOptions...); err != nil {
-			return nil, fmt.Errorf("error applying option: %w", err)
-		}
-	}
-
-	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/appstore/access_requests/{access_request_id}", request, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error generating URL: %w", err)
-	}
-
-	timeout := o.Timeout
-	if timeout == nil {
-		timeout = s.sdkConfiguration.Timeout
-	}
-
-	if timeout != nil {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, *timeout)
-		defer cancel()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
-
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
-		return nil, fmt.Errorf("error populating query params: %w", err)
-	}
-
-	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
-		return nil, err
-	}
-
-	globalRetryConfig := s.sdkConfiguration.RetryConfig
-	retryConfig := o.Retries
-	if retryConfig == nil {
-		if globalRetryConfig != nil {
-			retryConfig = globalRetryConfig
-		} else {
-			retryConfig = &retry.Config{
-				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
-					InitialInterval: 500,
-					MaxInterval:     30000,
-					Exponent:        1.5,
-					MaxElapsedTime:  60000,
-				},
-				RetryConnectionErrors: true,
-			}
-		}
-	}
-
-	var httpRes *http.Response
-	if retryConfig != nil {
-		httpRes, err = utils.Retry(ctx, utils.Retries{
-			Config: retryConfig,
-			StatusCodes: []string{
-				"5XX",
-			},
-		}, func() (*http.Response, error) {
-			if req.Body != nil {
-				copyBody, err := req.GetBody()
-				if err != nil {
-					return nil, err
-				}
-				req.Body = copyBody
-			}
-
-			req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
-			if err != nil {
-				return nil, backoff.Permanent(err)
-			}
-
-			httpRes, err := s.sdkConfiguration.Client.Do(req)
-			if err != nil || httpRes == nil {
-				if err != nil {
-					err = fmt.Errorf("error sending request: %w", err)
-				} else {
-					err = fmt.Errorf("error sending request: no response")
-				}
-
-				_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			}
-			return httpRes, err
-		})
-
-		if err != nil {
-			return nil, err
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			rawBody, err := getRawBody()
 			if err != nil {
 				return nil, err
 			}
+
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
-	} else {
-		req, err = s.sdkConfiguration.Hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+	default:
+		rawBody, err := getRawBody()
 		if err != nil {
 			return nil, err
 		}
 
-		httpRes, err = s.sdkConfiguration.Client.Do(req)
-		if err != nil || httpRes == nil {
-			if err != nil {
-				err = fmt.Errorf("error sending request: %w", err)
-			} else {
-				err = fmt.Errorf("error sending request: no response")
-			}
-
-			_, err = s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
-			return nil, err
-		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
-			_httpRes, err := s.sdkConfiguration.Hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
-			if err != nil {
-				return nil, err
-			} else if _httpRes != nil {
-				httpRes = _httpRes
-			}
-		} else {
-			httpRes, err = s.sdkConfiguration.Hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	res := &operations.GetAccessRequestResponse{
-		StatusCode:  httpRes.StatusCode,
-		ContentType: httpRes.Header.Get("Content-Type"),
-		RawResponse: httpRes,
-	}
-
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
-
-	switch {
-	case httpRes.StatusCode == 200:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.AccessRequest
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.AccessRequest = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	case httpRes.StatusCode == 422:
-		switch {
-		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
-			var out shared.HTTPValidationError
-			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
-				return nil, err
-			}
-
-			res.HTTPValidationError = &out
-		default:
-			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
-		}
-	default:
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 
@@ -3610,17 +4521,25 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 		RawResponse: httpRes,
 	}
 
-	rawBody, err := io.ReadAll(httpRes.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
+	getRawBody := func() ([]byte, error) {
+		rawBody, err := io.ReadAll(httpRes.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error reading response body: %w", err)
+		}
+		httpRes.Body.Close()
+		httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+		return rawBody, nil
 	}
-	httpRes.Body.Close()
-	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	switch {
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.PageAccessRequest
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3628,11 +4547,21 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 
 			res.PageAccessRequest = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			var out shared.HTTPValidationError
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
@@ -3640,9 +4569,19 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 
 			res.HTTPValidationError = &out
 		default:
+			rawBody, err := getRawBody()
+			if err != nil {
+				return nil, err
+			}
+
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
 	default:
+		rawBody, err := getRawBody()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
 	}
 

@@ -12,9 +12,11 @@ type ListAppsRequest struct {
 	// Search against name, app instance identifier, and app class ID.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
-	ExactMatch *bool  `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
-	Page       *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size       *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
+	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (l ListAppsRequest) MarshalJSON() ([]byte, error) {

@@ -29,15 +29,16 @@ type RequestablePermissionsDataSource struct {
 
 // RequestablePermissionsDataSourceModel describes the data model.
 type RequestablePermissionsDataSourceModel struct {
-	AppID      types.String                          `tfsdk:"app_id"`
-	ExactMatch types.Bool                            `tfsdk:"exact_match"`
-	InAppStore types.Bool                            `tfsdk:"in_app_store"`
-	Items      []tfTypes.RequestablePermissionOutput `tfsdk:"items"`
-	Page       types.Int64                           `tfsdk:"page"`
-	Pages      types.Int64                           `tfsdk:"pages"`
-	SearchTerm types.String                          `tfsdk:"search_term"`
-	Size       types.Int64                           `tfsdk:"size"`
-	Total      types.Int64                           `tfsdk:"total"`
+	AppID                   types.String                          `tfsdk:"app_id"`
+	ExactMatch              types.Bool                            `tfsdk:"exact_match"`
+	InAppStore              types.Bool                            `tfsdk:"in_app_store"`
+	IncludeInheritedConfigs types.Bool                            `tfsdk:"include_inherited_configs"`
+	Items                   []tfTypes.RequestablePermissionOutput `tfsdk:"items"`
+	Page                    types.Int64                           `tfsdk:"page"`
+	Pages                   types.Int64                           `tfsdk:"pages"`
+	SearchTerm              types.String                          `tfsdk:"search_term"`
+	Size                    types.Int64                           `tfsdk:"size"`
+	Total                   types.Int64                           `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
@@ -61,10 +62,13 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 				Description: `Search filter should be an exact match.`,
 			},
 			"in_app_store": schema.BoolAttribute{
-				Optional: true,
-				MarkdownDescription: `` + "\n" +
-					`    Filters permissions by visibility in the AppStore.` + "\n" +
-					``,
+				Optional:    true,
+				Description: `Filters permissions by visibility in the AppStore.`,
+			},
+			"include_inherited_configs": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `Include inherited configurations from parent app.`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
@@ -80,7 +84,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 						},
 						"app_instance_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the instance associated with this requestable permission.`,
+							Description: `The ID of the instance associated with this requestable permission. This may be an empty string.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -102,7 +106,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 										},
 										"hook_type": schema.StringAttribute{
 											Computed:    true,
-											Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+											Description: `The type of this inline webhook.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -132,7 +136,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 													},
 													"group_lifecycle": schema.StringAttribute{
 														Computed:    true,
-														Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+														Description: `The lifecycle of this group.`,
 													},
 													"id": schema.StringAttribute{
 														Computed:    true,
@@ -156,7 +160,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 										},
 										"type": schema.StringAttribute{
 											Computed:    true,
-											Description: `The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
+											Description: `The type of this allowed groups config, can be all groups or specific.`,
 										},
 									},
 									Description: `The allowed groups config associated with this config.`,
@@ -167,7 +171,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 								},
 								"appstore_visibility": schema.StringAttribute{
 									Computed:    true,
-									Description: `The appstore visibility of this request config. must be one of ["HIDDEN", "VISIBLE"]`,
+									Description: `The appstore visibility of this request config.`,
 								},
 								"request_approval_config": schema.SingleNestedAttribute{
 									Computed: true,
@@ -189,7 +193,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"group_lifecycle": schema.StringAttribute{
 																Computed:    true,
-																Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+																Description: `The lifecycle of this group.`,
 															},
 															"id": schema.StringAttribute{
 																Computed:    true,
@@ -233,7 +237,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"status": schema.StringAttribute{
 																Computed:    true,
-																Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+																Description: `The status of this user.`,
 															},
 														},
 													},
@@ -259,7 +263,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"group_lifecycle": schema.StringAttribute{
 																Computed:    true,
-																Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+																Description: `The lifecycle of this group.`,
 															},
 															"id": schema.StringAttribute{
 																Computed:    true,
@@ -303,7 +307,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"status": schema.StringAttribute{
 																Computed:    true,
-																Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+																Description: `The status of this user.`,
 															},
 														},
 													},
@@ -322,7 +326,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 										},
 										"manager_approval": schema.StringAttribute{
 											Computed:    true,
-											Description: `Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]`,
+											Description: `Manager approval can be configured as necessary to continue`,
 										},
 										"request_approval_config_override": schema.BoolAttribute{
 											Computed:    true,
@@ -359,7 +363,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 												},
 												"group_lifecycle": schema.StringAttribute{
 													Computed:    true,
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -389,7 +393,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 												},
 												"hook_type": schema.StringAttribute{
 													Computed:    true,
-													Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+													Description: `The type of this inline webhook.`,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -423,7 +427,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 										},
 										"hook_type": schema.StringAttribute{
 											Computed:    true,
-											Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+											Description: `The type of this inline webhook.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -441,28 +445,28 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 						},
 						"type": schema.StringAttribute{
 							Computed:    true,
-							Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
+							Description: `The type of this requestable permission.`,
 						},
 					},
 				},
 			},
 			"page": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page number`,
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
 			},
 			"search_term": schema.StringAttribute{
 				Optional: true,
-				MarkdownDescription: `` + "\n" +
-					`    Searches permissions by the permission's group name,` + "\n" +
-					`    request configuration name, or specific integration ID.` + "\n" +
-					``,
+				MarkdownDescription: `Searches permissions by the permission's group name,` + "\n" +
+					`    request configuration name, or specific integration ID.`,
 			},
 			"size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page size`,
 			},
 			"total": schema.Int64Attribute{
 				Computed: true,
@@ -533,6 +537,12 @@ func (r *RequestablePermissionsDataSource) Read(ctx context.Context, req datasou
 	} else {
 		inAppStore = nil
 	}
+	includeInheritedConfigs := new(bool)
+	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
+		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
+	} else {
+		includeInheritedConfigs = nil
+	}
 	page := new(int64)
 	if !data.Page.IsUnknown() && !data.Page.IsNull() {
 		*page = data.Page.ValueInt64()
@@ -545,15 +555,16 @@ func (r *RequestablePermissionsDataSource) Read(ctx context.Context, req datasou
 	} else {
 		size = nil
 	}
-	request := operations.GetAppstorePermissionsForAppAppstoreRequestablePermissionsGetRequest{
-		AppID:      appID,
-		SearchTerm: searchTerm,
-		ExactMatch: exactMatch,
-		InAppStore: inAppStore,
-		Page:       page,
-		Size:       size,
+	request := operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest{
+		AppID:                   appID,
+		SearchTerm:              searchTerm,
+		ExactMatch:              exactMatch,
+		InAppStore:              inAppStore,
+		IncludeInheritedConfigs: includeInheritedConfigs,
+		Page:                    page,
+		Size:                    size,
 	}
-	res, err := r.client.AppStore.GetAppstorePermissionsForAppAppstoreRequestablePermissionsGet(ctx, request)
+	res, err := r.client.AppStore.GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

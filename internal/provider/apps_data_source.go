@@ -89,7 +89,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						},
 						"status": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
+							Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'`,
 						},
 						"user_friendly_label": schema.StringAttribute{
 							Computed:    true,
@@ -107,15 +107,17 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Description: `Search against name, app instance identifier, and app class ID.`,
 			},
 			"page": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page number`,
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
 			},
 			"size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page size`,
 			},
 			"total": schema.Int64Attribute{
 				Computed: true,

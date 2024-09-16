@@ -14,12 +14,13 @@ RequestablePermissions DataSource
 
 ```terraform
 data "lumos_requestable_permissions" "my_requestablepermissions" {
-  app_id       = "...my_app_id..."
-  exact_match  = true
-  in_app_store = false
-  page         = 7
-  search_term  = "...my_search_term..."
-  size         = 10
+  app_id                    = "...my_app_id..."
+  exact_match               = false
+  in_app_store              = false
+  include_inherited_configs = false
+  page                      = 9
+  search_term               = "...my_search_term..."
+  size                      = 46
 }
 ```
 
@@ -31,10 +32,11 @@ data "lumos_requestable_permissions" "my_requestablepermissions" {
 - `app_id` (String) Filters requestable permissions by the ID of the app to which they belong.
 - `exact_match` (Boolean) Search filter should be an exact match.
 - `in_app_store` (Boolean) Filters permissions by visibility in the AppStore.
-- `page` (Number)
+- `include_inherited_configs` (Boolean) Include inherited configurations from parent app.
+- `page` (Number) Page number
 - `search_term` (String) Searches permissions by the permission's group name,
     request configuration name, or specific integration ID.
-- `size` (Number)
+- `size` (Number) Page size
 
 ### Read-Only
 
@@ -49,11 +51,11 @@ Read-Only:
 
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 - `app_id` (String) The ID of the app associated with this requestable permission.
-- `app_instance_id` (String) The ID of the instance associated with this requestable permission.
+- `app_instance_id` (String) The ID of the instance associated with this requestable permission. This may be an empty string.
 - `id` (String) The ID of this requestable permission.
 - `label` (String) The label of this requestable permission.
 - `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--items--request_config))
-- `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]
+- `type` (String) The type of this requestable permission.
 
 <a id="nestedatt--items--request_config"></a>
 ### Nested Schema for `items.request_config`
@@ -63,7 +65,7 @@ Read-Only:
 - `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--items--request_config--access_removal_inline_webhook))
 - `allowed_groups` (Attributes) The allowed groups config associated with this config. (see [below for nested schema](#nestedatt--items--request_config--allowed_groups))
 - `allowed_groups_override` (Boolean) Indicates if allowed groups is overriden from the app-level settings.
-- `appstore_visibility` (String) The appstore visibility of this request config. must be one of ["HIDDEN", "VISIBLE"]
+- `appstore_visibility` (String) The appstore visibility of this request config.
 - `request_approval_config` (Attributes) A request approval config can be optionally associated with this config (see [below for nested schema](#nestedatt--items--request_config--request_approval_config))
 - `request_fulfillment_config` (Attributes) A request fulfillment config can be optionally associated with this config (see [below for nested schema](#nestedatt--items--request_config--request_fulfillment_config))
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--items--request_config--request_validation_inline_webhook))
@@ -74,7 +76,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -85,7 +87,7 @@ Read-Only:
 Read-Only:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--items--request_config--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
+- `type` (String) The type of this allowed groups config, can be all groups or specific.
 
 <a id="nestedatt--items--request_config--allowed_groups--groups"></a>
 ### Nested Schema for `items.request_config.allowed_groups.groups`
@@ -94,7 +96,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -111,7 +113,7 @@ Read-Only:
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--items--request_config--request_approval_config--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
-- `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]
+- `manager_approval` (String) Manager approval can be configured as necessary to continue
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
@@ -130,7 +132,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -146,7 +148,7 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -165,7 +167,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -181,7 +183,7 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -205,7 +207,7 @@ Read-Only:
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
@@ -218,7 +220,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -230,6 +232,6 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook.
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.

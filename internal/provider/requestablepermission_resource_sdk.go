@@ -27,11 +27,11 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 	var label string
 	label = r.Label.ValueString()
 
-	var requestConfig *shared.RequestablePermissionInputRequestConfig
+	var requestConfig *shared.RequestConfigInputCreate
 	if r.RequestConfig != nil {
-		appstoreVisibility := new(shared.RequestablePermissionInputAppStoreVisibilityOption)
+		appstoreVisibility := new(shared.AppStoreVisibilityOption)
 		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
-			*appstoreVisibility = shared.RequestablePermissionInputAppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
+			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
 		} else {
 			appstoreVisibility = nil
 		}
@@ -41,11 +41,11 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 		} else {
 			allowedGroupsOverride = nil
 		}
-		var allowedGroups *shared.RequestablePermissionInputAllowedGroups
+		var allowedGroups *shared.AllowedGroupsConfigInput
 		if r.RequestConfig.AllowedGroups != nil {
-			typeVar := new(shared.RequestablePermissionInputAllowedGroupsConfigType)
+			typeVar := new(shared.AllowedGroupsConfigInputAllowedGroupsConfigType)
 			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.RequestablePermissionInputAllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
+				*typeVar = shared.AllowedGroupsConfigInputAllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
 			} else {
 				typeVar = nil
 			}
@@ -75,12 +75,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			allowedGroups = &shared.RequestablePermissionInputAllowedGroups{
+			allowedGroups = &shared.AllowedGroupsConfigInput{
 				Type:   typeVar,
 				Groups: groups,
 			}
 		}
-		var requestApprovalConfig *shared.RequestablePermissionInputRequestApprovalConfig
+		var requestApprovalConfig *shared.RequestApprovalConfigInput
 		if r.RequestConfig.RequestApprovalConfig != nil {
 			requestApprovalConfigOverride := new(bool)
 			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
@@ -88,9 +88,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				requestApprovalConfigOverride = nil
 			}
-			managerApproval := new(shared.RequestablePermissionInputManagerApprovalOption)
+			managerApproval := new(shared.ManagerApprovalOption)
 			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
-				*managerApproval = shared.RequestablePermissionInputManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
+				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
 			} else {
 				managerApproval = nil
 			}
@@ -112,7 +112,7 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				customApprovalMessageOverride = nil
 			}
-			var approvers *shared.RequestablePermissionInputApprovers
+			var approvers *shared.AppApproversInput
 			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
 				var groups1 []shared.BaseGroup = []shared.BaseGroup{}
 				for _, groupsItem1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -149,12 +149,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 						ID: id2,
 					})
 				}
-				approvers = &shared.RequestablePermissionInputApprovers{
+				approvers = &shared.AppApproversInput{
 					Groups: groups1,
 					Users:  users,
 				}
 			}
-			var approversStage2 *shared.RequestablePermissionInputApproversStage2
+			var approversStage2 *shared.AppApproversInput
 			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
 				var groups2 []shared.BaseGroup = []shared.BaseGroup{}
 				for _, groupsItem2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
@@ -191,12 +191,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 						ID: id4,
 					})
 				}
-				approversStage2 = &shared.RequestablePermissionInputApproversStage2{
+				approversStage2 = &shared.AppApproversInput{
 					Groups: groups2,
 					Users:  users1,
 				}
 			}
-			requestApprovalConfig = &shared.RequestablePermissionInputRequestApprovalConfig{
+			requestApprovalConfig = &shared.RequestApprovalConfigInput{
 				RequestApprovalConfigOverride: requestApprovalConfigOverride,
 				ManagerApproval:               managerApproval,
 				RequireAdditionalApproval:     requireAdditionalApproval,
@@ -206,25 +206,25 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 				ApproversStage2:               approversStage2,
 			}
 		}
-		var accessRemovalInlineWebhook *shared.RequestablePermissionInputAccessRemovalInlineWebhook
+		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
 		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
 			var id5 string
 			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
 
-			accessRemovalInlineWebhook = &shared.RequestablePermissionInputAccessRemovalInlineWebhook{
+			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id5,
 			}
 		}
-		var requestValidationInlineWebhook *shared.RequestablePermissionInputRequestValidationInlineWebhook
+		var requestValidationInlineWebhook *shared.BaseInlineWebhook
 		if r.RequestConfig.RequestValidationInlineWebhook != nil {
 			var id6 string
 			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
 
-			requestValidationInlineWebhook = &shared.RequestablePermissionInputRequestValidationInlineWebhook{
+			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id6,
 			}
 		}
-		var requestFulfillmentConfig *shared.RequestablePermissionInputRequestFulfillmentConfig
+		var requestFulfillmentConfig *shared.RequestFulfillmentConfigInput
 		if r.RequestConfig.RequestFulfillmentConfig != nil {
 			manualStepsNeeded := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsNull() {
@@ -248,7 +248,7 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				timeBasedAccessOverride = nil
 			}
-			var provisioningGroup *shared.RequestablePermissionInputProvisioningGroup
+			var provisioningGroup *shared.BaseGroup
 			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup != nil {
 				id7 := new(string)
 				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsNull() {
@@ -268,22 +268,22 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 				} else {
 					integrationSpecificId3 = nil
 				}
-				provisioningGroup = &shared.RequestablePermissionInputProvisioningGroup{
+				provisioningGroup = &shared.BaseGroup{
 					ID:                    id7,
 					AppID:                 appId4,
 					IntegrationSpecificID: integrationSpecificId3,
 				}
 			}
-			var provisioningWebhook *shared.RequestablePermissionInputProvisioningWebhook
+			var provisioningWebhook *shared.BaseInlineWebhook
 			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
 				var id8 string
 				id8 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
 
-				provisioningWebhook = &shared.RequestablePermissionInputProvisioningWebhook{
+				provisioningWebhook = &shared.BaseInlineWebhook{
 					ID: id8,
 				}
 			}
-			requestFulfillmentConfig = &shared.RequestablePermissionInputRequestFulfillmentConfig{
+			requestFulfillmentConfig = &shared.RequestFulfillmentConfigInput{
 				ManualStepsNeeded:       manualStepsNeeded,
 				ManualInstructions:      manualInstructions,
 				TimeBasedAccess:         timeBasedAccess,
@@ -292,7 +292,7 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 				ProvisioningWebhook:     provisioningWebhook,
 			}
 		}
-		requestConfig = &shared.RequestablePermissionInputRequestConfig{
+		requestConfig = &shared.RequestConfigInputCreate{
 			AppstoreVisibility:             appstoreVisibility,
 			AllowedGroupsOverride:          allowedGroupsOverride,
 			AllowedGroups:                  allowedGroups,
@@ -320,12 +320,12 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		r.ID = types.StringPointerValue(resp.ID)
 		r.Label = types.StringValue(resp.Label)
 		if r.RequestConfig == nil {
-			r.RequestConfig = &tfTypes.RequestablePermissionInputRequestConfig{}
+			r.RequestConfig = &tfTypes.RequestConfigInputCreate{}
 		}
 		if resp.RequestConfig.AccessRemovalInlineWebhook == nil {
 			r.RequestConfig.AccessRemovalInlineWebhook = nil
 		} else {
-			r.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+			r.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
 			r.RequestConfig.AccessRemovalInlineWebhook.Description = types.StringPointerValue(resp.RequestConfig.AccessRemovalInlineWebhook.Description)
 			r.RequestConfig.AccessRemovalInlineWebhook.HookType = types.StringValue(string(resp.RequestConfig.AccessRemovalInlineWebhook.HookType))
 			r.RequestConfig.AccessRemovalInlineWebhook.ID = types.StringValue(resp.RequestConfig.AccessRemovalInlineWebhook.ID)
@@ -334,7 +334,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		if resp.RequestConfig.AllowedGroups == nil {
 			r.RequestConfig.AllowedGroups = nil
 		} else {
-			r.RequestConfig.AllowedGroups = &tfTypes.AddAppToAppStoreInputAllowedGroups{}
+			r.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 			r.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 			if len(r.RequestConfig.AllowedGroups.Groups) > len(resp.RequestConfig.AllowedGroups.Groups) {
 				r.RequestConfig.AllowedGroups.Groups = r.RequestConfig.AllowedGroups.Groups[:len(resp.RequestConfig.AllowedGroups.Groups)]
@@ -379,11 +379,11 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		if resp.RequestConfig.RequestApprovalConfig == nil {
 			r.RequestConfig.RequestApprovalConfig = nil
 		} else {
-			r.RequestConfig.RequestApprovalConfig = &tfTypes.RequestablePermissionInputRequestApprovalConfig{}
+			r.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigInput{}
 			if resp.RequestConfig.RequestApprovalConfig.Approvers == nil {
 				r.RequestConfig.RequestApprovalConfig.Approvers = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) > len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups)]
@@ -442,7 +442,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 			} else {
-				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 				if len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) > len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups)]
@@ -511,7 +511,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		if resp.RequestConfig.RequestFulfillmentConfig == nil {
 			r.RequestConfig.RequestFulfillmentConfig = nil
 		} else {
-			r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestablePermissionInputRequestFulfillmentConfig{}
+			r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
 			r.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 			r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
 			if resp.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {
@@ -533,7 +533,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook == nil {
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = nil
 			} else {
-				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description = types.StringPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description)
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType = types.StringValue(string(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType))
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
@@ -548,7 +548,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		if resp.RequestConfig.RequestValidationInlineWebhook == nil {
 			r.RequestConfig.RequestValidationInlineWebhook = nil
 		} else {
-			r.RequestConfig.RequestValidationInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+			r.RequestConfig.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
 			r.RequestConfig.RequestValidationInlineWebhook.Description = types.StringPointerValue(resp.RequestConfig.RequestValidationInlineWebhook.Description)
 			r.RequestConfig.RequestValidationInlineWebhook.HookType = types.StringValue(string(resp.RequestConfig.RequestValidationInlineWebhook.HookType))
 			r.RequestConfig.RequestValidationInlineWebhook.ID = types.StringValue(resp.RequestConfig.RequestValidationInlineWebhook.ID)
@@ -587,11 +587,11 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 	} else {
 		label = nil
 	}
-	var requestConfig *shared.RequestablePermissionInputUpdateRequestConfig
+	var requestConfig *shared.RequestConfigInputUpdate
 	if r.RequestConfig != nil {
-		appstoreVisibility := new(shared.RequestablePermissionInputUpdateAppStoreVisibilityOption)
+		appstoreVisibility := new(shared.AppStoreVisibilityOption)
 		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
-			*appstoreVisibility = shared.RequestablePermissionInputUpdateAppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
+			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
 		} else {
 			appstoreVisibility = nil
 		}
@@ -601,11 +601,11 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 		} else {
 			allowedGroupsOverride = nil
 		}
-		var allowedGroups *shared.RequestablePermissionInputUpdateAllowedGroups
+		var allowedGroups *shared.AllowedGroupsConfigInput
 		if r.RequestConfig.AllowedGroups != nil {
-			typeVar := new(shared.RequestablePermissionInputUpdateAllowedGroupsConfigType)
+			typeVar := new(shared.AllowedGroupsConfigInputAllowedGroupsConfigType)
 			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.RequestablePermissionInputUpdateAllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
+				*typeVar = shared.AllowedGroupsConfigInputAllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
 			} else {
 				typeVar = nil
 			}
@@ -635,12 +635,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			allowedGroups = &shared.RequestablePermissionInputUpdateAllowedGroups{
+			allowedGroups = &shared.AllowedGroupsConfigInput{
 				Type:   typeVar,
 				Groups: groups,
 			}
 		}
-		var requestApprovalConfig *shared.RequestablePermissionInputUpdateRequestApprovalConfig
+		var requestApprovalConfig *shared.RequestApprovalConfigInput
 		if r.RequestConfig.RequestApprovalConfig != nil {
 			requestApprovalConfigOverride := new(bool)
 			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
@@ -648,9 +648,9 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				requestApprovalConfigOverride = nil
 			}
-			managerApproval := new(shared.RequestablePermissionInputUpdateManagerApprovalOption)
+			managerApproval := new(shared.ManagerApprovalOption)
 			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
-				*managerApproval = shared.RequestablePermissionInputUpdateManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
+				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
 			} else {
 				managerApproval = nil
 			}
@@ -672,7 +672,7 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				customApprovalMessageOverride = nil
 			}
-			var approvers *shared.RequestablePermissionInputUpdateApprovers
+			var approvers *shared.AppApproversInput
 			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
 				var groups1 []shared.BaseGroup = []shared.BaseGroup{}
 				for _, groupsItem1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -709,12 +709,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 						ID: id2,
 					})
 				}
-				approvers = &shared.RequestablePermissionInputUpdateApprovers{
+				approvers = &shared.AppApproversInput{
 					Groups: groups1,
 					Users:  users,
 				}
 			}
-			var approversStage2 *shared.RequestablePermissionInputUpdateApproversStage2
+			var approversStage2 *shared.AppApproversInput
 			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
 				var groups2 []shared.BaseGroup = []shared.BaseGroup{}
 				for _, groupsItem2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
@@ -751,12 +751,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 						ID: id4,
 					})
 				}
-				approversStage2 = &shared.RequestablePermissionInputUpdateApproversStage2{
+				approversStage2 = &shared.AppApproversInput{
 					Groups: groups2,
 					Users:  users1,
 				}
 			}
-			requestApprovalConfig = &shared.RequestablePermissionInputUpdateRequestApprovalConfig{
+			requestApprovalConfig = &shared.RequestApprovalConfigInput{
 				RequestApprovalConfigOverride: requestApprovalConfigOverride,
 				ManagerApproval:               managerApproval,
 				RequireAdditionalApproval:     requireAdditionalApproval,
@@ -766,25 +766,25 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 				ApproversStage2:               approversStage2,
 			}
 		}
-		var accessRemovalInlineWebhook *shared.RequestablePermissionInputUpdateAccessRemovalInlineWebhook
+		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
 		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
 			var id5 string
 			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
 
-			accessRemovalInlineWebhook = &shared.RequestablePermissionInputUpdateAccessRemovalInlineWebhook{
+			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id5,
 			}
 		}
-		var requestValidationInlineWebhook *shared.RequestablePermissionInputUpdateRequestValidationInlineWebhook
+		var requestValidationInlineWebhook *shared.BaseInlineWebhook
 		if r.RequestConfig.RequestValidationInlineWebhook != nil {
 			var id6 string
 			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
 
-			requestValidationInlineWebhook = &shared.RequestablePermissionInputUpdateRequestValidationInlineWebhook{
+			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id6,
 			}
 		}
-		var requestFulfillmentConfig *shared.RequestablePermissionInputUpdateRequestFulfillmentConfig
+		var requestFulfillmentConfig *shared.RequestFulfillmentConfigInputUpdate
 		if r.RequestConfig.RequestFulfillmentConfig != nil {
 			manualStepsNeeded := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsNull() {
@@ -808,16 +808,16 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				timeBasedAccessOverride = nil
 			}
-			var provisioningWebhook *shared.RequestablePermissionInputUpdateProvisioningWebhook
+			var provisioningWebhook *shared.BaseInlineWebhook
 			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
 				var id7 string
 				id7 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
 
-				provisioningWebhook = &shared.RequestablePermissionInputUpdateProvisioningWebhook{
+				provisioningWebhook = &shared.BaseInlineWebhook{
 					ID: id7,
 				}
 			}
-			requestFulfillmentConfig = &shared.RequestablePermissionInputUpdateRequestFulfillmentConfig{
+			requestFulfillmentConfig = &shared.RequestFulfillmentConfigInputUpdate{
 				ManualStepsNeeded:       manualStepsNeeded,
 				ManualInstructions:      manualInstructions,
 				TimeBasedAccess:         timeBasedAccess,
@@ -825,7 +825,7 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 				ProvisioningWebhook:     provisioningWebhook,
 			}
 		}
-		requestConfig = &shared.RequestablePermissionInputUpdateRequestConfig{
+		requestConfig = &shared.RequestConfigInputUpdate{
 			AppstoreVisibility:             appstoreVisibility,
 			AllowedGroupsOverride:          allowedGroupsOverride,
 			AllowedGroups:                  allowedGroups,

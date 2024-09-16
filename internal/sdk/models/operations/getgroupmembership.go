@@ -10,8 +10,10 @@ import (
 
 type GetGroupMembershipRequest struct {
 	GroupID string `pathParam:"style=simple,explode=false,name=group_id"`
-	Page    *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size    *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetGroupMembershipRequest) MarshalJSON() ([]byte, error) {

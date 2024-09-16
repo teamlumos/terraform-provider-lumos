@@ -4,7 +4,7 @@ package types
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type AddAppToAppStoreInputAllowedGroups struct {
+type AllowedGroupsConfigInput struct {
 	Groups []Group      `tfsdk:"groups"`
 	Type   types.String `tfsdk:"type"`
 }

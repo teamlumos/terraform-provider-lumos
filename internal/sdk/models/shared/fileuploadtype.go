@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// FileUploadType - An enumeration.
 type FileUploadType string
 
 const (

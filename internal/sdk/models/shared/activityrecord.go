@@ -7,65 +7,17 @@ import (
 	"time"
 )
 
-// ActivityRecordAccount - Metadata that Lumos can use to match the activity record to a software account within Lumos.
-type ActivityRecordAccount struct {
-	// The external app's user ID for the account.
-	ExternalID *string `json:"external_id,omitempty"`
-	// The email associated with the account
-	Email *string `json:"email,omitempty"`
-}
-
-func (o *ActivityRecordAccount) GetExternalID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ExternalID
-}
-
-func (o *ActivityRecordAccount) GetEmail() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Email
-}
-
-// Event - Metadata about the event being uploaded.
-type Event struct {
-	// The type of event being uploaded.
-	Type ActivityRecordEventType `json:"type"`
-}
-
-func (o *Event) GetType() ActivityRecordEventType {
-	if o == nil {
-		return ActivityRecordEventType("")
-	}
-	return o.Type
-}
-
-// ActivityRecordApp - Metadata that Lumos can use to match the activity record to an application within Lumos.
-type ActivityRecordApp struct {
-	// The ID of the app as it is identified in the source E.g. the ID that Okta uses to identify the app
-	InstanceIdentifier string `json:"instance_identifier"`
-}
-
-func (o *ActivityRecordApp) GetInstanceIdentifier() string {
-	if o == nil {
-		return ""
-	}
-	return o.InstanceIdentifier
-}
-
 type ActivityRecord struct {
 	// Metadata that Lumos can use to match the activity record to a software account within Lumos.
-	Account ActivityRecordAccount `json:"account"`
+	Account ActivityRecordAccountInput `json:"account"`
 	// Metadata about the event being uploaded.
-	Event Event `json:"event"`
+	Event ActivityRecordEventInput `json:"event"`
 	// The timestamp of this event, in ISO 8601 format.
 	Timestamp time.Time `json:"timestamp"`
 	// UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos found by going to Apps > Find your app in the list > Click '...' > Copy Stable Identifier)
 	SourceAppID string `json:"source_app_id"`
 	// Metadata that Lumos can use to match the activity record to an application within Lumos.
-	App *ActivityRecordApp `json:"app,omitempty"`
+	App *ActivityRecordAppInput `json:"app,omitempty"`
 }
 
 func (a ActivityRecord) MarshalJSON() ([]byte, error) {
@@ -79,16 +31,16 @@ func (a *ActivityRecord) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *ActivityRecord) GetAccount() ActivityRecordAccount {
+func (o *ActivityRecord) GetAccount() ActivityRecordAccountInput {
 	if o == nil {
-		return ActivityRecordAccount{}
+		return ActivityRecordAccountInput{}
 	}
 	return o.Account
 }
 
-func (o *ActivityRecord) GetEvent() Event {
+func (o *ActivityRecord) GetEvent() ActivityRecordEventInput {
 	if o == nil {
-		return Event{}
+		return ActivityRecordEventInput{}
 	}
 	return o.Event
 }
@@ -107,7 +59,7 @@ func (o *ActivityRecord) GetSourceAppID() string {
 	return o.SourceAppID
 }
 
-func (o *ActivityRecord) GetApp() *ActivityRecordApp {
+func (o *ActivityRecord) GetApp() *ActivityRecordAppInput {
 	if o == nil {
 		return nil
 	}

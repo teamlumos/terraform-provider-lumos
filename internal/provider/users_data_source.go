@@ -76,14 +76,15 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 						},
 						"status": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+							Description: `The status of this user.`,
 						},
 					},
 				},
 			},
 			"page": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page number`,
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
@@ -93,8 +94,9 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Description: `Search for users by name or email.`,
 			},
 			"size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page size`,
 			},
 			"total": schema.Int64Attribute{
 				Computed: true,

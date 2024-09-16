@@ -14,10 +14,10 @@ Users DataSource
 
 ```terraform
 data "lumos_users" "my_users" {
-  exact_match = false
+  exact_match = true
   page        = 4
   search_term = "...my_search_term..."
-  size        = 8
+  size        = 87
 }
 ```
 
@@ -27,9 +27,9 @@ data "lumos_users" "my_users" {
 ### Optional
 
 - `exact_match` (Boolean) If a search_term is provided, only accept exact matches.
-- `page` (Number)
+- `page` (Number) Page number
 - `search_term` (String) Search for users by name or email.
-- `size` (Number)
+- `size` (Number) Page size
 
 ### Read-Only
 
@@ -46,4 +46,4 @@ Read-Only:
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
 - `id` (String) The ID of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.

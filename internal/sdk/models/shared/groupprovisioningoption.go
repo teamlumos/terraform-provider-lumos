@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// GroupProvisioningOption - An enumeration.
 type GroupProvisioningOption string
 
 const (

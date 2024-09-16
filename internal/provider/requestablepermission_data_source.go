@@ -29,13 +29,14 @@ type RequestablePermissionDataSource struct {
 
 // RequestablePermissionDataSourceModel describes the data model.
 type RequestablePermissionDataSourceModel struct {
-	AppClassID    types.String                                    `tfsdk:"app_class_id"`
-	AppID         types.String                                    `tfsdk:"app_id"`
-	AppInstanceID types.String                                    `tfsdk:"app_instance_id"`
-	ID            types.String                                    `tfsdk:"id"`
-	Label         types.String                                    `tfsdk:"label"`
-	RequestConfig tfTypes.RequestablePermissionInputRequestConfig `tfsdk:"request_config"`
-	Type          types.String                                    `tfsdk:"type"`
+	AppClassID              types.String                `tfsdk:"app_class_id"`
+	AppID                   types.String                `tfsdk:"app_id"`
+	AppInstanceID           types.String                `tfsdk:"app_instance_id"`
+	ID                      types.String                `tfsdk:"id"`
+	IncludeInheritedConfigs types.Bool                  `tfsdk:"include_inherited_configs"`
+	Label                   types.String                `tfsdk:"label"`
+	RequestConfig           tfTypes.RequestConfigOutput `tfsdk:"request_config"`
+	Type                    types.String                `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.
@@ -59,10 +60,15 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 			},
 			"app_instance_id": schema.StringAttribute{
 				Computed:    true,
-				Description: `The ID of the instance associated with this requestable permission.`,
+				Description: `The ID of the instance associated with this requestable permission. This may be an empty string.`,
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+			},
+			"include_inherited_configs": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `Include inherited configurations from parent app.`,
 			},
 			"label": schema.StringAttribute{
 				Computed:    true,
@@ -80,7 +86,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook.`,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -110,7 +116,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -134,7 +140,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"type": schema.StringAttribute{
 								Computed:    true,
-								Description: `The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
+								Description: `The type of this allowed groups config, can be all groups or specific.`,
 							},
 						},
 						Description: `The allowed groups config associated with this config.`,
@@ -145,7 +151,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 					},
 					"appstore_visibility": schema.StringAttribute{
 						Computed:    true,
-						Description: `The appstore visibility of this request config. must be one of ["HIDDEN", "VISIBLE"]`,
+						Description: `The appstore visibility of this request config.`,
 					},
 					"request_approval_config": schema.SingleNestedAttribute{
 						Computed: true,
@@ -167,7 +173,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"group_lifecycle": schema.StringAttribute{
 													Computed:    true,
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -211,7 +217,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"status": schema.StringAttribute{
 													Computed:    true,
-													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+													Description: `The status of this user.`,
 												},
 											},
 										},
@@ -237,7 +243,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"group_lifecycle": schema.StringAttribute{
 													Computed:    true,
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -281,7 +287,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 												},
 												"status": schema.StringAttribute{
 													Computed:    true,
-													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+													Description: `The status of this user.`,
 												},
 											},
 										},
@@ -300,7 +306,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"manager_approval": schema.StringAttribute{
 								Computed:    true,
-								Description: `Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]`,
+								Description: `Manager approval can be configured as necessary to continue`,
 							},
 							"request_approval_config_override": schema.BoolAttribute{
 								Computed:    true,
@@ -337,7 +343,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 									},
 									"group_lifecycle": schema.StringAttribute{
 										Computed:    true,
-										Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+										Description: `The lifecycle of this group.`,
 									},
 									"id": schema.StringAttribute{
 										Computed:    true,
@@ -367,7 +373,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 									},
 									"hook_type": schema.StringAttribute{
 										Computed:    true,
-										Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+										Description: `The type of this inline webhook.`,
 									},
 									"id": schema.StringAttribute{
 										Computed:    true,
@@ -401,7 +407,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook.`,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -419,7 +425,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 			},
 			"type": schema.StringAttribute{
 				Computed:    true,
-				Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
+				Description: `The type of this requestable permission.`,
 			},
 		},
 	}
@@ -466,8 +472,15 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 	var id string
 	id = data.ID.ValueString()
 
+	includeInheritedConfigs := new(bool)
+	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
+		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
+	} else {
+		includeInheritedConfigs = nil
+	}
 	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		ID: id,
+		ID:                      id,
+		IncludeInheritedConfigs: includeInheritedConfigs,
 	}
 	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, request)
 	if err != nil {

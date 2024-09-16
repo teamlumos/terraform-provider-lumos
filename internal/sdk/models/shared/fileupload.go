@@ -2,18 +2,30 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type FileUpload struct {
 	// The type of content being uploaded. The only supported type today is 'url'
-	Type FileUploadType `json:"type"`
+	type_ FileUploadType `const:"url" json:"type"`
 	// The data to upload. This should be a publicly accessible URL that resolves to a file
 	Value string `json:"value"`
 }
 
-func (o *FileUpload) GetType() FileUploadType {
-	if o == nil {
-		return FileUploadType("")
+func (f FileUpload) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(f, "", false)
+}
+
+func (f *FileUpload) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &f, "", false, false); err != nil {
+		return err
 	}
-	return o.Type
+	return nil
+}
+
+func (o *FileUpload) GetType() FileUploadType {
+	return FileUploadTypeURL
 }
 
 func (o *FileUpload) GetValue() string {

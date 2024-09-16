@@ -86,7 +86,7 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"status": schema.StringAttribute{
 				Computed:    true,
-				Description: `An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
+				Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'`,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,

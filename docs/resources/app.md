@@ -17,7 +17,7 @@ resource "lumos_app" "my_app" {
   category             = "...my_category..."
   description          = "...my_description..."
   logo_url             = "...my_logo_url..."
-  name                 = "Frances Collier"
+  name                 = "...my_name..."
   request_instructions = "...my_request_instructions..."
   website_url          = "...my_website_url..."
 }
@@ -45,7 +45,7 @@ resource "lumos_app" "my_app" {
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `sources` (List of String) The sources of this app.
-- `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String) The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.
 
 ## Import

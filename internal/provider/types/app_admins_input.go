@@ -2,7 +2,7 @@
 
 package types
 
-type AddAppToAppStoreInputAdmins struct {
+type AppAdminsInput struct {
 	Groups []Group `tfsdk:"groups"`
 	Users  []User  `tfsdk:"users"`
 }

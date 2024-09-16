@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// DiscoverySource - An enumeration.
 type DiscoverySource string
 
 const (
