@@ -7,24 +7,11 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
-// OrderInputVendor - Information about the vendor associated with this contract. Currently, we will only support a name field.
-type OrderInputVendor struct {
-	// A user friendly name for the vendor
-	Name string `json:"name"`
-}
-
-func (o *OrderInputVendor) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
 type OrderInput struct {
 	// A unique ID for the contract being uploaded. This can be an ID from an external system like Ironclad, an internal ID such as a PO number, or simply the name of the vendor + date of the contract.
 	UniqueIdentifier string `json:"unique_identifier"`
 	// Information about the vendor associated with this contract. Currently, we will only support a name field.
-	Vendor OrderInputVendor `json:"vendor"`
+	Vendor Vendor `json:"vendor"`
 	// The start date of the attached contract
 	StartDate types.Date `json:"start_date"`
 	// The end date of the attached contract
@@ -38,7 +25,7 @@ type OrderInput struct {
 	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
 	LineItems []LineItemInput `json:"line_items"`
 	// Any additional attributes that you would like to save on the Order. The set of available options must be configured in advance in Lumos.
-	CustomAttributes map[string]OrderCustomAttribute `json:"custom_attributes,omitempty"`
+	CustomAttributes map[string]VendorAgreementCustomAttributeInput `json:"custom_attributes,omitempty"`
 	// UUID of the application in Lumos where this order was sourced (e.g. the ID of Ironclad within Lumos)
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
@@ -61,9 +48,9 @@ func (o *OrderInput) GetUniqueIdentifier() string {
 	return o.UniqueIdentifier
 }
 
-func (o *OrderInput) GetVendor() OrderInputVendor {
+func (o *OrderInput) GetVendor() Vendor {
 	if o == nil {
-		return OrderInputVendor{}
+		return Vendor{}
 	}
 	return o.Vendor
 }
@@ -110,7 +97,7 @@ func (o *OrderInput) GetLineItems() []LineItemInput {
 	return o.LineItems
 }
 
-func (o *OrderInput) GetCustomAttributes() map[string]OrderCustomAttribute {
+func (o *OrderInput) GetCustomAttributes() map[string]VendorAgreementCustomAttributeInput {
 	if o == nil {
 		return nil
 	}

@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// FlowState - An enumeration.
 type FlowState string
 
 const (

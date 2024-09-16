@@ -2,7 +2,7 @@
 
 package types
 
-type AddAppToAppStoreInputApprovers struct {
+type AppApproversInput struct {
 	Groups []Group `tfsdk:"groups"`
 	Users  []User  `tfsdk:"users"`
 }

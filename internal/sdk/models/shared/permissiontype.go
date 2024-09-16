@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// PermissionType - An enumeration.
 type PermissionType string
 
 const (

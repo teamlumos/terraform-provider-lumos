@@ -9,7 +9,9 @@ import (
 )
 
 type ListVendorAgreementsRequest struct {
+	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
 	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 

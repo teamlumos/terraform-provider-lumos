@@ -62,7 +62,7 @@ func (r *GroupDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			},
 			"group_lifecycle": schema.StringAttribute{
 				Computed:    true,
-				Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+				Description: `The lifecycle of this group.`,
 			},
 			"id": schema.StringAttribute{
 				Computed:    true,

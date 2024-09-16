@@ -3,7 +3,7 @@
 package shared
 
 type AccountInput struct {
-	// The stable identifier of this account.
+	// A unique identifier for this account, such as an account ID or email.
 	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`

@@ -13,7 +13,7 @@ type RequestablePermissionBaseOutput struct {
 	AppID string `json:"app_id"`
 	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 	AppClassID string `json:"app_class_id"`
-	// The ID of the instance associated with this requestable permission.
+	// The ID of the instance associated with this requestable permission. This may be an empty string.
 	AppInstanceID string `json:"app_instance_id"`
 }
 

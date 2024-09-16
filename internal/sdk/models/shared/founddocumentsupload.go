@@ -2,28 +2,6 @@
 
 package shared
 
-// TotalCost - The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
-type TotalCost struct {
-	// The currency in which this cost is stored
-	Currency *string `json:"currency,omitempty"`
-	// The quantity of the cost in terms of the specified currency
-	Value int64 `json:"value"`
-}
-
-func (o *TotalCost) GetCurrency() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Currency
-}
-
-func (o *TotalCost) GetValue() int64 {
-	if o == nil {
-		return 0
-	}
-	return o.Value
-}
-
 type FoundDocumentsUpload struct {
 	// A value that can be used to uniquely identify this contract (e.g. PO number, file name, etc)
 	UniqueIdentifier string `json:"unique_identifier"`
@@ -38,7 +16,7 @@ type FoundDocumentsUpload struct {
 	// By passing the ID of an application within Lumos, it will appear as if this Found Document was sourced from that app
 	SourceAppID *string `json:"source_app_id,omitempty"`
 	// The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
-	TotalCost *TotalCost `json:"total_cost,omitempty"`
+	TotalCost *Cost `json:"total_cost,omitempty"`
 	// The line items on the contract
 	LineItems []LineItemUpload `json:"line_items,omitempty"`
 }
@@ -85,7 +63,7 @@ func (o *FoundDocumentsUpload) GetSourceAppID() *string {
 	return o.SourceAppID
 }
 
-func (o *FoundDocumentsUpload) GetTotalCost() *TotalCost {
+func (o *FoundDocumentsUpload) GetTotalCost() *Cost {
 	if o == nil {
 		return nil
 	}

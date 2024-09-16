@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// TimeBasedAccessOptions - An enumeration.
 type TimeBasedAccessOptions string
 
 const (

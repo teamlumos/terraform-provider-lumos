@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// DomainAppStatus - An enumeration.
 type DomainAppStatus string
 
 const (

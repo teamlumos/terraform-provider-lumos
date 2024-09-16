@@ -2,28 +2,6 @@
 
 package shared
 
-// LineItemInputUnitCost - The per-unit cost of the line item
-type LineItemInputUnitCost struct {
-	// The period which this cost covers. Available options are per_month or per_year
-	Period string `json:"period"`
-	// The cost in terms of the specified currency (4 decimal places supported)
-	Value float64 `json:"value"`
-}
-
-func (o *LineItemInputUnitCost) GetPeriod() string {
-	if o == nil {
-		return ""
-	}
-	return o.Period
-}
-
-func (o *LineItemInputUnitCost) GetValue() float64 {
-	if o == nil {
-		return 0.0
-	}
-	return o.Value
-}
-
 type LineItemInput struct {
 	// The name of the line item as stored in Lumos
 	Name string `json:"name"`
@@ -32,7 +10,7 @@ type LineItemInput struct {
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
 	// The per-unit cost of the line item
-	UnitCost LineItemInputUnitCost `json:"unit_cost"`
+	UnitCost LineItemUnitCostInput `json:"unit_cost"`
 }
 
 func (o *LineItemInput) GetName() string {
@@ -56,9 +34,9 @@ func (o *LineItemInput) GetQuantity() int64 {
 	return o.Quantity
 }
 
-func (o *LineItemInput) GetUnitCost() LineItemInputUnitCost {
+func (o *LineItemInput) GetUnitCost() LineItemUnitCostInput {
 	if o == nil {
-		return LineItemInputUnitCost{}
+		return LineItemUnitCostInput{}
 	}
 	return o.UnitCost
 }

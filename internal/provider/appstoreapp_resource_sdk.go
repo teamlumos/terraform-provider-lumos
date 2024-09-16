@@ -15,7 +15,7 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 	} else {
 		customRequestInstructions = nil
 	}
-	var requestFlow *shared.AddAppToAppStoreInputRequestFlow
+	var requestFlow *shared.AppStoreAppSettingsRequestFlowInput
 	if r.RequestFlow != nil {
 		discoverability := new(shared.AppStoreVisibility)
 		if !r.RequestFlow.Discoverability.IsUnknown() && !r.RequestFlow.Discoverability.IsNull() {
@@ -41,11 +41,11 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 		} else {
 			requireAdditionalApproval = nil
 		}
-		var allowedGroups *shared.AddAppToAppStoreInputAllowedGroups
+		var allowedGroups *shared.AllowedGroupsConfigInput
 		if r.RequestFlow.AllowedGroups != nil {
-			typeVar := new(shared.AddAppToAppStoreInputAllowedGroupsConfigType)
+			typeVar := new(shared.AllowedGroupsConfigInputAllowedGroupsConfigType)
 			if !r.RequestFlow.AllowedGroups.Type.IsUnknown() && !r.RequestFlow.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.AddAppToAppStoreInputAllowedGroupsConfigType(r.RequestFlow.AllowedGroups.Type.ValueString())
+				*typeVar = shared.AllowedGroupsConfigInputAllowedGroupsConfigType(r.RequestFlow.AllowedGroups.Type.ValueString())
 			} else {
 				typeVar = nil
 			}
@@ -75,12 +75,12 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			allowedGroups = &shared.AddAppToAppStoreInputAllowedGroups{
+			allowedGroups = &shared.AllowedGroupsConfigInput{
 				Type:   typeVar,
 				Groups: groups,
 			}
 		}
-		var approvers *shared.AddAppToAppStoreInputApprovers
+		var approvers *shared.AppApproversInput
 		if r.RequestFlow.Approvers != nil {
 			var groups1 []shared.BaseGroup = []shared.BaseGroup{}
 			for _, groupsItem1 := range r.RequestFlow.Approvers.Groups {
@@ -117,12 +117,12 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					ID: id2,
 				})
 			}
-			approvers = &shared.AddAppToAppStoreInputApprovers{
+			approvers = &shared.AppApproversInput{
 				Groups: groups1,
 				Users:  users,
 			}
 		}
-		var approversStage2 *shared.AddAppToAppStoreInputApproversStage2
+		var approversStage2 *shared.AppApproversInput
 		if r.RequestFlow.ApproversStage2 != nil {
 			var groups2 []shared.BaseGroup = []shared.BaseGroup{}
 			for _, groupsItem2 := range r.RequestFlow.ApproversStage2.Groups {
@@ -159,12 +159,12 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					ID: id4,
 				})
 			}
-			approversStage2 = &shared.AddAppToAppStoreInputApproversStage2{
+			approversStage2 = &shared.AppApproversInput{
 				Groups: groups2,
 				Users:  users1,
 			}
 		}
-		var admins *shared.AddAppToAppStoreInputAdmins
+		var admins *shared.AppAdminsInput
 		if r.RequestFlow.Admins != nil {
 			var groups3 []shared.BaseGroup = []shared.BaseGroup{}
 			for _, groupsItem3 := range r.RequestFlow.Admins.Groups {
@@ -201,21 +201,21 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 					ID: id6,
 				})
 			}
-			admins = &shared.AddAppToAppStoreInputAdmins{
+			admins = &shared.AppAdminsInput{
 				Groups: groups3,
 				Users:  users2,
 			}
 		}
-		var requestValidationInlineWebhook *shared.AddAppToAppStoreInputRequestValidationInlineWebhook
+		var requestValidationInlineWebhook *shared.BaseInlineWebhook
 		if r.RequestFlow.RequestValidationInlineWebhook != nil {
 			var id7 string
 			id7 = r.RequestFlow.RequestValidationInlineWebhook.ID.ValueString()
 
-			requestValidationInlineWebhook = &shared.AddAppToAppStoreInputRequestValidationInlineWebhook{
+			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id7,
 			}
 		}
-		requestFlow = &shared.AddAppToAppStoreInputRequestFlow{
+		requestFlow = &shared.AppStoreAppSettingsRequestFlowInput{
 			Discoverability:                discoverability,
 			CustomApprovalMessage:          customApprovalMessage,
 			RequireManagerApproval:         requireManagerApproval,
@@ -227,7 +227,7 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 			RequestValidationInlineWebhook: requestValidationInlineWebhook,
 		}
 	}
-	var provisioning *shared.AddAppToAppStoreInputProvisioning
+	var provisioning *shared.AppStoreAppSettingsProvisioningInput
 	if r.Provisioning != nil {
 		groupsProvisioning := new(shared.GroupProvisioningOption)
 		if !r.Provisioning.GroupsProvisioning.IsUnknown() && !r.Provisioning.GroupsProvisioning.IsNull() {
@@ -257,25 +257,25 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput() *shared.AddAp
 		} else {
 			customProvisioningInstructions = nil
 		}
-		var provisioningWebhook *shared.AddAppToAppStoreInputProvisioningWebhook
+		var provisioningWebhook *shared.BaseInlineWebhook
 		if r.Provisioning.ProvisioningWebhook != nil {
 			var id8 string
 			id8 = r.Provisioning.ProvisioningWebhook.ID.ValueString()
 
-			provisioningWebhook = &shared.AddAppToAppStoreInputProvisioningWebhook{
+			provisioningWebhook = &shared.BaseInlineWebhook{
 				ID: id8,
 			}
 		}
-		var accessRemovalInlineWebhook *shared.AddAppToAppStoreInputAccessRemovalInlineWebhook
+		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
 		if r.Provisioning.AccessRemovalInlineWebhook != nil {
 			var id9 string
 			id9 = r.Provisioning.AccessRemovalInlineWebhook.ID.ValueString()
 
-			accessRemovalInlineWebhook = &shared.AddAppToAppStoreInputAccessRemovalInlineWebhook{
+			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
 				ID: id9,
 			}
 		}
-		provisioning = &shared.AddAppToAppStoreInputProvisioning{
+		provisioning = &shared.AppStoreAppSettingsProvisioningInput{
 			GroupsProvisioning:               groupsProvisioning,
 			TimeBasedAccess:                  timeBasedAccess,
 			AllowMultiplePermissionSelection: allowMultiplePermissionSelection,
@@ -303,11 +303,11 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 		if resp.Provisioning == nil {
 			r.Provisioning = nil
 		} else {
-			r.Provisioning = &tfTypes.AddAppToAppStoreInputProvisioning{}
+			r.Provisioning = &tfTypes.AppStoreAppSettingsProvisioningInput{}
 			if resp.Provisioning.AccessRemovalInlineWebhook == nil {
 				r.Provisioning.AccessRemovalInlineWebhook = nil
 			} else {
-				r.Provisioning.AccessRemovalInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				r.Provisioning.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
 				r.Provisioning.AccessRemovalInlineWebhook.Description = types.StringPointerValue(resp.Provisioning.AccessRemovalInlineWebhook.Description)
 				r.Provisioning.AccessRemovalInlineWebhook.HookType = types.StringValue(string(resp.Provisioning.AccessRemovalInlineWebhook.HookType))
 				r.Provisioning.AccessRemovalInlineWebhook.ID = types.StringValue(resp.Provisioning.AccessRemovalInlineWebhook.ID)
@@ -324,7 +324,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 			if resp.Provisioning.ProvisioningWebhook == nil {
 				r.Provisioning.ProvisioningWebhook = nil
 			} else {
-				r.Provisioning.ProvisioningWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				r.Provisioning.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
 				r.Provisioning.ProvisioningWebhook.Description = types.StringPointerValue(resp.Provisioning.ProvisioningWebhook.Description)
 				r.Provisioning.ProvisioningWebhook.HookType = types.StringValue(string(resp.Provisioning.ProvisioningWebhook.HookType))
 				r.Provisioning.ProvisioningWebhook.ID = types.StringValue(resp.Provisioning.ProvisioningWebhook.ID)
@@ -338,11 +338,11 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 		if resp.RequestFlow == nil {
 			r.RequestFlow = nil
 		} else {
-			r.RequestFlow = &tfTypes.AddAppToAppStoreInputRequestFlow{}
+			r.RequestFlow = &tfTypes.AppStoreAppSettingsRequestFlowInput{}
 			if resp.RequestFlow.Admins == nil {
 				r.RequestFlow.Admins = nil
 			} else {
-				r.RequestFlow.Admins = &tfTypes.AddAppToAppStoreInputAdmins{}
+				r.RequestFlow.Admins = &tfTypes.AppAdminsInput{}
 				r.RequestFlow.Admins.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.Admins.Groups) > len(resp.RequestFlow.Admins.Groups) {
 					r.RequestFlow.Admins.Groups = r.RequestFlow.Admins.Groups[:len(resp.RequestFlow.Admins.Groups)]
@@ -401,7 +401,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 			if resp.RequestFlow.AllowedGroups == nil {
 				r.RequestFlow.AllowedGroups = nil
 			} else {
-				r.RequestFlow.AllowedGroups = &tfTypes.AddAppToAppStoreInputAllowedGroups{}
+				r.RequestFlow.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 				r.RequestFlow.AllowedGroups.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.AllowedGroups.Groups) > len(resp.RequestFlow.AllowedGroups.Groups) {
 					r.RequestFlow.AllowedGroups.Groups = r.RequestFlow.AllowedGroups.Groups[:len(resp.RequestFlow.AllowedGroups.Groups)]
@@ -440,7 +440,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 			if resp.RequestFlow.Approvers == nil {
 				r.RequestFlow.Approvers = nil
 			} else {
-				r.RequestFlow.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestFlow.Approvers = &tfTypes.AppApproversInput{}
 				r.RequestFlow.Approvers.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.Approvers.Groups) > len(resp.RequestFlow.Approvers.Groups) {
 					r.RequestFlow.Approvers.Groups = r.RequestFlow.Approvers.Groups[:len(resp.RequestFlow.Approvers.Groups)]
@@ -499,7 +499,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 			if resp.RequestFlow.ApproversStage2 == nil {
 				r.RequestFlow.ApproversStage2 = nil
 			} else {
-				r.RequestFlow.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
+				r.RequestFlow.ApproversStage2 = &tfTypes.AppApproversInput{}
 				r.RequestFlow.ApproversStage2.Groups = []tfTypes.Group{}
 				if len(r.RequestFlow.ApproversStage2.Groups) > len(resp.RequestFlow.ApproversStage2.Groups) {
 					r.RequestFlow.ApproversStage2.Groups = r.RequestFlow.ApproversStage2.Groups[:len(resp.RequestFlow.ApproversStage2.Groups)]
@@ -564,7 +564,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(re
 			if resp.RequestFlow.RequestValidationInlineWebhook == nil {
 				r.RequestFlow.RequestValidationInlineWebhook = nil
 			} else {
-				r.RequestFlow.RequestValidationInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				r.RequestFlow.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
 				r.RequestFlow.RequestValidationInlineWebhook.Description = types.StringPointerValue(resp.RequestFlow.RequestValidationInlineWebhook.Description)
 				r.RequestFlow.RequestValidationInlineWebhook.HookType = types.StringValue(string(resp.RequestFlow.RequestValidationInlineWebhook.HookType))
 				r.RequestFlow.RequestValidationInlineWebhook.ID = types.StringValue(resp.RequestFlow.RequestValidationInlineWebhook.ID)

@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// AppStoreVisibility - An enumeration.
 type AppStoreVisibility string
 
 const (

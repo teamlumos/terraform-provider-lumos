@@ -17,8 +17,12 @@ type GetAccessRequestsRequest struct {
 	UserID *string `queryParam:"style=form,explode=true,name=user_id"`
 	// Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'
 	Statuses []shared.SupportRequestStatus `queryParam:"style=form,explode=true,name=statuses"`
-	Page     *int64                        `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size     *int64                        `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Sort access requests ascending (ASC) or descending (DESC) by created date.
+	Sort *string `default:"ASC" queryParam:"style=form,explode=true,name=sort"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetAccessRequestsRequest) MarshalJSON() ([]byte, error) {
@@ -58,6 +62,13 @@ func (o *GetAccessRequestsRequest) GetStatuses() []shared.SupportRequestStatus {
 		return nil
 	}
 	return o.Statuses
+}
+
+func (o *GetAccessRequestsRequest) GetSort() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Sort
 }
 
 func (o *GetAccessRequestsRequest) GetPage() *int64 {

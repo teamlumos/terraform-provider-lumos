@@ -24,7 +24,7 @@ type ActivityLog struct {
 	Outcome               string        `json:"outcome"`
 	Targets               []Targets     `json:"targets"`
 	Actor                 Actor         `json:"actor"`
-	EventBeganAt          time.Time     `json:"event_began_at"`
+	EventBeganAt          *time.Time    `json:"event_began_at,omitempty"`
 	EventMetadata         EventMetadata `json:"event_metadata"`
 }
 
@@ -81,9 +81,9 @@ func (o *ActivityLog) GetActor() Actor {
 	return o.Actor
 }
 
-func (o *ActivityLog) GetEventBeganAt() time.Time {
+func (o *ActivityLog) GetEventBeganAt() *time.Time {
 	if o == nil {
-		return time.Time{}
+		return nil
 	}
 	return o.EventBeganAt
 }

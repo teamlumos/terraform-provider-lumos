@@ -7,56 +7,23 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
-// Vendor - The vendor in which the agreement is created for
-type Vendor struct {
-	// A user friendly name for the vendor
-	Name string `json:"name"`
-}
-
-func (o *Vendor) GetName() string {
-	if o == nil {
-		return ""
-	}
-	return o.Name
-}
-
-// TotalContractCost - The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
-type TotalContractCost struct {
-	// The currency in which this cost is stored
-	Currency *string `json:"currency,omitempty"`
-	// The quantity of the cost in terms of the specified currency
-	Value int64 `json:"value"`
-}
-
-func (o *TotalContractCost) GetCurrency() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Currency
-}
-
-func (o *TotalContractCost) GetValue() int64 {
-	if o == nil {
-		return 0
-	}
-	return o.Value
-}
-
 type VendorAgreement struct {
 	// A unique identifier for this Vendor Agreement
 	ID string `json:"id"`
 	// The vendor in which the agreement is created for
 	Vendor Vendor `json:"vendor"`
 	// The start of the current term
-	StartDate types.Date `json:"start_date"`
+	StartDate *types.Date `json:"start_date"`
 	// The end of the current term
-	EndDate types.Date `json:"end_date"`
+	EndDate *types.Date `json:"end_date"`
 	// The date by which the vendor must be notified if you want to terminate the agreement
-	OptOutDate types.Date `json:"opt_out_date"`
+	OptOutDate *types.Date `json:"opt_out_date"`
 	// The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
-	TotalContractCost TotalContractCost `json:"total_contract_cost"`
+	TotalContractCost Cost `json:"total_contract_cost"`
 	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
 	LineItems []LineItem `json:"line_items"`
+	// Custom metadata tracked about each of your Vendor Agreements. The set of available options must be configured within the Lumos admin panel.
+	CustomAttributes map[string]VendorAgreementCustomAttributeOutput `json:"custom_attributes,omitempty"`
 }
 
 func (v VendorAgreement) MarshalJSON() ([]byte, error) {
@@ -84,30 +51,30 @@ func (o *VendorAgreement) GetVendor() Vendor {
 	return o.Vendor
 }
 
-func (o *VendorAgreement) GetStartDate() types.Date {
+func (o *VendorAgreement) GetStartDate() *types.Date {
 	if o == nil {
-		return types.Date{}
+		return nil
 	}
 	return o.StartDate
 }
 
-func (o *VendorAgreement) GetEndDate() types.Date {
+func (o *VendorAgreement) GetEndDate() *types.Date {
 	if o == nil {
-		return types.Date{}
+		return nil
 	}
 	return o.EndDate
 }
 
-func (o *VendorAgreement) GetOptOutDate() types.Date {
+func (o *VendorAgreement) GetOptOutDate() *types.Date {
 	if o == nil {
-		return types.Date{}
+		return nil
 	}
 	return o.OptOutDate
 }
 
-func (o *VendorAgreement) GetTotalContractCost() TotalContractCost {
+func (o *VendorAgreement) GetTotalContractCost() Cost {
 	if o == nil {
-		return TotalContractCost{}
+		return Cost{}
 	}
 	return o.TotalContractCost
 }
@@ -117,4 +84,11 @@ func (o *VendorAgreement) GetLineItems() []LineItem {
 		return []LineItem{}
 	}
 	return o.LineItems
+}
+
+func (o *VendorAgreement) GetCustomAttributes() map[string]VendorAgreementCustomAttributeOutput {
+	if o == nil {
+		return nil
+	}
+	return o.CustomAttributes
 }

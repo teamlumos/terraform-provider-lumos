@@ -3,12 +3,26 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
 type GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=permission_id"`
+	// Include inherited configurations from parent app.
+	IncludeInheritedConfigs *bool `default:"true" queryParam:"style=form,explode=true,name=include_inherited_configs"`
+}
+
+func (g GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest) GetID() string {
@@ -16,6 +30,13 @@ func (o *GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetReque
 		return ""
 	}
 	return o.ID
+}
+
+func (o *GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest) GetIncludeInheritedConfigs() *bool {
+	if o == nil {
+		return nil
+	}
+	return o.IncludeInheritedConfigs
 }
 
 type GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetResponse struct {
@@ -27,7 +48,7 @@ type GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetResponse 
 	RawResponse *http.Response
 	// Successful Response
 	RequestablePermissionOutput *shared.RequestablePermissionOutput
-	// Validation Error
+	// Not found
 	HTTPValidationError *shared.HTTPValidationError
 }
 

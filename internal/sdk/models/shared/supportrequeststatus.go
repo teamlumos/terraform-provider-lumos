@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// SupportRequestStatus - An enumeration.
 type SupportRequestStatus string
 
 const (

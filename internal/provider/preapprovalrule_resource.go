@@ -17,6 +17,7 @@ import (
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
+	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
@@ -35,15 +36,15 @@ type PreApprovalRuleResource struct {
 
 // PreApprovalRuleResourceModel describes the resource data model.
 type PreApprovalRuleResourceModel struct {
-	AppClassID             types.String                                              `tfsdk:"app_class_id"`
-	AppID                  types.String                                              `tfsdk:"app_id"`
-	AppInstanceID          types.String                                              `tfsdk:"app_instance_id"`
-	ID                     types.String                                              `tfsdk:"id"`
-	Justification          types.String                                              `tfsdk:"justification"`
-	PreapprovalWebhooks    []tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook `tfsdk:"preapproval_webhooks"`
-	PreapprovedGroups      []tfTypes.Group                                           `tfsdk:"preapproved_groups"`
-	PreapprovedPermissions []tfTypes.RequestablePermissionBase                       `tfsdk:"preapproved_permissions"`
-	TimeBasedAccess        []types.String                                            `tfsdk:"time_based_access"`
+	AppClassID             types.String                        `tfsdk:"app_class_id"`
+	AppID                  types.String                        `tfsdk:"app_id"`
+	AppInstanceID          types.String                        `tfsdk:"app_instance_id"`
+	ID                     types.String                        `tfsdk:"id"`
+	Justification          types.String                        `tfsdk:"justification"`
+	PreapprovalWebhooks    []tfTypes.BaseInlineWebhook         `tfsdk:"preapproval_webhooks"`
+	PreapprovedGroups      []tfTypes.Group                     `tfsdk:"preapproved_groups"`
+	PreapprovedPermissions []tfTypes.RequestablePermissionBase `tfsdk:"preapproved_permissions"`
+	TimeBasedAccess        []types.String                      `tfsdk:"time_based_access"`
 }
 
 func (r *PreApprovalRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -59,12 +60,12 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Description: `The ID of the service associated with this pre-approval rule.`,
 			},
 			"app_id": schema.StringAttribute{
+				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Required:    true,
-				Description: `The ID of the app associated with this pre-approval rule. Requires replacement if changed. `,
+				Description: `The ID of the app associated with this pre-approval rule. Requires replacement if changed.`,
 			},
 			"app_instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -85,6 +86,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -92,7 +96,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"hook_type": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+							Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"PRE_APPROVAL",
@@ -123,6 +127,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"app_id": schema.StringAttribute{
 							Computed:    true,
@@ -169,6 +176,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"app_class_id": schema.StringAttribute{
 							Computed:    true,
@@ -180,7 +190,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"app_instance_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the instance associated with this requestable permission.`,
+							Description: `The ID of the instance associated with this requestable permission. This may be an empty string.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -193,7 +203,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"type": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["SYNCED", "NATIVE"]`,
+							Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"SYNCED",

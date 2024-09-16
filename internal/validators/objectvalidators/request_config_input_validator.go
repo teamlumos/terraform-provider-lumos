@@ -44,7 +44,7 @@ func (v ObjectRequestConfigInputValidatorValidator) MarkdownDescription(ctx cont
 
 // Validate performs the validation.
 func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.Context, req validator.ObjectRequest, resp *validator.ObjectResponse) {
-	requestConfig := tfTypes.RequestablePermissionInputRequestConfig{}
+	requestConfig := tfTypes.RequestConfigInputCreate{}
 	req.ConfigValue.As(ctx, &requestConfig, basetypes.ObjectAsOptions{UnhandledNullAsEmpty: true, UnhandledUnknownAsEmpty: true})
 
 	// Check that none of the overrides are false or null with corresponding fields populated,
@@ -141,7 +141,7 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 	}
 }
 
-func ApproversIsPopulated(approvers *tfTypes.AddAppToAppStoreInputApprovers) bool {
+func ApproversIsPopulated(approvers *tfTypes.AppApproversInput) bool {
 	if approvers == nil {
 		return false
 	}
@@ -155,7 +155,7 @@ func ApproversIsPopulated(approvers *tfTypes.AddAppToAppStoreInputApprovers) boo
 
 // first bool indicates if its populated
 // second bool indicate if its *properly* populated
-func AllowedGroupsIsPopulatedProperly(allowedGroups *tfTypes.AddAppToAppStoreInputAllowedGroups) (bool, bool, string) {
+func AllowedGroupsIsPopulatedProperly(allowedGroups *tfTypes.AllowedGroupsConfigInput) (bool, bool, string) {
 	if allowedGroups == nil {
 		return false, false, "`allowed_groups` is not populated"
 	}

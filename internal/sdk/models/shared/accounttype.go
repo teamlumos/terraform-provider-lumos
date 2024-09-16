@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// AccountType - An enumeration.
 type AccountType string
 
 const (

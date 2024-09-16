@@ -78,7 +78,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"group_lifecycle": schema.StringAttribute{
 							Computed:    true,
-							Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+							Description: `The lifecycle of this group.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -104,15 +104,17 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Description: `Filters groups by name.`,
 			},
 			"page": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page number`,
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
 			},
 			"size": schema.Int64Attribute{
-				Computed: true,
-				Optional: true,
+				Computed:    true,
+				Optional:    true,
+				Description: `Page size`,
 			},
 			"total": schema.Int64Attribute{
 				Computed: true,

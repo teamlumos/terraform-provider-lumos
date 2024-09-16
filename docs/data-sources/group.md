@@ -29,7 +29,7 @@ data "lumos_group" "my_group" {
 
 - `app_id` (String) The ID of the app that sources this group.
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.

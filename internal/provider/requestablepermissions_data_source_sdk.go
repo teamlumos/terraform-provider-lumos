@@ -24,7 +24,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.AccessRemovalInlineWebhook == nil {
 				items1.RequestConfig.AccessRemovalInlineWebhook = nil
 			} else {
-				items1.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				items1.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
 				items1.RequestConfig.AccessRemovalInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.Description)
 				items1.RequestConfig.AccessRemovalInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.AccessRemovalInlineWebhook.HookType))
 				items1.RequestConfig.AccessRemovalInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.ID)
@@ -33,7 +33,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.AllowedGroups == nil {
 				items1.RequestConfig.AllowedGroups = nil
 			} else {
-				items1.RequestConfig.AllowedGroups = &tfTypes.AddAppToAppStoreInputAllowedGroups{}
+				items1.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 				items1.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 				for groupsCount, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
 					var groups1 tfTypes.Group
@@ -75,11 +75,11 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.RequestApprovalConfig == nil {
 				items1.RequestConfig.RequestApprovalConfig = nil
 			} else {
-				items1.RequestConfig.RequestApprovalConfig = &tfTypes.RequestablePermissionInputRequestApprovalConfig{}
+				items1.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigOutput{}
 				if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
 					items1.RequestConfig.RequestApprovalConfig.Approvers = nil
 				} else {
-					items1.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AddAppToAppStoreInputApprovers{}
+					items1.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 					items1.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 					for groupsCount1, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
 						var groups3 tfTypes.Group
@@ -132,7 +132,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 					items1.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 				} else {
-					items1.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AddAppToAppStoreInputApprovers{}
+					items1.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 					items1.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 					for groupsCount2, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
 						var groups5 tfTypes.Group
@@ -195,7 +195,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.RequestFulfillmentConfig == nil {
 				items1.RequestConfig.RequestFulfillmentConfig = nil
 			} else {
-				items1.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestablePermissionInputRequestFulfillmentConfig{}
+				items1.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
 				items1.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 				items1.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
 				if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {
@@ -217,7 +217,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook == nil {
 					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = nil
 				} else {
-					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
 					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description)
 					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType))
 					items1.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
@@ -232,7 +232,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.RequestValidationInlineWebhook == nil {
 				items1.RequestConfig.RequestValidationInlineWebhook = nil
 			} else {
-				items1.RequestConfig.RequestValidationInlineWebhook = &tfTypes.AddAppToAppStoreInputAccessRemovalInlineWebhook{}
+				items1.RequestConfig.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
 				items1.RequestConfig.RequestValidationInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.Description)
 				items1.RequestConfig.RequestValidationInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestValidationInlineWebhook.HookType))
 				items1.RequestConfig.RequestValidationInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.ID)

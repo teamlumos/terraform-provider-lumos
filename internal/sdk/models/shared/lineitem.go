@@ -2,40 +2,10 @@
 
 package shared
 
-// PerMonth - The per unit cost associated with this line item, amortized to the cost per month
-type PerMonth struct {
-	// The currency in which this cost is stored
-	Currency *string `json:"currency,omitempty"`
-	// The quantity of the cost in terms of the specified currency
-	Value int64 `json:"value"`
-}
-
-func (o *PerMonth) GetCurrency() *string {
-	if o == nil {
-		return nil
-	}
-	return o.Currency
-}
-
-func (o *PerMonth) GetValue() int64 {
-	if o == nil {
-		return 0
-	}
-	return o.Value
-}
-
-// UnitCost - The unit cost of this line item
-type UnitCost struct {
-	// The per unit cost associated with this line item, amortized to the cost per month
-	PerMonth PerMonth `json:"per_month"`
-}
-
-func (o *UnitCost) GetPerMonth() PerMonth {
-	if o == nil {
-		return PerMonth{}
-	}
-	return o.PerMonth
-}
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
+)
 
 type LineItem struct {
 	// The name of the line item as stored in Lumos
@@ -45,7 +15,22 @@ type LineItem struct {
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
 	// The unit cost of this line item
-	UnitCost UnitCost `json:"unit_cost"`
+	UnitCost LineItemUnitCost `json:"unit_cost"`
+	// The start of the line item
+	StartDate *types.Date `json:"start_date"`
+	// The end of the line item. Null for monthly line items.
+	EndDate *types.Date `json:"end_date"`
+}
+
+func (l LineItem) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LineItem) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *LineItem) GetName() string {
@@ -69,9 +54,23 @@ func (o *LineItem) GetQuantity() int64 {
 	return o.Quantity
 }
 
-func (o *LineItem) GetUnitCost() UnitCost {
+func (o *LineItem) GetUnitCost() LineItemUnitCost {
 	if o == nil {
-		return UnitCost{}
+		return LineItemUnitCost{}
 	}
 	return o.UnitCost
+}
+
+func (o *LineItem) GetStartDate() *types.Date {
+	if o == nil {
+		return nil
+	}
+	return o.StartDate
+}
+
+func (o *LineItem) GetEndDate() *types.Date {
+	if o == nil {
+		return nil
+	}
+	return o.EndDate
 }

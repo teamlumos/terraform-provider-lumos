@@ -12,7 +12,7 @@ type CreateAccessRequestInput struct {
 	BusinessJustification *string `json:"business_justification,omitempty"`
 	// [Deprecated, use access_length] Once granted, how long the access should last. Omit for permanent access.
 	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitempty"`
-	// Once granted, how long the access should last. Omit for permanent access.
+	// Once granted, how long the access should last. Omit for permanent access. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and permissions.
 	AccessLength *string `json:"access_length,omitempty"`
 	// The IDs of the requestable permissions the user is requesting access to. Omit this to just request access to the app.
 	RequestablePermissionIds []string `json:"requestable_permission_ids,omitempty"`

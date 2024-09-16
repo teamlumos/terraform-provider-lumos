@@ -7,7 +7,6 @@ import (
 	"fmt"
 )
 
-// ApproverType - An enumeration.
 type ApproverType string
 
 const (

@@ -2,57 +2,13 @@
 
 package shared
 
-// ApproverInputUser - Optionally, the approver can be a user.
-type ApproverInputUser struct {
-	// The ID of this user.
-	ID string `json:"id"`
-}
-
-func (o *ApproverInputUser) GetID() string {
-	if o == nil {
-		return ""
-	}
-	return o.ID
-}
-
-// ApproverInputGroup - Optionally, the approver can be a group.
-type ApproverInputGroup struct {
-	// The ID of this group.
-	ID *string `json:"id,omitempty"`
-	// The ID of the app that sources this group.
-	AppID *string `json:"app_id,omitempty"`
-	// The ID of this group, specific to the integration.
-	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
-}
-
-func (o *ApproverInputGroup) GetID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.ID
-}
-
-func (o *ApproverInputGroup) GetAppID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.AppID
-}
-
-func (o *ApproverInputGroup) GetIntegrationSpecificID() *string {
-	if o == nil {
-		return nil
-	}
-	return o.IntegrationSpecificID
-}
-
 type ApproverInput struct {
 	// The type of this approver.
 	Type *ApproverType `json:"type,omitempty"`
 	// Optionally, the approver can be a user.
-	User *ApproverInputUser `json:"user,omitempty"`
+	User *BaseUser `json:"user,omitempty"`
 	// Optionally, the approver can be a group.
-	Group *ApproverInputGroup `json:"group,omitempty"`
+	Group *BaseGroup `json:"group,omitempty"`
 }
 
 func (o *ApproverInput) GetType() *ApproverType {
@@ -62,14 +18,14 @@ func (o *ApproverInput) GetType() *ApproverType {
 	return o.Type
 }
 
-func (o *ApproverInput) GetUser() *ApproverInputUser {
+func (o *ApproverInput) GetUser() *BaseUser {
 	if o == nil {
 		return nil
 	}
 	return o.User
 }
 
-func (o *ApproverInput) GetGroup() *ApproverInputGroup {
+func (o *ApproverInput) GetGroup() *BaseGroup {
 	if o == nil {
 		return nil
 	}

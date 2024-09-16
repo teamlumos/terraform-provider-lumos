@@ -2,39 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
-// Lifecycle - The lifecycle of this group.
-type Lifecycle string
-
-const (
-	LifecycleSynced Lifecycle = "SYNCED"
-	LifecycleNative Lifecycle = "NATIVE"
-)
-
-func (e Lifecycle) ToPointer() *Lifecycle {
-	return &e
-}
-func (e *Lifecycle) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "SYNCED":
-		fallthrough
-	case "NATIVE":
-		*e = Lifecycle(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for Lifecycle: %v", v)
-	}
-}
-
 type Group struct {
 	// The ID of this group.
 	ID *string `json:"id,omitempty"`
@@ -47,20 +14,9 @@ type Group struct {
 	// The description of this group.
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
-	GroupLifecycle *Lifecycle `default:"SYNCED" json:"group_lifecycle"`
+	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitempty"`
 	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
-}
-
-func (g Group) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *Group) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (o *Group) GetID() *string {
