@@ -16,6 +16,82 @@ AppStoreApp Resource
 resource "lumos_app_store_app" "my_appstoreapp" {
   app_id                      = "...my_app_id..."
   custom_request_instructions = "...my_custom_request_instructions..."
+  provisioning = {
+    access_removal_inline_webhook = {
+      id = "...my_id..."
+    }
+    allow_multiple_permission_selection = false
+    custom_provisioning_instructions    = "...my_custom_provisioning_instructions..."
+    groups_provisioning                 = "GROUPS_AND_VISIBLE"
+    manual_steps_needed                 = true
+    provisioning_webhook = {
+      id = "...my_id..."
+    }
+    time_based_access = [
+      "90 days"
+    ]
+  }
+  request_flow = {
+    admins = {
+      groups = [
+        {
+          app_id                  = "...my_app_id..."
+          id                      = "...my_id..."
+          integration_specific_id = "...my_integration_specific_id..."
+        }
+      ]
+      users = [
+        {
+          id = "...my_id..."
+        }
+      ]
+    }
+    allowed_groups = {
+      groups = [
+        {
+          app_id                  = "...my_app_id..."
+          id                      = "...my_id..."
+          integration_specific_id = "...my_integration_specific_id..."
+        }
+      ]
+      type = "SPECIFIED_GROUPS"
+    }
+    approvers = {
+      groups = [
+        {
+          app_id                  = "...my_app_id..."
+          id                      = "...my_id..."
+          integration_specific_id = "...my_integration_specific_id..."
+        }
+      ]
+      users = [
+        {
+          id = "...my_id..."
+        }
+      ]
+    }
+    approvers_stage_2 = {
+      groups = [
+        {
+          app_id                  = "...my_app_id..."
+          id                      = "...my_id..."
+          integration_specific_id = "...my_integration_specific_id..."
+        }
+      ]
+      users = [
+        {
+          id = "...my_id..."
+        }
+      ]
+    }
+    custom_approval_message = "...my_custom_approval_message..."
+    discoverability         = "LIMITED"
+    request_validation_inline_webhook = {
+      id = "...my_id..."
+    }
+    require_additional_approval = false
+    require_manager_approval    = false
+  }
 }
 ```
 
@@ -41,7 +117,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
-- `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String) The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
 
@@ -53,7 +129,7 @@ Optional:
 - `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
 - `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.
 - `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `groups_provisioning` (String) An enumeration. Requires replacement if changed. ; must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]
+- `groups_provisioning` (String) If enabled, Approvers must choose a group to provision the user to for access requests. must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.
 - `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.
 - `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
 - `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.
@@ -63,12 +139,12 @@ Optional:
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -77,12 +153,12 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -97,7 +173,7 @@ Optional:
 - `approvers` (Attributes) AppStore App approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
 - `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `discoverability` (String) An enumeration. Requires replacement if changed. ; must be one of ["FULL", "LIMITED", "NONE"]
+- `discoverability` (String) AppStore App visibility. must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.
@@ -122,7 +198,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -132,14 +208,14 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
 
 
 
@@ -149,7 +225,7 @@ Read-Only:
 Optional:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific. Requires replacement if changed. ; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"
+- `type` (String) The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>
 ### Nested Schema for `request_flow.allowed_groups.groups`
@@ -163,7 +239,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -189,7 +265,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -199,14 +275,14 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
 
 
 
@@ -230,7 +306,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -240,14 +316,14 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
 
 
 
@@ -256,12 +332,12 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Requires replacement if changed. ; Not Null
+- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
 
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 ## Import

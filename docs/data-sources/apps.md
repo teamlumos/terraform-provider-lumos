@@ -14,10 +14,10 @@ Apps DataSource
 
 ```terraform
 data "lumos_apps" "my_apps" {
-  exact_match = false
+  exact_match = true
   name_search = "...my_name_search..."
-  page        = 1
-  size        = 6
+  page        = 3
+  size        = 19
 }
 ```
 
@@ -49,6 +49,6 @@ Read-Only:
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
-- `status` (String) An enumeration. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String) The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.

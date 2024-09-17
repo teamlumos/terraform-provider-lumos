@@ -16,6 +16,26 @@ PreApprovalRule Resource
 resource "lumos_pre_approval_rule" "my_preapprovalrule" {
   app_id        = "...my_app_id..."
   justification = "...my_justification..."
+  preapproval_webhooks = [
+    {
+      id = "...my_id..."
+    }
+  ]
+  preapproved_groups = [
+    {
+      app_id                  = "...my_app_id..."
+      id                      = "...my_id..."
+      integration_specific_id = "...my_integration_specific_id..."
+    }
+  ]
+  preapproved_permissions = [
+    {
+      id = "...my_id..."
+    }
+  ]
+  time_based_access = [
+    "4 hours"
+  ]
 }
 ```
 
@@ -50,7 +70,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -66,7 +86,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -84,4 +104,4 @@ Read-Only:
 - `app_id` (String) The ID of the app associated with this requestable permission.
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission.
 - `label` (String) The label of this requestable permission.
-- `type` (String) An enumeration. must be one of ["SYNCED", "NATIVE"]
+- `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]

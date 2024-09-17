@@ -65,7 +65,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook.`,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -88,7 +88,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					},
 					"groups_provisioning": schema.StringAttribute{
 						Computed:    true,
-						Description: `An enumeration. must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]`,
+						Description: `If enabled, Approvers must choose a group to provision the user to for access requests.`,
 					},
 					"manual_steps_needed": schema.BoolAttribute{
 						Computed:    true,
@@ -103,7 +103,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook.`,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -144,7 +144,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -188,7 +188,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -214,7 +214,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -238,7 +238,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 							},
 							"type": schema.StringAttribute{
 								Computed:    true,
-								Description: `The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
+								Description: `The type of this allowed groups config, can be all groups or specific.`,
 							},
 						},
 						Description: `The allowed groups config associated with this config.`,
@@ -260,7 +260,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -304,7 +304,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -330,7 +330,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -374,7 +374,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -389,7 +389,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 					},
 					"discoverability": schema.StringAttribute{
 						Computed:    true,
-						Description: `An enumeration. must be one of ["FULL", "LIMITED", "NONE"]`,
+						Description: `AppStore App visibility.`,
 					},
 					"request_validation_inline_webhook": schema.SingleNestedAttribute{
 						Computed: true,
@@ -400,7 +400,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook.`,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,

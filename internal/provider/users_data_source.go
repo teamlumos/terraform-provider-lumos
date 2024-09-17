@@ -76,7 +76,7 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 						},
 						"status": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+							Description: `The status of this user.`,
 						},
 					},
 				},

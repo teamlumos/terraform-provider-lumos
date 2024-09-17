@@ -25,6 +25,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	custom_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
+	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
@@ -62,10 +63,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 		Attributes: map[string]schema.Attribute{
 			"app_class_id": schema.StringAttribute{
 				Computed: true,
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Optional:    true,
 				Description: `The ID of the service associated with this requestable permission.`,
 			},
 			"app_id": schema.StringAttribute{
@@ -74,10 +75,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 			},
 			"app_instance_id": schema.StringAttribute{
 				Computed: true,
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Optional:    true,
 				Description: `Optionally, an app has an identifer associated with it's particular instance.`,
 			},
 			"id": schema.StringAttribute{
@@ -93,17 +94,17 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 			},
 			"request_config": schema.SingleNestedAttribute{
 				Computed: true,
+				Optional: true,
 				PlanModifiers: []planmodifier.Object{
 					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 				},
-				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"access_removal_inline_webhook": schema.SingleNestedAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Object{
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
-						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
 								Computed: true,
@@ -117,7 +118,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -130,10 +131,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `The ID of this inline webhook. Not Null`,
 								Validators: []validator.String{
 									speakeasy_stringvalidators.NotNull(),
@@ -151,25 +152,31 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Object{
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
-						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"groups": schema.SetNestedAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Set{
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
-								Optional: true,
 								NestedObject: schema.NestedAttributeObject{
+									Validators: []validator.Object{
+										speakeasy_objectvalidators.NotNull(),
+									},
+									PlanModifiers: []planmodifier.Object{
+										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+									},
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
 											Computed: true,
+											Optional: true,
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Optional:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
@@ -181,10 +188,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed: true,
+											Default:  stringdefault.StaticString("SYNCED"),
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+											Description: `The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]`,
 											Validators: []validator.String{
 												stringvalidator.OneOf(
 													"SYNCED",
@@ -194,18 +202,18 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
+											Optional: true,
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Optional:    true,
 											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
 											Computed: true,
+											Optional: true,
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Optional:    true,
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
@@ -228,12 +236,12 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"type": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
+								Default:  stringdefault.StaticString("ALL_GROUPS"),
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
-								Default:     stringdefault.StaticString("ALL_GROUPS"),
-								Description: `The type of this allowed groups config, can be all groups or specific. must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Default: "ALL_GROUPS"`,
+								Description: `The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"ALL_GROUPS",
@@ -246,20 +254,20 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 					"allowed_groups_override": schema.BoolAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Bool{
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Optional:    true,
 						Description: `Indicates if allowed groups is overriden from the app-level settings.`,
 					},
 					"appstore_visibility": schema.StringAttribute{
 						Computed: true,
+						Optional: true,
+						Default:  stringdefault.StaticString("HIDDEN"),
 						PlanModifiers: []planmodifier.String{
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Optional:    true,
-						Default:     stringdefault.StaticString("HIDDEN"),
-						Description: `The appstore visibility of this request config. must be one of ["HIDDEN", "VISIBLE"]; Default: "HIDDEN"`,
+						Description: `The appstore visibility of this request config. Default: "HIDDEN"; must be one of ["HIDDEN", "VISIBLE"]`,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"HIDDEN",
@@ -269,32 +277,38 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 					"request_approval_config": schema.SingleNestedAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Object{
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
-						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"approvers": schema.SingleNestedAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Object{
 									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 								},
-								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"groups": schema.SetNestedAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.Set{
 											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 										},
-										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
+											Validators: []validator.Object{
+												speakeasy_objectvalidators.NotNull(),
+											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
@@ -306,10 +320,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"group_lifecycle": schema.StringAttribute{
 													Computed: true,
+													Default:  stringdefault.StaticString("SYNCED"),
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+													Description: `The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]`,
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"SYNCED",
@@ -319,18 +334,18 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this group.`,
 												},
 												"integration_specific_id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
@@ -353,11 +368,17 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									},
 									"users": schema.SetNestedAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.Set{
 											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 										},
-										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
+											Validators: []validator.Object{
+												speakeasy_objectvalidators.NotNull(),
+											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
 													Computed: true,
@@ -382,10 +403,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this user. Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
@@ -396,7 +417,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+													Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"STAGED",
@@ -415,25 +436,31 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"approvers_stage_2": schema.SingleNestedAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Object{
 									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 								},
-								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"groups": schema.SetNestedAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.Set{
 											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 										},
-										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
+											Validators: []validator.Object{
+												speakeasy_objectvalidators.NotNull(),
+											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
@@ -445,10 +472,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"group_lifecycle": schema.StringAttribute{
 													Computed: true,
+													Default:  stringdefault.StaticString("SYNCED"),
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+													Description: `The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]`,
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"SYNCED",
@@ -458,18 +486,18 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this group.`,
 												},
 												"integration_specific_id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
@@ -492,11 +520,17 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									},
 									"users": schema.SetNestedAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.Set{
 											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 										},
-										Optional: true,
 										NestedObject: schema.NestedAttributeObject{
+											Validators: []validator.Object{
+												speakeasy_objectvalidators.NotNull(),
+											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
 													Computed: true,
@@ -521,10 +555,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
+													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Optional:    true,
 													Description: `The ID of this user. Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
@@ -535,7 +569,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `An enumeration. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
+													Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
 													Validators: []validator.String{
 														stringvalidator.OneOf(
 															"STAGED",
@@ -554,28 +588,28 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"custom_approval_message": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.`,
 							},
 							"custom_approval_message_override": schema.BoolAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `Indicates if custom_approval_message is overridden.`,
 							},
 							"manager_approval": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
+								Default:  stringdefault.StaticString("NONE"),
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
-								Default:     stringdefault.StaticString("NONE"),
-								Description: `Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]; Default: "NONE"`,
+								Description: `Manager approval can be configured as necessary to continue. Default: "NONE"; must be one of ["NONE", "INITIAL_APPROVAL"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"NONE",
@@ -585,18 +619,18 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"request_approval_config_override": schema.BoolAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `Indicates if approval flow is overridden.`,
 							},
 							"require_additional_approval": schema.BoolAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
 							},
 						},
@@ -604,43 +638,43 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 					"request_fulfillment_config": schema.SingleNestedAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Object{
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
-						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"manual_instructions": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `The manual instructions that go along.`,
 							},
 							"manual_steps_needed": schema.BoolAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `Whether manual steps are needed.`,
 							},
 							"provisioning_group": schema.SingleNestedAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Object{
 									objectplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 								},
-								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"app_id": schema.StringAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.String{
 											stringplanmodifier.RequiresReplaceIfConfigured(),
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Optional:    true,
-										Description: `The ID of the app that sources this group. Requires replacement if changed. `,
+										Description: `The ID of the app that sources this group. Requires replacement if changed.`,
 									},
 									"description": schema.StringAttribute{
 										Computed: true,
@@ -651,10 +685,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									},
 									"group_lifecycle": schema.StringAttribute{
 										Computed: true,
+										Default:  stringdefault.StaticString("SYNCED"),
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+										Description: `The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]`,
 										Validators: []validator.String{
 											stringvalidator.OneOf(
 												"SYNCED",
@@ -664,21 +699,21 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									},
 									"id": schema.StringAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.String{
 											stringplanmodifier.RequiresReplaceIfConfigured(),
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Optional:    true,
-										Description: `The ID of this group. Requires replacement if changed. `,
+										Description: `The ID of this group. Requires replacement if changed.`,
 									},
 									"integration_specific_id": schema.StringAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.String{
 											stringplanmodifier.RequiresReplaceIfConfigured(),
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Optional:    true,
-										Description: `The ID of this group, specific to the integration. Requires replacement if changed. `,
+										Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
 									},
 									"name": schema.StringAttribute{
 										Computed: true,
@@ -695,14 +730,14 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Description: `The ID of the app that sources this group.`,
 									},
 								},
-								Description: `The provisioning group optionally associated with this config. Requires replacement if changed. `,
+								Description: `The provisioning group optionally associated with this config. Requires replacement if changed.`,
 							},
 							"provisioning_webhook": schema.SingleNestedAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Object{
 									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 								},
-								Optional: true,
 								Attributes: map[string]schema.Attribute{
 									"description": schema.StringAttribute{
 										Computed: true,
@@ -716,7 +751,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+										Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 										Validators: []validator.String{
 											stringvalidator.OneOf(
 												"PRE_APPROVAL",
@@ -729,10 +764,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									},
 									"id": schema.StringAttribute{
 										Computed: true,
+										Optional: true,
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Optional:    true,
 										Description: `The ID of this inline webhook. Not Null`,
 										Validators: []validator.String{
 											speakeasy_stringvalidators.NotNull(),
@@ -750,19 +785,19 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"time_based_access": schema.ListAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.List{
 									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								ElementType: types.StringType,
 								Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.`,
 							},
 							"time_based_access_override": schema.BoolAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `Indicates if time based access is overriden.`,
 							},
 						},
@@ -770,10 +805,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 					"request_validation_inline_webhook": schema.SingleNestedAttribute{
 						Computed: true,
+						Optional: true,
 						PlanModifiers: []planmodifier.Object{
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
-						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
 								Computed: true,
@@ -787,7 +822,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -800,10 +835,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
+								Optional: true,
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Optional:    true,
 								Description: `The ID of this inline webhook. Not Null`,
 								Validators: []validator.String{
 									speakeasy_stringvalidators.NotNull(),

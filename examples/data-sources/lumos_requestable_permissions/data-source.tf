@@ -1,8 +1,8 @@
 data "lumos_requestable_permissions" "my_requestablepermissions" {
   app_id       = "...my_app_id..."
-  exact_match  = true
+  exact_match  = false
   in_app_store = false
-  page         = 7
+  page         = 9
   search_term  = "...my_search_term..."
-  size         = 10
+  size         = 46
 }

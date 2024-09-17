@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -17,6 +18,7 @@ import (
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
+	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
@@ -59,12 +61,12 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Description: `The ID of the service associated with this pre-approval rule.`,
 			},
 			"app_id": schema.StringAttribute{
+				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Required:    true,
-				Description: `The ID of the app associated with this pre-approval rule. Requires replacement if changed. `,
+				Description: `The ID of the app associated with this pre-approval rule. Requires replacement if changed.`,
 			},
 			"app_instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -85,6 +87,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -92,7 +97,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"hook_type": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+							Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"PRE_APPROVAL",
@@ -123,6 +128,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"app_id": schema.StringAttribute{
 							Computed:    true,
@@ -135,7 +143,8 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"group_lifecycle": schema.StringAttribute{
 							Computed:    true,
-							Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
+							Default:     stringdefault.StaticString("SYNCED"),
+							Description: `The lifecycle of this group. Default: "SYNCED"; must be one of ["SYNCED", "NATIVE"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"SYNCED",
@@ -169,6 +178,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
 					Attributes: map[string]schema.Attribute{
 						"app_class_id": schema.StringAttribute{
 							Computed:    true,
@@ -193,7 +205,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"type": schema.StringAttribute{
 							Computed:    true,
-							Description: `An enumeration. must be one of ["SYNCED", "NATIVE"]`,
+							Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"SYNCED",

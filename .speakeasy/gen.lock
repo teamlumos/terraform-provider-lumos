@@ -3,176 +3,44 @@ id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
   docChecksum: 8c43483effe5dc326d375dcc864b71eb
   docVersion: 0.1.0
-  speakeasyVersion: 1.349.1
-  generationVersion: 2.382.1
-  releaseVersion: 0.3.8
-  configChecksum: bcea65b49f778ee9584de6d303adb987
+  speakeasyVersion: 1.398.1
+  generationVersion: 2.415.8
+  releaseVersion: 0.4.0
+  configChecksum: cd8fe41518c6cf96146b277439f1024f
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.4
-    core: 3.24.5
-    globalSecurity: 2.81.6
+    core: 3.24.11
+    envVarSecurityUsage: 0.1.0
+    globalSecurity: 2.81.8
     globalServerURLs: 2.82.1
     nameOverrides: 2.81.2
     retries: 2.81.1
     sets: 0.1.2
-    unions: 2.81.15
+    unions: 2.81.16
 generatedFiles:
-  - internal/sdk/core.go
-  - internal/sdk/appstore.go
-  - internal/sdk/vendormanagement.go
-  - internal/sdk/meta.go
-  - internal/sdk/integrationwebhooks.go
-  - internal/sdk/lumos.go
-  - internal/sdk/models/errors/sdkerror.go
-  - internal/sdk/retry/config.go
-  - internal/sdk/types/bigint.go
-  - internal/sdk/types/date.go
-  - internal/sdk/types/datetime.go
-  - internal/sdk/types/decimal.go
-  - internal/sdk/types/pointers.go
-  - internal/sdk/internal/utils/contenttype.go
-  - internal/sdk/internal/utils/form.go
-  - internal/sdk/internal/utils/headers.go
-  - internal/sdk/internal/utils/json.go
-  - internal/sdk/internal/utils/pathparams.go
-  - internal/sdk/internal/utils/queryparams.go
-  - internal/sdk/internal/utils/requestbody.go
-  - internal/sdk/internal/utils/retries.go
-  - internal/sdk/internal/utils/security.go
-  - internal/sdk/internal/utils/utils.go
-  - internal/sdk/models/operations/listapps.go
-  - internal/sdk/models/operations/createapp.go
-  - internal/sdk/models/operations/getappcategories.go
-  - internal/sdk/models/operations/getapp.go
-  - internal/sdk/models/operations/updateapp.go
-  - internal/sdk/models/operations/getappsettings.go
-  - internal/sdk/models/operations/updateappsettings.go
-  - internal/sdk/models/operations/currentuser.go
-  - internal/sdk/models/operations/listusers.go
-  - internal/sdk/models/operations/getuser.go
-  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
-  - internal/sdk/models/operations/getaccounts.go
-  - internal/sdk/models/operations/getgroupmembership.go
-  - internal/sdk/models/operations/getgroup.go
-  - internal/sdk/models/operations/getgroups.go
-  - internal/sdk/models/operations/getuploadjobstate.go
-  - internal/sdk/models/operations/getactivitylogs.go
-  - internal/sdk/models/operations/postaccounts.go
-  - internal/sdk/models/operations/activityrecords.go
-  - internal/sdk/models/operations/getactivityrecordsjobstate.go
-  - internal/sdk/models/operations/getappstorepermissionsforappappstorerequestablepermissionsget.go
-  - internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go
-  - internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go
-  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
-  - internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go
-  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
-  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
-  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
-  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
-  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
-  - internal/sdk/models/operations/getappstoreappsettings.go
-  - internal/sdk/models/operations/updateappstoreappsettings.go
-  - internal/sdk/models/operations/getappstoreapps.go
-  - internal/sdk/models/operations/addapptoappstore.go
-  - internal/sdk/models/operations/getappstoreapp.go
-  - internal/sdk/models/operations/removeappfromappstore.go
-  - internal/sdk/models/operations/createaccessrequest.go
-  - internal/sdk/models/operations/getaccessrequest.go
-  - internal/sdk/models/operations/getaccessrequests.go
-  - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
-  - internal/sdk/models/operations/createfounddocumentjson.go
-  - internal/sdk/models/operations/createorder.go
-  - internal/sdk/models/operations/lumosart.go
-  - internal/sdk/models/operations/lumoslivenesscheck.go
-  - internal/sdk/models/operations/processairbasemilestoneevent.go
-  - internal/sdk/models/shared/httpvalidationerror.go
-  - internal/sdk/models/shared/validationerror.go
-  - internal/sdk/models/shared/pageapp.go
-  - internal/sdk/models/shared/app.go
-  - internal/sdk/models/shared/discoverysource.go
-  - internal/sdk/models/shared/domainappstatus.go
-  - internal/sdk/models/shared/appinputcreate.go
-  - internal/sdk/models/shared/appsettingoutput.go
-  - internal/sdk/models/shared/inlinewebhooktype.go
-  - internal/sdk/models/shared/timebasedaccessoptions.go
-  - internal/sdk/models/shared/groupprovisioningoption.go
-  - internal/sdk/models/shared/user.go
-  - internal/sdk/models/shared/userlifecyclestatus.go
-  - internal/sdk/models/shared/group.go
-  - internal/sdk/models/shared/appstorevisibility.go
-  - internal/sdk/models/shared/appsettinginput.go
-  - internal/sdk/models/shared/baseuser.go
-  - internal/sdk/models/shared/basegroup.go
-  - internal/sdk/models/shared/pageuser.go
-  - internal/sdk/models/shared/inlinewebhook.go
-  - internal/sdk/models/shared/pageaccount.go
-  - internal/sdk/models/shared/account.go
-  - internal/sdk/models/shared/accounttype.go
-  - internal/sdk/models/shared/pagegroup.go
-  - internal/sdk/models/shared/jobstateoutput.go
-  - internal/sdk/models/shared/flowstate.go
-  - internal/sdk/models/shared/limitoffsetpageactivitylog.go
-  - internal/sdk/models/shared/links.go
-  - internal/sdk/models/shared/activitylog.go
-  - internal/sdk/models/shared/accountsuploadinput.go
-  - internal/sdk/models/shared/accountinput.go
-  - internal/sdk/models/shared/attributeinput.go
-  - internal/sdk/models/shared/permissioninput.go
-  - internal/sdk/models/shared/accountlifecyclestatus.go
-  - internal/sdk/models/shared/activityrecordoutput.go
-  - internal/sdk/models/shared/runinfostatus.go
-  - internal/sdk/models/shared/activityrecordinput.go
-  - internal/sdk/models/shared/activityrecord.go
-  - internal/sdk/models/shared/activityrecordeventtype.go
-  - internal/sdk/models/shared/synctaskoutput.go
-  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
-  - internal/sdk/models/shared/requestablepermissionoutput.go
-  - internal/sdk/models/shared/requestapprovalstageoutput.go
-  - internal/sdk/models/shared/approveroutput.go
-  - internal/sdk/models/shared/approvertype.go
-  - internal/sdk/models/shared/requestablepermissioninput.go
-  - internal/sdk/models/shared/requestapprovalstageinput.go
-  - internal/sdk/models/shared/approverinput.go
-  - internal/sdk/models/shared/requestablepermissioninputupdate.go
-  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
-  - internal/sdk/models/shared/preapprovalruleoutput.go
-  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
-  - internal/sdk/models/shared/permissiontype.go
-  - internal/sdk/models/shared/preapprovalruleinput.go
-  - internal/sdk/models/shared/baseinlinewebhook.go
-  - internal/sdk/models/shared/requestablepermissionbase.go
-  - internal/sdk/models/shared/preapprovalruleupdateinput.go
-  - internal/sdk/models/shared/appstoreappsettingsoutput.go
-  - internal/sdk/models/shared/appstoreappsettingsinput.go
-  - internal/sdk/models/shared/pageappstoreapp.go
-  - internal/sdk/models/shared/appstoreapp.go
-  - internal/sdk/models/shared/addapptoappstoreinput.go
-  - internal/sdk/models/shared/accessrequest.go
-  - internal/sdk/models/shared/supportrequeststatus.go
-  - internal/sdk/models/shared/createaccessrequestinput.go
-  - internal/sdk/models/shared/pageaccessrequest.go
-  - internal/sdk/models/shared/pagevendoragreement.go
-  - internal/sdk/models/shared/vendoragreement.go
-  - internal/sdk/models/shared/lineitem.go
-  - internal/sdk/models/shared/founddocumentsupload.go
-  - internal/sdk/models/shared/lineitemupload.go
-  - internal/sdk/models/shared/fileupload.go
-  - internal/sdk/models/shared/fileuploadtype.go
-  - internal/sdk/models/shared/orderinput.go
-  - internal/sdk/models/shared/ordercustomattribute.go
-  - internal/sdk/models/shared/ordercustomattributetype.go
-  - internal/sdk/models/shared/lineiteminput.go
-  - internal/sdk/models/shared/airbasepurchaserequestevent.go
-  - internal/sdk/models/shared/security.go
-  - internal/sdk/.gitignore
-  - internal/sdk/models/operations/options.go
-  - internal/sdk/.gitattributes
-  - internal/sdk/internal/hooks/hooks.go
-  - internal/sdk/CONTRIBUTING.md
+  - .gitattributes
+  - CONTRIBUTING.md
+  - USAGE.md
   - examples/README.md
+  - examples/data-sources/lumos_app/data-source.tf
+  - examples/data-sources/lumos_app_store_app/data-source.tf
+  - examples/data-sources/lumos_app_store_app_settings/data-source.tf
+  - examples/data-sources/lumos_apps/data-source.tf
+  - examples/data-sources/lumos_group/data-source.tf
+  - examples/data-sources/lumos_groups/data-source.tf
+  - examples/data-sources/lumos_requestable_permission/data-source.tf
+  - examples/data-sources/lumos_requestable_permissions/data-source.tf
+  - examples/data-sources/lumos_user/data-source.tf
+  - examples/data-sources/lumos_users/data-source.tf
+  - examples/provider/provider.tf
+  - examples/resources/lumos_app/import.sh
+  - examples/resources/lumos_app/resource.tf
+  - examples/resources/lumos_app_store_app/import.sh
+  - examples/resources/lumos_app_store_app/resource.tf
+  - examples/resources/lumos_pre_approval_rule/resource.tf
+  - examples/resources/lumos_requestable_permission/import.sh
   - go.mod
   - go.sum
   - internal/planmodifiers/boolplanmodifier/suppress_diff.go
@@ -185,6 +53,25 @@ generatedFiles:
   - internal/planmodifiers/setplanmodifier/suppress_diff.go
   - internal/planmodifiers/stringplanmodifier/suppress_diff.go
   - internal/planmodifiers/utils/state_check.go
+  - internal/provider/app_data_source.go
+  - internal/provider/app_data_source_sdk.go
+  - internal/provider/app_resource.go
+  - internal/provider/app_resource_sdk.go
+  - internal/provider/apps_data_source.go
+  - internal/provider/apps_data_source_sdk.go
+  - internal/provider/appstoreapp_data_source.go
+  - internal/provider/appstoreapp_data_source_sdk.go
+  - internal/provider/appstoreapp_resource.go
+  - internal/provider/appstoreapp_resource_sdk.go
+  - internal/provider/appstoreappsettings_data_source.go
+  - internal/provider/appstoreappsettings_data_source_sdk.go
+  - internal/provider/group_data_source.go
+  - internal/provider/group_data_source_sdk.go
+  - internal/provider/groups_data_source.go
+  - internal/provider/groups_data_source_sdk.go
+  - internal/provider/preapprovalrule_resource.go
+  - internal/provider/preapprovalrule_resource_sdk.go
+  - internal/provider/provider.go
   - internal/provider/reflect/diags.go
   - internal/provider/reflect/doc.go
   - internal/provider/reflect/generic_attr_value.go
@@ -199,7 +86,184 @@ generatedFiles:
   - internal/provider/reflect/primitive.go
   - internal/provider/reflect/slice.go
   - internal/provider/reflect/struct.go
+  - internal/provider/requestablepermission_data_source.go
+  - internal/provider/requestablepermission_data_source_sdk.go
+  - internal/provider/requestablepermission_resource.go
+  - internal/provider/requestablepermission_resource_sdk.go
+  - internal/provider/requestablepermissions_data_source.go
+  - internal/provider/requestablepermissions_data_source_sdk.go
+  - internal/provider/types/add_app_to_app_store_input_access_removal_inline_webhook.go
+  - internal/provider/types/add_app_to_app_store_input_admins.go
+  - internal/provider/types/add_app_to_app_store_input_allowed_groups.go
+  - internal/provider/types/add_app_to_app_store_input_approvers.go
+  - internal/provider/types/add_app_to_app_store_input_provisioning.go
+  - internal/provider/types/add_app_to_app_store_input_request_flow.go
+  - internal/provider/types/app.go
+  - internal/provider/types/group.go
+  - internal/provider/types/requestable_permission_base.go
+  - internal/provider/types/requestable_permission_input_request_approval_config.go
+  - internal/provider/types/requestable_permission_input_request_config.go
+  - internal/provider/types/requestable_permission_input_request_fulfillment_config.go
+  - internal/provider/types/requestable_permission_output.go
+  - internal/provider/types/user.go
+  - internal/provider/user_data_source.go
+  - internal/provider/user_data_source_sdk.go
+  - internal/provider/users_data_source.go
+  - internal/provider/users_data_source_sdk.go
   - internal/provider/utils.go
+  - internal/sdk/.gitattributes
+  - internal/sdk/.gitignore
+  - internal/sdk/CONTRIBUTING.md
+  - internal/sdk/appstore.go
+  - internal/sdk/core.go
+  - internal/sdk/integrationwebhooks.go
+  - internal/sdk/internal/hooks/hooks.go
+  - internal/sdk/internal/utils/contenttype.go
+  - internal/sdk/internal/utils/form.go
+  - internal/sdk/internal/utils/headers.go
+  - internal/sdk/internal/utils/json.go
+  - internal/sdk/internal/utils/pathparams.go
+  - internal/sdk/internal/utils/queryparams.go
+  - internal/sdk/internal/utils/requestbody.go
+  - internal/sdk/internal/utils/retries.go
+  - internal/sdk/internal/utils/security.go
+  - internal/sdk/internal/utils/utils.go
+  - internal/sdk/lumos.go
+  - internal/sdk/meta.go
+  - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/models/operations/activityrecords.go
+  - internal/sdk/models/operations/addapptoappstore.go
+  - internal/sdk/models/operations/createaccessrequest.go
+  - internal/sdk/models/operations/createapp.go
+  - internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go
+  - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
+  - internal/sdk/models/operations/createorder.go
+  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
+  - internal/sdk/models/operations/currentuser.go
+  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
+  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
+  - internal/sdk/models/operations/getaccessrequest.go
+  - internal/sdk/models/operations/getaccessrequests.go
+  - internal/sdk/models/operations/getaccounts.go
+  - internal/sdk/models/operations/getactivitylogs.go
+  - internal/sdk/models/operations/getactivityrecordsjobstate.go
+  - internal/sdk/models/operations/getapp.go
+  - internal/sdk/models/operations/getappcategories.go
+  - internal/sdk/models/operations/getappsettings.go
+  - internal/sdk/models/operations/getappstoreapp.go
+  - internal/sdk/models/operations/getappstoreapps.go
+  - internal/sdk/models/operations/getappstoreappsettings.go
+  - internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go
+  - internal/sdk/models/operations/getappstorepermissionsforappappstorerequestablepermissionsget.go
+  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
+  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
+  - internal/sdk/models/operations/getgroup.go
+  - internal/sdk/models/operations/getgroupmembership.go
+  - internal/sdk/models/operations/getgroups.go
+  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
+  - internal/sdk/models/operations/getuploadjobstate.go
+  - internal/sdk/models/operations/getuser.go
+  - internal/sdk/models/operations/listapps.go
+  - internal/sdk/models/operations/listusers.go
+  - internal/sdk/models/operations/listvendoragreements.go
+  - internal/sdk/models/operations/lumosart.go
+  - internal/sdk/models/operations/lumoslivenesscheck.go
+  - internal/sdk/models/operations/options.go
+  - internal/sdk/models/operations/postaccounts.go
+  - internal/sdk/models/operations/processairbasemilestoneevent.go
+  - internal/sdk/models/operations/removeappfromappstore.go
+  - internal/sdk/models/operations/updateapp.go
+  - internal/sdk/models/operations/updateappsettings.go
+  - internal/sdk/models/operations/updateappstoreappsettings.go
+  - internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go
+  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
+  - internal/sdk/models/shared/accessrequest.go
+  - internal/sdk/models/shared/account.go
+  - internal/sdk/models/shared/accountinput.go
+  - internal/sdk/models/shared/accountlifecyclestatus.go
+  - internal/sdk/models/shared/accountsuploadinput.go
+  - internal/sdk/models/shared/accounttype.go
+  - internal/sdk/models/shared/activitylog.go
+  - internal/sdk/models/shared/activityrecord.go
+  - internal/sdk/models/shared/activityrecordeventtype.go
+  - internal/sdk/models/shared/activityrecordinput.go
+  - internal/sdk/models/shared/activityrecordoutput.go
+  - internal/sdk/models/shared/addapptoappstoreinput.go
+  - internal/sdk/models/shared/airbasepurchaserequestevent.go
+  - internal/sdk/models/shared/app.go
+  - internal/sdk/models/shared/appinputcreate.go
+  - internal/sdk/models/shared/approverinput.go
+  - internal/sdk/models/shared/approveroutput.go
+  - internal/sdk/models/shared/approvertype.go
+  - internal/sdk/models/shared/appsettinginput.go
+  - internal/sdk/models/shared/appsettingoutput.go
+  - internal/sdk/models/shared/appstoreapp.go
+  - internal/sdk/models/shared/appstoreappsettingsinput.go
+  - internal/sdk/models/shared/appstoreappsettingsoutput.go
+  - internal/sdk/models/shared/appstorevisibility.go
+  - internal/sdk/models/shared/attributeinput.go
+  - internal/sdk/models/shared/basegroup.go
+  - internal/sdk/models/shared/baseinlinewebhook.go
+  - internal/sdk/models/shared/baseuser.go
+  - internal/sdk/models/shared/createaccessrequestinput.go
+  - internal/sdk/models/shared/discoverysource.go
+  - internal/sdk/models/shared/domainappstatus.go
+  - internal/sdk/models/shared/fileupload.go
+  - internal/sdk/models/shared/fileuploadtype.go
+  - internal/sdk/models/shared/flowstate.go
+  - internal/sdk/models/shared/founddocumentsupload.go
+  - internal/sdk/models/shared/group.go
+  - internal/sdk/models/shared/groupprovisioningoption.go
+  - internal/sdk/models/shared/httpvalidationerror.go
+  - internal/sdk/models/shared/inlinewebhook.go
+  - internal/sdk/models/shared/inlinewebhooktype.go
+  - internal/sdk/models/shared/jobstateoutput.go
+  - internal/sdk/models/shared/limitoffsetpageactivitylog.go
+  - internal/sdk/models/shared/lineitem.go
+  - internal/sdk/models/shared/lineiteminput.go
+  - internal/sdk/models/shared/lineitemupload.go
+  - internal/sdk/models/shared/links.go
+  - internal/sdk/models/shared/ordercustomattribute.go
+  - internal/sdk/models/shared/ordercustomattributetype.go
+  - internal/sdk/models/shared/orderinput.go
+  - internal/sdk/models/shared/pageaccessrequest.go
+  - internal/sdk/models/shared/pageaccount.go
+  - internal/sdk/models/shared/pageapp.go
+  - internal/sdk/models/shared/pageappstoreapp.go
+  - internal/sdk/models/shared/pagegroup.go
+  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
+  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
+  - internal/sdk/models/shared/pageuser.go
+  - internal/sdk/models/shared/pagevendoragreement.go
+  - internal/sdk/models/shared/permissioninput.go
+  - internal/sdk/models/shared/permissiontype.go
+  - internal/sdk/models/shared/preapprovalruleinput.go
+  - internal/sdk/models/shared/preapprovalruleoutput.go
+  - internal/sdk/models/shared/preapprovalruleupdateinput.go
+  - internal/sdk/models/shared/requestablepermissionbase.go
+  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
+  - internal/sdk/models/shared/requestablepermissioninput.go
+  - internal/sdk/models/shared/requestablepermissioninputupdate.go
+  - internal/sdk/models/shared/requestablepermissionoutput.go
+  - internal/sdk/models/shared/requestapprovalstageinput.go
+  - internal/sdk/models/shared/requestapprovalstageoutput.go
+  - internal/sdk/models/shared/runinfostatus.go
+  - internal/sdk/models/shared/security.go
+  - internal/sdk/models/shared/supportrequeststatus.go
+  - internal/sdk/models/shared/synctaskoutput.go
+  - internal/sdk/models/shared/timebasedaccessoptions.go
+  - internal/sdk/models/shared/user.go
+  - internal/sdk/models/shared/userlifecyclestatus.go
+  - internal/sdk/models/shared/validationerror.go
+  - internal/sdk/models/shared/vendoragreement.go
+  - internal/sdk/retry/config.go
+  - internal/sdk/types/bigint.go
+  - internal/sdk/types/date.go
+  - internal/sdk/types/datetime.go
+  - internal/sdk/types/decimal.go
+  - internal/sdk/types/pointers.go
+  - internal/sdk/vendormanagement.go
   - internal/validators/DateValidator.go
   - internal/validators/ExactlyOneChild.go
   - internal/validators/JSONParseValidator.go
@@ -216,66 +280,330 @@ generatedFiles:
   - main.go
   - terraform-registry-manifest.json
   - tools/tools.go
-  - internal/provider/types/add_app_to_app_store_input_access_removal_inline_webhook.go
-  - internal/provider/types/add_app_to_app_store_input_provisioning.go
-  - internal/provider/types/group.go
-  - internal/provider/types/user.go
-  - internal/provider/types/add_app_to_app_store_input_admins.go
-  - internal/provider/types/add_app_to_app_store_input_allowed_groups.go
-  - internal/provider/types/add_app_to_app_store_input_approvers.go
-  - internal/provider/types/add_app_to_app_store_input_request_flow.go
-  - internal/provider/types/requestable_permission_base.go
-  - internal/provider/types/requestable_permission_input_request_approval_config.go
-  - internal/provider/types/requestable_permission_input_request_fulfillment_config.go
-  - internal/provider/types/requestable_permission_input_request_config.go
-  - internal/provider/types/app.go
-  - internal/provider/types/requestable_permission_output.go
-  - USAGE.md
-  - internal/provider/provider.go
-  - examples/provider/provider.tf
-  - examples/resources/lumos_app/import.sh
-  - internal/provider/app_resource.go
-  - internal/provider/app_resource_sdk.go
-  - examples/resources/lumos_app/resource.tf
-  - examples/resources/lumos_app_store_app/import.sh
-  - internal/provider/appstoreapp_resource.go
-  - internal/provider/appstoreapp_resource_sdk.go
-  - examples/resources/lumos_app_store_app/resource.tf
-  - internal/provider/preapprovalrule_resource.go
-  - internal/provider/preapprovalrule_resource_sdk.go
-  - examples/resources/lumos_pre_approval_rule/resource.tf
-  - examples/resources/lumos_requestable_permission/import.sh
-  - internal/provider/requestablepermission_resource.go
-  - internal/provider/requestablepermission_resource_sdk.go
-  - internal/provider/app_data_source.go
-  - internal/provider/app_data_source_sdk.go
-  - examples/data-sources/lumos_app/data-source.tf
-  - internal/provider/apps_data_source.go
-  - internal/provider/apps_data_source_sdk.go
-  - examples/data-sources/lumos_apps/data-source.tf
-  - internal/provider/appstoreapp_data_source.go
-  - internal/provider/appstoreapp_data_source_sdk.go
-  - examples/data-sources/lumos_app_store_app/data-source.tf
-  - internal/provider/appstoreappsettings_data_source.go
-  - internal/provider/appstoreappsettings_data_source_sdk.go
-  - examples/data-sources/lumos_app_store_app_settings/data-source.tf
-  - internal/provider/group_data_source.go
-  - internal/provider/group_data_source_sdk.go
-  - examples/data-sources/lumos_group/data-source.tf
-  - internal/provider/groups_data_source.go
-  - internal/provider/groups_data_source_sdk.go
-  - examples/data-sources/lumos_groups/data-source.tf
-  - internal/provider/requestablepermission_data_source.go
-  - internal/provider/requestablepermission_data_source_sdk.go
-  - examples/data-sources/lumos_requestable_permission/data-source.tf
-  - internal/provider/requestablepermissions_data_source.go
-  - internal/provider/requestablepermissions_data_source_sdk.go
-  - examples/data-sources/lumos_requestable_permissions/data-source.tf
-  - internal/provider/user_data_source.go
-  - internal/provider/user_data_source_sdk.go
-  - examples/data-sources/lumos_user/data-source.tf
-  - internal/provider/users_data_source.go
-  - internal/provider/users_data_source_sdk.go
-  - examples/data-sources/lumos_users/data-source.tf
-  - .gitattributes
-  - CONTRIBUTING.md
+examples:
+  listApps:
+    speakeasy-default-list-apps:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  createApp:
+    speakeasy-default-create-app:
+      requestBody:
+        application/json: {"name": "<value>", "category": "<value>", "description": "Virtual maximized help-desk"}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
+        "422": {}
+  getAppCategories:
+    speakeasy-default-get-app-categories:
+      responses:
+        "200":
+          application/json: []
+  getApp:
+    speakeasy-default-get-app:
+      parameters:
+        path:
+          app_id: "<id>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
+        "422": {}
+  updateApp:
+    speakeasy-default-update-app:
+      parameters:
+        path:
+          app_id: "<id>"
+      requestBody:
+        application/json: {"name": "<value>", "category": "<value>", "description": "Vision-oriented next generation ability"}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
+        "422": {}
+  getAppSettings:
+    speakeasy-default-get-app-settings:
+      parameters:
+        path:
+          app_id: "<value>"
+  updateAppSettings:
+    speakeasy-default-update-app-settings:
+      parameters:
+        path:
+          app_id: "<value>"
+  currentUser:
+    speakeasy-default-current-user:
+      responses:
+        "200":
+          application/json: {"id": "<id>"}
+  listUsers:
+    speakeasy-default-list-users:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  getUser:
+    speakeasy-default-get-user:
+      parameters:
+        path:
+          user_id: "<value>"
+      responses:
+        "200":
+          application/json: {"id": "<id>"}
+        "422": {}
+  get_inline_webhooks_inline_webhooks_get:
+    speakeasy-default-get-inline-webhooks-inline-webhooks-get:
+      responses:
+        "200":
+          application/json: []
+  getAccounts:
+    speakeasy-default-get-accounts:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  getGroupMembership:
+    speakeasy-default-get-group-membership:
+      parameters:
+        path:
+          group_id: "<value>"
+        query: {}
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  getGroup:
+    speakeasy-default-get-group:
+      parameters:
+        path:
+          group_id: "<value>"
+  getGroups:
+    speakeasy-default-get-groups:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  getUploadJobState:
+    speakeasy-default-get-upload-job-state:
+      parameters:
+        path:
+          job_id: "<value>"
+      responses:
+        "200":
+          application/json: {"job_id": "<value>"}
+        "422": {}
+  getActivityLogs:
+    speakeasy-default-get-activity-logs:
+      responses:
+        "200":
+          application/json: {"items": [], "links": {"first": "/api/v1/users?limit=1&offset1", "last": "/api/v1/users?limit=1&offset1", "self": "/api/v1/users?limit=1&offset1", "next": "/api/v1/users?limit=1&offset1", "prev": "/api/v1/users?limit=1&offset1"}}
+        "422": {}
+  postAccounts:
+    speakeasy-default-post-accounts:
+      requestBody:
+        application/json: {"app_id": "<value>"}
+      responses:
+        "200":
+          application/json: {"job_id": "<value>"}
+        "422": {}
+  activityRecords:
+    speakeasy-default-activity-records:
+      requestBody:
+        application/json: {"records": []}
+      responses:
+        "200":
+          application/json: {"job": {"job_id": "<value>"}}
+        "422": {}
+  getActivityRecordsJobState:
+    speakeasy-default-get-activity-records-job-state:
+      parameters:
+        path:
+          job_id: "<value>"
+      responses:
+        "200":
+          application/json: {"job_id": "<value>"}
+        "422": {}
+  get_appstore_permissions_for_app_appstore_requestable_permissions_get:
+    speakeasy-default-get-appstore-permissions-for-app-appstore-requestable-permissions-get:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  create_appstore_requestable_permission_appstore_requestable_permissions_post:
+    speakeasy-default-create-appstore-requestable-permission-appstore-requestable-permissions-post:
+      requestBody:
+        application/json: {"app_id": "<value>", "label": "<value>"}
+      responses:
+        "201":
+          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  get_appstore_permission_appstore_requestable_permissions__permission_id__get:
+    speakeasy-default-get-appstore-permission-appstore-requestable-permissions-permission-id-get:
+      parameters:
+        path:
+          permission_id: "<id>"
+      responses:
+        "200":
+          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  delete_appstore_permission_appstore_requestable_permissions__permission_id__delete:
+    speakeasy-default-delete-appstore-permission-appstore-requestable-permissions-permission-id-delete:
+      parameters:
+        path:
+          permission_id: "<id>"
+  update_appstore_permission_appstore_requestable_permissions__permission_id__patch:
+    speakeasy-default-update-appstore-permission-appstore-requestable-permissions-permission-id-patch:
+      parameters:
+        path:
+          permission_id: "<id>"
+      responses:
+        "200":
+          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  get_appstore_pre_approval_rules_for_app_appstore_pre_approval_rules_get:
+    speakeasy-default-get-appstore-pre-approval-rules-for-app-appstore-pre-approval-rules-get:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  create_pre_approval_rule_appstore_pre_approval_rules_post:
+    speakeasy-default-create-pre-approval-rule-appstore-pre-approval-rules-post:
+      requestBody:
+        application/json: {"justification": "<value>", "app_id": "<value>"}
+      responses:
+        "201":
+          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  get_appstore_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__get:
+    speakeasy-default-get-appstore-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-get:
+      parameters:
+        path:
+          pre_approval_rule_id: "<value>"
+      responses:
+        "200":
+          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete:
+    speakeasy-default-delete-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-delete:
+      parameters:
+        path:
+          pre_approval_rule_id: "<id>"
+  update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch:
+    speakeasy-default-update-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-patch:
+      parameters:
+        path:
+          pre_approval_rule_id: "<id>"
+      requestBody:
+        application/json: {"justification": "<value>"}
+      responses:
+        "200":
+          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
+        "422": {}
+  getAppStoreAppSettings:
+    speakeasy-default-get-app-store-app-settings:
+      parameters:
+        path:
+          app_id: "<id>"
+  updateAppStoreAppSettings:
+    speakeasy-default-update-app-store-app-settings:
+      parameters:
+        path:
+          app_id: "<id>"
+  getAppStoreApps:
+    speakeasy-default-get-app-store-apps:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  addAppToAppStore:
+    speakeasy-default-add-app-to-app-store:
+      requestBody:
+        application/json: {"app_id": "<value>"}
+  getAppStoreApp:
+    speakeasy-default-get-app-store-app:
+      parameters:
+        path:
+          app_id: "<value>"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "NEEDS_REVIEW", "sources": [], "allow_multiple_permission_selection": true}
+        "422": {}
+  removeAppFromAppStore:
+    speakeasy-default-remove-app-from-app-store:
+      parameters:
+        path:
+          app_id: "<value>"
+      responses:
+        "200":
+          application/json: "<value>"
+        "422": {}
+  createAccessRequest:
+    speakeasy-default-create-access-request:
+      requestBody:
+        application/json: {"app_id": "<value>"}
+      responses:
+        "201":
+          application/json: []
+        "422": {}
+  getAccessRequest:
+    speakeasy-default-get-access-request:
+      parameters:
+        path:
+          access_request_id: "<value>"
+        query: {}
+      responses:
+        "200":
+          application/json: {"id": "<id>", "app_id": "<value>", "app_name": "<value>", "requester_user": {"id": "<id>"}, "target_user": {"id": "<id>"}, "status": "EXPIRED"}
+        "422": {}
+  getAccessRequests:
+    speakeasy-default-get-access-requests:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  listVendorAgreements:
+    speakeasy-default-list-vendor-agreements:
+      responses:
+        "200":
+          application/json: {"items": []}
+        "422": {}
+  createFoundDocument:
+    speakeasy-default-create-found-document-json:
+      requestBody:
+        application/json: {"unique_identifier": "<value>", "files": []}
+      responses:
+        "200":
+          application/json: "<value>"
+        "422": {}
+    speakeasy-default-create-found-document-multipart:
+      requestBody:
+        multipart/form-data: {"unique_identifier": "<value>", "files": []}
+      responses:
+        "200":
+          application/json: "<value>"
+        "422": {}
+  createOrder:
+    speakeasy-default-create-order:
+      requestBody:
+        application/json: {"unique_identifier": "<value>", "vendor": {"name": "<value>"}, "start_date": "2024-01-07", "end_date": "2022-01-30", "auto_renewal": false, "line_items": []}
+      responses:
+        "201":
+          application/json: "<value>"
+        "422": {}
+  Lumos Art.:
+    speakeasy-default-lumos-art:
+      responses:
+        "200":
+          text/plain: "<value>"
+  Lumos liveness check:
+    speakeasy-default-lumos-liveness-check: {}
+  processAirbaseMilestoneEvent:
+    speakeasy-default-process-airbase-milestone-event:
+      parameters:
+        path:
+          domain_app_uuid: "<value>"
+      requestBody:
+        application/json: {"id": "<id>", "object": "<value>", "type": "<value>", "created_date": "<value>"}
+      responses:
+        "200":
+          application/json: "<value>"
+        "422": {}
