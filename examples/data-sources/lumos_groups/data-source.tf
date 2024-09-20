@@ -1,6 +1,6 @@
 data "lumos_groups" "my_groups" {
   app_id                  = "...my_app_id..."
-  exact_match             = false
+  exact_match             = true
   integration_specific_id = "...my_integration_specific_id..."
   name                    = "...my_name..."
   page                    = 1
