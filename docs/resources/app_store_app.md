@@ -20,10 +20,10 @@ resource "lumos_app_store_app" "my_appstoreapp" {
     access_removal_inline_webhook = {
       id = "...my_id..."
     }
-    allow_multiple_permission_selection = false
+    allow_multiple_permission_selection = true
     custom_provisioning_instructions    = "...my_custom_provisioning_instructions..."
     groups_provisioning                 = "GROUPS_AND_VISIBLE"
-    manual_steps_needed                 = true
+    manual_steps_needed                 = false
     provisioning_webhook = {
       id = "...my_id..."
     }
@@ -89,8 +89,8 @@ resource "lumos_app_store_app" "my_appstoreapp" {
     request_validation_inline_webhook = {
       id = "...my_id..."
     }
-    require_additional_approval = false
-    require_manager_approval    = false
+    require_additional_approval = true
+    require_manager_approval    = true
   }
 }
 ```

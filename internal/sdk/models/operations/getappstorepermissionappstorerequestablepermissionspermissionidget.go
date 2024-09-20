@@ -48,7 +48,7 @@ type GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetResponse 
 	RawResponse *http.Response
 	// Successful Response
 	RequestablePermissionOutput *shared.RequestablePermissionOutput
-	// Not found
+	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
 

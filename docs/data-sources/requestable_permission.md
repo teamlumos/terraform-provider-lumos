@@ -15,7 +15,7 @@ RequestablePermission DataSource
 ```terraform
 data "lumos_requestable_permission" "my_requestablepermission" {
   id                        = "...my_id..."
-  include_inherited_configs = true
+  include_inherited_configs = false
 }
 ```
 

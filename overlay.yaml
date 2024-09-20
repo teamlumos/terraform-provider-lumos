@@ -230,3 +230,7 @@ actions:
   - target: $["components"]["schemas"]["RequestConfigInputUpdate"]
     update:
       "x-speakeasy-plan-validators": "RequestConfigInputValidator"
+
+  # Don't attempt to unmarshal 404 respones
+  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["get"]["responses"]["404"]["content"]
+    remove: true
