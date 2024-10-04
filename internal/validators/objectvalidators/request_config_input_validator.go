@@ -132,7 +132,7 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 					)
 				}
 			} 
-		} else if requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+		} else if (requestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil && len(requestConfig.RequestFulfillmentConfig.TimeBasedAccess) > 0) {
 			AddAttributeErrorToResp(resp, req, 
 				"Invalid time based access",
 				fmt.Sprintf("`time_based_access_override` is %s but `time_based_access` is populated (%s)", requestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.String(), requestConfig.RequestFulfillmentConfig.TimeBasedAccess),
