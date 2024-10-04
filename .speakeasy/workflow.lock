@@ -1,17 +1,17 @@
-speakeasyVersion: 1.401.0
+speakeasyVersion: 1.409.0
 sources:
     FastAPI:
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:a9527aa01be7cc280557bba53b907b1ba7ae3fd0c599fa8cdf73e7d773319487
-        sourceBlobDigest: sha256:72e0b6cd83dddce57322b10d5eb19b866bbec2fb1d2553ab5bfe3ece0622d6f0
+        sourceRevisionDigest: sha256:58253b02a007d87e3c08181e0f32579a56e29741f56a8556f2e20c422cf05b6d
+        sourceBlobDigest: sha256:a6cb682a9eeb374f99f580d6adc607886b5f6b0e1b3fb13162f5b48ca6da3a89
         tags:
             - latest
 targets:
     lumos-terraform-provider-target:
         source: FastAPI
         sourceNamespace: fast-api
-        sourceRevisionDigest: sha256:a9527aa01be7cc280557bba53b907b1ba7ae3fd0c599fa8cdf73e7d773319487
-        sourceBlobDigest: sha256:72e0b6cd83dddce57322b10d5eb19b866bbec2fb1d2553ab5bfe3ece0622d6f0
+        sourceRevisionDigest: sha256:58253b02a007d87e3c08181e0f32579a56e29741f56a8556f2e20c422cf05b6d
+        sourceBlobDigest: sha256:a6cb682a9eeb374f99f580d6adc607886b5f6b0e1b3fb13162f5b48ca6da3a89
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest

@@ -130,7 +130,7 @@ func TestAccPermissionResource(t *testing.T) {
 				Config: providerConfig() + fmt.Sprintf(`
 				resource "lumos_requestable_permission" "test_manager_approval" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "manager approval"
 					request_config = {
 						appstore_visibility = "HIDDEN"
 						request_approval_config = {
@@ -147,7 +147,7 @@ func TestAccPermissionResource(t *testing.T) {
 				Config: providerConfig() + fmt.Sprintf(`
 				resource "lumos_requestable_permission" "test_approvers" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "Approvers"
 					request_config = {
 						appstore_visibility = "HIDDEN"
 						request_approval_config = {
@@ -180,9 +180,9 @@ func TestAccPermissionResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test_manager_approval" {
+				resource "lumos_requestable_permission" "test_lowercase_time_based_access" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "Lowercase time based access"
 					request_config = {
 						request_fulfillment_config = {
 							time_based_access_override = true
@@ -191,11 +191,30 @@ func TestAccPermissionResource(t *testing.T) {
 					}
 				}`, os.Getenv("APP_ID")),
 			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		ErrorCheck: func(err error) error {
+			if err == nil {
+				return errors.New("expected error but got none")
+			}
+
+			// some simple example with string matching
+			if strings.Contains(err.Error(), "Invalid time based access") {
+				return nil
+			}
+
+			// return original error if no match
+			return err
+		},
+		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test_manager_approval" {
+				resource "lumos_requestable_permission" "test_uppercase_time_based_access" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "Upper case time based access"
 					request_config = {
 						request_fulfillment_config = {
 							time_based_access_override = true
@@ -204,11 +223,30 @@ func TestAccPermissionResource(t *testing.T) {
 					}
 				}`, os.Getenv("APP_ID")),
 			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		ErrorCheck: func(err error) error {
+			if err == nil {
+				return errors.New("expected error but got none")
+			}
+
+			// some simple example with string matching
+			if strings.Contains(err.Error(), "Invalid time based access") {
+				return nil
+			}
+
+			// return original error if no match
+			return err
+		},
+		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test_manager_approval" {
+				resource "lumos_requestable_permission" "test_override_but_no_time_based_access" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "Override but no time based access"
 					request_config = {
 						request_fulfillment_config = {
 							time_based_access_override = true
@@ -217,14 +255,59 @@ func TestAccPermissionResource(t *testing.T) {
 					}
 				}`, os.Getenv("APP_ID")),
 			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		ErrorCheck: func(err error) error {
+			if err == nil {
+				return errors.New("expected error but got none")
+			}
+
+			// some simple example with string matching
+			if strings.Contains(err.Error(), "Invalid time based access") {
+				return nil
+			}
+
+			// return original error if no match
+			return err
+		},
+		Steps: []resource.TestStep{
 			{
 				Config: providerConfig() + fmt.Sprintf(`
-				resource "lumos_requestable_permission" "test_manager_approval" {
+				resource "lumos_requestable_permission" "test_no_override_but_time_based_access" {
 					app_id      = "%s"
-					label       = "Permission Label"
+					label       = "No override but time based access"
 					request_config = {
 						request_fulfillment_config = {
 							time_based_access_override = false
+							time_based_access = ["Unlimited"]
+						}
+					}
+				}`, os.Getenv("APP_ID")),
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		ErrorCheck: func(err error) error {
+			if err == nil {
+				return nil
+			}
+
+			return err
+		},
+		Steps: []resource.TestStep{
+			{
+				Config: providerConfig() + fmt.Sprintf(`
+				resource "lumos_requestable_permission" "test_override_with_time_based_access" {
+					app_id      = "%s"
+					label       = "Override with time based access"
+					request_config = {
+						request_fulfillment_config = {
+							time_based_access_override = true
 							time_based_access = ["Unlimited"]
 						}
 					}
