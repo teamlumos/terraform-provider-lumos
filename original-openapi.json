@@ -4971,11 +4971,12 @@
       "HTTPValidationError": {
         "properties": {
           "detail": {
+            "title": "Detail",
+            "description": "The detail of the validation error",
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
+            }
           }
         },
         "type": "object",
