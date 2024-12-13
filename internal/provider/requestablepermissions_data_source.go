@@ -57,7 +57,6 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 				Description: `Filters requestable permissions by the ID of the app to which they belong.`,
 			},
 			"exact_match": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Search filter should be an exact match.`,
 			},
@@ -66,7 +65,6 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 				Description: `Filters permissions by visibility in the AppStore.`,
 			},
 			"include_inherited_configs": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Include inherited configurations from parent app.`,
 			},

@@ -50,7 +50,6 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Search filter should be an exact match.`,
 			},

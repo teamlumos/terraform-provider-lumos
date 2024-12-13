@@ -151,9 +151,9 @@ func New(opts ...SDKOption) *Lumos {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "0.1.0",
-			SDKVersion:        "0.0.1",
-			GenVersion:        "2.429.0",
-			UserAgent:         "speakeasy-sdk/go 0.0.1 2.429.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			SDKVersion:        "0.7.0",
+			GenVersion:        "2.479.3",
+			UserAgent:         "speakeasy-sdk/terraform 0.7.0 2.479.3 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			Hooks:             hooks.New(),
 		},
 	}

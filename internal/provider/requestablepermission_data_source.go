@@ -66,7 +66,6 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 				Required: true,
 			},
 			"include_inherited_configs": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Include inherited configurations from parent app.`,
 			},

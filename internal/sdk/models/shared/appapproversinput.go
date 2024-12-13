@@ -2,11 +2,26 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type AppApproversInput struct {
 	// Groups assigned as support request approvers.
-	Groups []BaseGroup `json:"groups,omitempty"`
+	Groups []BaseGroup `json:"groups"`
 	// Users assigned as support request approvers.
-	Users []BaseUser `json:"users,omitempty"`
+	Users []BaseUser `json:"users"`
+}
+
+func (a AppApproversInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppApproversInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *AppApproversInput) GetGroups() []BaseGroup {

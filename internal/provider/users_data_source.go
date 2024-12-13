@@ -50,7 +50,6 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `If a search_term is provided, only accept exact matches.`,
 			},
