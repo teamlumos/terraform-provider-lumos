@@ -17,8 +17,8 @@ const (
 
 // VendorAgreementCustomAttributeInputValue - The value of the attribute for an individual Order
 type VendorAgreementCustomAttributeInputValue struct {
-	Str         *string
-	ArrayOfUser []User
+	Str         *string `queryParam:"inline"`
+	ArrayOfUser []User  `queryParam:"inline"`
 
 	Type VendorAgreementCustomAttributeInputValueType
 }

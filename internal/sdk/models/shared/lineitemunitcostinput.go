@@ -17,8 +17,8 @@ const (
 
 // LineItemUnitCostInputValue - The cost in terms of the specified currency (4 decimal places supported)
 type LineItemUnitCostInputValue struct {
-	Number *float64
-	Str    *string
+	Number *float64 `queryParam:"inline"`
+	Str    *string  `queryParam:"inline"`
 
 	Type LineItemUnitCostInputValueType
 }

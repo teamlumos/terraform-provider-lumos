@@ -56,7 +56,6 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 				Description: `Filters groups by the ID of the app to which they belong.`,
 			},
 			"exact_match": schema.BoolAttribute{
-				Computed:    true,
 				Optional:    true,
 				Description: `Search filter should be an exact match.`,
 			},

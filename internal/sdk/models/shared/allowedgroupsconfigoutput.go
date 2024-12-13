@@ -39,7 +39,7 @@ type AllowedGroupsConfigOutput struct {
 	// The type of this allowed groups config, can be all groups or specific.
 	Type *AllowedGroupsConfigType `default:"ALL_GROUPS" json:"type"`
 	// The groups allowed to request this permission.
-	Groups []Group `json:"groups,omitempty"`
+	Groups []Group `json:"groups"`
 }
 
 func (a AllowedGroupsConfigOutput) MarshalJSON() ([]byte, error) {

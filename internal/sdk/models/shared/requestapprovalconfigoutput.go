@@ -18,7 +18,7 @@ type RequestApprovalConfigOutput struct {
 	// AppStore App stage 2 approvers assigned.
 	ApproversStage2 *AppApproversOutput `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
-	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages,omitempty"`
+	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages"`
 }
 
 func (o *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
