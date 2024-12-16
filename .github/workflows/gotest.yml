@@ -17,47 +17,6 @@ on:
   push:
     branches:
       - 'main'
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'The exact version of the go-coverage-report toolgit  to use.'
-        required: true
-        default: "v1.0.2"
-
-      sha256sum:
-        description: 'Optional SHA256 checksum of the tarball when downloading the go-coverage-report binary.'
-        required: false
-
-      coverage-artifact-name:
-        description: 'The name of the artifact containing the code coverage results.'
-        required: true
-        default: "code-coverage"
-
-      coverage-file-name:
-        description: 'The name of the file containing the code coverage results.'
-        required: true
-        default: "coverage.txt"
-
-      root-package:
-        description: |
-          The Go import path of the tested repository to add as a prefix to all paths of the
-          changed files. This is useful to map the changed files (e.g., ["foo/my_file.go"]
-          to their coverage profile which uses the full package name to identify the files
-          (e.g., "github.com/fgrosse/example/foo/my_file.go"). Note that currently, 
-          packages with a different name than their directory are not supported.
-        required: false
-        default: "github.com/teamlumos/terraform-provider-lumos"
-
-      trim:
-        description: 'Trim a prefix in the "Impacted Packages" column of the markdown report.'
-        required: false
-
-      skip-comment:
-        description: |
-          Skip creating or updating the pull request comment. This may be useful when you want
-          to generate the coverage report and modify it in your own scripts.
-        required: false
-        default: 'false'
 
 jobs:
   unit_tests:

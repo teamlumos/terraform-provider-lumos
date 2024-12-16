@@ -52,7 +52,7 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 	allowedGroupsPopulated, allowedGroupsPopulatedProperly, errorMessage := AllowedGroupsIsPopulatedProperly(requestConfig.AllowedGroups)
 	if requestConfig.AllowedGroupsOverride.ValueBool() == false {
 		if allowedGroupsPopulated {
-			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` is populated", requestConfig.AllowedGroupsOverride.String()))
+			AddAttributeErrorToResp(resp, req, "Invalid allowed groups", fmt.Sprintf("`allowed_groups_override` is %s but `allowed_groups` is populated (%s)", requestConfig.AllowedGroupsOverride.String(), requestConfig.AllowedGroups))
 		}
 	} else if !allowedGroupsPopulatedProperly {
 		// allowed_groups_override is true
@@ -89,12 +89,12 @@ func (v ObjectRequestConfigInputValidatorValidator) ValidateObject(ctx context.C
 		} else if (ApproversIsPopulated(requestConfig.RequestApprovalConfig.Approvers))	{
 			AddAttributeErrorToResp(resp, req, 
 				"Invalid request approval config",
-				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` are populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
+				fmt.Sprintf("`request_approval_config_override` is %s but `approvers` are populated (%s)", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String(), requestConfig.RequestApprovalConfig.Approvers),
 			)
 		} else if (!requestConfig.RequestApprovalConfig.ManagerApproval.IsNull()) {
 			AddAttributeErrorToResp(resp, req, 
 				"Invalid request approval config",
-				fmt.Sprintf("`request_approval_config_override` is %s but `manager_approval` is populated", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String()),
+				fmt.Sprintf("`request_approval_config_override` is %s but `manager_approval` is populated (%s)", requestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.String(), requestConfig.RequestApprovalConfig.ManagerApproval),
 			)
 		}
 	
