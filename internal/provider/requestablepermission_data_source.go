@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -33,7 +32,7 @@ type RequestablePermissionDataSourceModel struct {
 	AppID                   types.String                `tfsdk:"app_id"`
 	AppInstanceID           types.String                `tfsdk:"app_instance_id"`
 	ID                      types.String                `tfsdk:"id"`
-	IncludeInheritedConfigs types.Bool                  `tfsdk:"include_inherited_configs"`
+	IncludeInheritedConfigs types.Bool                  `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
 	Label                   types.String                `tfsdk:"label"`
 	RequestConfig           tfTypes.RequestConfigOutput `tfsdk:"request_config"`
 	Type                    types.String                `tfsdk:"type"`
@@ -84,8 +83,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this inline webhook.`,
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -138,8 +136,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 								Description: `The groups allowed to request this permission.`,
 							},
 							"type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this allowed groups config, can be all groups or specific.`,
+								Computed: true,
 							},
 						},
 						Description: `The allowed groups config associated with this config.`,
@@ -371,8 +368,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 										Description: `The description of this inline webhook.`,
 									},
 									"hook_type": schema.StringAttribute{
-										Computed:    true,
-										Description: `The type of this inline webhook.`,
+										Computed: true,
 									},
 									"id": schema.StringAttribute{
 										Computed:    true,
@@ -405,8 +401,7 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this inline webhook.`,
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -420,7 +415,6 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 						Description: `A request validation webhook can be optionally associated with this config.`,
 					},
 				},
-				Description: `The request config associated with this requestable permission.`,
 			},
 			"type": schema.StringAttribute{
 				Computed:    true,
@@ -468,20 +462,13 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	includeInheritedConfigs := new(bool)
-	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		ID:                      id,
-		IncludeInheritedConfigs: includeInheritedConfigs,
-	}
-	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, request)
+	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -493,10 +480,6 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -505,7 +488,11 @@ func (r *RequestablePermissionDataSource) Read(ctx context.Context, req datasour
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedRequestablePermissionOutput(res.RequestablePermissionOutput)
+	resp.Diagnostics.Append(data.RefreshFromSharedRequestablePermissionOutput(ctx, res.RequestablePermissionOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

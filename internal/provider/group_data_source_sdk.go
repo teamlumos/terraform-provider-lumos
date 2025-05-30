@@ -3,11 +3,29 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *GroupDataSourceModel) RefreshFromSharedGroup(resp *shared.Group) {
+func (r *GroupDataSourceModel) ToOperationsGetGroupRequest(ctx context.Context) (*operations.GetGroupRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var groupID string
+	groupID = r.GroupID.ValueString()
+
+	out := operations.GetGroupRequest{
+		GroupID: groupID,
+	}
+
+	return &out, diags
+}
+
+func (r *GroupDataSourceModel) RefreshFromSharedGroup(ctx context.Context, resp *shared.Group) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.AppID = types.StringPointerValue(resp.AppID)
 		r.Description = types.StringPointerValue(resp.Description)
@@ -21,4 +39,6 @@ func (r *GroupDataSourceModel) RefreshFromSharedGroup(resp *shared.Group) {
 		r.Name = types.StringPointerValue(resp.Name)
 		r.SourceAppID = types.StringPointerValue(resp.SourceAppID)
 	}
+
+	return diags
 }

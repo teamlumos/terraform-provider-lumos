@@ -14,8 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -33,19 +33,20 @@ type AppResource struct {
 
 // AppResourceModel describes the resource data model.
 type AppResourceModel struct {
-	AllowMultiplePermissionSelection types.Bool     `tfsdk:"allow_multiple_permission_selection"`
-	AppClassID                       types.String   `tfsdk:"app_class_id"`
-	Category                         types.String   `tfsdk:"category"`
-	Description                      types.String   `tfsdk:"description"`
-	ID                               types.String   `tfsdk:"id"`
-	InstanceID                       types.String   `tfsdk:"instance_id"`
-	LogoURL                          types.String   `tfsdk:"logo_url"`
-	Name                             types.String   `tfsdk:"name"`
-	RequestInstructions              types.String   `tfsdk:"request_instructions"`
-	Sources                          []types.String `tfsdk:"sources"`
-	Status                           types.String   `tfsdk:"status"`
-	UserFriendlyLabel                types.String   `tfsdk:"user_friendly_label"`
-	WebsiteURL                       types.String   `tfsdk:"website_url"`
+	AllowMultiplePermissionSelection types.Bool       `tfsdk:"allow_multiple_permission_selection"`
+	AppClassID                       types.String     `tfsdk:"app_class_id"`
+	Category                         types.String     `tfsdk:"category"`
+	Description                      types.String     `tfsdk:"description"`
+	ID                               types.String     `tfsdk:"id"`
+	InstanceID                       types.String     `tfsdk:"instance_id"`
+	Links                            tfTypes.AppLinks `tfsdk:"links"`
+	LogoURL                          types.String     `tfsdk:"logo_url"`
+	Name                             types.String     `tfsdk:"name"`
+	RequestInstructions              types.String     `tfsdk:"request_instructions"`
+	Sources                          []types.String   `tfsdk:"sources"`
+	Status                           types.String     `tfsdk:"status"`
+	UserFriendlyLabel                types.String     `tfsdk:"user_friendly_label"`
+	WebsiteURL                       types.String     `tfsdk:"website_url"`
 }
 
 func (r *AppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -86,6 +87,19 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed:    true,
 				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
 			},
+			"links": schema.SingleNestedAttribute{
+				Computed: true,
+				Attributes: map[string]schema.Attribute{
+					"admin_url": schema.StringAttribute{
+						Computed:    true,
+						Description: `A URL to access this application within the Lumos web UI`,
+					},
+					"self": schema.StringAttribute{
+						Computed:    true,
+						Description: `The canonical API URL for retrieving this specific application`,
+					},
+				},
+			},
 			"logo_url": schema.StringAttribute{
 				Computed:    true,
 				Optional:    true,
@@ -107,10 +121,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"status": schema.StringAttribute{
 				Computed:    true,
-				Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
+				Description: `must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DISCOVERED",
+						"IN_REVIEW",
 						"NEEDS_REVIEW",
 						"APPROVED",
 						"BLOCKLISTED",
@@ -169,8 +184,13 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 		return
 	}
 
-	request := *data.ToSharedAppInputCreate()
-	res, err := r.client.Core.CreateApp(ctx, request)
+	request, requestDiags := data.ToSharedAppInputCreate(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.Core.CreateApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -190,15 +210,24 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedApp(res.App)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var id string
-	id = data.ID.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedApp(ctx, res.App)...)
 
-	request1 := operations.GetAppRequest{
-		ID: id,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.Core.GetApp(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAppRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Core.GetApp(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -218,8 +247,17 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedApp(res1.App)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedApp(ctx, res1.App)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -243,13 +281,13 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetAppRequest{
-		ID: id,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.Core.GetApp(ctx, request)
+	res, err := r.client.Core.GetApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -273,7 +311,11 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedApp(res.App)
+	resp.Diagnostics.Append(data.RefreshFromSharedApp(ctx, res.App)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -293,15 +335,13 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsUpdateAppRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	appInputCreate := *data.ToSharedAppInputCreate()
-	request := operations.UpdateAppRequest{
-		ID:             id,
-		AppInputCreate: appInputCreate,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.Core.UpdateApp(ctx, request)
+	res, err := r.client.Core.UpdateApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -321,15 +361,24 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedApp(res.App)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var id1 string
-	id1 = data.ID.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedApp(ctx, res.App)...)
 
-	request1 := operations.GetAppRequest{
-		ID: id1,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.Core.GetApp(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAppRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Core.GetApp(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -349,8 +398,17 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedApp(res1.App)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedApp(ctx, res1.App)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

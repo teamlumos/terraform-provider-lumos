@@ -3,7 +3,6 @@
 package shared
 
 type ApproverInput struct {
-	// The type of this approver.
 	Type *ApproverType `json:"type,omitempty"`
 	// Optionally, the approver can be a user.
 	User *BaseUser `json:"user,omitempty"`

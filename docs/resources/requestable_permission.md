@@ -103,7 +103,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -113,7 +113,7 @@ Read-Only:
 Optional:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
+- `type` (String) must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
 
 <a id="nestedatt--request_config--allowed_groups--groups"></a>
 ### Nested Schema for `request_config.allowed_groups.groups`
@@ -138,8 +138,8 @@ Read-Only:
 
 Optional:
 
-- `approvers` (Attributes) AppStore App approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
-- `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
+- `approvers` (Attributes) (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
+- `approvers_stage_2` (Attributes) (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
 - `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]
@@ -268,7 +268,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -283,7 +283,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 ## Import

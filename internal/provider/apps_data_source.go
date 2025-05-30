@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -29,12 +28,12 @@ type AppsDataSource struct {
 
 // AppsDataSourceModel describes the data model.
 type AppsDataSourceModel struct {
-	ExactMatch types.Bool    `tfsdk:"exact_match"`
+	ExactMatch types.Bool    `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
 	Items      []tfTypes.App `tfsdk:"items"`
-	NameSearch types.String  `tfsdk:"name_search"`
-	Page       types.Int64   `tfsdk:"page"`
+	NameSearch types.String  `queryParam:"style=form,explode=true,name=name_search" tfsdk:"name_search"`
+	Page       types.Int64   `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
 	Pages      types.Int64   `tfsdk:"pages"`
-	Size       types.Int64   `tfsdk:"size"`
+	Size       types.Int64   `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
 	Total      types.Int64   `tfsdk:"total"`
 }
 
@@ -65,6 +64,14 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 						},
+						"category": schema.StringAttribute{
+							Computed:    true,
+							Description: `The category of the app, as shown in the AppStore`,
+						},
+						"description": schema.StringAttribute{
+							Computed:    true,
+							Description: `The user-facing description of the app`,
+						},
 						"id": schema.StringAttribute{
 							Computed:    true,
 							Description: `The ID of this app.`,
@@ -72,6 +79,19 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"instance_id": schema.StringAttribute{
 							Computed:    true,
 							Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
+						},
+						"links": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"admin_url": schema.StringAttribute{
+									Computed:    true,
+									Description: `A URL to access this application within the Lumos web UI`,
+								},
+								"self": schema.StringAttribute{
+									Computed:    true,
+									Description: `The canonical API URL for retrieving this specific application`,
+								},
+							},
 						},
 						"logo_url": schema.StringAttribute{
 							Computed:    true,
@@ -87,8 +107,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Description: `The sources of this app.`,
 						},
 						"status": schema.StringAttribute{
-							Computed:    true,
-							Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'`,
+							Computed: true,
 						},
 						"user_friendly_label": schema.StringAttribute{
 							Computed:    true,
@@ -163,37 +182,13 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	nameSearch := new(string)
-	if !data.NameSearch.IsUnknown() && !data.NameSearch.IsNull() {
-		*nameSearch = data.NameSearch.ValueString()
-	} else {
-		nameSearch = nil
+	request, requestDiags := data.ToOperationsListAppsRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	exactMatch := new(bool)
-	if !data.ExactMatch.IsUnknown() && !data.ExactMatch.IsNull() {
-		*exactMatch = data.ExactMatch.ValueBool()
-	} else {
-		exactMatch = nil
-	}
-	page := new(int64)
-	if !data.Page.IsUnknown() && !data.Page.IsNull() {
-		*page = data.Page.ValueInt64()
-	} else {
-		page = nil
-	}
-	size := new(int64)
-	if !data.Size.IsUnknown() && !data.Size.IsNull() {
-		*size = data.Size.ValueInt64()
-	} else {
-		size = nil
-	}
-	request := operations.ListAppsRequest{
-		NameSearch: nameSearch,
-		ExactMatch: exactMatch,
-		Page:       page,
-		Size:       size,
-	}
-	res, err := r.client.Core.ListApps(ctx, request)
+	res, err := r.client.Core.ListApps(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -205,10 +200,6 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -217,7 +208,11 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPageApp(res.PageApp)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageApp(ctx, res.PageApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

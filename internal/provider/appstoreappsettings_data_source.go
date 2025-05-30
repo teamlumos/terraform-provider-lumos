@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -64,8 +63,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this inline webhook.`,
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -87,8 +85,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.`,
 					},
 					"groups_provisioning": schema.StringAttribute{
-						Computed:    true,
-						Description: `If enabled, Approvers must choose a group to provision the user to for access requests.`,
+						Computed: true,
 					},
 					"manual_steps_needed": schema.BoolAttribute{
 						Computed:    true,
@@ -102,8 +99,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this inline webhook.`,
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -122,7 +118,6 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.`,
 					},
 				},
-				Description: `Provisioning flow configuration to request access to app.`,
 			},
 			"request_flow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -195,7 +190,6 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `Users assigned as app admins.`,
 							},
 						},
-						Description: `AppStore App admins assigned.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
@@ -237,8 +231,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `The groups allowed to request this permission.`,
 							},
 							"type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this allowed groups config, can be all groups or specific.`,
+								Computed: true,
 							},
 						},
 						Description: `The allowed groups config associated with this config.`,
@@ -311,7 +304,6 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `Users assigned as support request approvers.`,
 							},
 						},
-						Description: `AppStore App approvers assigned.`,
 					},
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,
@@ -381,15 +373,13 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `Users assigned as support request approvers.`,
 							},
 						},
-						Description: `AppStore App stage 2 approvers assigned.`,
 					},
 					"custom_approval_message": schema.StringAttribute{
 						Computed:    true,
 						Description: `After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.`,
 					},
 					"discoverability": schema.StringAttribute{
-						Computed:    true,
-						Description: `AppStore App visibility.`,
+						Computed: true,
 					},
 					"request_validation_inline_webhook": schema.SingleNestedAttribute{
 						Computed: true,
@@ -399,8 +389,7 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `The type of this inline webhook.`,
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed:    true,
@@ -422,7 +411,6 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals.`,
 					},
 				},
-				Description: `Request flow configuration to request access to app.`,
 			},
 		},
 	}
@@ -466,13 +454,13 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetAppStoreAppSettingsRequest{
-		ID: id,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.GetAppStoreAppSettings(ctx, request)
+	res, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -484,10 +472,6 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -496,7 +480,11 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedAppStoreAppSettingsOutput(res.AppStoreAppSettingsOutput)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res.AppStoreAppSettingsOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

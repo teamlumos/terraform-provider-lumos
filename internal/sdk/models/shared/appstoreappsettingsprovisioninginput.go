@@ -3,7 +3,6 @@
 package shared
 
 type AppStoreAppSettingsProvisioningInput struct {
-	// If enabled, Approvers must choose a group to provision the user to for access requests.
 	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`

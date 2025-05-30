@@ -10,8 +10,7 @@ import (
 type OrderInput struct {
 	// A unique ID for the contract being uploaded. This can be an ID from an external system like Ironclad, an internal ID such as a PO number, or simply the name of the vendor + date of the contract.
 	UniqueIdentifier string `json:"unique_identifier"`
-	// Information about the vendor associated with this contract. Currently, we will only support a name field.
-	Vendor Vendor `json:"vendor"`
+	Vendor           Vendor `json:"vendor"`
 	// The start date of the attached contract
 	StartDate types.Date `json:"start_date"`
 	// The end date of the attached contract

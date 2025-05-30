@@ -13,8 +13,7 @@ type LineItem struct {
 	// The type of purchase that this line item refers to
 	Type string `json:"type"`
 	// The number of units purchased for this line item
-	Quantity int64 `json:"quantity"`
-	// The unit cost of this line item
+	Quantity int64            `json:"quantity"`
 	UnitCost LineItemUnitCost `json:"unit_cost"`
 	// The start of the line item
 	StartDate *types.Date `json:"start_date"`

@@ -3,40 +3,96 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *GroupsDataSourceModel) RefreshFromSharedPageGroup(resp *shared.PageGroup) {
+func (r *GroupsDataSourceModel) ToOperationsGetGroupsRequest(ctx context.Context) (*operations.GetGroupsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	integrationSpecificID := new(string)
+	if !r.IntegrationSpecificID.IsUnknown() && !r.IntegrationSpecificID.IsNull() {
+		*integrationSpecificID = r.IntegrationSpecificID.ValueString()
+	} else {
+		integrationSpecificID = nil
+	}
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
+	} else {
+		name = nil
+	}
+	exactMatch := new(bool)
+	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
+		*exactMatch = r.ExactMatch.ValueBool()
+	} else {
+		exactMatch = nil
+	}
+	appID := new(string)
+	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
+		*appID = r.AppID.ValueString()
+	} else {
+		appID = nil
+	}
+	page := new(int64)
+	if !r.Page.IsUnknown() && !r.Page.IsNull() {
+		*page = r.Page.ValueInt64()
+	} else {
+		page = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	out := operations.GetGroupsRequest{
+		IntegrationSpecificID: integrationSpecificID,
+		Name:                  name,
+		ExactMatch:            exactMatch,
+		AppID:                 appID,
+		Page:                  page,
+		Size:                  size,
+	}
+
+	return &out, diags
+}
+
+func (r *GroupsDataSourceModel) RefreshFromSharedPageGroup(ctx context.Context, resp *shared.PageGroup) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.Group{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.Group
-			items1.AppID = types.StringPointerValue(itemsItem.AppID)
-			items1.Description = types.StringPointerValue(itemsItem.Description)
+			var items tfTypes.Group
+			items.AppID = types.StringPointerValue(itemsItem.AppID)
+			items.Description = types.StringPointerValue(itemsItem.Description)
 			if itemsItem.GroupLifecycle != nil {
-				items1.GroupLifecycle = types.StringValue(string(*itemsItem.GroupLifecycle))
+				items.GroupLifecycle = types.StringValue(string(*itemsItem.GroupLifecycle))
 			} else {
-				items1.GroupLifecycle = types.StringNull()
+				items.GroupLifecycle = types.StringNull()
 			}
-			items1.ID = types.StringPointerValue(itemsItem.ID)
-			items1.IntegrationSpecificID = types.StringPointerValue(itemsItem.IntegrationSpecificID)
-			items1.Name = types.StringPointerValue(itemsItem.Name)
-			items1.SourceAppID = types.StringPointerValue(itemsItem.SourceAppID)
+			items.ID = types.StringPointerValue(itemsItem.ID)
+			items.IntegrationSpecificID = types.StringPointerValue(itemsItem.IntegrationSpecificID)
+			items.Name = types.StringPointerValue(itemsItem.Name)
+			items.SourceAppID = types.StringPointerValue(itemsItem.SourceAppID)
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].AppID = items1.AppID
-				r.Items[itemsCount].Description = items1.Description
-				r.Items[itemsCount].GroupLifecycle = items1.GroupLifecycle
-				r.Items[itemsCount].ID = items1.ID
-				r.Items[itemsCount].IntegrationSpecificID = items1.IntegrationSpecificID
-				r.Items[itemsCount].Name = items1.Name
-				r.Items[itemsCount].SourceAppID = items1.SourceAppID
+				r.Items[itemsCount].AppID = items.AppID
+				r.Items[itemsCount].Description = items.Description
+				r.Items[itemsCount].GroupLifecycle = items.GroupLifecycle
+				r.Items[itemsCount].ID = items.ID
+				r.Items[itemsCount].IntegrationSpecificID = items.IntegrationSpecificID
+				r.Items[itemsCount].Name = items.Name
+				r.Items[itemsCount].SourceAppID = items.SourceAppID
 			}
 		}
 		r.Page = types.Int64PointerValue(resp.Page)
@@ -44,4 +100,6 @@ func (r *GroupsDataSourceModel) RefreshFromSharedPageGroup(resp *shared.PageGrou
 		r.Size = types.Int64PointerValue(resp.Size)
 		r.Total = types.Int64PointerValue(resp.Total)
 	}
+
+	return diags
 }

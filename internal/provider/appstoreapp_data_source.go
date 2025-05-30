@@ -9,8 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -28,17 +28,20 @@ type AppStoreAppDataSource struct {
 
 // AppStoreAppDataSourceModel describes the data model.
 type AppStoreAppDataSourceModel struct {
-	AllowMultiplePermissionSelection types.Bool     `tfsdk:"allow_multiple_permission_selection"`
-	AppClassID                       types.String   `tfsdk:"app_class_id"`
-	AppID                            types.String   `tfsdk:"app_id"`
-	ID                               types.String   `tfsdk:"id"`
-	InstanceID                       types.String   `tfsdk:"instance_id"`
-	LogoURL                          types.String   `tfsdk:"logo_url"`
-	RequestInstructions              types.String   `tfsdk:"request_instructions"`
-	Sources                          []types.String `tfsdk:"sources"`
-	Status                           types.String   `tfsdk:"status"`
-	UserFriendlyLabel                types.String   `tfsdk:"user_friendly_label"`
-	WebsiteURL                       types.String   `tfsdk:"website_url"`
+	AllowMultiplePermissionSelection types.Bool       `tfsdk:"allow_multiple_permission_selection"`
+	AppClassID                       types.String     `tfsdk:"app_class_id"`
+	AppID                            types.String     `tfsdk:"app_id"`
+	Category                         types.String     `tfsdk:"category"`
+	Description                      types.String     `tfsdk:"description"`
+	ID                               types.String     `tfsdk:"id"`
+	InstanceID                       types.String     `tfsdk:"instance_id"`
+	Links                            tfTypes.AppLinks `tfsdk:"links"`
+	LogoURL                          types.String     `tfsdk:"logo_url"`
+	RequestInstructions              types.String     `tfsdk:"request_instructions"`
+	Sources                          []types.String   `tfsdk:"sources"`
+	Status                           types.String     `tfsdk:"status"`
+	UserFriendlyLabel                types.String     `tfsdk:"user_friendly_label"`
+	WebsiteURL                       types.String     `tfsdk:"website_url"`
 }
 
 // Metadata returns the data source type name.
@@ -63,6 +66,14 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			"app_id": schema.StringAttribute{
 				Required: true,
 			},
+			"category": schema.StringAttribute{
+				Computed:    true,
+				Description: `The category of the app, as shown in the AppStore`,
+			},
+			"description": schema.StringAttribute{
+				Computed:    true,
+				Description: `The user-facing description of the app`,
+			},
 			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The ID of this app.`,
@@ -70,6 +81,19 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
+			},
+			"links": schema.SingleNestedAttribute{
+				Computed: true,
+				Attributes: map[string]schema.Attribute{
+					"admin_url": schema.StringAttribute{
+						Computed:    true,
+						Description: `A URL to access this application within the Lumos web UI`,
+					},
+					"self": schema.StringAttribute{
+						Computed:    true,
+						Description: `The canonical API URL for retrieving this specific application`,
+					},
+				},
 			},
 			"logo_url": schema.StringAttribute{
 				Computed:    true,
@@ -85,8 +109,7 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 				Description: `The sources of this app.`,
 			},
 			"status": schema.StringAttribute{
-				Computed:    true,
-				Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'`,
+				Computed: true,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
@@ -138,13 +161,13 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	var appID string
-	appID = data.AppID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppStoreAppRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetAppStoreAppRequest{
-		AppID: appID,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.GetAppStoreApp(ctx, request)
+	res, err := r.client.AppStore.GetAppStoreApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -156,10 +179,6 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -168,7 +187,11 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedAppStoreApp(res.AppStoreApp)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreApp(ctx, res.AppStoreApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

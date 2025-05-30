@@ -3,45 +3,94 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppsDataSourceModel) RefreshFromSharedPageApp(resp *shared.PageApp) {
+func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (*operations.ListAppsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	nameSearch := new(string)
+	if !r.NameSearch.IsUnknown() && !r.NameSearch.IsNull() {
+		*nameSearch = r.NameSearch.ValueString()
+	} else {
+		nameSearch = nil
+	}
+	exactMatch := new(bool)
+	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
+		*exactMatch = r.ExactMatch.ValueBool()
+	} else {
+		exactMatch = nil
+	}
+	page := new(int64)
+	if !r.Page.IsUnknown() && !r.Page.IsNull() {
+		*page = r.Page.ValueInt64()
+	} else {
+		page = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	out := operations.ListAppsRequest{
+		NameSearch: nameSearch,
+		ExactMatch: exactMatch,
+		Page:       page,
+		Size:       size,
+	}
+
+	return &out, diags
+}
+
+func (r *AppsDataSourceModel) RefreshFromSharedPageApp(ctx context.Context, resp *shared.PageApp) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.App{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.App
-			items1.AllowMultiplePermissionSelection = types.BoolValue(itemsItem.AllowMultiplePermissionSelection)
-			items1.AppClassID = types.StringValue(itemsItem.AppClassID)
-			items1.ID = types.StringValue(itemsItem.ID)
-			items1.InstanceID = types.StringValue(itemsItem.InstanceID)
-			items1.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
-			items1.RequestInstructions = types.StringPointerValue(itemsItem.RequestInstructions)
-			items1.Sources = []types.String{}
+			var items tfTypes.App
+			items.AllowMultiplePermissionSelection = types.BoolValue(itemsItem.AllowMultiplePermissionSelection)
+			items.AppClassID = types.StringValue(itemsItem.AppClassID)
+			items.Category = types.StringPointerValue(itemsItem.Category)
+			items.Description = types.StringPointerValue(itemsItem.Description)
+			items.ID = types.StringValue(itemsItem.ID)
+			items.InstanceID = types.StringValue(itemsItem.InstanceID)
+			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
+			items.Links.Self = types.StringValue(itemsItem.Links.Self)
+			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
+			items.RequestInstructions = types.StringPointerValue(itemsItem.RequestInstructions)
+			items.Sources = make([]types.String, 0, len(itemsItem.Sources))
 			for _, v := range itemsItem.Sources {
-				items1.Sources = append(items1.Sources, types.StringValue(string(v)))
+				items.Sources = append(items.Sources, types.StringValue(string(v)))
 			}
-			items1.Status = types.StringValue(string(itemsItem.Status))
-			items1.UserFriendlyLabel = types.StringValue(itemsItem.UserFriendlyLabel)
-			items1.WebsiteURL = types.StringPointerValue(itemsItem.WebsiteURL)
+			items.Status = types.StringValue(string(itemsItem.Status))
+			items.UserFriendlyLabel = types.StringValue(itemsItem.UserFriendlyLabel)
+			items.WebsiteURL = types.StringPointerValue(itemsItem.WebsiteURL)
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].AllowMultiplePermissionSelection = items1.AllowMultiplePermissionSelection
-				r.Items[itemsCount].AppClassID = items1.AppClassID
-				r.Items[itemsCount].ID = items1.ID
-				r.Items[itemsCount].InstanceID = items1.InstanceID
-				r.Items[itemsCount].LogoURL = items1.LogoURL
-				r.Items[itemsCount].RequestInstructions = items1.RequestInstructions
-				r.Items[itemsCount].Sources = items1.Sources
-				r.Items[itemsCount].Status = items1.Status
-				r.Items[itemsCount].UserFriendlyLabel = items1.UserFriendlyLabel
-				r.Items[itemsCount].WebsiteURL = items1.WebsiteURL
+				r.Items[itemsCount].AllowMultiplePermissionSelection = items.AllowMultiplePermissionSelection
+				r.Items[itemsCount].AppClassID = items.AppClassID
+				r.Items[itemsCount].Category = items.Category
+				r.Items[itemsCount].Description = items.Description
+				r.Items[itemsCount].ID = items.ID
+				r.Items[itemsCount].InstanceID = items.InstanceID
+				r.Items[itemsCount].Links = items.Links
+				r.Items[itemsCount].LogoURL = items.LogoURL
+				r.Items[itemsCount].RequestInstructions = items.RequestInstructions
+				r.Items[itemsCount].Sources = items.Sources
+				r.Items[itemsCount].Status = items.Status
+				r.Items[itemsCount].UserFriendlyLabel = items.UserFriendlyLabel
+				r.Items[itemsCount].WebsiteURL = items.WebsiteURL
 			}
 		}
 		r.Page = types.Int64PointerValue(resp.Page)
@@ -49,4 +98,6 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageApp(resp *shared.PageApp) {
 		r.Size = types.Int64PointerValue(resp.Size)
 		r.Total = types.Int64PointerValue(resp.Total)
 	}
+
+	return diags
 }

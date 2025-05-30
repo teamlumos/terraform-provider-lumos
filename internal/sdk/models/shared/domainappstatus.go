@@ -11,6 +11,7 @@ type DomainAppStatus string
 
 const (
 	DomainAppStatusDiscovered  DomainAppStatus = "DISCOVERED"
+	DomainAppStatusInReview    DomainAppStatus = "IN_REVIEW"
 	DomainAppStatusNeedsReview DomainAppStatus = "NEEDS_REVIEW"
 	DomainAppStatusApproved    DomainAppStatus = "APPROVED"
 	DomainAppStatusBlocklisted DomainAppStatus = "BLOCKLISTED"
@@ -27,6 +28,8 @@ func (e *DomainAppStatus) UnmarshalJSON(data []byte) error {
 	}
 	switch v {
 	case "DISCOVERED":
+		fallthrough
+	case "IN_REVIEW":
 		fallthrough
 	case "NEEDS_REVIEW":
 		fallthrough

@@ -10,9 +10,8 @@ type AppStoreApp struct {
 	// The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 	InstanceID string `json:"instance_id"`
 	// The user-friendly label of this app.
-	UserFriendlyLabel string `json:"user_friendly_label"`
-	// The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
-	Status DomainAppStatus `json:"status"`
+	UserFriendlyLabel string          `json:"user_friendly_label"`
+	Status            DomainAppStatus `json:"status"`
 	// The sources of this app.
 	Sources []DiscoverySource `json:"sources"`
 	// Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
@@ -23,6 +22,11 @@ type AppStoreApp struct {
 	WebsiteURL *string `json:"website_url,omitempty"`
 	// The request instructions.
 	RequestInstructions *string `json:"request_instructions,omitempty"`
+	// The user-facing description of the app
+	Description *string `json:"description,omitempty"`
+	// The category of the app, as shown in the AppStore
+	Category *string  `json:"category,omitempty"`
+	Links    AppLinks `json:"links"`
 }
 
 func (o *AppStoreApp) GetID() string {
@@ -93,4 +97,25 @@ func (o *AppStoreApp) GetRequestInstructions() *string {
 		return nil
 	}
 	return o.RequestInstructions
+}
+
+func (o *AppStoreApp) GetDescription() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Description
+}
+
+func (o *AppStoreApp) GetCategory() *string {
+	if o == nil {
+		return nil
+	}
+	return o.Category
+}
+
+func (o *AppStoreApp) GetLinks() AppLinks {
+	if o == nil {
+		return AppLinks{}
+	}
+	return o.Links
 }

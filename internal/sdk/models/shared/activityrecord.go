@@ -8,10 +8,8 @@ import (
 )
 
 type ActivityRecord struct {
-	// Metadata that Lumos can use to match the activity record to a software account within Lumos.
 	Account ActivityRecordAccountInput `json:"account"`
-	// Metadata about the event being uploaded.
-	Event ActivityRecordEventInput `json:"event"`
+	Event   ActivityRecordEventInput   `json:"event"`
 	// The timestamp of this event, in ISO 8601 format.
 	Timestamp time.Time `json:"timestamp"`
 	// UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos found by going to Apps > Find your app in the list > Click '...' > Copy Stable Identifier)

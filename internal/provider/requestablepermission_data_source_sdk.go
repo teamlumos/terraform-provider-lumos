@@ -3,12 +3,37 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermissionOutput(resp *shared.RequestablePermissionOutput) {
+func (r *RequestablePermissionDataSourceModel) ToOperationsGetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest(ctx context.Context) (*operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	includeInheritedConfigs := new(bool)
+	if !r.IncludeInheritedConfigs.IsUnknown() && !r.IncludeInheritedConfigs.IsNull() {
+		*includeInheritedConfigs = r.IncludeInheritedConfigs.ValueBool()
+	} else {
+		includeInheritedConfigs = nil
+	}
+	out := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
+		ID:                      id,
+		IncludeInheritedConfigs: includeInheritedConfigs,
+	}
+
+	return &out, diags
+}
+
+func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermissionOutput(ctx context.Context, resp *shared.RequestablePermissionOutput) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.AppClassID = types.StringValue(resp.AppClassID)
 		r.AppID = types.StringValue(resp.AppID)
@@ -33,28 +58,28 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 				r.RequestConfig.AllowedGroups.Groups = r.RequestConfig.AllowedGroups.Groups[:len(resp.RequestConfig.AllowedGroups.Groups)]
 			}
 			for groupsCount, groupsItem := range resp.RequestConfig.AllowedGroups.Groups {
-				var groups1 tfTypes.Group
-				groups1.AppID = types.StringPointerValue(groupsItem.AppID)
-				groups1.Description = types.StringPointerValue(groupsItem.Description)
+				var groups tfTypes.Group
+				groups.AppID = types.StringPointerValue(groupsItem.AppID)
+				groups.Description = types.StringPointerValue(groupsItem.Description)
 				if groupsItem.GroupLifecycle != nil {
-					groups1.GroupLifecycle = types.StringValue(string(*groupsItem.GroupLifecycle))
+					groups.GroupLifecycle = types.StringValue(string(*groupsItem.GroupLifecycle))
 				} else {
-					groups1.GroupLifecycle = types.StringNull()
+					groups.GroupLifecycle = types.StringNull()
 				}
-				groups1.ID = types.StringPointerValue(groupsItem.ID)
-				groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
-				groups1.Name = types.StringPointerValue(groupsItem.Name)
-				groups1.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
+				groups.ID = types.StringPointerValue(groupsItem.ID)
+				groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
+				groups.Name = types.StringPointerValue(groupsItem.Name)
+				groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
 				if groupsCount+1 > len(r.RequestConfig.AllowedGroups.Groups) {
-					r.RequestConfig.AllowedGroups.Groups = append(r.RequestConfig.AllowedGroups.Groups, groups1)
+					r.RequestConfig.AllowedGroups.Groups = append(r.RequestConfig.AllowedGroups.Groups, groups)
 				} else {
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].AppID = groups1.AppID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].Description = groups1.Description
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].GroupLifecycle = groups1.GroupLifecycle
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].ID = groups1.ID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].IntegrationSpecificID = groups1.IntegrationSpecificID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].Name = groups1.Name
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].SourceAppID = groups1.SourceAppID
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].AppID = groups.AppID
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].Description = groups.Description
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].GroupLifecycle = groups.GroupLifecycle
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].ID = groups.ID
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].IntegrationSpecificID = groups.IntegrationSpecificID
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].Name = groups.Name
+					r.RequestConfig.AllowedGroups.Groups[groupsCount].SourceAppID = groups.SourceAppID
 				}
 			}
 			if resp.RequestConfig.AllowedGroups.Type != nil {
@@ -82,28 +107,28 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups)]
 				}
 				for groupsCount1, groupsItem1 := range resp.RequestConfig.RequestApprovalConfig.Approvers.Groups {
-					var groups3 tfTypes.Group
-					groups3.AppID = types.StringPointerValue(groupsItem1.AppID)
-					groups3.Description = types.StringPointerValue(groupsItem1.Description)
+					var groups1 tfTypes.Group
+					groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
+					groups1.Description = types.StringPointerValue(groupsItem1.Description)
 					if groupsItem1.GroupLifecycle != nil {
-						groups3.GroupLifecycle = types.StringValue(string(*groupsItem1.GroupLifecycle))
+						groups1.GroupLifecycle = types.StringValue(string(*groupsItem1.GroupLifecycle))
 					} else {
-						groups3.GroupLifecycle = types.StringNull()
+						groups1.GroupLifecycle = types.StringNull()
 					}
-					groups3.ID = types.StringPointerValue(groupsItem1.ID)
-					groups3.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
-					groups3.Name = types.StringPointerValue(groupsItem1.Name)
-					groups3.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
+					groups1.ID = types.StringPointerValue(groupsItem1.ID)
+					groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
+					groups1.Name = types.StringPointerValue(groupsItem1.Name)
+					groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
 					if groupsCount1+1 > len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(r.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups3)
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(r.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
 					} else {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].AppID = groups3.AppID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Description = groups3.Description
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].GroupLifecycle = groups3.GroupLifecycle
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].ID = groups3.ID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].IntegrationSpecificID = groups3.IntegrationSpecificID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Name = groups3.Name
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].SourceAppID = groups3.SourceAppID
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].AppID = groups1.AppID
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Description = groups1.Description
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].GroupLifecycle = groups1.GroupLifecycle
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].ID = groups1.ID
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].IntegrationSpecificID = groups1.IntegrationSpecificID
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Name = groups1.Name
+						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].SourceAppID = groups1.SourceAppID
 					}
 				}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Users = []tfTypes.User{}
@@ -111,24 +136,24 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					r.RequestConfig.RequestApprovalConfig.Approvers.Users = r.RequestConfig.RequestApprovalConfig.Approvers.Users[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Users)]
 				}
 				for usersCount, usersItem := range resp.RequestConfig.RequestApprovalConfig.Approvers.Users {
-					var users1 tfTypes.User
-					users1.Email = types.StringPointerValue(usersItem.Email)
-					users1.FamilyName = types.StringPointerValue(usersItem.FamilyName)
-					users1.GivenName = types.StringPointerValue(usersItem.GivenName)
-					users1.ID = types.StringValue(usersItem.ID)
+					var users tfTypes.User
+					users.Email = types.StringPointerValue(usersItem.Email)
+					users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
+					users.GivenName = types.StringPointerValue(usersItem.GivenName)
+					users.ID = types.StringValue(usersItem.ID)
 					if usersItem.Status != nil {
-						users1.Status = types.StringValue(string(*usersItem.Status))
+						users.Status = types.StringValue(string(*usersItem.Status))
 					} else {
-						users1.Status = types.StringNull()
+						users.Status = types.StringNull()
 					}
 					if usersCount+1 > len(r.RequestConfig.RequestApprovalConfig.Approvers.Users) {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users = append(r.RequestConfig.RequestApprovalConfig.Approvers.Users, users1)
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users = append(r.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
 					} else {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Email = users1.Email
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].FamilyName = users1.FamilyName
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].GivenName = users1.GivenName
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].ID = users1.ID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Status = users1.Status
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Email = users.Email
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].FamilyName = users.FamilyName
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].GivenName = users.GivenName
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].ID = users.ID
+						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Status = users.Status
 					}
 				}
 			}
@@ -141,28 +166,28 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups)]
 				}
 				for groupsCount2, groupsItem2 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
-					var groups5 tfTypes.Group
-					groups5.AppID = types.StringPointerValue(groupsItem2.AppID)
-					groups5.Description = types.StringPointerValue(groupsItem2.Description)
+					var groups2 tfTypes.Group
+					groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
+					groups2.Description = types.StringPointerValue(groupsItem2.Description)
 					if groupsItem2.GroupLifecycle != nil {
-						groups5.GroupLifecycle = types.StringValue(string(*groupsItem2.GroupLifecycle))
+						groups2.GroupLifecycle = types.StringValue(string(*groupsItem2.GroupLifecycle))
 					} else {
-						groups5.GroupLifecycle = types.StringNull()
+						groups2.GroupLifecycle = types.StringNull()
 					}
-					groups5.ID = types.StringPointerValue(groupsItem2.ID)
-					groups5.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
-					groups5.Name = types.StringPointerValue(groupsItem2.Name)
-					groups5.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
+					groups2.ID = types.StringPointerValue(groupsItem2.ID)
+					groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
+					groups2.Name = types.StringPointerValue(groupsItem2.Name)
+					groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
 					if groupsCount2+1 > len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups5)
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
 					} else {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].AppID = groups5.AppID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Description = groups5.Description
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].GroupLifecycle = groups5.GroupLifecycle
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].ID = groups5.ID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].IntegrationSpecificID = groups5.IntegrationSpecificID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Name = groups5.Name
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].SourceAppID = groups5.SourceAppID
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].AppID = groups2.AppID
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Description = groups2.Description
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].GroupLifecycle = groups2.GroupLifecycle
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].ID = groups2.ID
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].IntegrationSpecificID = groups2.IntegrationSpecificID
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Name = groups2.Name
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].SourceAppID = groups2.SourceAppID
 					}
 				}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = []tfTypes.User{}
@@ -170,24 +195,24 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users)]
 				}
 				for usersCount1, usersItem1 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-					var users3 tfTypes.User
-					users3.Email = types.StringPointerValue(usersItem1.Email)
-					users3.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
-					users3.GivenName = types.StringPointerValue(usersItem1.GivenName)
-					users3.ID = types.StringValue(usersItem1.ID)
+					var users1 tfTypes.User
+					users1.Email = types.StringPointerValue(usersItem1.Email)
+					users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
+					users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
+					users1.ID = types.StringValue(usersItem1.ID)
 					if usersItem1.Status != nil {
-						users3.Status = types.StringValue(string(*usersItem1.Status))
+						users1.Status = types.StringValue(string(*usersItem1.Status))
 					} else {
-						users3.Status = types.StringNull()
+						users1.Status = types.StringNull()
 					}
 					if usersCount1+1 > len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users) {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users3)
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
 					} else {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Email = users3.Email
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].FamilyName = users3.FamilyName
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].GivenName = users3.GivenName
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].ID = users3.ID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Status = users3.Status
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Email = users1.Email
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].FamilyName = users1.FamilyName
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].GivenName = users1.GivenName
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].ID = users1.ID
+						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Status = users1.Status
 					}
 				}
 			}
@@ -232,7 +257,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
 				r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name)
 			}
-			r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = []types.String{}
+			r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
 			for _, v := range resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
 				r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
 			}
@@ -253,4 +278,6 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			r.Type = types.StringNull()
 		}
 	}
+
+	return diags
 }

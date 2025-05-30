@@ -11,6 +11,8 @@ type PreApprovalRuleUpdateInput struct {
 	PreapprovedGroups []BaseGroup `json:"preapproved_groups,omitempty"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions,omitempty"`
+	// The set of users this pre-approval rule applies to, defined by attributes that must be true about the user
+	PreapprovedUsersByAttribute []AttributeEqualityRule `json:"preapproved_users_by_attribute,omitempty"`
 	// The preapproval webhooks of this preapproval rule.
 	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
 }
@@ -41,6 +43,13 @@ func (o *PreApprovalRuleUpdateInput) GetPreapprovedPermissions() []RequestablePe
 		return nil
 	}
 	return o.PreapprovedPermissions
+}
+
+func (o *PreApprovalRuleUpdateInput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
+	if o == nil {
+		return nil
+	}
+	return o.PreapprovedUsersByAttribute
 }
 
 func (o *PreApprovalRuleUpdateInput) GetPreapprovalWebhooks() []BaseInlineWebhook {

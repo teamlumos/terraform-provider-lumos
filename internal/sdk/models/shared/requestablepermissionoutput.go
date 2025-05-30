@@ -45,8 +45,7 @@ type RequestablePermissionOutput struct {
 	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.
 	AppClassID string `json:"app_class_id"`
 	// The ID of the instance associated with this requestable permission. This may be an empty string.
-	AppInstanceID string `json:"app_instance_id"`
-	// The request config associated with this requestable permission.
+	AppInstanceID string              `json:"app_instance_id"`
 	RequestConfig RequestConfigOutput `json:"request_config"`
 }
 

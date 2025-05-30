@@ -5,6 +5,7 @@ package provider
 import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -15,7 +16,8 @@ import (
 	"os"
 )
 
-var _ provider.Provider = &LumosProvider{}
+var _ provider.Provider = (*LumosProvider)(nil)
+var _ provider.ProviderWithEphemeralResources = (*LumosProvider)(nil)
 
 type LumosProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -26,8 +28,8 @@ type LumosProvider struct {
 
 // LumosProviderModel describes the provider data model.
 type LumosProviderModel struct {
-	ServerURL  types.String `tfsdk:"server_url"`
 	HTTPBearer types.String `tfsdk:"http_bearer"`
+	ServerURL  types.String `tfsdk:"server_url"`
 }
 
 func (p *LumosProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -37,18 +39,17 @@ func (p *LumosProvider) Metadata(ctx context.Context, req provider.MetadataReque
 
 func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: `Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules`,
 		Attributes: map[string]schema.Attribute{
-			"server_url": schema.StringAttribute{
-				MarkdownDescription: "Server URL (defaults to https://api.lumos.com)",
-				Optional:            true,
-				Required:            false,
-			},
 			"http_bearer": schema.StringAttribute{
-				Sensitive: true,
 				Optional:  true,
+				Sensitive: true,
+			},
+			"server_url": schema.StringAttribute{
+				Description: `Server URL (defaults to https://api.lumos.com)`,
+				Optional:    true,
 			},
 		},
+		MarkdownDescription: `Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules`,
 	}
 }
 
@@ -67,22 +68,30 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		ServerURL = "https://api.lumos.com"
 	}
 
-	httpBearer := new(string)
-	if !data.HTTPBearer.IsUnknown() && !data.HTTPBearer.IsNull() {
-		*httpBearer = data.HTTPBearer.ValueString()
-	} else {
-		if len(os.Getenv("LUMOS_ACCESS_TOKEN")) > 0 {
-			*httpBearer = os.Getenv("LUMOS_ACCESS_TOKEN")
-		} else {
-			httpBearer = nil
-		}
+	security := shared.Security{}
+
+	if !data.HTTPBearer.IsUnknown() {
+		security.HTTPBearer = data.HTTPBearer.ValueString()
 	}
-	security := shared.Security{
-		HTTPBearer: httpBearer,
+
+	if httpBearerEnvVar := os.Getenv("LUMOS_ACCESS_TOKEN"); security.HTTPBearer == "" && httpBearerEnvVar != "" {
+		security.HTTPBearer = httpBearerEnvVar
+	}
+
+	if security.HTTPBearer == "" {
+		resp.Diagnostics.AddError(
+			"Missing Provider Security Configuration",
+			"Either the environment variable LUMOS_ACCESS_TOKEN or provider configuration http_bearer attribute must be configured.",
+		)
+	}
+
+	providerHTTPTransportOpts := ProviderHTTPTransportOpts{
+		SetHeaders: make(map[string]string),
+		Transport:  http.DefaultTransport,
 	}
 
 	httpClient := http.DefaultClient
-	httpClient.Transport = NewLoggingHTTPTransport(http.DefaultTransport)
+	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
 		sdk.WithServerURL(ServerURL),
@@ -92,6 +101,7 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	client := sdk.New(opts...)
 
 	resp.DataSourceData = client
+	resp.EphemeralResourceData = client
 	resp.ResourceData = client
 }
 
@@ -117,6 +127,10 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 		NewUserDataSource,
 		NewUsersDataSource,
 	}
+}
+
+func (p *LumosProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{}
 }
 
 func New(version string) func() provider.Provider {

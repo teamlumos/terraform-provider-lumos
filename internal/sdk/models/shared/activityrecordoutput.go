@@ -3,7 +3,6 @@
 package shared
 
 type ActivityRecordOutput struct {
-	// State of the job to post-process the records.
 	Job SyncTaskOutput `json:"job"`
 }
 

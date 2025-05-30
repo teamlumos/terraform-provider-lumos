@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -26,7 +25,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -49,9 +47,12 @@ type AppStoreAppResourceModel struct {
 	AllowMultiplePermissionSelection types.Bool                                    `tfsdk:"allow_multiple_permission_selection"`
 	AppClassID                       types.String                                  `tfsdk:"app_class_id"`
 	AppID                            types.String                                  `tfsdk:"app_id"`
+	Category                         types.String                                  `tfsdk:"category"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
+	Description                      types.String                                  `tfsdk:"description"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
+	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
@@ -85,6 +86,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				},
 				Description: `The ID of the app to add to the app store. Requires replacement if changed.`,
 			},
+			"category": schema.StringAttribute{
+				Computed:    true,
+				Description: `The category of the app, as shown in the AppStore`,
+			},
 			"custom_request_instructions": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
@@ -94,6 +99,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				},
 				Description: `AppStore App instructions that are shown to the requester. Requires replacement if changed.`,
 			},
+			"description": schema.StringAttribute{
+				Computed:    true,
+				Description: `The user-facing description of the app`,
+			},
 			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The ID of this app.`,
@@ -101,6 +110,19 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
+			},
+			"links": schema.SingleNestedAttribute{
+				Computed: true,
+				Attributes: map[string]schema.Attribute{
+					"admin_url": schema.StringAttribute{
+						Computed:    true,
+						Description: `A URL to access this application within the Lumos web UI`,
+					},
+					"self": schema.StringAttribute{
+						Computed:    true,
+						Description: `The canonical API URL for retrieving this specific application`,
+					},
+				},
 			},
 			"logo_url": schema.StringAttribute{
 				Computed:    true,
@@ -128,7 +150,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -183,7 +205,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `If enabled, Approvers must choose a group to provision the user to for access requests. must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.`,
+						Description: `must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.`,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"DIRECT_TO_USER",
@@ -215,7 +237,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -256,7 +278,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.`,
 					},
 				},
-				Description: `Provisioning flow configuration to request access to app. Requires replacement if changed.`,
+				Description: `Requires replacement if changed.`,
 			},
 			"request_flow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -400,7 +422,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as app admins. Requires replacement if changed.`,
 							},
 						},
-						Description: `AppStore App admins assigned. Requires replacement if changed.`,
+						Description: `Requires replacement if changed.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
@@ -482,12 +504,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							"type": schema.StringAttribute{
 								Computed: true,
 								Optional: true,
-								Default:  stringdefault.StaticString("ALL_GROUPS"),
 								PlanModifiers: []planmodifier.String{
 									stringplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.`,
+								Description: `must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"ALL_GROUPS",
@@ -632,7 +653,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
 							},
 						},
-						Description: `AppStore App approvers assigned. Requires replacement if changed.`,
+						Description: `Requires replacement if changed.`,
 					},
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,
@@ -768,7 +789,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
 							},
 						},
-						Description: `AppStore App stage 2 approvers assigned. Requires replacement if changed.`,
+						Description: `Requires replacement if changed.`,
 					},
 					"custom_approval_message": schema.StringAttribute{
 						Computed: true,
@@ -786,7 +807,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `AppStore App visibility. must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.`,
+						Description: `must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.`,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"FULL",
@@ -809,7 +830,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							},
 							"hook_type": schema.StringAttribute{
 								Computed:    true,
-								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -858,7 +879,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.`,
 					},
 				},
-				Description: `Request flow configuration to request access to app. Requires replacement if changed.`,
+				Description: `Requires replacement if changed.`,
 			},
 			"request_instructions": schema.StringAttribute{
 				Computed:    true,
@@ -871,10 +892,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			},
 			"status": schema.StringAttribute{
 				Computed:    true,
-				Description: `The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
+				Description: `must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DISCOVERED",
+						"IN_REVIEW",
 						"NEEDS_REVIEW",
 						"APPROVED",
 						"BLOCKLISTED",
@@ -932,8 +954,13 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	request := *data.ToSharedAddAppToAppStoreInput()
-	res, err := r.client.AppStore.AddAppToAppStore(ctx, request)
+	request, requestDiags := data.ToSharedAddAppToAppStoreInput(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.AppStore.AddAppToAppStore(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -953,15 +980,24 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedAppStoreAppSettingsOutput(res.AppStoreAppSettingsOutput)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
-	var appID string
-	appID = data.AppID.ValueString()
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res.AppStoreAppSettingsOutput)...)
 
-	request1 := operations.GetAppStoreAppRequest{
-		AppID: appID,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res1, err := r.client.AppStore.GetAppStoreApp(ctx, request1)
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAppStoreAppRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.AppStore.GetAppStoreApp(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -981,8 +1017,17 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	data.RefreshFromSharedAppStoreApp(res1.AppStoreApp)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreApp(ctx, res1.AppStoreApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1006,13 +1051,13 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	var appID string
-	appID = data.AppID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppStoreAppRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.GetAppStoreAppRequest{
-		AppID: appID,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.GetAppStoreApp(ctx, request)
+	res, err := r.client.AppStore.GetAppStoreApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1036,7 +1081,11 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedAppStoreApp(res.AppStoreApp)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreApp(ctx, res.AppStoreApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1080,13 +1129,13 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 		return
 	}
 
-	var appID string
-	appID = data.AppID.ValueString()
+	request, requestDiags := data.ToOperationsRemoveAppFromAppStoreRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.RemoveAppFromAppStoreRequest{
-		AppID: appID,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.RemoveAppFromAppStore(ctx, request)
+	res, err := r.client.AppStore.RemoveAppFromAppStore(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

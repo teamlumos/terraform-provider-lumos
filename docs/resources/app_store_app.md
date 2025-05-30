@@ -105,19 +105,22 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 ### Optional
 
 - `custom_request_instructions` (String) AppStore App instructions that are shown to the requester. Requires replacement if changed.
-- `provisioning` (Attributes) Provisioning flow configuration to request access to app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning))
-- `request_flow` (Attributes) Request flow configuration to request access to app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow))
+- `provisioning` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning))
+- `request_flow` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow))
 
 ### Read-Only
 
 - `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
+- `category` (String) The category of the app, as shown in the AppStore
+- `description` (String) The user-facing description of the app
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
+- `links` (Attributes) (see [below for nested schema](#nestedatt--links))
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
-- `status` (String) The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'. must be one of ["DISCOVERED", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String) must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
 
@@ -129,7 +132,7 @@ Optional:
 - `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
 - `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.
 - `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `groups_provisioning` (String) If enabled, Approvers must choose a group to provision the user to for access requests. must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.
+- `groups_provisioning` (String) must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.
 - `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.
 - `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
 - `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.
@@ -144,7 +147,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -158,7 +161,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -168,12 +171,12 @@ Read-Only:
 
 Optional:
 
-- `admins` (Attributes) AppStore App admins assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins))
+- `admins` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins))
 - `allowed_groups` (Attributes) The allowed groups associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
-- `approvers` (Attributes) AppStore App approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
-- `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
+- `approvers` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
+- `approvers_stage_2` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `discoverability` (String) AppStore App visibility. must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.
+- `discoverability` (String) must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.
@@ -225,7 +228,7 @@ Read-Only:
 Optional:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.
+- `type` (String) must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>
 ### Nested Schema for `request_flow.allowed_groups.groups`
@@ -337,8 +340,18 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
+
+
+
+<a id="nestedatt--links"></a>
+### Nested Schema for `links`
+
+Read-Only:
+
+- `admin_url` (String) A URL to access this application within the Lumos web UI
+- `self` (String) The canonical API URL for retrieving this specific application
 
 ## Import
 

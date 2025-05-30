@@ -33,6 +33,12 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
       id = "...my_id..."
     }
   ]
+  preapproved_users_by_attribute = [
+    {
+      attribute = "...my_attribute..."
+      value     = "...my_value..."
+    }
+  ]
   time_based_access = [
     "4 hours"
   ]
@@ -52,6 +58,7 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
 - `preapproval_webhooks` (Attributes List) The preapproval webhooks of this preapproval rule. (see [below for nested schema](#nestedatt--preapproval_webhooks))
 - `preapproved_groups` (Attributes List) The preapproved groups of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_groups))
 - `preapproved_permissions` (Attributes List) The preapproved permissions of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_permissions))
+- `preapproved_users_by_attribute` (Attributes List) The set of users this pre-approval rule applies to, defined by attributes that must be true about the user (see [below for nested schema](#nestedatt--preapproved_users_by_attribute))
 - `time_based_access` (List of String) Preapproval rule time access length,
 
 ### Read-Only
@@ -70,7 +77,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
 - `name` (String) The name of this inline webhook.
 
 
@@ -105,3 +112,12 @@ Read-Only:
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission. This may be an empty string.
 - `label` (String) The label of this requestable permission.
 - `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]
+
+
+<a id="nestedatt--preapproved_users_by_attribute"></a>
+### Nested Schema for `preapproved_users_by_attribute`
+
+Optional:
+
+- `attribute` (String) The label for the attribute that will be matched against. Not Null
+- `value` (String) A value to check for strict equality against. Not Null

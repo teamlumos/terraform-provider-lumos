@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type RequestConfigOutput struct {
 	AccessRemovalInlineWebhook     *BaseInlineWebhook             `tfsdk:"access_removal_inline_webhook"`

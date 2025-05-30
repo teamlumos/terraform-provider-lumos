@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -29,12 +28,13 @@ type UsersDataSource struct {
 
 // UsersDataSourceModel describes the data model.
 type UsersDataSourceModel struct {
-	ExactMatch types.Bool     `tfsdk:"exact_match"`
+	ExactMatch types.Bool     `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	Expand     []types.String `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	Items      []tfTypes.User `tfsdk:"items"`
-	Page       types.Int64    `tfsdk:"page"`
+	Page       types.Int64    `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
 	Pages      types.Int64    `tfsdk:"pages"`
-	SearchTerm types.String   `tfsdk:"search_term"`
-	Size       types.Int64    `tfsdk:"size"`
+	SearchTerm types.String   `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Size       types.Int64    `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
 	Total      types.Int64    `tfsdk:"total"`
 }
 
@@ -52,6 +52,11 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 			"exact_match": schema.BoolAttribute{
 				Optional:    true,
 				Description: `If a search_term is provided, only accept exact matches.`,
+			},
+			"expand": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Fields to expand. Supported fields: custom_attributes.`,
 			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
@@ -142,37 +147,13 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	searchTerm := new(string)
-	if !data.SearchTerm.IsUnknown() && !data.SearchTerm.IsNull() {
-		*searchTerm = data.SearchTerm.ValueString()
-	} else {
-		searchTerm = nil
+	request, requestDiags := data.ToOperationsListUsersRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	exactMatch := new(bool)
-	if !data.ExactMatch.IsUnknown() && !data.ExactMatch.IsNull() {
-		*exactMatch = data.ExactMatch.ValueBool()
-	} else {
-		exactMatch = nil
-	}
-	page := new(int64)
-	if !data.Page.IsUnknown() && !data.Page.IsNull() {
-		*page = data.Page.ValueInt64()
-	} else {
-		page = nil
-	}
-	size := new(int64)
-	if !data.Size.IsUnknown() && !data.Size.IsNull() {
-		*size = data.Size.ValueInt64()
-	} else {
-		size = nil
-	}
-	request := operations.ListUsersRequest{
-		SearchTerm: searchTerm,
-		ExactMatch: exactMatch,
-		Page:       page,
-		Size:       size,
-	}
-	res, err := r.client.Core.ListUsers(ctx, request)
+	res, err := r.client.Core.ListUsers(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -184,10 +165,6 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -196,7 +173,11 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPageUser(res.PageUser)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageUser(ctx, res.PageUser)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

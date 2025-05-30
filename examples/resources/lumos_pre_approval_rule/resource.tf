@@ -18,6 +18,12 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
       id = "...my_id..."
     }
   ]
+  preapproved_users_by_attribute = [
+    {
+      attribute = "...my_attribute..."
+      value     = "...my_value..."
+    }
+  ]
   time_based_access = [
     "4 hours"
   ]

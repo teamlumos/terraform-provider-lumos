@@ -2,15 +2,34 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
+)
+
 type LineItemInput struct {
 	// The name of the line item as stored in Lumos
 	Name string `json:"name"`
 	// The type of purchase that this line item refers to
 	Type string `json:"type"`
 	// The number of units purchased for this line item
-	Quantity int64 `json:"quantity"`
-	// The per-unit cost of the line item
+	Quantity int64                 `json:"quantity"`
 	UnitCost LineItemUnitCostInput `json:"unit_cost"`
+	// The start date of the line item
+	StartDate types.Date `json:"start_date"`
+	// The end date of the line item.
+	EndDate *types.Date `json:"end_date"`
+}
+
+func (l LineItemInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *LineItemInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *LineItemInput) GetName() string {
@@ -39,4 +58,18 @@ func (o *LineItemInput) GetUnitCost() LineItemUnitCostInput {
 		return LineItemUnitCostInput{}
 	}
 	return o.UnitCost
+}
+
+func (o *LineItemInput) GetStartDate() types.Date {
+	if o == nil {
+		return types.Date{}
+	}
+	return o.StartDate
+}
+
+func (o *LineItemInput) GetEndDate() *types.Date {
+	if o == nil {
+		return nil
+	}
+	return o.EndDate
 }

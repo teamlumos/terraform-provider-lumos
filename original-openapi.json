@@ -463,6 +463,27 @@
             "description": "If a search_term is provided, only accept exact matches."
           },
           {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fields to expand. Supported fields: custom_attributes.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand. Supported fields: custom_attributes."
+          },
+          {
             "name": "page",
             "in": "query",
             "required": false,
@@ -562,6 +583,102 @@
         }
       }
     },
+    "/users/{user_id}/accounts": {
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Get User Accounts",
+        "description": "Get a list of Accounts for this user",
+        "operationId": "getUserAccounts",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fields to expand. Supported fields: app.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand. Supported fields: app."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size",
+              "default": 50,
+              "title": "Size"
+            },
+            "description": "Page size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_Account_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/inline_webhooks": {
       "get": {
         "tags": [
@@ -622,6 +739,80 @@
               ],
               "title": "App Id"
             }
+          },
+          {
+            "name": "discovered_before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Discovered Before"
+            }
+          },
+          {
+            "name": "discovered_after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Discovered After"
+            }
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DiscoverySource"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sources"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fields to expand. Supported fields: app.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand. Supported fields: app."
           },
           {
             "name": "page",
@@ -1090,7 +1281,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AccountsUploadInput"
+                "title": "Body"
               }
             }
           },
@@ -1601,7 +1792,7 @@
             }
           },
           "404": {
-            "description": "Not found"
+            "description": "Not Found"
           },
           "422": {
             "description": "Validation Error",
@@ -2356,52 +2547,6 @@
       }
     },
     "/appstore/access_requests/{id}": {
-      "get": {
-        "tags": [
-          "AppStore"
-        ],
-        "summary": "Get Access Request",
-        "description": "Get access request by ID.",
-        "operationId": "getAccessRequest",
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccessRequest"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
       "delete": {
         "tags": [
           "AppStore"
@@ -2446,6 +2591,52 @@
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AppStore"
+        ],
+        "summary": "Get Access Request",
+        "description": "Get access request by ID.",
+        "operationId": "getAccessRequest",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessRequest"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -2595,10 +2786,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'",
+              "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_DEPROVISIONING', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'",
               "title": "Statuses"
             },
-            "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'"
+            "description": "Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_DEPROVISIONING', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED'"
           },
           {
             "name": "sort",
@@ -3021,6 +3212,64 @@
           }
         }
       }
+    },
+    "/webhooks/vendr/request_completed/{domain_app_uuid}": {
+      "post": {
+        "tags": [
+          "Integration Webhooks"
+        ],
+        "summary": "Process Vendr Request Completed",
+        "description": "Webhook for Vendr to send request completed events to Lumos",
+        "operationId": "process_vendr_request_completed_webhooks_vendr_request_completed__domain_app_uuid__post",
+        "parameters": [
+          {
+            "name": "domain_app_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Domain App Uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3043,19 +3292,11 @@
             "description": "The name of the app the request is for."
           },
           "requester_user": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/User"
-              }
-            ],
+            "$ref": "#/components/schemas/User",
             "description": "The user who requested access. It's possible for one user to request access on another's behalf."
           },
           "target_user": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/User"
-              }
-            ],
+            "$ref": "#/components/schemas/User",
             "description": "The user the request is for."
           },
           "supporter_user": {
@@ -3069,11 +3310,7 @@
             ]
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SupportRequestStatus"
-              }
-            ],
+            "$ref": "#/components/schemas/SupportRequestStatus",
             "description": "The current status of the request."
           },
           "notes": {
@@ -3150,17 +3387,24 @@
             "title": "App Id",
             "description": "The ID of the app that owns this account."
           },
+          "app": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/App"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The app this account is for"
+          },
           "unique_identifier": {
             "type": "string",
             "title": "Unique Identifier",
             "description": "The stable identifier of this account from the associated service."
           },
           "account_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AccountType"
-              }
-            ],
+            "$ref": "#/components/schemas/AccountType",
             "description": "The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP)."
           },
           "email": {
@@ -3186,6 +3430,53 @@
             ],
             "title": "User Id",
             "description": "The ID of the user associated with this account."
+          },
+          "discovered_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discovered At",
+            "description": "The time that Lumos first discovered this account, in ISO 8601 format"
+          },
+          "last_login": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login",
+            "description": "The last time a user logged into this app, in ISO 8601 format"
+          },
+          "last_activity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Activity",
+            "description": "The last time a user completed an action tracked by Lumos, in ISO 8601 format"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/DiscoverySource"
+            },
+            "type": "array",
+            "title": "Sources",
+            "description": "The discovery methods through which Lumos identified this account"
           }
         },
         "type": "object",
@@ -3196,96 +3487,6 @@
         ],
         "title": "Account"
       },
-      "AccountInput": {
-        "properties": {
-          "unique_identifier": {
-            "type": "string",
-            "title": "Unique Identifier",
-            "description": "A unique identifier for this account, such as an account ID or email."
-          },
-          "email": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Email",
-            "description": "The email of this account."
-          },
-          "first_name": {
-            "type": "string",
-            "title": "First Name",
-            "description": "The first name of the user."
-          },
-          "last_name": {
-            "type": "string",
-            "title": "Last Name",
-            "description": "The last name of the user."
-          },
-          "last_activity": {
-            "type": "string",
-            "title": "Last Activity",
-            "description": "The datetime of last activity of the user."
-          },
-          "last_login": {
-            "type": "string",
-            "title": "Last Login",
-            "description": "The datetime of last login of the user."
-          },
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AccountLifecycleStatus"
-              }
-            ],
-            "description": "The status of the account."
-          },
-          "permissions": {
-            "items": {
-              "$ref": "#/components/schemas/PermissionInput"
-            },
-            "type": "array",
-            "title": "Permissions",
-            "description": "The permissions of the account.",
-            "default": []
-          },
-          "attributes": {
-            "items": {
-              "$ref": "#/components/schemas/AttributeInput"
-            },
-            "type": "array",
-            "title": "Attributes",
-            "description": "The attributes of the account.",
-            "default": []
-          }
-        },
-        "type": "object",
-        "required": [
-          "unique_identifier"
-        ],
-        "title": "AccountInput"
-      },
-      "AccountLifecycleStatus": {
-        "type": "string",
-        "enum": [
-          "DISCOVERED",
-          "STAGED",
-          "ACCESS_CREATED",
-          "ACTIVE",
-          "ARCHIVED",
-          "SUSPENDED",
-          "DEPROVISIONED",
-          "MANUALLY_REMOVED",
-          "ACCESS_REMOVED",
-          "NON_CORPORATE_ACCOUNT",
-          "WAITING_MANUAL_REMOVAL"
-        ],
-        "title": "AccountLifecycleStatus",
-        "description": "NOTE: If you update this, also update UserDomainAppLifecycleStatus\n\nDISCOVERED             - Account discovered through accountfinding. Could be noisy.\n\nSTAGED                 - An account that has been queued for provisioning, but is not\n                         provisioned yet. Relevant for Apps where provisioning is async\n                         (eg. Okta, OneLogin).\n\nACCESS_CREATED         - When an account has been provisioned but not accessed.\n\nACTIVE                 - A live, active, accessible account.\n\nSUSPENDED              - The user can no longer access the account, the license may or may not\n                         be removed. The account can be recovered.\n\nDEPROVISIONED          - The user can no longer access the account, the license was removed,\n                         and the account cannot be recovered.\n\nARCHIVED               - The user can no longer access the account, the license may or may not\n                         be removed. The account can be recovered.\n\nMANUALLY_REMOVED       - The user can no longer access the account, the license is presumably\n                         removed, but all of this was done manually\n\nACCESS_REMOVED         - The user can no longer access the account, but a license may still\n                         exist. This is the case when we remove access through Okta but not a\n                         direct integration\n\nNON_CORPORATE_ACCOUNT  - The account doesn't exist, or is a personal employee account.\n\nWAITING_MANUAL_REMOVAL - Waiting manual removal, someone was requested to remove the user access\n                         from the App, and we are waiting for an answer about it."
-      },
       "AccountType": {
         "type": "string",
         "enum": [
@@ -3294,29 +3495,6 @@
           "SERVICE"
         ],
         "title": "AccountType"
-      },
-      "AccountsUploadInput": {
-        "properties": {
-          "accounts": {
-            "items": {
-              "$ref": "#/components/schemas/AccountInput"
-            },
-            "type": "array",
-            "title": "Accounts",
-            "description": "Accounts to upload.",
-            "default": []
-          },
-          "app_id": {
-            "type": "string",
-            "title": "App Id",
-            "description": "The ID of the app to upload accounts to."
-          }
-        },
-        "type": "object",
-        "required": [
-          "app_id"
-        ],
-        "title": "AccountsUploadInput"
       },
       "ActivityLog": {
         "properties": {
@@ -3380,19 +3558,11 @@
       "ActivityRecord": {
         "properties": {
           "account": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActivityRecordAccountInput"
-              }
-            ],
+            "$ref": "#/components/schemas/ActivityRecordAccountInput",
             "description": "Metadata that Lumos can use to match the activity record to a software account within Lumos."
           },
           "event": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActivityRecordEventInput"
-              }
-            ],
+            "$ref": "#/components/schemas/ActivityRecordEventInput",
             "description": "Metadata about the event being uploaded."
           },
           "timestamp": {
@@ -3467,11 +3637,7 @@
       "ActivityRecordEventInput": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ActivityRecordEventType"
-              }
-            ],
+            "$ref": "#/components/schemas/ActivityRecordEventType",
             "description": "The type of event being uploaded."
           }
         },
@@ -3509,11 +3675,7 @@
       "ActivityRecordOutput": {
         "properties": {
           "job": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SyncTaskOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/SyncTaskOutput",
             "description": "State of the job to post-process the records."
           }
         },
@@ -3531,19 +3693,11 @@
             "description": "AppStore App instructions that are shown to the requester."
           },
           "request_flow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
             "description": "Request flow configuration to request access to app."
           },
           "provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput",
             "description": "Provisioning flow configuration to request access to app."
           },
           "app_id": {
@@ -3595,11 +3749,7 @@
       "AllowedGroupsConfigInput": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AllowedGroupsConfigType"
-              }
-            ],
+            "$ref": "#/components/schemas/AllowedGroupsConfigType",
             "description": "The type of this allowed groups config, can be all groups or specific.",
             "default": "ALL_GROUPS"
           },
@@ -3618,11 +3768,7 @@
       "AllowedGroupsConfigOutput": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AllowedGroupsConfigType"
-              }
-            ],
+            "$ref": "#/components/schemas/AllowedGroupsConfigType",
             "description": "The type of this allowed groups config, can be all groups or specific.",
             "default": "ALL_GROUPS"
           },
@@ -3662,7 +3808,7 @@
           "instance_id": {
             "type": "string",
             "title": "Instance Id",
-            "description": "The non-unique ID of the instance associated with this app. This will be the Okta app id if it\u2019s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos."
+            "description": "The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos."
           },
           "user_friendly_label": {
             "type": "string",
@@ -3670,12 +3816,8 @@
             "description": "The user-friendly label of this app."
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DomainAppStatus"
-              }
-            ],
-            "description": "The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'"
+            "$ref": "#/components/schemas/DomainAppStatus",
+            "description": "The status of this app. Possible values: 'DISCOVERED', 'IN_REVIEW', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'"
           },
           "sources": {
             "items": {
@@ -3725,6 +3867,34 @@
             ],
             "title": "Request Instructions",
             "description": "The request instructions."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "The user-facing description of the app"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The category of the app, as shown in the AppStore"
+          },
+          "links": {
+            "$ref": "#/components/schemas/AppLinks",
+            "description": "A collection of URLs related to this application"
           }
         },
         "type": "object",
@@ -3735,7 +3905,8 @@
           "user_friendly_label",
           "status",
           "sources",
-          "allow_multiple_permission_selection"
+          "allow_multiple_permission_selection",
+          "links"
         ],
         "title": "App"
       },
@@ -3896,6 +4067,26 @@
         ],
         "title": "AppInputCreate"
       },
+      "AppLinks": {
+        "properties": {
+          "self": {
+            "type": "string",
+            "title": "Self",
+            "description": "The canonical API URL for retrieving this specific application"
+          },
+          "admin_url": {
+            "type": "string",
+            "title": "Admin Url",
+            "description": "A URL to access this application within the Lumos web UI"
+          }
+        },
+        "type": "object",
+        "required": [
+          "self",
+          "admin_url"
+        ],
+        "title": "AppLinks"
+      },
       "AppSettingInput": {
         "properties": {
           "custom_request_instructions": {
@@ -3904,19 +4095,11 @@
             "description": "AppStore App instructions that are shown to the requester."
           },
           "request_flow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
             "description": "Request flow configuration to request access to app."
           },
           "provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput",
             "description": "Provisioning flow configuration to request access to app."
           },
           "in_app_store": {
@@ -3937,19 +4120,11 @@
             "description": "AppStore App instructions that are shown to the requester."
           },
           "request_flow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput",
             "description": "Request flow configuration to request access to app."
           },
           "provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningOutput",
             "description": "Provisioning flow configuration to request access to app."
           },
           "in_app_store": {
@@ -3977,7 +4152,7 @@
           "instance_id": {
             "type": "string",
             "title": "Instance Id",
-            "description": "The non-unique ID of the instance associated with this app. This will be the Okta app id if it\u2019s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos."
+            "description": "The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos."
           },
           "user_friendly_label": {
             "type": "string",
@@ -3985,12 +4160,8 @@
             "description": "The user-friendly label of this app."
           },
           "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DomainAppStatus"
-              }
-            ],
-            "description": "The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'"
+            "$ref": "#/components/schemas/DomainAppStatus",
+            "description": "The status of this app. Possible values: 'DISCOVERED', 'IN_REVIEW', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'"
           },
           "sources": {
             "items": {
@@ -4040,6 +4211,34 @@
             ],
             "title": "Request Instructions",
             "description": "The request instructions."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "The user-facing description of the app"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The category of the app, as shown in the AppStore"
+          },
+          "links": {
+            "$ref": "#/components/schemas/AppLinks",
+            "description": "A collection of URLs related to this application"
           }
         },
         "type": "object",
@@ -4050,7 +4249,8 @@
           "user_friendly_label",
           "status",
           "sources",
-          "allow_multiple_permission_selection"
+          "allow_multiple_permission_selection",
+          "links"
         ],
         "title": "AppStoreApp"
       },
@@ -4062,19 +4262,11 @@
             "description": "AppStore App instructions that are shown to the requester."
           },
           "request_flow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
             "description": "Request flow configuration to request access to app."
           },
           "provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningInput",
             "description": "Provisioning flow configuration to request access to app."
           }
         },
@@ -4089,19 +4281,11 @@
             "description": "AppStore App instructions that are shown to the requester."
           },
           "request_flow": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput",
             "description": "Request flow configuration to request access to app."
           },
           "provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreAppSettingsProvisioningOutput",
             "description": "Provisioning flow configuration to request access to app."
           }
         },
@@ -4111,11 +4295,7 @@
       "AppStoreAppSettingsProvisioningInput": {
         "properties": {
           "groups_provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GroupProvisioningOption"
-              }
-            ],
+            "$ref": "#/components/schemas/GroupProvisioningOption",
             "description": "If enabled, Approvers must choose a group to provision the user to for access requests."
           },
           "time_based_access": {
@@ -4177,11 +4357,7 @@
       "AppStoreAppSettingsProvisioningOutput": {
         "properties": {
           "groups_provisioning": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GroupProvisioningOption"
-              }
-            ],
+            "$ref": "#/components/schemas/GroupProvisioningOption",
             "description": "If enabled, Approvers must choose a group to provision the user to for access requests."
           },
           "time_based_access": {
@@ -4243,11 +4419,7 @@
       "AppStoreAppSettingsRequestFlowInput": {
         "properties": {
           "discoverability": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreVisibility"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreVisibility",
             "description": "AppStore App visibility."
           },
           "custom_approval_message": {
@@ -4277,27 +4449,15 @@
             "description": "The allowed groups associated with this config."
           },
           "approvers": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversInput",
             "description": "AppStore App approvers assigned."
           },
           "approvers_stage_2": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversInput",
             "description": "AppStore App stage 2 approvers assigned."
           },
           "admins": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppAdminsInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppAdminsInput",
             "description": "AppStore App admins assigned."
           },
           "request_validation_inline_webhook": {
@@ -4318,11 +4478,7 @@
       "AppStoreAppSettingsRequestFlowOutput": {
         "properties": {
           "discoverability": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppStoreVisibility"
-              }
-            ],
+            "$ref": "#/components/schemas/AppStoreVisibility",
             "description": "AppStore App visibility."
           },
           "custom_approval_message": {
@@ -4356,11 +4512,7 @@
             }
           },
           "approvers": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversOutput",
             "description": "AppStore App approvers assigned.",
             "default": {
               "groups": [],
@@ -4368,11 +4520,7 @@
             }
           },
           "approvers_stage_2": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversOutput",
             "description": "AppStore App stage 2 approvers assigned.",
             "default": {
               "groups": [],
@@ -4380,11 +4528,7 @@
             }
           },
           "admins": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppAdminsOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppAdminsOutput",
             "description": "AppStore App admins assigned.",
             "default": []
           },
@@ -4423,11 +4567,7 @@
       "ApproverInput": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ApproverType"
-              }
-            ],
+            "$ref": "#/components/schemas/ApproverType",
             "description": "The type of this approver."
           },
           "user": {
@@ -4459,11 +4599,7 @@
       "ApproverOutput": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ApproverType"
-              }
-            ],
+            "$ref": "#/components/schemas/ApproverType",
             "description": "The type of this approver."
           },
           "user": {
@@ -4503,26 +4639,25 @@
         ],
         "title": "ApproverType"
       },
-      "AttributeInput": {
+      "AttributeEqualityRule": {
         "properties": {
-          "unique_identifier": {
+          "attribute": {
             "type": "string",
-            "title": "Unique Identifier",
-            "description": "The unique identifier of the custom attribute"
+            "title": "Attribute",
+            "description": "The label for the attribute that will be matched against"
           },
-          "type": {
+          "value": {
             "type": "string",
-            "title": "Type",
-            "description": "The type of the attribute."
-          },
-          "name": {
-            "type": "string",
-            "title": "Name",
-            "description": "The name of the attribute."
+            "title": "Value",
+            "description": "A value to check for strict equality against"
           }
         },
         "type": "object",
-        "title": "AttributeInput"
+        "required": [
+          "attribute",
+          "value"
+        ],
+        "title": "AttributeEqualityRule"
       },
       "BaseGroup": {
         "properties": {
@@ -4626,6 +4761,11 @@
             "type": "string",
             "title": "App Id"
           },
+          "requester_user_id": {
+            "type": "string",
+            "title": "Requester User Id",
+            "description": "Override the user who made the request. If omitted, use the current user. Only available to organization admins."
+          },
           "target_user_id": {
             "type": "string",
             "title": "Target User Id",
@@ -4724,6 +4864,7 @@
         "type": "string",
         "enum": [
           "DISCOVERED",
+          "IN_REVIEW",
           "NEEDS_REVIEW",
           "APPROVED",
           "BLOCKLISTED",
@@ -4734,11 +4875,7 @@
       "FileUpload": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/FileUploadType"
-              }
-            ],
+            "$ref": "#/components/schemas/FileUploadType",
             "description": "The type of content being uploaded. The only supported type today is 'url'"
           },
           "value": {
@@ -4757,9 +4894,9 @@
       "FileUploadType": {
         "type": "string",
         "enum": [
-          "url"
+          "url",
+          "base64"
         ],
-        "const": "url",
         "title": "FileUploadType"
       },
       "FlowState": {
@@ -4971,12 +5108,11 @@
       "HTTPValidationError": {
         "properties": {
           "detail": {
-            "title": "Detail",
-            "description": "The detail of the validation error",
-            "type": "array",
             "items": {
               "$ref": "#/components/schemas/ValidationError"
-            }
+            },
+            "type": "array",
+            "title": "Detail"
           }
         },
         "type": "object",
@@ -4990,11 +5126,7 @@
             "description": "The ID of this inline webhook."
           },
           "hook_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/InlineWebhookType"
-              }
-            ],
+            "$ref": "#/components/schemas/InlineWebhookType",
             "description": "The type of this inline webhook."
           },
           "name": {
@@ -5042,11 +5174,7 @@
             "description": "The ID of the job."
           },
           "state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/FlowState"
-              }
-            ],
+            "$ref": "#/components/schemas/FlowState",
             "description": "The state of the job."
           }
         },
@@ -5141,11 +5269,7 @@
             "description": "The number of units purchased for this line item"
           },
           "unit_cost": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LineItemUnitCost"
-              }
-            ],
+            "$ref": "#/components/schemas/LineItemUnitCost",
             "description": "The unit cost of this line item"
           },
           "start_date": {
@@ -5204,12 +5328,27 @@
             "description": "The number of units purchased for this line item"
           },
           "unit_cost": {
-            "allOf": [
+            "$ref": "#/components/schemas/LineItemUnitCostInput",
+            "description": "The per-unit cost of the line item"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date",
+            "description": "The start date of the line item"
+          },
+          "end_date": {
+            "anyOf": [
               {
-                "$ref": "#/components/schemas/LineItemUnitCostInput"
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
               }
             ],
-            "description": "The per-unit cost of the line item"
+            "title": "End Date",
+            "description": "The end date of the line item."
           }
         },
         "type": "object",
@@ -5217,18 +5356,16 @@
           "name",
           "type",
           "quantity",
-          "unit_cost"
+          "unit_cost",
+          "start_date",
+          "end_date"
         ],
         "title": "LineItemInput"
       },
       "LineItemUnitCost": {
         "properties": {
           "per_month": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Cost"
-              }
-            ],
+            "$ref": "#/components/schemas/Cost",
             "description": "The per unit cost associated with this line item, amortized to the cost per month"
           }
         },
@@ -5278,11 +5415,7 @@
             "description": "The number of units purchased for this line item"
           },
           "unit_cost": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Cost"
-              }
-            ],
+            "$ref": "#/components/schemas/Cost",
             "description": "The unit cost of this line item"
           }
         },
@@ -5393,11 +5526,7 @@
             "description": "A unique ID for the contract being uploaded. This can be an ID from an external system like Ironclad, an internal ID such as a PO number, or simply the name of the vendor + date of the contract."
           },
           "vendor": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Vendor"
-              }
-            ],
+            "$ref": "#/components/schemas/Vendor",
             "description": "Information about the vendor associated with this contract. Currently, we will only support a name field."
           },
           "start_date": {
@@ -6085,27 +6214,6 @@
         ],
         "title": "Page[VendorAgreement]"
       },
-      "PermissionInput": {
-        "properties": {
-          "unique_identifier": {
-            "type": "string",
-            "title": "Unique Identifier",
-            "description": "The unique identifier of the permission."
-          },
-          "type": {
-            "type": "string",
-            "title": "Type",
-            "description": "The type of the permission."
-          },
-          "name": {
-            "type": "string",
-            "title": "Name",
-            "description": "The name of the permission."
-          }
-        },
-        "type": "object",
-        "title": "PermissionInput"
-      },
       "PermissionType": {
         "type": "string",
         "enum": [
@@ -6150,6 +6258,15 @@
             "type": "array",
             "title": "Preapproved Permissions",
             "description": "The preapproved permissions of this preapproval rule.",
+            "default": []
+          },
+          "preapproved_users_by_attribute": {
+            "items": {
+              "$ref": "#/components/schemas/AttributeEqualityRule"
+            },
+            "type": "array",
+            "title": "Preapproved Users By Attribute",
+            "description": "The set of users this pre-approval rule applies to, defined by attributes that must be true about the user",
             "default": []
           },
           "preapproval_webhooks": {
@@ -6213,6 +6330,15 @@
             "description": "The preapproved groups of this preapproval rule.",
             "default": []
           },
+          "preapproved_users_by_attribute": {
+            "items": {
+              "$ref": "#/components/schemas/AttributeEqualityRule"
+            },
+            "type": "array",
+            "title": "Preapproved Users By Attribute",
+            "description": "The set of users this pre-approval rule applies to, defined by attributes that must be true about the user",
+            "default": []
+          },
           "preapproved_permissions": {
             "items": {
               "$ref": "#/components/schemas/RequestablePermissionBaseOutput"
@@ -6272,6 +6398,15 @@
             "type": "array",
             "title": "Preapproved Permissions",
             "description": "The preapproved permissions of this preapproval rule.",
+            "default": []
+          },
+          "preapproved_users_by_attribute": {
+            "items": {
+              "$ref": "#/components/schemas/AttributeEqualityRule"
+            },
+            "type": "array",
+            "title": "Preapproved Users By Attribute",
+            "description": "The set of users this pre-approval rule applies to, defined by attributes that must be true about the user",
             "default": []
           },
           "preapproval_webhooks": {
@@ -6346,19 +6481,11 @@
             "description": "Indicates if custom_approval_message is overridden."
           },
           "approvers": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversInput",
             "description": "AppStore App approvers assigned."
           },
           "approvers_stage_2": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AppApproversInput"
-              }
-            ],
+            "$ref": "#/components/schemas/AppApproversInput",
             "description": "AppStore App stage 2 approvers assigned."
           },
           "request_approval_stages": {
@@ -7210,11 +7337,7 @@
             "description": "The ID of the instance associated with this requestable permission. This may be an empty string."
           },
           "request_config": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RequestConfigOutput"
-              }
-            ],
+            "$ref": "#/components/schemas/RequestConfigOutput",
             "description": "The request config associated with this requestable permission."
           }
         },
@@ -7252,6 +7375,7 @@
           "PENDING_MANUAL_PROVISIONING",
           "DENIED_PROVISIONING",
           "PROVISIONED",
+          "PENDING_DEPROVISIONING",
           "PENDING_MANUAL_DEPROVISIONING",
           "TIME_BASED_EXPIRED",
           "COMPLETED",
@@ -7425,11 +7549,7 @@
             "description": "A unique identifier for this Vendor Agreement"
           },
           "vendor": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Vendor"
-              }
-            ],
+            "$ref": "#/components/schemas/Vendor",
             "description": "The vendor in which the agreement is created for"
           },
           "start_date": {
@@ -7471,12 +7591,16 @@
             "title": "Opt Out Date",
             "description": "The date by which the vendor must be notified if you want to terminate the agreement"
           },
+          "renewal_owners": {
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "type": "array",
+            "title": "Renewal Owners",
+            "description": "The individuals responsible for managing renewals and true-ups for this agreement. They will receive all notifications configured in Lumos."
+          },
           "total_contract_cost": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Cost"
-              }
-            ],
+            "$ref": "#/components/schemas/Cost",
             "description": "The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements."
           },
           "line_items": {
@@ -7511,11 +7635,7 @@
       "VendorAgreementCustomAttribute-Input": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/VendorAgreementCustomAttributeType"
-              }
-            ],
+            "$ref": "#/components/schemas/VendorAgreementCustomAttributeType",
             "description": "The type of custom attribute. Only text and user options are available today"
           },
           "value": {
@@ -7546,11 +7666,7 @@
       "VendorAgreementCustomAttribute-Output": {
         "properties": {
           "type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/VendorAgreementCustomAttributeType"
-              }
-            ],
+            "$ref": "#/components/schemas/VendorAgreementCustomAttributeType",
             "description": "The type of custom attribute. Only text and user options are available today"
           },
           "value": {

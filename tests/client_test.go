@@ -17,7 +17,7 @@ func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
 		t.Fatalf(`LUMOS_API_TOKEN is not set`)
 	}
 	security := shared.Security{
-		HTTPBearer: &apiToken,
+		HTTPBearer: apiToken,
 	}
 	opts := []sdk.SDKOption{
 		sdk.WithServerURL(os.Getenv("LUMOS_API_URL")),

@@ -17,6 +17,8 @@ type PreApprovalRuleOutput struct {
 	AppInstanceID string `json:"app_instance_id"`
 	// The preapproved groups of this preapproval rule.
 	PreapprovedGroups []Group `json:"preapproved_groups,omitempty"`
+	// The set of users this pre-approval rule applies to, defined by attributes that must be true about the user
+	PreapprovedUsersByAttribute []AttributeEqualityRule `json:"preapproved_users_by_attribute,omitempty"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBaseOutput `json:"preapproved_permissions,omitempty"`
 	// The preapproval webhooks of this preapproval rule.
@@ -70,6 +72,13 @@ func (o *PreApprovalRuleOutput) GetPreapprovedGroups() []Group {
 		return nil
 	}
 	return o.PreapprovedGroups
+}
+
+func (o *PreApprovalRuleOutput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
+	if o == nil {
+		return nil
+	}
+	return o.PreapprovedUsersByAttribute
 }
 
 func (o *PreApprovalRuleOutput) GetPreapprovedPermissions() []RequestablePermissionBaseOutput {
