@@ -23,6 +23,7 @@ const (
 	SupportRequestStatusPendingManualProvisioning   SupportRequestStatus = "PENDING_MANUAL_PROVISIONING"
 	SupportRequestStatusDeniedProvisioning          SupportRequestStatus = "DENIED_PROVISIONING"
 	SupportRequestStatusProvisioned                 SupportRequestStatus = "PROVISIONED"
+	SupportRequestStatusPendingDeprovisioning       SupportRequestStatus = "PENDING_DEPROVISIONING"
 	SupportRequestStatusPendingManualDeprovisioning SupportRequestStatus = "PENDING_MANUAL_DEPROVISIONING"
 	SupportRequestStatusTimeBasedExpired            SupportRequestStatus = "TIME_BASED_EXPIRED"
 	SupportRequestStatusCompleted                   SupportRequestStatus = "COMPLETED"
@@ -64,6 +65,8 @@ func (e *SupportRequestStatus) UnmarshalJSON(data []byte) error {
 	case "DENIED_PROVISIONING":
 		fallthrough
 	case "PROVISIONED":
+		fallthrough
+	case "PENDING_DEPROVISIONING":
 		fallthrough
 	case "PENDING_MANUAL_DEPROVISIONING":
 		fallthrough

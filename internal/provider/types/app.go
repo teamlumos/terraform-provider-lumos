@@ -2,13 +2,18 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type App struct {
 	AllowMultiplePermissionSelection types.Bool     `tfsdk:"allow_multiple_permission_selection"`
 	AppClassID                       types.String   `tfsdk:"app_class_id"`
+	Category                         types.String   `tfsdk:"category"`
+	Description                      types.String   `tfsdk:"description"`
 	ID                               types.String   `tfsdk:"id"`
 	InstanceID                       types.String   `tfsdk:"instance_id"`
+	Links                            AppLinks       `tfsdk:"links"`
 	LogoURL                          types.String   `tfsdk:"logo_url"`
 	RequestInstructions              types.String   `tfsdk:"request_instructions"`
 	Sources                          []types.String `tfsdk:"sources"`

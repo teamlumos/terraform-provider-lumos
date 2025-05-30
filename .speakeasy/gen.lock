@@ -1,28 +1,26 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 6e63e170285ba9294141577f934f22c0
+  docChecksum: 202efb5efa77d6252219deefbc704540
   docVersion: 0.1.0
-  speakeasyVersion: 1.409.0
-  generationVersion: 2.429.0
-  releaseVersion: 0.4.4
-  configChecksum: 10811cabdc04bcb71d69048575fdef4f
+  speakeasyVersion: 1.554.1
+  generationVersion: 2.616.1
+  releaseVersion: 0.8.0
+  configChecksum: 45600e20829dcab69253c4a39241546e
 features:
   terraform:
     additionalDependencies: 0.1.0
-    constsAndDefaults: 0.1.4
-    core: 3.24.15
-    envVarSecurityUsage: 0.1.0
-    globalSecurity: 2.81.8
-    globalServerURLs: 2.82.1
-    nameOverrides: 2.81.2
+    constsAndDefaults: 0.2.1
+    core: 3.41.10
+    globalSecurity: 2.81.12
+    globalServerURLs: 2.82.2
+    nameOverrides: 2.81.3
     nullables: 0.0.0
-    retries: 2.81.1
+    retries: 2.81.2
     sets: 0.1.2
-    unions: 2.81.16
+    unions: 2.81.17
 generatedFiles:
   - .gitattributes
-  - CONTRIBUTING.md
   - USAGE.md
   - examples/README.md
   - examples/data-sources/lumos_app/data-source.tf
@@ -45,7 +43,9 @@ generatedFiles:
   - go.mod
   - go.sum
   - internal/planmodifiers/boolplanmodifier/suppress_diff.go
+  - internal/planmodifiers/float32planmodifier/suppress_diff.go
   - internal/planmodifiers/float64planmodifier/suppress_diff.go
+  - internal/planmodifiers/int32planmodifier/suppress_diff.go
   - internal/planmodifiers/int64planmodifier/suppress_diff.go
   - internal/planmodifiers/listplanmodifier/suppress_diff.go
   - internal/planmodifiers/mapplanmodifier/suppress_diff.go
@@ -93,12 +93,17 @@ generatedFiles:
   - internal/provider/requestablepermission_resource_sdk.go
   - internal/provider/requestablepermissions_data_source.go
   - internal/provider/requestablepermissions_data_source_sdk.go
+  - internal/provider/typeconvert/date.go
+  - internal/provider/typeconvert/datetime.go
+  - internal/provider/typeconvert/int32.go
   - internal/provider/types/allowed_groups_config_input.go
   - internal/provider/types/app.go
   - internal/provider/types/app_admins_input.go
   - internal/provider/types/app_approvers_input.go
+  - internal/provider/types/app_links.go
   - internal/provider/types/app_store_app_settings_provisioning_input.go
   - internal/provider/types/app_store_app_settings_request_flow_input.go
+  - internal/provider/types/attribute_equality_rule.go
   - internal/provider/types/base_inline_webhook.go
   - internal/provider/types/group.go
   - internal/provider/types/request_approval_config_input.go
@@ -115,13 +120,14 @@ generatedFiles:
   - internal/provider/users_data_source_sdk.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
-  - internal/sdk/.gitignore
-  - internal/sdk/CONTRIBUTING.md
   - internal/sdk/appstore.go
   - internal/sdk/core.go
+  - internal/sdk/docs/models/operations/option.md
   - internal/sdk/integrationwebhooks.go
+  - internal/sdk/internal/config/sdkconfiguration.go
   - internal/sdk/internal/hooks/hooks.go
   - internal/sdk/internal/utils/contenttype.go
+  - internal/sdk/internal/utils/env.go
   - internal/sdk/internal/utils/form.go
   - internal/sdk/internal/utils/headers.go
   - internal/sdk/internal/utils/json.go
@@ -169,6 +175,7 @@ generatedFiles:
   - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
   - internal/sdk/models/operations/getuploadjobstate.go
   - internal/sdk/models/operations/getuser.go
+  - internal/sdk/models/operations/getuseraccounts.go
   - internal/sdk/models/operations/listapps.go
   - internal/sdk/models/operations/listusers.go
   - internal/sdk/models/operations/listvendoragreements.go
@@ -177,6 +184,7 @@ generatedFiles:
   - internal/sdk/models/operations/options.go
   - internal/sdk/models/operations/postaccounts.go
   - internal/sdk/models/operations/processairbasemilestoneevent.go
+  - internal/sdk/models/operations/processvendrrequestcompletedwebhooksvendrrequestcompleteddomainappuuidpost.go
   - internal/sdk/models/operations/removeappfromappstore.go
   - internal/sdk/models/operations/updateapp.go
   - internal/sdk/models/operations/updateappsettings.go
@@ -185,9 +193,6 @@ generatedFiles:
   - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
   - internal/sdk/models/shared/accessrequest.go
   - internal/sdk/models/shared/account.go
-  - internal/sdk/models/shared/accountinput.go
-  - internal/sdk/models/shared/accountlifecyclestatus.go
-  - internal/sdk/models/shared/accountsuploadinput.go
   - internal/sdk/models/shared/accounttype.go
   - internal/sdk/models/shared/activitylog.go
   - internal/sdk/models/shared/activityrecord.go
@@ -201,11 +206,14 @@ generatedFiles:
   - internal/sdk/models/shared/airbasepurchaserequestevent.go
   - internal/sdk/models/shared/allowedgroupsconfiginput.go
   - internal/sdk/models/shared/allowedgroupsconfigoutput.go
+  - internal/sdk/models/shared/allowedgroupsconfigtype.go
   - internal/sdk/models/shared/app.go
   - internal/sdk/models/shared/appadminsinput.go
+  - internal/sdk/models/shared/appadminsoutput.go
   - internal/sdk/models/shared/appapproversinput.go
   - internal/sdk/models/shared/appapproversoutput.go
   - internal/sdk/models/shared/appinputcreate.go
+  - internal/sdk/models/shared/applinks.go
   - internal/sdk/models/shared/approverinput.go
   - internal/sdk/models/shared/approveroutput.go
   - internal/sdk/models/shared/approvertype.go
@@ -220,7 +228,7 @@ generatedFiles:
   - internal/sdk/models/shared/appstoreappsettingsrequestflowoutput.go
   - internal/sdk/models/shared/appstorevisibility.go
   - internal/sdk/models/shared/appstorevisibilityoption.go
-  - internal/sdk/models/shared/attributeinput.go
+  - internal/sdk/models/shared/attributeequalityrule.go
   - internal/sdk/models/shared/basegroup.go
   - internal/sdk/models/shared/baseinlinewebhook.go
   - internal/sdk/models/shared/baseuser.go
@@ -257,7 +265,6 @@ generatedFiles:
   - internal/sdk/models/shared/pagerequestablepermissionoutput.go
   - internal/sdk/models/shared/pageuser.go
   - internal/sdk/models/shared/pagevendoragreement.go
-  - internal/sdk/models/shared/permissioninput.go
   - internal/sdk/models/shared/permissiontype.go
   - internal/sdk/models/shared/preapprovalruleinput.go
   - internal/sdk/models/shared/preapprovalruleoutput.go
@@ -302,7 +309,9 @@ generatedFiles:
   - internal/validators/JSONParseValidator.go
   - internal/validators/RFC3339Validator.go
   - internal/validators/boolvalidators/not_null.go
+  - internal/validators/float32validators/not_null.go
   - internal/validators/float64validators/not_null.go
+  - internal/validators/int32validators/not_null.go
   - internal/validators/int64validators/not_null.go
   - internal/validators/listvalidators/not_null.go
   - internal/validators/mapvalidators/not_null.go
@@ -316,23 +325,30 @@ generatedFiles:
 examples:
   listApps:
     speakeasy-default-list-apps:
+      parameters:
+        query:
+          exact_match: false
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 220154, "page": 92647, "size": 133499}
-        "422": {}
+          application/json: {"items": [{"id": "<id>", "app_class_id": "<id>", "instance_id": "<id>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": ["ONELOGIN", "OKTA", "LUMOS_INTEGRATION"], "allow_multiple_permission_selection": false, "links": {"self": "<value>", "admin_url": "https://idealistic-maestro.net"}}], "total": 434887, "page": 202474, "size": 486200}
+        "422":
+          application/json: {}
   createApp:
     speakeasy-default-create-app:
       requestBody:
-        application/json: {"name": "<value>", "category": "<value>", "description": "Virtual maximized help-desk"}
+        application/json: {"name": "<value>", "category": "<value>", "description": "royal bourgeoisie clumsy yahoo responsible to nor whose oh"}
       responses:
         "200":
-          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
-        "422": {}
+          application/json: {"id": "<id>", "app_class_id": "<id>", "instance_id": "<id>", "user_friendly_label": "<value>", "status": "APPROVED", "sources": ["ATLASSIAN", "MICROSOFT_DEEP_INBOX", "MANUAL"], "allow_multiple_permission_selection": true, "links": {"self": "<value>", "admin_url": "https://productive-tinderbox.info/"}}
+        "422":
+          application/json: {}
   getAppCategories:
     speakeasy-default-get-app-categories:
       responses:
         "200":
-          application/json: []
+          application/json: ["<value 1>", "<value 2>"]
   getApp:
     speakeasy-default-get-app:
       parameters:
@@ -340,29 +356,43 @@ examples:
           app_id: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
-        "422": {}
+          application/json: {"id": "<id>", "app_class_id": "<id>", "instance_id": "<id>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": ["MICROSOFT_OAUTH"], "allow_multiple_permission_selection": true, "links": {"self": "<value>", "admin_url": "https://dull-instance.org"}}
+        "422":
+          application/json: {}
   updateApp:
     speakeasy-default-update-app:
       parameters:
         path:
           app_id: "<id>"
       requestBody:
-        application/json: {"name": "<value>", "category": "<value>", "description": "Vision-oriented next generation ability"}
+        application/json: {"name": "<value>", "category": "<value>", "description": "convalesce which tarragon battle chow finally electrify"}
       responses:
         "200":
-          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "DEPRECATED", "sources": [], "allow_multiple_permission_selection": false}
-        "422": {}
+          application/json: {"id": "<id>", "app_class_id": "<id>", "instance_id": "<id>", "user_friendly_label": "<value>", "status": "DISCOVERED", "sources": ["MICROSOFT_OAUTH"], "allow_multiple_permission_selection": true, "links": {"self": "<value>", "admin_url": "https://minty-festival.biz"}}
+        "422":
+          application/json: {}
   getAppSettings:
     speakeasy-default-get-app-settings:
       parameters:
         path:
-          app_id: "<value>"
+          app_id: "<id>"
+      responses:
+        "200":
+          application/json: {"in_app_store": false}
+        "422":
+          application/json: {}
   updateAppSettings:
     speakeasy-default-update-app-settings:
       parameters:
         path:
-          app_id: "<value>"
+          app_id: "<id>"
+      requestBody:
+        application/json: {"in_app_store": false}
+      responses:
+        "200":
+          application/json: {"in_app_store": false}
+        "422":
+          application/json: {}
   currentUser:
     speakeasy-default-current-user:
       responses:
@@ -370,299 +400,434 @@ examples:
           application/json: {"id": "<id>"}
   listUsers:
     speakeasy-default-list-users:
+      parameters:
+        query:
+          exact_match: false
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 526212, "page": 540061, "size": 129084}
-        "422": {}
+          application/json: {"items": [{"id": "<id>"}, {"id": "<id>"}, {"id": "<id>"}], "total": 293464, "page": 264240, "size": 809193}
+        "422":
+          application/json: {}
   getUser:
     speakeasy-default-get-user:
       parameters:
         path:
-          user_id: "<value>"
+          user_id: "<id>"
       responses:
         "200":
           application/json: {"id": "<id>"}
-        "422": {}
+        "422":
+          application/json: {}
+  getUserAccounts:
+    speakeasy-default-get-user-accounts:
+      parameters:
+        path:
+          user_id: "<id>"
+        query:
+          page: 1
+          size: 50
+      responses:
+        "200":
+          application/json: {"items": [{"app_id": "<id>", "unique_identifier": "<value>", "account_type": "USER"}], "total": null, "page": 269971, "size": 278471}
+        "422":
+          application/json: {}
   get_inline_webhooks_inline_webhooks_get:
     speakeasy-default-get-inline-webhooks-inline-webhooks-get:
       responses:
         "200":
-          application/json: []
+          application/json: [{"id": "<id>", "hook_type": "DEPROVISION", "name": "<value>"}, {"id": "<id>", "hook_type": "DEPROVISION", "name": "<value>"}, {"id": "<id>", "hook_type": "DEPROVISION", "name": "<value>"}]
   getAccounts:
     speakeasy-default-get-accounts:
+      parameters:
+        query:
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 362838, "page": 205365, "size": 978666}
-        "422": {}
+          application/json: {"items": [], "total": 812429, "page": 740916, "size": 493207}
+        "422":
+          application/json: {}
   getGroupMembership:
     speakeasy-default-get-group-membership:
       parameters:
         path:
-          group_id: "<value>"
-        query: {}
+          group_id: "<id>"
+        query:
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 666267, "page": 749293, "size": 790853}
-        "422": {}
+          application/json: {"items": [{"id": "<id>"}, {"id": "<id>"}, {"id": "<id>"}], "total": 129106, "page": 708210, "size": 133691}
+        "422":
+          application/json: {}
   getGroup:
     speakeasy-default-get-group:
       parameters:
         path:
-          group_id: "<value>"
-  getGroups:
-    speakeasy-default-get-groups:
+          group_id: "<id>"
       responses:
         "200":
-          application/json: {"items": [], "total": 288074, "page": 452984, "size": 736003}
-        "422": {}
+          application/json: {}
+        "422":
+          application/json: {}
+  getGroups:
+    speakeasy-default-get-groups:
+      parameters:
+        query:
+          exact_match: false
+          page: 1
+          size: 50
+      responses:
+        "200":
+          application/json: {"items": [{}], "total": 254949, "page": 571802, "size": 474240}
+        "422":
+          application/json: {}
   getUploadJobState:
     speakeasy-default-get-upload-job-state:
       parameters:
         path:
-          job_id: "<value>"
+          job_id: "<id>"
       responses:
         "200":
-          application/json: {"job_id": "<value>"}
-        "422": {}
+          application/json: {"job_id": "<id>"}
+        "422":
+          application/json: {}
   getActivityLogs:
     speakeasy-default-get-activity-logs:
+      parameters:
+        query:
+          limit: 50
+          offset: 0
       responses:
         "200":
-          application/json: {"items": [], "total": 867607, "limit": 533609, "offset": 666257, "links": {"first": "/api/v1/users?limit=1&offset1", "last": "/api/v1/users?limit=1&offset1", "self": "/api/v1/users?limit=1&offset1", "next": "/api/v1/users?limit=1&offset1", "prev": "/api/v1/users?limit=1&offset1"}}
-        "422": {}
+          application/json: {"items": [{"event_hash": "<value>", "event_type": "<value>", "event_type_user_friendly": "<value>", "outcome": "<value>", "targets": [], "actor": {}, "event_metadata": {}}, {"event_hash": "<value>", "event_type": "<value>", "event_type_user_friendly": "<value>", "outcome": "<value>", "targets": [], "actor": {}, "event_metadata": {}}, {"event_hash": "<value>", "event_type": "<value>", "event_type_user_friendly": "<value>", "outcome": "<value>", "targets": [], "actor": {}, "event_metadata": {}}], "total": 292415, "limit": 360760, "offset": 161277, "links": {"first": "/api/v1/users?limit=1&offset1", "last": "/api/v1/users?limit=1&offset1", "self": "/api/v1/users?limit=1&offset1", "next": "/api/v1/users?limit=1&offset1", "prev": "/api/v1/users?limit=1&offset1"}}
+        "422":
+          application/json: {}
   postAccounts:
     speakeasy-default-post-accounts:
       requestBody:
-        application/json: {"app_id": "<value>"}
+        application/json: "<value>"
       responses:
         "200":
-          application/json: {"job_id": "<value>"}
-        "422": {}
+          application/json: {"job_id": "<id>"}
+        "422":
+          application/json: {}
   activityRecords:
     speakeasy-default-activity-records:
       requestBody:
-        application/json: {"records": []}
+        application/json: {"records": [{"account": {}, "event": {"type": "LOGIN"}, "timestamp": "2025-12-13T10:47:05.191Z", "source_app_id": "<id>"}]}
       responses:
         "200":
-          application/json: {"job": {"job_id": "<value>"}}
-        "422": {}
+          application/json: {"job": {"job_id": "<id>"}}
+        "422":
+          application/json: {}
   getActivityRecordsJobState:
     speakeasy-default-get-activity-records-job-state:
       parameters:
         path:
-          job_id: "<value>"
+          job_id: "<id>"
       responses:
         "200":
-          application/json: {"job_id": "<value>"}
-        "422": {}
-  get_appstore_permissions_for_app_appstore_requestable_permissions_get:
-    speakeasy-default-get-appstore-permissions-for-app-appstore-requestable-permissions-get:
+          application/json: {"job_id": "<id>"}
+        "422":
+          application/json: {}
+  get_appstore_permissions_for_app_appstore_apps__app_id__requestable_permissions_get:
+    speakeasy-default-get-appstore-permissions-for-app-appstore-apps-app-id-requestable-permissions-get:
+      parameters:
+        path:
+          app_id: "<id>"
+        query:
+          exact_match: false
+          include_inherited_configs: true
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": []}
-        "422": {}
+          application/json: {"items": [{"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}, {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}, {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}], "total": 248899, "page": 87538, "size": 793192}
+        "422":
+          application/json: {}
+  get_appstore_permissions_appstore_requestable_permissions_get:
+    speakeasy-default-get-appstore-permissions-appstore-requestable-permissions-get:
+      parameters:
+        query:
+          exact_match: false
+          include_inherited_configs: true
+          page: 1
+          size: 50
+      responses:
+        "200":
+          application/json: {"items": [{"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}, {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}, {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}], "total": null, "page": 526245, "size": 177749}
+        "422":
+          application/json: {}
   create_appstore_requestable_permission_appstore_requestable_permissions_post:
     speakeasy-default-create-appstore-requestable-permission-appstore-requestable-permissions-post:
+      parameters:
+        query:
+          include_inherited_configs: true
       requestBody:
-        application/json: {"app_id": "<value>", "label": "<value>"}
+        application/json: {"app_id": "<id>", "label": "<value>"}
       responses:
         "201":
-          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+        "422":
+          application/json: {}
   get_appstore_permission_appstore_requestable_permissions__permission_id__get:
     speakeasy-default-get-appstore-permission-appstore-requestable-permissions-permission-id-get:
       parameters:
         path:
           permission_id: "<id>"
-        query: {}
+        query:
+          include_inherited_configs: true
       responses:
         "200":
-          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
-        "404": {}
-  delete_appstore_permission_appstore_requestable_permissions__permission_id__delete:
-    speakeasy-default-delete-appstore-permission-appstore-requestable-permissions-permission-id-delete:
-      parameters:
-        path:
-          permission_id: "<id>"
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+        "422":
+          application/json: {}
   update_appstore_permission_appstore_requestable_permissions__permission_id__patch:
     speakeasy-default-update-appstore-permission-appstore-requestable-permissions-permission-id-patch:
       parameters:
         path:
           permission_id: "<id>"
-        query: {}
+        query:
+          include_inherited_configs: true
+      requestBody:
+        application/json: {}
       responses:
         "200":
-          application/json: {"label": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+        "422":
+          application/json: {}
+  delete_appstore_permission_appstore_requestable_permissions__permission_id__delete:
+    speakeasy-default-delete-appstore-permission-appstore-requestable-permissions-permission-id-delete:
+      parameters:
+        path:
+          permission_id: "<id>"
+      responses:
+        "422":
+          application/json: {}
   get_appstore_pre_approval_rules_for_app_appstore_pre_approval_rules_get:
     speakeasy-default-get-appstore-pre-approval-rules-for-app-appstore-pre-approval-rules-get:
+      parameters:
+        query:
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 278110, "page": 484123, "size": 415236}
-        "422": {}
+          application/json: {"items": [{"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}, {"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}, {"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}], "total": 152279, "page": 726897, "size": 452159}
+        "422":
+          application/json: {}
   create_pre_approval_rule_appstore_pre_approval_rules_post:
     speakeasy-default-create-pre-approval-rule-appstore-pre-approval-rules-post:
       requestBody:
-        application/json: {"justification": "<value>", "app_id": "<value>"}
+        application/json: {"justification": "<value>", "app_id": "<id>", "preapproved_groups": [], "preapproved_permissions": [], "preapproved_users_by_attribute": [], "preapproval_webhooks": []}
       responses:
         "201":
-          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
+          application/json: {"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}
+        "422":
+          application/json: {}
   get_appstore_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__get:
     speakeasy-default-get-appstore-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-get:
       parameters:
         path:
-          pre_approval_rule_id: "<value>"
+          pre_approval_rule_id: "<id>"
       responses:
         "200":
-          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
-  delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete:
-    speakeasy-default-delete-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-delete:
-      parameters:
-        path:
-          pre_approval_rule_id: "<id>"
+          application/json: {"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}
+        "422":
+          application/json: {}
   update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch:
     speakeasy-default-update-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-patch:
       parameters:
         path:
           pre_approval_rule_id: "<id>"
       requestBody:
-        application/json: {"justification": "<value>"}
+        application/json: {"justification": "<value>", "preapproved_groups": [], "preapproved_permissions": [], "preapproved_users_by_attribute": [], "preapproval_webhooks": []}
       responses:
         "200":
-          application/json: {"justification": "<value>", "app_id": "<value>", "app_class_id": "<value>", "app_instance_id": "<value>"}
-        "422": {}
+          application/json: {"justification": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "preapproved_groups": [], "preapproved_users_by_attribute": [], "preapproved_permissions": [], "preapproval_webhooks": []}
+        "422":
+          application/json: {}
+  delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete:
+    speakeasy-default-delete-pre-approval-rule-appstore-pre-approval-rules-pre-approval-rule-id-delete:
+      parameters:
+        path:
+          pre_approval_rule_id: "<id>"
+      responses:
+        "422":
+          application/json: {}
   getAppStoreAppSettings:
     speakeasy-default-get-app-store-app-settings:
       parameters:
         path:
           app_id: "<id>"
+      responses:
+        "200":
+          application/json: {}
+        "422":
+          application/json: {}
   updateAppStoreAppSettings:
     speakeasy-default-update-app-store-app-settings:
       parameters:
         path:
           app_id: "<id>"
-  getAppStoreApps:
-    speakeasy-default-get-app-store-apps:
+      requestBody:
+        application/json: {}
       responses:
         "200":
-          application/json: {"items": [], "total": 944857, "page": 45577, "size": 713298}
-        "422": {}
+          application/json: {}
+        "422":
+          application/json: {}
   addAppToAppStore:
     speakeasy-default-add-app-to-app-store:
       requestBody:
-        application/json: {"app_id": "<value>"}
-  getAppStoreApp:
-    speakeasy-default-get-app-store-app:
-      parameters:
-        path:
-          app_id: "<value>"
+        application/json: {"app_id": "<id>"}
       responses:
         "200":
-          application/json: {"id": "<id>", "app_class_id": "<value>", "instance_id": "<value>", "user_friendly_label": "<value>", "status": "NEEDS_REVIEW", "sources": [], "allow_multiple_permission_selection": true}
-        "422": {}
+          application/json: {}
+        "422":
+          application/json: {}
+  getAppStoreApps:
+    speakeasy-default-get-app-store-apps:
+      parameters:
+        query:
+          exact_match: false
+          all_visibilities: false
+          page: 1
+          size: 50
+      responses:
+        "200":
+          application/json: {"items": [], "total": 793993, "page": 291590, "size": 815515}
+        "422":
+          application/json: {}
   removeAppFromAppStore:
     speakeasy-default-remove-app-from-app-store:
       parameters:
         path:
-          app_id: "<value>"
+          app_id: "<id>"
       responses:
         "200":
           application/json: "<value>"
-        "422": {}
-  createAccessRequest:
-    speakeasy-default-create-access-request:
-      requestBody:
-        application/json: {"app_id": "<value>"}
+        "422":
+          application/json: {}
+  getAppStoreApp:
+    speakeasy-default-get-app-store-app:
+      parameters:
+        path:
+          app_id: "<id>"
       responses:
-        "201":
-          application/json: []
-        "422": {}
+        "200":
+          application/json: {"id": "<id>", "app_class_id": "<id>", "instance_id": "<id>", "user_friendly_label": "<value>", "status": "APPROVED", "sources": ["MANUAL"], "allow_multiple_permission_selection": false, "links": {"self": "<value>", "admin_url": "https://passionate-longboat.net/"}}
+        "422":
+          application/json: {}
+  cancelAccessRequest:
+    speakeasy-default-cancel-access-request:
+      parameters:
+        path:
+          id: "<id>"
+      responses:
+        "422":
+          application/json: {}
   getAccessRequest:
     speakeasy-default-get-access-request:
       parameters:
         path:
-          access_request_id: "<value>"
           id: "<id>"
-        query: {}
       responses:
         "200":
-          application/json: {"id": "<id>", "app_id": "<value>", "app_name": "<value>", "requester_user": {"id": "<id>"}, "target_user": {"id": "<id>"}, "status": "EXPIRED"}
-        "422": {}
+          application/json: {"id": "<id>", "app_id": "<id>", "app_name": "<value>", "requester_user": {"id": "<id>"}, "target_user": {"id": "<id>"}, "status": "PENDING_MANUAL_DEPROVISIONING"}
+        "422":
+          application/json: {}
+  createAccessRequest:
+    speakeasy-default-create-access-request:
+      requestBody:
+        application/json: {"app_id": "<id>"}
+      responses:
+        "201":
+          application/json: [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "requester_user": {"id": "<id>"}, "target_user": {"id": "<id>"}, "status": "REVERTED"}]
+        "422":
+          application/json: {}
   getAccessRequests:
     speakeasy-default-get-access-requests:
+      parameters:
+        query:
+          sort: "ASC"
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 589667, "page": 350558, "size": 149113}
-        "422": {}
+          application/json: {"items": [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "requester_user": {"id": "<id>"}, "target_user": {"id": "<id>"}, "status": "DENIED_PROVISIONING"}], "total": 806609, "page": 616287, "size": 323032}
+        "422":
+          application/json: {}
   listVendorAgreements:
     speakeasy-default-list-vendor-agreements:
+      parameters:
+        query:
+          page: 1
+          size: 50
       responses:
         "200":
-          application/json: {"items": [], "total": 577759, "page": 762505, "size": 12102}
-        "422": {}
+          application/json: {"items": [], "total": 414337, "page": 926555, "size": 688650}
+        "422":
+          application/json: {}
   createFoundDocument:
     speakeasy-default-create-found-document-json:
       requestBody:
-        application/json: {"unique_identifier": "<value>", "files": []}
+        application/json: {"unique_identifier": "<value>", "files": [{"type": "url", "value": "<value>"}]}
       responses:
         "200":
           application/json: "<value>"
-        "422": {}
+        "422":
+          application/json: {}
     speakeasy-default-create-found-document-multipart:
       requestBody:
-        multipart/form-data: {"unique_identifier": "<value>", "files": []}
+        multipart/form-data: {"unique_identifier": "<value>", "files": [{"": "0x70a6C9a86c"}]}
       responses:
         "200":
           application/json: "<value>"
-        "422": {}
+        "422":
+          application/json: {}
   createOrder:
     speakeasy-default-create-order:
       requestBody:
-        application/json: {"unique_identifier": "<value>", "vendor": {"name": "<value>"}, "start_date": "2024-01-07", "end_date": "2022-01-30", "auto_renewal": false, "line_items": []}
+        application/json: {"unique_identifier": "<value>", "vendor": {"name": "<value>"}, "start_date": "2024-02-21", "end_date": "2023-07-22", "auto_renewal": false, "line_items": [{"name": "<value>", "type": "<value>", "quantity": 96345, "unit_cost": {"period": "<value>", "value": 8870.49}, "start_date": "2023-05-19", "end_date": "2024-01-08"}, {"name": "<value>", "type": "<value>", "quantity": 96345, "unit_cost": {"period": "<value>", "value": 8870.49}, "start_date": "2023-05-19", "end_date": "2024-01-08"}, {"name": "<value>", "type": "<value>", "quantity": 96345, "unit_cost": {"period": "<value>", "value": 8870.49}, "start_date": "2023-05-19", "end_date": "2024-01-08"}]}
       responses:
         "201":
           application/json: "<value>"
-        "422": {}
+        "422":
+          application/json: {}
   Lumos Art.:
     speakeasy-default-lumos-art:
       responses:
         "200":
           text/plain: "<value>"
   Lumos liveness check:
-    speakeasy-default-lumos-liveness-check: {}
+    speakeasy-default-lumos-liveness-check:
+      responses:
+        "200":
+          application/json: {}
   processAirbaseMilestoneEvent:
     speakeasy-default-process-airbase-milestone-event:
       parameters:
         path:
-          domain_app_uuid: "<value>"
+          domain_app_uuid: "<id>"
       requestBody:
-        application/json: {"id": "<id>", "object": "<value>", "type": "<value>", "created_date": "<value>"}
+        application/json: {"id": "<id>", "object": "<value>", "type": "<value>", "created_date": "<value>", "data": {}}
       responses:
         "200":
           application/json: "<value>"
-        "422": {}
-  get_appstore_permissions_for_app_appstore_apps__app_id__requestable_permissions_get:
-    speakeasy-default-get-appstore-permissions-for-app-appstore-apps-app-id-requestable-permissions-get:
+        "422":
+          application/json: {}
+  process_vendr_request_completed_webhooks_vendr_request_completed__domain_app_uuid__post:
+    speakeasy-default-process-vendr-request-completed-webhooks-vendr-request-completed-domain-app-uuid-post:
       parameters:
         path:
-          app_id: "<value>"
-        query: {}
+          domain_app_uuid: "<id>"
       responses:
         "200":
-          application/json: {"items": [], "total": 370764, "page": 712829, "size": 386135}
-        "422": {}
-  get_appstore_permissions_appstore_requestable_permissions_get:
-    speakeasy-default-get-appstore-permissions-appstore-requestable-permissions-get:
-      responses:
-        "200":
-          application/json: {"items": [], "total": 792945, "page": 403127, "size": 849864}
-        "422": {}
-  cancelAccessRequest:
-    speakeasy-default-cancel-access-request:
-      parameters:
-        path:
-          id: "<id>"
-        query: {}
+          application/json: "<value>"
+        "422":
+          application/json: {}
+examplesVersion: 1.0.2
+generatedTests: {}

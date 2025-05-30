@@ -9,8 +9,7 @@ import (
 
 type VendorAgreement struct {
 	// A unique identifier for this Vendor Agreement
-	ID string `json:"id"`
-	// The vendor in which the agreement is created for
+	ID     string `json:"id"`
 	Vendor Vendor `json:"vendor"`
 	// The start of the current term
 	StartDate *types.Date `json:"start_date"`
@@ -18,8 +17,9 @@ type VendorAgreement struct {
 	EndDate *types.Date `json:"end_date"`
 	// The date by which the vendor must be notified if you want to terminate the agreement
 	OptOutDate *types.Date `json:"opt_out_date"`
-	// The total cost of the current service term, including all line items and true ups, and including future years for multi-year agreements.
-	TotalContractCost Cost `json:"total_contract_cost"`
+	// The individuals responsible for managing renewals and true-ups for this agreement. They will receive all notifications configured in Lumos.
+	RenewalOwners     []User `json:"renewal_owners,omitempty"`
+	TotalContractCost Cost   `json:"total_contract_cost"`
 	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
 	LineItems []LineItem `json:"line_items"`
 	// Custom metadata tracked about each of your Vendor Agreements. The set of available options must be configured within the Lumos admin panel.
@@ -70,6 +70,13 @@ func (o *VendorAgreement) GetOptOutDate() *types.Date {
 		return nil
 	}
 	return o.OptOutDate
+}
+
+func (o *VendorAgreement) GetRenewalOwners() []User {
+	if o == nil {
+		return nil
+	}
+	return o.RenewalOwners
 }
 
 func (o *VendorAgreement) GetTotalContractCost() Cost {

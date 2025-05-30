@@ -2,100 +2,7 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
-// AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput - AppStore App approvers assigned.
-type AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput struct {
-	// Groups assigned as support request approvers.
-	Groups []Group `json:"groups"`
-	// Users assigned as support request approvers.
-	Users []User `json:"users"`
-}
-
-func (a AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (o *AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput) GetGroups() []Group {
-	if o == nil {
-		return nil
-	}
-	return o.Groups
-}
-
-func (o *AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput) GetUsers() []User {
-	if o == nil {
-		return nil
-	}
-	return o.Users
-}
-
-// AppStoreAppSettingsRequestFlowOutputAppApproversOutput - AppStore App stage 2 approvers assigned.
-type AppStoreAppSettingsRequestFlowOutputAppApproversOutput struct {
-	// Groups assigned as support request approvers.
-	Groups []Group `json:"groups"`
-	// Users assigned as support request approvers.
-	Users []User `json:"users"`
-}
-
-func (a AppStoreAppSettingsRequestFlowOutputAppApproversOutput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutputAppApproversOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (o *AppStoreAppSettingsRequestFlowOutputAppApproversOutput) GetGroups() []Group {
-	if o == nil {
-		return nil
-	}
-	return o.Groups
-}
-
-func (o *AppStoreAppSettingsRequestFlowOutputAppApproversOutput) GetUsers() []User {
-	if o == nil {
-		return nil
-	}
-	return o.Users
-}
-
-// AppAdminsOutput - AppStore App admins assigned.
-type AppAdminsOutput struct {
-	// Groups assigned as app admins.
-	Groups []Group `json:"groups,omitempty"`
-	// Users assigned as app admins.
-	Users []User `json:"users,omitempty"`
-}
-
-func (o *AppAdminsOutput) GetGroups() []Group {
-	if o == nil {
-		return nil
-	}
-	return o.Groups
-}
-
-func (o *AppAdminsOutput) GetUsers() []User {
-	if o == nil {
-		return nil
-	}
-	return o.Users
-}
-
 type AppStoreAppSettingsRequestFlowOutput struct {
-	// AppStore App visibility.
 	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
 	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
@@ -104,13 +11,10 @@ type AppStoreAppSettingsRequestFlowOutput struct {
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// The allowed groups config associated with this config.
-	AllowedGroups *AllowedGroupsConfigOutput `json:"allowed_groups,omitempty"`
-	// AppStore App approvers assigned.
-	Approvers *AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput `json:"approvers,omitempty"`
-	// AppStore App stage 2 approvers assigned.
-	ApproversStage2 *AppStoreAppSettingsRequestFlowOutputAppApproversOutput `json:"approvers_stage_2,omitempty"`
-	// AppStore App admins assigned.
-	Admins *AppAdminsOutput `json:"admins,omitempty"`
+	AllowedGroups   *AllowedGroupsConfigOutput `json:"allowed_groups,omitempty"`
+	Approvers       *AppApproversOutput        `json:"approvers,omitempty"`
+	ApproversStage2 *AppApproversOutput        `json:"approvers_stage_2,omitempty"`
+	Admins          *AppAdminsOutput           `json:"admins,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
@@ -150,14 +54,14 @@ func (o *AppStoreAppSettingsRequestFlowOutput) GetAllowedGroups() *AllowedGroups
 	return o.AllowedGroups
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetApprovers() *AppStoreAppSettingsRequestFlowOutputApproversAppApproversOutput {
+func (o *AppStoreAppSettingsRequestFlowOutput) GetApprovers() *AppApproversOutput {
 	if o == nil {
 		return nil
 	}
 	return o.Approvers
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetApproversStage2() *AppStoreAppSettingsRequestFlowOutputAppApproversOutput {
+func (o *AppStoreAppSettingsRequestFlowOutput) GetApproversStage2() *AppApproversOutput {
 	if o == nil {
 		return nil
 	}

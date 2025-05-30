@@ -10,7 +10,8 @@ import (
 type FileUploadType string
 
 const (
-	FileUploadTypeURL FileUploadType = "url"
+	FileUploadTypeURL    FileUploadType = "url"
+	FileUploadTypeBase64 FileUploadType = "base64"
 )
 
 func (e FileUploadType) ToPointer() *FileUploadType {
@@ -23,6 +24,8 @@ func (e *FileUploadType) UnmarshalJSON(data []byte) error {
 	}
 	switch v {
 	case "url":
+		fallthrough
+	case "base64":
 		*e = FileUploadType(v)
 		return nil
 	default:

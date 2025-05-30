@@ -7,8 +7,7 @@ type LineItemUpload struct {
 	Name string `json:"name"`
 	// The number of units purchased for this line item
 	Quantity int64 `json:"quantity"`
-	// The unit cost of this line item
-	UnitCost Cost `json:"unit_cost"`
+	UnitCost Cost  `json:"unit_cost"`
 }
 
 func (o *LineItemUpload) GetName() string {

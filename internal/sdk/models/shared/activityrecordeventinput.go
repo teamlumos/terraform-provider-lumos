@@ -3,7 +3,6 @@
 package shared
 
 type ActivityRecordEventInput struct {
-	// The type of event being uploaded.
 	Type ActivityRecordEventType `json:"type"`
 }
 

@@ -3,11 +3,29 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *UserDataSourceModel) RefreshFromSharedUser(resp *shared.User) {
+func (r *UserDataSourceModel) ToOperationsGetUserRequest(ctx context.Context) (*operations.GetUserRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var userID string
+	userID = r.UserID.ValueString()
+
+	out := operations.GetUserRequest{
+		UserID: userID,
+	}
+
+	return &out, diags
+}
+
+func (r *UserDataSourceModel) RefreshFromSharedUser(ctx context.Context, resp *shared.User) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Email = types.StringPointerValue(resp.Email)
 		r.FamilyName = types.StringPointerValue(resp.FamilyName)
@@ -19,4 +37,6 @@ func (r *UserDataSourceModel) RefreshFromSharedUser(resp *shared.User) {
 			r.Status = types.StringNull()
 		}
 	}
+
+	return diags
 }

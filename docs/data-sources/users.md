@@ -15,6 +15,9 @@ Users DataSource
 ```terraform
 data "lumos_users" "my_users" {
   exact_match = true
+  expand = [
+    "..."
+  ]
   page        = 4
   search_term = "...my_search_term..."
   size        = 87
@@ -27,6 +30,7 @@ data "lumos_users" "my_users" {
 ### Optional
 
 - `exact_match` (Boolean) If a search_term is provided, only accept exact matches.
+- `expand` (List of String) Fields to expand. Supported fields: custom_attributes.
 - `page` (Number) Page number
 - `search_term` (String) Search for users by name or email.
 - `size` (Number) Page size

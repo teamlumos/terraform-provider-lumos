@@ -16,7 +16,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -36,15 +35,16 @@ type PreApprovalRuleResource struct {
 
 // PreApprovalRuleResourceModel describes the resource data model.
 type PreApprovalRuleResourceModel struct {
-	AppClassID             types.String                        `tfsdk:"app_class_id"`
-	AppID                  types.String                        `tfsdk:"app_id"`
-	AppInstanceID          types.String                        `tfsdk:"app_instance_id"`
-	ID                     types.String                        `tfsdk:"id"`
-	Justification          types.String                        `tfsdk:"justification"`
-	PreapprovalWebhooks    []tfTypes.BaseInlineWebhook         `tfsdk:"preapproval_webhooks"`
-	PreapprovedGroups      []tfTypes.Group                     `tfsdk:"preapproved_groups"`
-	PreapprovedPermissions []tfTypes.RequestablePermissionBase `tfsdk:"preapproved_permissions"`
-	TimeBasedAccess        []types.String                      `tfsdk:"time_based_access"`
+	AppClassID                  types.String                        `tfsdk:"app_class_id"`
+	AppID                       types.String                        `tfsdk:"app_id"`
+	AppInstanceID               types.String                        `tfsdk:"app_instance_id"`
+	ID                          types.String                        `tfsdk:"id"`
+	Justification               types.String                        `tfsdk:"justification"`
+	PreapprovalWebhooks         []tfTypes.BaseInlineWebhook         `tfsdk:"preapproval_webhooks"`
+	PreapprovedGroups           []tfTypes.Group                     `tfsdk:"preapproved_groups"`
+	PreapprovedPermissions      []tfTypes.RequestablePermissionBase `tfsdk:"preapproved_permissions"`
+	PreapprovedUsersByAttribute []tfTypes.AttributeEqualityRule     `tfsdk:"preapproved_users_by_attribute"`
+	TimeBasedAccess             []types.String                      `tfsdk:"time_based_access"`
 }
 
 func (r *PreApprovalRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -96,7 +96,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"hook_type": schema.StringAttribute{
 							Computed:    true,
-							Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+							Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 							Validators: []validator.String{
 								stringvalidator.OneOf(
 									"PRE_APPROVAL",
@@ -215,6 +215,34 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `The preapproved permissions of this preapproval rule.`,
 			},
+			"preapproved_users_by_attribute": schema.ListNestedAttribute{
+				Computed: true,
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
+					Attributes: map[string]schema.Attribute{
+						"attribute": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `The label for the attribute that will be matched against. Not Null`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+							},
+						},
+						"value": schema.StringAttribute{
+							Computed:    true,
+							Optional:    true,
+							Description: `A value to check for strict equality against. Not Null`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+							},
+						},
+					},
+				},
+				Description: `The set of users this pre-approval rule applies to, defined by attributes that must be true about the user`,
+			},
 			"time_based_access": schema.ListAttribute{
 				Computed:    true,
 				Optional:    true,
@@ -263,8 +291,13 @@ func (r *PreApprovalRuleResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	request := *data.ToSharedPreApprovalRuleInput()
-	res, err := r.client.AppStore.CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx, request)
+	request, requestDiags := data.ToSharedPreApprovalRuleInput(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.AppStore.CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -284,8 +317,17 @@ func (r *PreApprovalRuleResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPreApprovalRuleOutput(res.PreApprovalRuleOutput)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedPreApprovalRuleOutput(ctx, res.PreApprovalRuleOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -329,15 +371,13 @@ func (r *PreApprovalRuleResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsUpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	preApprovalRuleUpdateInput := *data.ToSharedPreApprovalRuleUpdateInput()
-	request := operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest{
-		ID:                         id,
-		PreApprovalRuleUpdateInput: preApprovalRuleUpdateInput,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatch(ctx, request)
+	res, err := r.client.AppStore.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatch(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -357,8 +397,17 @@ func (r *PreApprovalRuleResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPreApprovalRuleOutput(res.PreApprovalRuleOutput)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedPreApprovalRuleOutput(ctx, res.PreApprovalRuleOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -382,13 +431,13 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsDeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
-		ID: id,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx, request)
+	res, err := r.client.AppStore.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

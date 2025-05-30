@@ -54,7 +54,7 @@ Read-Only:
 - `app_instance_id` (String) The ID of the instance associated with this requestable permission. This may be an empty string.
 - `id` (String) The ID of this requestable permission.
 - `label` (String) The label of this requestable permission.
-- `request_config` (Attributes) The request config associated with this requestable permission. (see [below for nested schema](#nestedatt--items--request_config))
+- `request_config` (Attributes) (see [below for nested schema](#nestedatt--items--request_config))
 - `type` (String) The type of this requestable permission.
 
 <a id="nestedatt--items--request_config"></a>
@@ -76,7 +76,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook.
+- `hook_type` (String)
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -87,7 +87,7 @@ Read-Only:
 Read-Only:
 
 - `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--items--request_config--allowed_groups--groups))
-- `type` (String) The type of this allowed groups config, can be all groups or specific.
+- `type` (String)
 
 <a id="nestedatt--items--request_config--allowed_groups--groups"></a>
 ### Nested Schema for `items.request_config.allowed_groups.groups`
@@ -220,7 +220,7 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook.
+- `hook_type` (String)
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.
 
@@ -232,6 +232,6 @@ Read-Only:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) The type of this inline webhook.
+- `hook_type` (String)
 - `id` (String) The ID of this inline webhook.
 - `name` (String) The name of this inline webhook.

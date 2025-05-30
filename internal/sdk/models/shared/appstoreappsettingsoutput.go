@@ -4,11 +4,9 @@ package shared
 
 type AppStoreAppSettingsOutput struct {
 	// AppStore App instructions that are shown to the requester.
-	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
-	// Request flow configuration to request access to app.
-	RequestFlow *AppStoreAppSettingsRequestFlowOutput `json:"request_flow,omitempty"`
-	// Provisioning flow configuration to request access to app.
-	Provisioning *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
+	CustomRequestInstructions *string                                `json:"custom_request_instructions,omitempty"`
+	RequestFlow               *AppStoreAppSettingsRequestFlowOutput  `json:"request_flow,omitempty"`
+	Provisioning              *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
 }
 
 func (o *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {

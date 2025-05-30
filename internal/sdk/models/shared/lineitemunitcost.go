@@ -3,7 +3,6 @@
 package shared
 
 type LineItemUnitCost struct {
-	// The per unit cost associated with this line item, amortized to the cost per month
 	PerMonth Cost `json:"per_month"`
 }
 

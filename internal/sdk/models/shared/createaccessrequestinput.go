@@ -4,6 +4,8 @@ package shared
 
 type CreateAccessRequestInput struct {
 	AppID string `json:"app_id"`
+	// Override the user who made the request. If omitted, use the current user. Only available to organization admins.
+	RequesterUserID *string `json:"requester_user_id,omitempty"`
 	// User to request access for. If omitted, request for the current user.
 	TargetUserID *string `json:"target_user_id,omitempty"`
 	// [Deprecated - use business_justification] Why the user needs access.
@@ -23,6 +25,13 @@ func (o *CreateAccessRequestInput) GetAppID() string {
 		return ""
 	}
 	return o.AppID
+}
+
+func (o *CreateAccessRequestInput) GetRequesterUserID() *string {
+	if o == nil {
+		return nil
+	}
+	return o.RequesterUserID
 }
 
 func (o *CreateAccessRequestInput) GetTargetUserID() *string {

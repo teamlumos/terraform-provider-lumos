@@ -4,8 +4,7 @@ package shared
 
 type InlineWebhook struct {
 	// The ID of this inline webhook.
-	ID string `json:"id"`
-	// The type of this inline webhook.
+	ID       string            `json:"id"`
 	HookType InlineWebhookType `json:"hook_type"`
 	// The name of this inline webhook.
 	Name string `json:"name"`

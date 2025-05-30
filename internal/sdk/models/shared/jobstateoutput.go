@@ -4,8 +4,7 @@ package shared
 
 type JobStateOutput struct {
 	// The ID of the job.
-	JobID string `json:"job_id"`
-	// The state of the job.
+	JobID string     `json:"job_id"`
 	State *FlowState `json:"state,omitempty"`
 }
 

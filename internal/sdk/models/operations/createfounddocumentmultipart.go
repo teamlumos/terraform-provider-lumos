@@ -10,7 +10,7 @@ import (
 )
 
 type Files struct {
-	FileName string `multipartForm:"name=files"`
+	FileName string `multipartForm:"name=fileName"`
 	Content  []byte `multipartForm:"content"`
 }
 

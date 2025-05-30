@@ -15,7 +15,6 @@ const (
 	DetailTypeStr                    DetailType = "str"
 )
 
-// Detail - The detail of the validation error
 type Detail struct {
 	ArrayOfValidationError []ValidationError `queryParam:"inline"`
 	Str                    *string           `queryParam:"inline"`
@@ -73,7 +72,6 @@ func (u Detail) MarshalJSON() ([]byte, error) {
 }
 
 type HTTPValidationError struct {
-	// The detail of the validation error
 	Detail *Detail `json:"detail,omitempty"`
 }
 

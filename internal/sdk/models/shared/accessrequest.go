@@ -14,16 +14,13 @@ type AccessRequest struct {
 	// The ID of the app the request is for.
 	AppID string `json:"app_id"`
 	// The name of the app the request is for.
-	AppName string `json:"app_name"`
-	// The user who requested access. It's possible for one user to request access on another's behalf.
-	RequesterUser User `json:"requester_user"`
-	// The user the request is for.
-	TargetUser    User  `json:"target_user"`
-	SupporterUser *User `json:"supporter_user,omitempty"`
-	// The current status of the request.
-	Status SupportRequestStatus `json:"status"`
+	AppName       string               `json:"app_name"`
+	RequesterUser User                 `json:"requester_user"`
+	TargetUser    User                 `json:"target_user"`
+	SupporterUser *User                `json:"supporter_user,omitempty"`
+	Status        SupportRequestStatus `json:"status"`
 	// The reason the user wrote for putting the access request into the given state.
-	Notes                  map[string]string             `json:"notes,omitempty"`
+	Notes                  map[string]*string            `json:"notes,omitempty"`
 	ExpiresAt              *time.Time                    `json:"expires_at,omitempty"`
 	RequestablePermissions []RequestablePermissionOutput `json:"requestable_permissions,omitempty"`
 	RequestedAt            *time.Time                    `json:"requested_at,omitempty"`
@@ -89,7 +86,7 @@ func (o *AccessRequest) GetStatus() SupportRequestStatus {
 	return o.Status
 }
 
-func (o *AccessRequest) GetNotes() map[string]string {
+func (o *AccessRequest) GetNotes() map[string]*string {
 	if o == nil {
 		return nil
 	}

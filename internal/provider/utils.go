@@ -6,22 +6,22 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httputil"
+	"net/textproto"
+	"strings"
+
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+
 	tfReflect "github.com/teamlumos/terraform-provider-lumos/internal/provider/reflect"
-	"io"
-	"net/http"
-	"net/http/httputil"
-	"net/textproto"
-	"reflect"
-	"strings"
 )
 
 func debugResponse(response *http.Response) string {
@@ -43,19 +43,6 @@ func debugResponse(response *http.Response) string {
 		}
 	}
 	return fmt.Sprintf("**Request**:\n%s\n**Response**:\n%s", string(dumpReq), string(dumpRes))
-}
-
-func reflectJSONKey(data any, key string) reflect.Value {
-	jsonIfied, err := json.Marshal(data)
-	if err != nil {
-		panic(fmt.Errorf("failed to marshal data: %w", err))
-	}
-	var jsonMap map[string]interface{}
-	err = json.Unmarshal(jsonIfied, &jsonMap)
-	if err != nil {
-		panic(fmt.Errorf("failed to unmarshal data: %w", err))
-	}
-	return reflect.ValueOf(jsonMap[key])
 }
 
 func merge(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse, target interface{}) {
@@ -83,26 +70,46 @@ func merge(ctx context.Context, req resource.UpdateRequest, resp *resource.Updat
 		return
 	}
 
-	refreshPlan(ctx, plan, target, resp.Diagnostics)
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, target)...)
 }
 
-func refreshPlan(ctx context.Context, plan types.Object, target interface{}, diagnostics diag.Diagnostics) {
+func refreshPlan(ctx context.Context, plan types.Object, target any) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	obj := types.ObjectType{AttrTypes: plan.AttributeTypes(ctx)}
 	val, err := plan.ToTerraformValue(ctx)
 	if err != nil {
-		diagnostics.Append(diag.NewErrorDiagnostic("Object Conversion Error", "An unexpected error was encountered trying to convert object. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error()))
-		return
+		diags.AddError(
+			"Object Conversion Error",
+			"An unexpected error was encountered trying to convert object. This is always an error in the provider. Please report the following to the provider developer:\n\n"+err.Error(),
+		)
+		return diags
 	}
-	diagnostics.Append(tfReflect.Into(ctx, obj, val, target, tfReflect.Options{
+
+	diags.Append(tfReflect.Into(ctx, obj, val, target, tfReflect.Options{
 		UnhandledNullAsEmpty:    true,
 		UnhandledUnknownAsEmpty: true,
 		SourceType:              tfReflect.SourceTypePlan,
 	}, path.Empty())...)
+
+	return diags
+}
+
+// Configurable options for the provider HTTP transport.
+type ProviderHTTPTransportOpts struct {
+	// HTTP headers to set on all requests.
+	SetHeaders map[string]string
+
+	// Underlying HTTP transport.
+	Transport http.RoundTripper
 }
 
 // Note: this is taken as a more minimal/specific version of https://github.com/hashicorp/terraform-plugin-sdk/blob/main/helper/logging/logging_http_transport.go
-func NewLoggingHTTPTransport(t http.RoundTripper) *loggingHttpTransport {
-	return &loggingHttpTransport{t}
+func NewProviderHTTPTransport(opts ProviderHTTPTransportOpts) *providerHttpTransport {
+	return &providerHttpTransport{
+		setHeaders: opts.SetHeaders,
+		transport:  opts.Transport,
+	}
 }
 
 const (
@@ -120,13 +127,17 @@ const (
 	FieldHttpTransactionId        = "tf_http_trans_id"
 )
 
-type loggingHttpTransport struct {
-	transport http.RoundTripper
+type providerHttpTransport struct {
+	setHeaders map[string]string
+	transport  http.RoundTripper
 }
 
-func (t *loggingHttpTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t *providerHttpTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	ctx := req.Context()
 	ctx = t.addTransactionIdField(ctx)
+
+	// Set globally defined HTTP headers in the request
+	t.setRequestHeaders(req)
 
 	// Decompose the request bytes in a message (HTTP body) and fields (HTTP headers), then log it
 	fields, err := decomposeRequestForLogging(req)
@@ -157,7 +168,8 @@ func (t *loggingHttpTransport) RoundTrip(req *http.Request) (*http.Response, err
 	return res, nil
 }
 
-func (t *loggingHttpTransport) addTransactionIdField(ctx context.Context) context.Context {
+// Generates UUID and sets it into the tf_http_trans_id logging field.
+func (t *providerHttpTransport) addTransactionIdField(ctx context.Context) context.Context {
 	tId, err := uuid.GenerateUUID()
 
 	if err != nil {
@@ -165,6 +177,13 @@ func (t *loggingHttpTransport) addTransactionIdField(ctx context.Context) contex
 	}
 
 	return tflog.SetField(ctx, FieldHttpTransactionId, tId)
+}
+
+// Sets globally defined HTTP headers in the request.
+func (t *providerHttpTransport) setRequestHeaders(req *http.Request) {
+	for name, value := range t.setHeaders {
+		req.Header.Set(name, value)
+	}
 }
 
 func decomposeRequestForLogging(req *http.Request) (map[string]interface{}, error) {

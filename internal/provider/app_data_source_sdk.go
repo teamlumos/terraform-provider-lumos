@@ -3,19 +3,41 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppDataSourceModel) RefreshFromSharedApp(resp *shared.App) {
+func (r *AppDataSourceModel) ToOperationsGetAppRequest(ctx context.Context) (*operations.GetAppRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.GetAppRequest{
+		ID: id,
+	}
+
+	return &out, diags
+}
+
+func (r *AppDataSourceModel) RefreshFromSharedApp(ctx context.Context, resp *shared.App) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.AllowMultiplePermissionSelection = types.BoolValue(resp.AllowMultiplePermissionSelection)
 		r.AppClassID = types.StringValue(resp.AppClassID)
+		r.Category = types.StringPointerValue(resp.Category)
+		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
+		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
+		r.Links.Self = types.StringValue(resp.Links.Self)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
 		r.RequestInstructions = types.StringPointerValue(resp.RequestInstructions)
-		r.Sources = []types.String{}
+		r.Sources = make([]types.String, 0, len(resp.Sources))
 		for _, v := range resp.Sources {
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
@@ -23,4 +45,6 @@ func (r *AppDataSourceModel) RefreshFromSharedApp(resp *shared.App) {
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}
+
+	return diags
 }

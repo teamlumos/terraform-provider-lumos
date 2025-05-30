@@ -6,10 +6,16 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
+	"time"
 )
 
 type GetAccountsRequest struct {
-	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
+	AppID            *string                  `queryParam:"style=form,explode=true,name=app_id"`
+	DiscoveredBefore *time.Time               `queryParam:"style=form,explode=true,name=discovered_before"`
+	DiscoveredAfter  *time.Time               `queryParam:"style=form,explode=true,name=discovered_after"`
+	Sources          []shared.DiscoverySource `queryParam:"style=form,explode=true,name=sources"`
+	// Fields to expand. Supported fields: app.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	// Page size
@@ -32,6 +38,34 @@ func (o *GetAccountsRequest) GetAppID() *string {
 		return nil
 	}
 	return o.AppID
+}
+
+func (o *GetAccountsRequest) GetDiscoveredBefore() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.DiscoveredBefore
+}
+
+func (o *GetAccountsRequest) GetDiscoveredAfter() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.DiscoveredAfter
+}
+
+func (o *GetAccountsRequest) GetSources() []shared.DiscoverySource {
+	if o == nil {
+		return nil
+	}
+	return o.Sources
+}
+
+func (o *GetAccountsRequest) GetExpand() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Expand
 }
 
 func (o *GetAccountsRequest) GetPage() *int64 {

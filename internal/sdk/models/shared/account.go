@@ -2,17 +2,42 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+	"time"
+)
+
 type Account struct {
 	// The ID of the app that owns this account.
 	AppID string `json:"app_id"`
+	// The app this account is for
+	App *App `json:"app,omitempty"`
 	// The stable identifier of this account from the associated service.
-	UniqueIdentifier string `json:"unique_identifier"`
-	// The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP).
-	AccountType AccountType `json:"account_type"`
+	UniqueIdentifier string      `json:"unique_identifier"`
+	AccountType      AccountType `json:"account_type"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`
 	// The ID of the user associated with this account.
 	UserID *string `json:"user_id,omitempty"`
+	// The time that Lumos first discovered this account, in ISO 8601 format
+	DiscoveredAt *time.Time `json:"discovered_at,omitempty"`
+	// The last time a user logged into this app, in ISO 8601 format
+	LastLogin *time.Time `json:"last_login,omitempty"`
+	// The last time a user completed an action tracked by Lumos, in ISO 8601 format
+	LastActivity *time.Time `json:"last_activity,omitempty"`
+	// The discovery methods through which Lumos identified this account
+	Sources []DiscoverySource `json:"sources,omitempty"`
+}
+
+func (a Account) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *Account) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *Account) GetAppID() string {
@@ -20,6 +45,13 @@ func (o *Account) GetAppID() string {
 		return ""
 	}
 	return o.AppID
+}
+
+func (o *Account) GetApp() *App {
+	if o == nil {
+		return nil
+	}
+	return o.App
 }
 
 func (o *Account) GetUniqueIdentifier() string {
@@ -48,4 +80,32 @@ func (o *Account) GetUserID() *string {
 		return nil
 	}
 	return o.UserID
+}
+
+func (o *Account) GetDiscoveredAt() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.DiscoveredAt
+}
+
+func (o *Account) GetLastLogin() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.LastLogin
+}
+
+func (o *Account) GetLastActivity() *time.Time {
+	if o == nil {
+		return nil
+	}
+	return o.LastActivity
+}
+
+func (o *Account) GetSources() []DiscoverySource {
+	if o == nil {
+		return nil
+	}
+	return o.Sources
 }

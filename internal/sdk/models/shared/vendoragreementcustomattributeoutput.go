@@ -73,7 +73,6 @@ func (u Value) MarshalJSON() ([]byte, error) {
 }
 
 type VendorAgreementCustomAttributeOutput struct {
-	// The type of custom attribute. Only text and user options are available today
 	Type VendorAgreementCustomAttributeType `json:"type"`
 	// The value of the attribute for an individual Order
 	Value *Value `json:"value,omitempty"`

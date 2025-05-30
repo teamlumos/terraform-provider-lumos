@@ -44,11 +44,22 @@ Read-Only:
 
 - `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
+- `category` (String) The category of the app, as shown in the AppStore
+- `description` (String) The user-facing description of the app
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
+- `links` (Attributes) (see [below for nested schema](#nestedatt--items--links))
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
-- `status` (String) The status of this app. Possible values: 'DISCOVERED', 'NEEDS_REVIEW', 'APPROVED', 'BLOCKLISTED', 'DEPRECATED'
+- `status` (String)
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
+
+<a id="nestedatt--items--links"></a>
+### Nested Schema for `items.links`
+
+Read-Only:
+
+- `admin_url` (String) A URL to access this application within the Lumos web UI
+- `self` (String) The canonical API URL for retrieving this specific application

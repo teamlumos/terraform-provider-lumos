@@ -10,13 +10,13 @@ import (
 type TimeBasedAccessOptions string
 
 const (
-	TimeBasedAccessOptionsTwoHours     TimeBasedAccessOptions = "2 hours"
-	TimeBasedAccessOptionsFourHours    TimeBasedAccessOptions = "4 hours"
-	TimeBasedAccessOptionsTwelveHours  TimeBasedAccessOptions = "12 hours"
-	TimeBasedAccessOptionsSevenDays    TimeBasedAccessOptions = "7 days"
-	TimeBasedAccessOptionsFourteenDays TimeBasedAccessOptions = "14 days"
-	TimeBasedAccessOptionsThirtyDays   TimeBasedAccessOptions = "30 days"
-	TimeBasedAccessOptionsNinetyDays   TimeBasedAccessOptions = "90 days"
+	TimeBasedAccessOptionsTwohours     TimeBasedAccessOptions = "2 hours"
+	TimeBasedAccessOptionsFourhours    TimeBasedAccessOptions = "4 hours"
+	TimeBasedAccessOptionsTwelvehours  TimeBasedAccessOptions = "12 hours"
+	TimeBasedAccessOptionsSevendays    TimeBasedAccessOptions = "7 days"
+	TimeBasedAccessOptionsFourteendays TimeBasedAccessOptions = "14 days"
+	TimeBasedAccessOptionsThirtydays   TimeBasedAccessOptions = "30 days"
+	TimeBasedAccessOptionsNinetydays   TimeBasedAccessOptions = "90 days"
 	TimeBasedAccessOptionsUnlimited    TimeBasedAccessOptions = "Unlimited"
 )
 

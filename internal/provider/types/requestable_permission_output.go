@@ -2,7 +2,9 @@
 
 package types
 
-import "github.com/hashicorp/terraform-plugin-framework/types"
+import (
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
 
 type RequestablePermissionOutput struct {
 	AppClassID    types.String        `tfsdk:"app_class_id"`

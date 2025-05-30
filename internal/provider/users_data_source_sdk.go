@@ -3,36 +3,86 @@
 package provider
 
 import (
+	"context"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *UsersDataSourceModel) RefreshFromSharedPageUser(resp *shared.PageUser) {
+func (r *UsersDataSourceModel) ToOperationsListUsersRequest(ctx context.Context) (*operations.ListUsersRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	searchTerm := new(string)
+	if !r.SearchTerm.IsUnknown() && !r.SearchTerm.IsNull() {
+		*searchTerm = r.SearchTerm.ValueString()
+	} else {
+		searchTerm = nil
+	}
+	exactMatch := new(bool)
+	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
+		*exactMatch = r.ExactMatch.ValueBool()
+	} else {
+		exactMatch = nil
+	}
+	var expand []string
+	if r.Expand != nil {
+		expand = make([]string, 0, len(r.Expand))
+		for _, expandItem := range r.Expand {
+			expand = append(expand, expandItem.ValueString())
+		}
+	}
+	page := new(int64)
+	if !r.Page.IsUnknown() && !r.Page.IsNull() {
+		*page = r.Page.ValueInt64()
+	} else {
+		page = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	out := operations.ListUsersRequest{
+		SearchTerm: searchTerm,
+		ExactMatch: exactMatch,
+		Expand:     expand,
+		Page:       page,
+		Size:       size,
+	}
+
+	return &out, diags
+}
+
+func (r *UsersDataSourceModel) RefreshFromSharedPageUser(ctx context.Context, resp *shared.PageUser) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	if resp != nil {
 		r.Items = []tfTypes.User{}
 		if len(r.Items) > len(resp.Items) {
 			r.Items = r.Items[:len(resp.Items)]
 		}
 		for itemsCount, itemsItem := range resp.Items {
-			var items1 tfTypes.User
-			items1.Email = types.StringPointerValue(itemsItem.Email)
-			items1.FamilyName = types.StringPointerValue(itemsItem.FamilyName)
-			items1.GivenName = types.StringPointerValue(itemsItem.GivenName)
-			items1.ID = types.StringValue(itemsItem.ID)
+			var items tfTypes.User
+			items.Email = types.StringPointerValue(itemsItem.Email)
+			items.FamilyName = types.StringPointerValue(itemsItem.FamilyName)
+			items.GivenName = types.StringPointerValue(itemsItem.GivenName)
+			items.ID = types.StringValue(itemsItem.ID)
 			if itemsItem.Status != nil {
-				items1.Status = types.StringValue(string(*itemsItem.Status))
+				items.Status = types.StringValue(string(*itemsItem.Status))
 			} else {
-				items1.Status = types.StringNull()
+				items.Status = types.StringNull()
 			}
 			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items1)
+				r.Items = append(r.Items, items)
 			} else {
-				r.Items[itemsCount].Email = items1.Email
-				r.Items[itemsCount].FamilyName = items1.FamilyName
-				r.Items[itemsCount].GivenName = items1.GivenName
-				r.Items[itemsCount].ID = items1.ID
-				r.Items[itemsCount].Status = items1.Status
+				r.Items[itemsCount].Email = items.Email
+				r.Items[itemsCount].FamilyName = items.FamilyName
+				r.Items[itemsCount].GivenName = items.GivenName
+				r.Items[itemsCount].ID = items.ID
+				r.Items[itemsCount].Status = items.Status
 			}
 		}
 		r.Page = types.Int64PointerValue(resp.Page)
@@ -40,4 +90,6 @@ func (r *UsersDataSourceModel) RefreshFromSharedPageUser(resp *shared.PageUser) 
 		r.Size = types.Int64PointerValue(resp.Size)
 		r.Total = types.Int64PointerValue(resp.Total)
 	}
+
+	return diags
 }

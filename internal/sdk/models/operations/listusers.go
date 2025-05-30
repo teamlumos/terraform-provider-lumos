@@ -13,6 +13,8 @@ type ListUsersRequest struct {
 	SearchTerm *string `queryParam:"style=form,explode=true,name=search_term"`
 	// If a search_term is provided, only accept exact matches.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Fields to expand. Supported fields: custom_attributes.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	// Page size
@@ -42,6 +44,13 @@ func (o *ListUsersRequest) GetExactMatch() *bool {
 		return nil
 	}
 	return o.ExactMatch
+}
+
+func (o *ListUsersRequest) GetExpand() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Expand
 }
 
 func (o *ListUsersRequest) GetPage() *int64 {

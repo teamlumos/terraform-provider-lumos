@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,7 +23,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	custom_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
@@ -49,7 +47,7 @@ type RequestablePermissionResourceModel struct {
 	AppID                   types.String                      `tfsdk:"app_id"`
 	AppInstanceID           types.String                      `tfsdk:"app_instance_id"`
 	ID                      types.String                      `tfsdk:"id"`
-	IncludeInheritedConfigs types.Bool                        `tfsdk:"include_inherited_configs"`
+	IncludeInheritedConfigs types.Bool                        `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
 	Label                   types.String                      `tfsdk:"label"`
 	RequestConfig           *tfTypes.RequestConfigInputCreate `tfsdk:"request_config"`
 	Type                    types.String                      `tfsdk:"type"`
@@ -126,7 +124,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -244,11 +242,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							"type": schema.StringAttribute{
 								Computed: true,
 								Optional: true,
-								Default:  stringdefault.StaticString("ALL_GROUPS"),
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The type of this allowed groups config, can be all groups or specific. Default: "ALL_GROUPS"; must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
+								Description: `must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"ALL_GROUPS",
@@ -437,7 +434,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Description: `Users assigned as support request approvers.`,
 									},
 								},
-								Description: `AppStore App approvers assigned.`,
 							},
 							"approvers_stage_2": schema.SingleNestedAttribute{
 								Computed: true,
@@ -588,7 +584,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Description: `Users assigned as support request approvers.`,
 									},
 								},
-								Description: `AppStore App stage 2 approvers assigned.`,
 							},
 							"custom_approval_message": schema.StringAttribute{
 								Computed: true,
@@ -753,7 +748,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+										Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 										Validators: []validator.String{
 											stringvalidator.OneOf(
 												"PRE_APPROVAL",
@@ -824,7 +819,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The type of this inline webhook. must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
+								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"PRE_APPROVAL",
@@ -917,18 +912,13 @@ func (r *RequestablePermissionResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	includeInheritedConfigs := new(bool)
-	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
+	request, requestDiags := data.ToOperationsCreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	requestablePermissionInput := *data.ToSharedRequestablePermissionInput()
-	request := operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest{
-		IncludeInheritedConfigs:    includeInheritedConfigs,
-		RequestablePermissionInput: requestablePermissionInput,
-	}
-	res, err := r.client.AppStore.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost(ctx, request)
+	res, err := r.client.AppStore.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -948,8 +938,17 @@ func (r *RequestablePermissionResource) Create(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedRequestablePermissionOutput(res.RequestablePermissionOutput)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedRequestablePermissionOutput(ctx, res.RequestablePermissionOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -973,20 +972,13 @@ func (r *RequestablePermissionResource) Read(ctx context.Context, req resource.R
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsGetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	includeInheritedConfigs := new(bool)
-	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	request := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		ID:                      id,
-		IncludeInheritedConfigs: includeInheritedConfigs,
-	}
-	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, request)
+	res, err := r.client.AppStore.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1010,7 +1002,11 @@ func (r *RequestablePermissionResource) Read(ctx context.Context, req resource.R
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedRequestablePermissionOutput(res.RequestablePermissionOutput)
+	resp.Diagnostics.Append(data.RefreshFromSharedRequestablePermissionOutput(ctx, res.RequestablePermissionOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1030,22 +1026,13 @@ func (r *RequestablePermissionResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsUpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	includeInheritedConfigs := new(bool)
-	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	requestablePermissionInputUpdate := *data.ToSharedRequestablePermissionInputUpdate()
-	request := operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest{
-		ID:                               id,
-		IncludeInheritedConfigs:          includeInheritedConfigs,
-		RequestablePermissionInputUpdate: requestablePermissionInputUpdate,
-	}
-	res, err := r.client.AppStore.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx, request)
+	res, err := r.client.AppStore.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -1065,8 +1052,17 @@ func (r *RequestablePermissionResource) Update(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedRequestablePermissionOutput(res.RequestablePermissionOutput)
-	refreshPlan(ctx, plan, &data, resp.Diagnostics)
+	resp.Diagnostics.Append(data.RefreshFromSharedRequestablePermissionOutput(ctx, res.RequestablePermissionOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1090,13 +1086,13 @@ func (r *RequestablePermissionResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	var id string
-	id = data.ID.ValueString()
+	request, requestDiags := data.ToOperationsDeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
 
-	request := operations.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest{
-		ID: id,
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	res, err := r.client.AppStore.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete(ctx, request)
+	res, err := r.client.AppStore.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -29,14 +28,14 @@ type GroupsDataSource struct {
 
 // GroupsDataSourceModel describes the data model.
 type GroupsDataSourceModel struct {
-	AppID                 types.String    `tfsdk:"app_id"`
-	ExactMatch            types.Bool      `tfsdk:"exact_match"`
-	IntegrationSpecificID types.String    `tfsdk:"integration_specific_id"`
+	AppID                 types.String    `queryParam:"style=form,explode=true,name=app_id" tfsdk:"app_id"`
+	ExactMatch            types.Bool      `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	IntegrationSpecificID types.String    `queryParam:"style=form,explode=true,name=integration_specific_id" tfsdk:"integration_specific_id"`
 	Items                 []tfTypes.Group `tfsdk:"items"`
-	Name                  types.String    `tfsdk:"name"`
-	Page                  types.Int64     `tfsdk:"page"`
+	Name                  types.String    `queryParam:"style=form,explode=true,name=name" tfsdk:"name"`
+	Page                  types.Int64     `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
 	Pages                 types.Int64     `tfsdk:"pages"`
-	Size                  types.Int64     `tfsdk:"size"`
+	Size                  types.Int64     `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
 	Total                 types.Int64     `tfsdk:"total"`
 }
 
@@ -160,51 +159,13 @@ func (r *GroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	integrationSpecificID := new(string)
-	if !data.IntegrationSpecificID.IsUnknown() && !data.IntegrationSpecificID.IsNull() {
-		*integrationSpecificID = data.IntegrationSpecificID.ValueString()
-	} else {
-		integrationSpecificID = nil
+	request, requestDiags := data.ToOperationsGetGroupsRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	name := new(string)
-	if !data.Name.IsUnknown() && !data.Name.IsNull() {
-		*name = data.Name.ValueString()
-	} else {
-		name = nil
-	}
-	exactMatch := new(bool)
-	if !data.ExactMatch.IsUnknown() && !data.ExactMatch.IsNull() {
-		*exactMatch = data.ExactMatch.ValueBool()
-	} else {
-		exactMatch = nil
-	}
-	appID := new(string)
-	if !data.AppID.IsUnknown() && !data.AppID.IsNull() {
-		*appID = data.AppID.ValueString()
-	} else {
-		appID = nil
-	}
-	page := new(int64)
-	if !data.Page.IsUnknown() && !data.Page.IsNull() {
-		*page = data.Page.ValueInt64()
-	} else {
-		page = nil
-	}
-	size := new(int64)
-	if !data.Size.IsUnknown() && !data.Size.IsNull() {
-		*size = data.Size.ValueInt64()
-	} else {
-		size = nil
-	}
-	request := operations.GetGroupsRequest{
-		IntegrationSpecificID: integrationSpecificID,
-		Name:                  name,
-		ExactMatch:            exactMatch,
-		AppID:                 appID,
-		Page:                  page,
-		Size:                  size,
-	}
-	res, err := r.client.Core.GetGroups(ctx, request)
+	res, err := r.client.Core.GetGroups(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -216,10 +177,6 @@ func (r *GroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -228,7 +185,11 @@ func (r *GroupsDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPageGroup(res.PageGroup)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageGroup(ctx, res.PageGroup)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

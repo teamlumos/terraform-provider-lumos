@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -29,15 +28,15 @@ type RequestablePermissionsDataSource struct {
 
 // RequestablePermissionsDataSourceModel describes the data model.
 type RequestablePermissionsDataSourceModel struct {
-	AppID                   types.String                          `tfsdk:"app_id"`
-	ExactMatch              types.Bool                            `tfsdk:"exact_match"`
-	InAppStore              types.Bool                            `tfsdk:"in_app_store"`
-	IncludeInheritedConfigs types.Bool                            `tfsdk:"include_inherited_configs"`
+	AppID                   types.String                          `queryParam:"style=form,explode=true,name=app_id" tfsdk:"app_id"`
+	ExactMatch              types.Bool                            `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	InAppStore              types.Bool                            `queryParam:"style=form,explode=true,name=in_app_store" tfsdk:"in_app_store"`
+	IncludeInheritedConfigs types.Bool                            `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
 	Items                   []tfTypes.RequestablePermissionOutput `tfsdk:"items"`
-	Page                    types.Int64                           `tfsdk:"page"`
+	Page                    types.Int64                           `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
 	Pages                   types.Int64                           `tfsdk:"pages"`
-	SearchTerm              types.String                          `tfsdk:"search_term"`
-	Size                    types.Int64                           `tfsdk:"size"`
+	SearchTerm              types.String                          `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Size                    types.Int64                           `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
 	Total                   types.Int64                           `tfsdk:"total"`
 }
 
@@ -103,8 +102,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Description: `The description of this inline webhook.`,
 										},
 										"hook_type": schema.StringAttribute{
-											Computed:    true,
-											Description: `The type of this inline webhook.`,
+											Computed: true,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -157,8 +155,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Description: `The groups allowed to request this permission.`,
 										},
 										"type": schema.StringAttribute{
-											Computed:    true,
-											Description: `The type of this allowed groups config, can be all groups or specific.`,
+											Computed: true,
 										},
 									},
 									Description: `The allowed groups config associated with this config.`,
@@ -390,8 +387,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 													Description: `The description of this inline webhook.`,
 												},
 												"hook_type": schema.StringAttribute{
-													Computed:    true,
-													Description: `The type of this inline webhook.`,
+													Computed: true,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -424,8 +420,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Description: `The description of this inline webhook.`,
 										},
 										"hook_type": schema.StringAttribute{
-											Computed:    true,
-											Description: `The type of this inline webhook.`,
+											Computed: true,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -439,7 +434,6 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 									Description: `A request validation webhook can be optionally associated with this config.`,
 								},
 							},
-							Description: `The request config associated with this requestable permission.`,
 						},
 						"type": schema.StringAttribute{
 							Computed:    true,
@@ -511,58 +505,13 @@ func (r *RequestablePermissionsDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 
-	appID := new(string)
-	if !data.AppID.IsUnknown() && !data.AppID.IsNull() {
-		*appID = data.AppID.ValueString()
-	} else {
-		appID = nil
+	request, requestDiags := data.ToOperationsGetAppstorePermissionsAppstoreRequestablePermissionsGetRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
 	}
-	searchTerm := new(string)
-	if !data.SearchTerm.IsUnknown() && !data.SearchTerm.IsNull() {
-		*searchTerm = data.SearchTerm.ValueString()
-	} else {
-		searchTerm = nil
-	}
-	exactMatch := new(bool)
-	if !data.ExactMatch.IsUnknown() && !data.ExactMatch.IsNull() {
-		*exactMatch = data.ExactMatch.ValueBool()
-	} else {
-		exactMatch = nil
-	}
-	inAppStore := new(bool)
-	if !data.InAppStore.IsUnknown() && !data.InAppStore.IsNull() {
-		*inAppStore = data.InAppStore.ValueBool()
-	} else {
-		inAppStore = nil
-	}
-	includeInheritedConfigs := new(bool)
-	if !data.IncludeInheritedConfigs.IsUnknown() && !data.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = data.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
-	}
-	page := new(int64)
-	if !data.Page.IsUnknown() && !data.Page.IsNull() {
-		*page = data.Page.ValueInt64()
-	} else {
-		page = nil
-	}
-	size := new(int64)
-	if !data.Size.IsUnknown() && !data.Size.IsNull() {
-		*size = data.Size.ValueInt64()
-	} else {
-		size = nil
-	}
-	request := operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest{
-		AppID:                   appID,
-		SearchTerm:              searchTerm,
-		ExactMatch:              exactMatch,
-		InAppStore:              inAppStore,
-		IncludeInheritedConfigs: includeInheritedConfigs,
-		Page:                    page,
-		Size:                    size,
-	}
-	res, err := r.client.AppStore.GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx, request)
+	res, err := r.client.AppStore.GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -574,10 +523,6 @@ func (r *RequestablePermissionsDataSource) Read(ctx context.Context, req datasou
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode == 404 {
-		resp.State.RemoveResource(ctx)
-		return
-	}
 	if res.StatusCode != 200 {
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
@@ -586,7 +531,11 @@ func (r *RequestablePermissionsDataSource) Read(ctx context.Context, req datasou
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromSharedPageRequestablePermissionOutput(res.PageRequestablePermissionOutput)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageRequestablePermissionOutput(ctx, res.PageRequestablePermissionOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
