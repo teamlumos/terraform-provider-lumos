@@ -1,0 +1,30 @@
+resource "lumos_pre_approval_rule" "my_preapprovalrule" {
+  app_id        = "...my_app_id..."
+  justification = "...my_justification..."
+  preapproval_webhooks = [
+    {
+      id = "...my_id..."
+    }
+  ]
+  preapproved_groups = [
+    {
+      app_id                  = "...my_app_id..."
+      id                      = "...my_id..."
+      integration_specific_id = "...my_integration_specific_id..."
+    }
+  ]
+  preapproved_permissions = [
+    {
+      id = "...my_id..."
+    }
+  ]
+  preapproved_users_by_attribute = [
+    {
+      attribute = "...my_attribute..."
+      value     = "...my_value..."
+    }
+  ]
+  time_based_access = [
+    "4 hours"
+  ]
+}
