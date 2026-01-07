@@ -11,11 +11,11 @@ type GetActivityRecordsJobStateRequest struct {
 	JobID string `pathParam:"style=simple,explode=false,name=job_id"`
 }
 
-func (o *GetActivityRecordsJobStateRequest) GetJobID() string {
-	if o == nil {
+func (g *GetActivityRecordsJobStateRequest) GetJobID() string {
+	if g == nil {
 		return ""
 	}
-	return o.JobID
+	return g.JobID
 }
 
 type GetActivityRecordsJobStateResponse struct {
@@ -31,37 +31,37 @@ type GetActivityRecordsJobStateResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetActivityRecordsJobStateResponse) GetContentType() string {
-	if o == nil {
+func (g *GetActivityRecordsJobStateResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetActivityRecordsJobStateResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetActivityRecordsJobStateResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetActivityRecordsJobStateResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetActivityRecordsJobStateResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetActivityRecordsJobStateResponse) GetSyncTaskOutput() *shared.SyncTaskOutput {
-	if o == nil {
+func (g *GetActivityRecordsJobStateResponse) GetSyncTaskOutput() *shared.SyncTaskOutput {
+	if g == nil {
 		return nil
 	}
-	return o.SyncTaskOutput
+	return g.SyncTaskOutput
 }
 
-func (o *GetActivityRecordsJobStateResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetActivityRecordsJobStateResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

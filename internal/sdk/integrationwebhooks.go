@@ -62,7 +62,7 @@ func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "processAirbaseMilestoneEvent",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AirbasePurchaseRequestEvent", "json", `request:"mediaType=application/json"`)
@@ -125,11 +125,13 @@ func (s *IntegrationWebhooks) ProcessAirbaseMilestoneEvent(ctx context.Context, 
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -287,7 +289,7 @@ func (s *IntegrationWebhooks) ProcessVendrRequestCompletedWebhooksVendrRequestCo
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "process_vendr_request_completed_webhooks_vendr_request_completed__domain_app_uuid__post",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, true, true, "RequestBody", "json", `request:"mediaType=application/json"`)
@@ -350,11 +352,13 @@ func (s *IntegrationWebhooks) ProcessVendrRequestCompletedWebhooksVendrRequestCo
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 

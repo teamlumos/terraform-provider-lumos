@@ -25,72 +25,72 @@ type PreApprovalRuleOutput struct {
 	PreapprovalWebhooks []InlineWebhook `json:"preapproval_webhooks,omitempty"`
 }
 
-func (o *PreApprovalRuleOutput) GetJustification() string {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetJustification() string {
+	if p == nil {
 		return ""
 	}
-	return o.Justification
+	return p.Justification
 }
 
-func (o *PreApprovalRuleOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if p == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
+	return p.TimeBasedAccess
 }
 
-func (o *PreApprovalRuleOutput) GetID() *string {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetID() *string {
+	if p == nil {
 		return nil
 	}
-	return o.ID
+	return p.ID
 }
 
-func (o *PreApprovalRuleOutput) GetAppID() string {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetAppID() string {
+	if p == nil {
 		return ""
 	}
-	return o.AppID
+	return p.AppID
 }
 
-func (o *PreApprovalRuleOutput) GetAppClassID() string {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetAppClassID() string {
+	if p == nil {
 		return ""
 	}
-	return o.AppClassID
+	return p.AppClassID
 }
 
-func (o *PreApprovalRuleOutput) GetAppInstanceID() string {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetAppInstanceID() string {
+	if p == nil {
 		return ""
 	}
-	return o.AppInstanceID
+	return p.AppInstanceID
 }
 
-func (o *PreApprovalRuleOutput) GetPreapprovedGroups() []Group {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetPreapprovedGroups() []Group {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedGroups
+	return p.PreapprovedGroups
 }
 
-func (o *PreApprovalRuleOutput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedUsersByAttribute
+	return p.PreapprovedUsersByAttribute
 }
 
-func (o *PreApprovalRuleOutput) GetPreapprovedPermissions() []RequestablePermissionBaseOutput {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetPreapprovedPermissions() []RequestablePermissionBaseOutput {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedPermissions
+	return p.PreapprovedPermissions
 }
 
-func (o *PreApprovalRuleOutput) GetPreapprovalWebhooks() []InlineWebhook {
-	if o == nil {
+func (p *PreApprovalRuleOutput) GetPreapprovalWebhooks() []InlineWebhook {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovalWebhooks
+	return p.PreapprovalWebhooks
 }

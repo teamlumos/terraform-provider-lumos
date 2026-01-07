@@ -16,8 +16,17 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: true
     oAuth2PasswordEnabled: false
+    hoistGlobalSecurity: true
+  schemas:
+    allOfMergeStrategy: shallowMerge
+  requestBodyFieldName: ""
+  persistentEdits: {}
+  tests:
+    generateTests: true
+    generateNewTests: false
+    skipResponseBodyAssertions: false
 terraform:
-  version: 0.8.0
+  version: 0.9.3
   additionalDataSources: []
   additionalDependencies: {}
   additionalEphemeralResources: []
@@ -27,9 +36,19 @@ terraform:
   additionalResources: []
   allowUnknownFieldsInWeakUnions: false
   author: teamlumos
+  baseErrorName: LumosError
+  debugLogging: {}
   defaultErrorName: SDKError
+  enableCustomCodeRegions: false
+  enableOperationSecurity: false
+  enableOperationServers: false
   enableTypeDeduplication: true
   environmentVariables:
     - env: LUMOS_ACCESS_TOKEN
       providerAttribute: http_bearer
+  excludeEmptyObjectSchemas: false
+  includeEmptyObjects: false
+  inferUnionDiscriminators: false
   packageName: lumos
+  respectRequiredFields: false
+  unionStrategy: populated-fields

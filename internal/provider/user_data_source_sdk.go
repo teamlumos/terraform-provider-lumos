@@ -10,19 +10,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *UserDataSourceModel) ToOperationsGetUserRequest(ctx context.Context) (*operations.GetUserRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var userID string
-	userID = r.UserID.ValueString()
-
-	out := operations.GetUserRequest{
-		UserID: userID,
-	}
-
-	return &out, diags
-}
-
 func (r *UserDataSourceModel) RefreshFromSharedUser(ctx context.Context, resp *shared.User) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -39,4 +26,17 @@ func (r *UserDataSourceModel) RefreshFromSharedUser(ctx context.Context, resp *s
 	}
 
 	return diags
+}
+
+func (r *UserDataSourceModel) ToOperationsGetUserRequest(ctx context.Context) (*operations.GetUserRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var userID string
+	userID = r.UserID.ValueString()
+
+	out := operations.GetUserRequest{
+		UserID: userID,
+	}
+
+	return &out, diags
 }

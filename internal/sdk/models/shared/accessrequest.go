@@ -31,85 +31,85 @@ func (a AccessRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AccessRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AccessRequest) GetID() string {
-	if o == nil {
+func (a *AccessRequest) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
 }
 
-func (o *AccessRequest) GetAppID() string {
-	if o == nil {
+func (a *AccessRequest) GetAppID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppID
+	return a.AppID
 }
 
-func (o *AccessRequest) GetAppName() string {
-	if o == nil {
+func (a *AccessRequest) GetAppName() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppName
+	return a.AppName
 }
 
-func (o *AccessRequest) GetRequesterUser() User {
-	if o == nil {
+func (a *AccessRequest) GetRequesterUser() User {
+	if a == nil {
 		return User{}
 	}
-	return o.RequesterUser
+	return a.RequesterUser
 }
 
-func (o *AccessRequest) GetTargetUser() User {
-	if o == nil {
+func (a *AccessRequest) GetTargetUser() User {
+	if a == nil {
 		return User{}
 	}
-	return o.TargetUser
+	return a.TargetUser
 }
 
-func (o *AccessRequest) GetSupporterUser() *User {
-	if o == nil {
+func (a *AccessRequest) GetSupporterUser() *User {
+	if a == nil {
 		return nil
 	}
-	return o.SupporterUser
+	return a.SupporterUser
 }
 
-func (o *AccessRequest) GetStatus() SupportRequestStatus {
-	if o == nil {
+func (a *AccessRequest) GetStatus() SupportRequestStatus {
+	if a == nil {
 		return SupportRequestStatus("")
 	}
-	return o.Status
+	return a.Status
 }
 
-func (o *AccessRequest) GetNotes() map[string]*string {
-	if o == nil {
+func (a *AccessRequest) GetNotes() map[string]*string {
+	if a == nil {
 		return nil
 	}
-	return o.Notes
+	return a.Notes
 }
 
-func (o *AccessRequest) GetExpiresAt() *time.Time {
-	if o == nil {
+func (a *AccessRequest) GetExpiresAt() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.ExpiresAt
+	return a.ExpiresAt
 }
 
-func (o *AccessRequest) GetRequestablePermissions() []RequestablePermissionOutput {
-	if o == nil {
+func (a *AccessRequest) GetRequestablePermissions() []RequestablePermissionOutput {
+	if a == nil {
 		return nil
 	}
-	return o.RequestablePermissions
+	return a.RequestablePermissions
 }
 
-func (o *AccessRequest) GetRequestedAt() *time.Time {
-	if o == nil {
+func (a *AccessRequest) GetRequestedAt() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.RequestedAt
+	return a.RequestedAt
 }

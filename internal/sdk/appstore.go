@@ -63,7 +63,7 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermi
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_appstore_permissions_for_app_appstore_apps__app_id__requestable_permissions_get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -85,7 +85,7 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermi
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -123,11 +123,13 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermi
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -285,7 +287,7 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_appstore_permissions_appstore_requestable_permissions_get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -307,7 +309,7 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -345,11 +347,13 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -463,6 +467,7 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -525,7 +530,7 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "create_appstore_requestable_permission_appstore_requestable_permissions_post",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "RequestablePermissionInput", "json", `request:"mediaType=application/json"`)
@@ -554,7 +559,7 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 		req.Header.Set("Content-Type", reqContentType)
 	}
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -592,11 +597,13 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -754,7 +761,7 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_appstore_permission_appstore_requestable_permissions__permission_id__get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -776,7 +783,7 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -814,11 +821,13 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -983,7 +992,7 @@ func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermiss
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "update_appstore_permission_appstore_requestable_permissions__permission_id__patch",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "RequestablePermissionInputUpdate", "json", `request:"mediaType=application/json"`)
@@ -1012,7 +1021,7 @@ func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermiss
 		req.Header.Set("Content-Type", reqContentType)
 	}
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -1050,11 +1059,13 @@ func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermiss
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1214,7 +1225,7 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "delete_appstore_permission_appstore_requestable_permissions__permission_id__delete",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1270,11 +1281,13 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1368,6 +1381,7 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -1412,7 +1426,7 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_appstore_pre_approval_rules_for_app_appstore_pre_approval_rules_get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1434,7 +1448,7 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -1472,11 +1486,13 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1634,7 +1650,7 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "create_pre_approval_rule_appstore_pre_approval_rules_post",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -1697,11 +1713,13 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1859,7 +1877,7 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_appstore_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1915,11 +1933,13 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2080,7 +2100,7 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "PreApprovalRuleUpdateInput", "json", `request:"mediaType=application/json"`)
@@ -2143,11 +2163,13 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2305,7 +2327,7 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2361,11 +2383,13 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2459,6 +2483,7 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -2503,7 +2528,7 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAppStoreAppSettings",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2559,11 +2584,13 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2677,6 +2704,7 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -2721,7 +2749,7 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateAppStoreAppSettings",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppStoreAppSettingsInput", "json", `request:"mediaType=application/json"`)
@@ -2784,11 +2812,13 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2946,7 +2976,7 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "addAppToAppStore",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -3009,11 +3039,13 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3171,7 +3203,7 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAppStoreApps",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3193,7 +3225,7 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -3231,11 +3263,13 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3393,7 +3427,7 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "removeAppFromAppStore",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3449,11 +3483,13 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3567,6 +3603,7 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -3611,7 +3648,7 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAppStoreApp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3667,11 +3704,13 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3785,6 +3824,7 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -3829,7 +3869,7 @@ func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.C
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "cancelAccessRequest",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3851,7 +3891,7 @@ func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.C
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -3889,11 +3929,13 @@ func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.C
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -4031,7 +4073,7 @@ func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetA
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAccessRequest",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -4087,11 +4129,13 @@ func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetA
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -4249,7 +4293,7 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "createAccessRequest",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -4312,11 +4356,13 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -4474,7 +4520,7 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAccessRequests",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -4496,7 +4542,7 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -4534,11 +4580,13 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 

@@ -8,16 +8,16 @@ type AllowedGroupsConfigInput struct {
 	Groups []BaseGroup `json:"groups,omitempty"`
 }
 
-func (o *AllowedGroupsConfigInput) GetType() *AllowedGroupsConfigType {
-	if o == nil {
+func (a *AllowedGroupsConfigInput) GetType() *AllowedGroupsConfigType {
+	if a == nil {
 		return nil
 	}
-	return o.Type
+	return a.Type
 }
 
-func (o *AllowedGroupsConfigInput) GetGroups() []BaseGroup {
-	if o == nil {
+func (a *AllowedGroupsConfigInput) GetGroups() []BaseGroup {
+	if a == nil {
 		return nil
 	}
-	return o.Groups
+	return a.Groups
 }

@@ -28,52 +28,52 @@ func (g GetAppStoreAppsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetAppStoreAppsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetAppStoreAppsRequest) GetAppID() *string {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *GetAppStoreAppsRequest) GetNameSearch() *string {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetNameSearch() *string {
+	if g == nil {
 		return nil
 	}
-	return o.NameSearch
+	return g.NameSearch
 }
 
-func (o *GetAppStoreAppsRequest) GetExactMatch() *bool {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetExactMatch() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.ExactMatch
+	return g.ExactMatch
 }
 
-func (o *GetAppStoreAppsRequest) GetAllVisibilities() *bool {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetAllVisibilities() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.AllVisibilities
+	return g.AllVisibilities
 }
 
-func (o *GetAppStoreAppsRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetAppStoreAppsRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetAppStoreAppsRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetAppStoreAppsResponse struct {
@@ -89,37 +89,37 @@ type GetAppStoreAppsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAppStoreAppsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAppStoreAppsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAppStoreAppsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAppStoreAppsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAppStoreAppsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAppStoreAppsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAppStoreAppsResponse) GetPageAppStoreApp() *shared.PageAppStoreApp {
-	if o == nil {
+func (g *GetAppStoreAppsResponse) GetPageAppStoreApp() *shared.PageAppStoreApp {
+	if g == nil {
 		return nil
 	}
-	return o.PageAppStoreApp
+	return g.PageAppStoreApp
 }
 
-func (o *GetAppStoreAppsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAppStoreAppsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

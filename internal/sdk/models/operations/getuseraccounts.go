@@ -23,38 +23,38 @@ func (g GetUserAccountsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetUserAccountsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetUserAccountsRequest) GetUserID() string {
-	if o == nil {
+func (g *GetUserAccountsRequest) GetUserID() string {
+	if g == nil {
 		return ""
 	}
-	return o.UserID
+	return g.UserID
 }
 
-func (o *GetUserAccountsRequest) GetExpand() []string {
-	if o == nil {
+func (g *GetUserAccountsRequest) GetExpand() []string {
+	if g == nil {
 		return nil
 	}
-	return o.Expand
+	return g.Expand
 }
 
-func (o *GetUserAccountsRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetUserAccountsRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetUserAccountsRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetUserAccountsRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetUserAccountsResponse struct {
@@ -70,37 +70,37 @@ type GetUserAccountsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetUserAccountsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetUserAccountsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetUserAccountsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetUserAccountsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetUserAccountsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetUserAccountsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetUserAccountsResponse) GetPageAccount() *shared.PageAccount {
-	if o == nil {
+func (g *GetUserAccountsResponse) GetPageAccount() *shared.PageAccount {
+	if g == nil {
 		return nil
 	}
-	return o.PageAccount
+	return g.PageAccount
 }
 
-func (o *GetUserAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetUserAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

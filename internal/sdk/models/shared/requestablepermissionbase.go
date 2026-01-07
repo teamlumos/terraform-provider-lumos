@@ -7,9 +7,9 @@ type RequestablePermissionBase struct {
 	ID *string `json:"id,omitempty"`
 }
 
-func (o *RequestablePermissionBase) GetID() *string {
-	if o == nil {
+func (r *RequestablePermissionBase) GetID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.ID
+	return r.ID
 }

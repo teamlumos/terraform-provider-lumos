@@ -19,51 +19,51 @@ type Group struct {
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
 
-func (o *Group) GetID() *string {
-	if o == nil {
+func (g *Group) GetID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.ID
+	return g.ID
 }
 
-func (o *Group) GetAppID() *string {
-	if o == nil {
+func (g *Group) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *Group) GetIntegrationSpecificID() *string {
-	if o == nil {
+func (g *Group) GetIntegrationSpecificID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.IntegrationSpecificID
+	return g.IntegrationSpecificID
 }
 
-func (o *Group) GetName() *string {
-	if o == nil {
+func (g *Group) GetName() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Name
+	return g.Name
 }
 
-func (o *Group) GetDescription() *string {
-	if o == nil {
+func (g *Group) GetDescription() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Description
+	return g.Description
 }
 
-func (o *Group) GetGroupLifecycle() *Lifecycle {
-	if o == nil {
+func (g *Group) GetGroupLifecycle() *Lifecycle {
+	if g == nil {
 		return nil
 	}
-	return o.GroupLifecycle
+	return g.GroupLifecycle
 }
 
-func (o *Group) GetSourceAppID() *string {
-	if o == nil {
+func (g *Group) GetSourceAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.SourceAppID
+	return g.SourceAppID
 }

@@ -19,51 +19,51 @@ type RequestConfigInputUpdate struct {
 	RequestFulfillmentConfig *RequestFulfillmentConfigInputUpdate `json:"request_fulfillment_config,omitempty"`
 }
 
-func (o *RequestConfigInputUpdate) GetAppstoreVisibility() *AppStoreVisibilityOption {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetAppstoreVisibility() *AppStoreVisibilityOption {
+	if r == nil {
 		return nil
 	}
-	return o.AppstoreVisibility
+	return r.AppstoreVisibility
 }
 
-func (o *RequestConfigInputUpdate) GetAllowedGroupsOverride() *bool {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetAllowedGroupsOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.AllowedGroupsOverride
+	return r.AllowedGroupsOverride
 }
 
-func (o *RequestConfigInputUpdate) GetAllowedGroups() *AllowedGroupsConfigInput {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetAllowedGroups() *AllowedGroupsConfigInput {
+	if r == nil {
 		return nil
 	}
-	return o.AllowedGroups
+	return r.AllowedGroups
 }
 
-func (o *RequestConfigInputUpdate) GetRequestApprovalConfig() *RequestApprovalConfigInput {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetRequestApprovalConfig() *RequestApprovalConfigInput {
+	if r == nil {
 		return nil
 	}
-	return o.RequestApprovalConfig
+	return r.RequestApprovalConfig
 }
 
-func (o *RequestConfigInputUpdate) GetAccessRemovalInlineWebhook() *BaseInlineWebhook {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetAccessRemovalInlineWebhook() *BaseInlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.AccessRemovalInlineWebhook
+	return r.AccessRemovalInlineWebhook
 }
 
-func (o *RequestConfigInputUpdate) GetRequestValidationInlineWebhook() *BaseInlineWebhook {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetRequestValidationInlineWebhook() *BaseInlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.RequestValidationInlineWebhook
+	return r.RequestValidationInlineWebhook
 }
 
-func (o *RequestConfigInputUpdate) GetRequestFulfillmentConfig() *RequestFulfillmentConfigInputUpdate {
-	if o == nil {
+func (r *RequestConfigInputUpdate) GetRequestFulfillmentConfig() *RequestFulfillmentConfigInputUpdate {
+	if r == nil {
 		return nil
 	}
-	return o.RequestFulfillmentConfig
+	return r.RequestFulfillmentConfig
 }

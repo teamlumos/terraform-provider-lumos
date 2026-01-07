@@ -20,36 +20,36 @@ func (a AppSettingInput) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AppSettingInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AppSettingInput) GetCustomRequestInstructions() *string {
-	if o == nil {
+func (a *AppSettingInput) GetCustomRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.CustomRequestInstructions
+	return a.CustomRequestInstructions
 }
 
-func (o *AppSettingInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
-	if o == nil {
+func (a *AppSettingInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
+	if a == nil {
 		return nil
 	}
-	return o.RequestFlow
+	return a.RequestFlow
 }
 
-func (o *AppSettingInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
-	if o == nil {
+func (a *AppSettingInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
+	if a == nil {
 		return nil
 	}
-	return o.Provisioning
+	return a.Provisioning
 }
 
-func (o *AppSettingInput) GetInAppStore() *bool {
-	if o == nil {
+func (a *AppSettingInput) GetInAppStore() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.InAppStore
+	return a.InAppStore
 }

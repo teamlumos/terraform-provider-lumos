@@ -18,30 +18,30 @@ type GetInlineWebhooksInlineWebhooksGetResponse struct {
 	ResponseGetInlineWebhooksInlineWebhooksGet []shared.InlineWebhook
 }
 
-func (o *GetInlineWebhooksInlineWebhooksGetResponse) GetContentType() string {
-	if o == nil {
+func (g *GetInlineWebhooksInlineWebhooksGetResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetInlineWebhooksInlineWebhooksGetResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetInlineWebhooksInlineWebhooksGetResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetInlineWebhooksInlineWebhooksGetResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetInlineWebhooksInlineWebhooksGetResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetInlineWebhooksInlineWebhooksGetResponse) GetResponseGetInlineWebhooksInlineWebhooksGet() []shared.InlineWebhook {
-	if o == nil {
+func (g *GetInlineWebhooksInlineWebhooksGetResponse) GetResponseGetInlineWebhooksInlineWebhooksGet() []shared.InlineWebhook {
+	if g == nil {
 		return nil
 	}
-	return o.ResponseGetInlineWebhooksInlineWebhooksGet
+	return g.ResponseGetInlineWebhooksInlineWebhooksGet
 }

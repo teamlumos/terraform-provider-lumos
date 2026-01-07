@@ -16,8 +16,8 @@ const (
 )
 
 type Detail struct {
-	ArrayOfValidationError []ValidationError `queryParam:"inline"`
-	Str                    *string           `queryParam:"inline"`
+	ArrayOfValidationError []ValidationError `queryParam:"inline" union:"member"`
+	Str                    *string           `queryParam:"inline" union:"member"`
 
 	Type DetailType
 }
@@ -42,17 +42,43 @@ func CreateDetailStr(str string) Detail {
 
 func (u *Detail) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var arrayOfValidationError []ValidationError = []ValidationError{}
-	if err := utils.UnmarshalJSON(data, &arrayOfValidationError, "", true, true); err == nil {
-		u.ArrayOfValidationError = arrayOfValidationError
-		u.Type = DetailTypeArrayOfValidationError
-		return nil
+	if err := utils.UnmarshalJSON(data, &arrayOfValidationError, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  DetailTypeArrayOfValidationError,
+			Value: arrayOfValidationError,
+		})
 	}
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
-		u.Str = &str
-		u.Type = DetailTypeStr
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  DetailTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Detail", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Detail", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(DetailType)
+	switch best.Type {
+	case DetailTypeArrayOfValidationError:
+		u.ArrayOfValidationError = best.Value.([]ValidationError)
+		return nil
+	case DetailTypeStr:
+		u.Str = best.Value.(*string)
 		return nil
 	}
 
@@ -75,9 +101,9 @@ type HTTPValidationError struct {
 	Detail *Detail `json:"detail,omitempty"`
 }
 
-func (o *HTTPValidationError) GetDetail() *Detail {
-	if o == nil {
+func (h *HTTPValidationError) GetDetail() *Detail {
+	if h == nil {
 		return nil
 	}
-	return o.Detail
+	return h.Detail
 }

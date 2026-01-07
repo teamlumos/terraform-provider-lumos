@@ -12,30 +12,30 @@ type InlineWebhook struct {
 	Description *string `json:"description,omitempty"`
 }
 
-func (o *InlineWebhook) GetID() string {
-	if o == nil {
+func (i *InlineWebhook) GetID() string {
+	if i == nil {
 		return ""
 	}
-	return o.ID
+	return i.ID
 }
 
-func (o *InlineWebhook) GetHookType() InlineWebhookType {
-	if o == nil {
+func (i *InlineWebhook) GetHookType() InlineWebhookType {
+	if i == nil {
 		return InlineWebhookType("")
 	}
-	return o.HookType
+	return i.HookType
 }
 
-func (o *InlineWebhook) GetName() string {
-	if o == nil {
+func (i *InlineWebhook) GetName() string {
+	if i == nil {
 		return ""
 	}
-	return o.Name
+	return i.Name
 }
 
-func (o *InlineWebhook) GetDescription() *string {
-	if o == nil {
+func (i *InlineWebhook) GetDescription() *string {
+	if i == nil {
 		return nil
 	}
-	return o.Description
+	return i.Description
 }

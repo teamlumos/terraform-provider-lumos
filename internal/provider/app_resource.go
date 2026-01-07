@@ -28,6 +28,7 @@ func NewAppResource() resource.Resource {
 
 // AppResource defines the resource implementation.
 type AppResource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -120,18 +121,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `The sources of this app.`,
 			},
 			"status": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"DISCOVERED",
-						"IN_REVIEW",
-						"NEEDS_REVIEW",
-						"APPROVED",
-						"BLOCKLISTED",
-						"DEPRECATED",
-					),
-				},
+				Computed: true,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,

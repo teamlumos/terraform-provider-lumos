@@ -11,11 +11,11 @@ type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteReq
 	ID string `pathParam:"style=simple,explode=false,name=permission_id"`
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest) GetID() string {
-	if o == nil {
+func (d *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
 type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse struct {
@@ -29,30 +29,30 @@ type DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRes
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (d *DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if d == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return d.HTTPValidationError
 }

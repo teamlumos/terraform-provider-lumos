@@ -15,18 +15,18 @@ type ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostR
 	RequestBody   *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequestBody `request:"mediaType=application/json"`
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequest) GetDomainAppUUID() string {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequest) GetDomainAppUUID() string {
+	if p == nil {
 		return ""
 	}
-	return o.DomainAppUUID
+	return p.DomainAppUUID
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequest) GetRequestBody() *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequestBody {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequest) GetRequestBody() *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostRequestBody {
+	if p == nil {
 		return nil
 	}
-	return o.RequestBody
+	return p.RequestBody
 }
 
 type ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse struct {
@@ -42,37 +42,37 @@ type ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostR
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetContentType() string {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetStatusCode() int {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetAny() any {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetAny() any {
+	if p == nil {
 		return nil
 	}
-	return o.Any
+	return p.Any
 }
 
-func (o *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (p *ProcessVendrRequestCompletedWebhooksVendrRequestCompletedDomainAppUUIDPostResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if p == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return p.HTTPValidationError
 }

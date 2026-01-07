@@ -39,6 +39,7 @@ func NewAppStoreAppResource() resource.Resource {
 
 // AppStoreAppResource defines the resource implementation.
 type AppStoreAppResource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -149,17 +150,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"PRE_APPROVAL",
-										"PROVISION",
-										"DEPROVISION",
-										"REQUEST_VALIDATION",
-										"SIEM",
-									),
-								},
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -236,17 +227,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"PRE_APPROVAL",
-										"PROVISION",
-										"DEPROVISION",
-										"REQUEST_VALIDATION",
-										"SIEM",
-									),
-								},
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -327,13 +308,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"SYNCED",
-													"NATIVE",
-												),
-											},
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -407,15 +382,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"STAGED",
-													"ACTIVE",
-													"SUSPENDED",
-													"INACTIVE",
-												),
-											},
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -463,13 +430,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"SYNCED",
-													"NATIVE",
-												),
-											},
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -558,13 +519,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"SYNCED",
-													"NATIVE",
-												),
-											},
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -638,15 +593,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"STAGED",
-													"ACTIVE",
-													"SUSPENDED",
-													"INACTIVE",
-												),
-											},
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -694,13 +641,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"SYNCED",
-													"NATIVE",
-												),
-											},
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -774,15 +715,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"status": schema.StringAttribute{
 											Computed:    true,
-											Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"STAGED",
-													"ACTIVE",
-													"SUSPENDED",
-													"INACTIVE",
-												),
-											},
+											Description: `The status of this user.`,
 										},
 									},
 								},
@@ -829,17 +762,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
-								Computed:    true,
-								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"PRE_APPROVAL",
-										"PROVISION",
-										"DEPROVISION",
-										"REQUEST_VALIDATION",
-										"SIEM",
-									),
-								},
+								Computed: true,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -891,18 +814,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: `The sources of this app.`,
 			},
 			"status": schema.StringAttribute{
-				Computed:    true,
-				Description: `must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"DISCOVERED",
-						"IN_REVIEW",
-						"NEEDS_REVIEW",
-						"APPROVED",
-						"BLOCKLISTED",
-						"DEPRECATED",
-					),
-				},
+				Computed: true,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
@@ -1147,7 +1059,10 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

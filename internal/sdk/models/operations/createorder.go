@@ -20,37 +20,37 @@ type CreateOrderResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CreateOrderResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateOrderResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateOrderResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateOrderResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateOrderResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateOrderResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateOrderResponse) GetAny() any {
-	if o == nil {
+func (c *CreateOrderResponse) GetAny() any {
+	if c == nil {
 		return nil
 	}
-	return o.Any
+	return c.Any
 }
 
-func (o *CreateOrderResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CreateOrderResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }

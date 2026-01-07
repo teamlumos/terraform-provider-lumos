@@ -9,16 +9,16 @@ type SyncTaskOutput struct {
 	State *RunInfoStatus `json:"state,omitempty"`
 }
 
-func (o *SyncTaskOutput) GetJobID() string {
-	if o == nil {
+func (s *SyncTaskOutput) GetJobID() string {
+	if s == nil {
 		return ""
 	}
-	return o.JobID
+	return s.JobID
 }
 
-func (o *SyncTaskOutput) GetState() *RunInfoStatus {
-	if o == nil {
+func (s *SyncTaskOutput) GetState() *RunInfoStatus {
+	if s == nil {
 		return nil
 	}
-	return o.State
+	return s.State
 }

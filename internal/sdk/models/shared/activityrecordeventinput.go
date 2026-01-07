@@ -6,9 +6,9 @@ type ActivityRecordEventInput struct {
 	Type ActivityRecordEventType `json:"type"`
 }
 
-func (o *ActivityRecordEventInput) GetType() ActivityRecordEventType {
-	if o == nil {
+func (a *ActivityRecordEventInput) GetType() ActivityRecordEventType {
+	if a == nil {
 		return ActivityRecordEventType("")
 	}
-	return o.Type
+	return a.Type
 }

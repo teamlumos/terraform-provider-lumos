@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -30,6 +29,7 @@ func NewPreApprovalRuleResource() resource.Resource {
 
 // PreApprovalRuleResource defines the resource implementation.
 type PreApprovalRuleResource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -95,17 +95,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The description of this inline webhook.`,
 						},
 						"hook_type": schema.StringAttribute{
-							Computed:    true,
-							Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"PRE_APPROVAL",
-									"PROVISION",
-									"DEPROVISION",
-									"REQUEST_VALIDATION",
-									"SIEM",
-								),
-							},
+							Computed: true,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -142,13 +132,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"group_lifecycle": schema.StringAttribute{
 							Computed:    true,
-							Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"SYNCED",
-									"NATIVE",
-								),
-							},
+							Description: `The lifecycle of this group.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -203,13 +187,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"type": schema.StringAttribute{
 							Computed:    true,
-							Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
-							Validators: []validator.String{
-								stringvalidator.OneOf(
-									"SYNCED",
-									"NATIVE",
-								),
-							},
+							Description: `The type of this requestable permission.`,
 						},
 					},
 				},
@@ -449,7 +427,10 @@ func (r *PreApprovalRuleResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 204 {
+	switch res.StatusCode {
+	case 204, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

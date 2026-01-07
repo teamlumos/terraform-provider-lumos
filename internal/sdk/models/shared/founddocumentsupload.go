@@ -21,58 +21,58 @@ type FoundDocumentsUpload struct {
 	LineItems []LineItemUpload `json:"line_items,omitempty"`
 }
 
-func (o *FoundDocumentsUpload) GetUniqueIdentifier() string {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetUniqueIdentifier() string {
+	if f == nil {
 		return ""
 	}
-	return o.UniqueIdentifier
+	return f.UniqueIdentifier
 }
 
-func (o *FoundDocumentsUpload) GetFiles() []FileUpload {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetFiles() []FileUpload {
+	if f == nil {
 		return []FileUpload{}
 	}
-	return o.Files
+	return f.Files
 }
 
-func (o *FoundDocumentsUpload) GetVendorName() *string {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetVendorName() *string {
+	if f == nil {
 		return nil
 	}
-	return o.VendorName
+	return f.VendorName
 }
 
-func (o *FoundDocumentsUpload) GetStartDate() *string {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetStartDate() *string {
+	if f == nil {
 		return nil
 	}
-	return o.StartDate
+	return f.StartDate
 }
 
-func (o *FoundDocumentsUpload) GetEndDate() *string {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetEndDate() *string {
+	if f == nil {
 		return nil
 	}
-	return o.EndDate
+	return f.EndDate
 }
 
-func (o *FoundDocumentsUpload) GetSourceAppID() *string {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetSourceAppID() *string {
+	if f == nil {
 		return nil
 	}
-	return o.SourceAppID
+	return f.SourceAppID
 }
 
-func (o *FoundDocumentsUpload) GetTotalCost() *Cost {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetTotalCost() *Cost {
+	if f == nil {
 		return nil
 	}
-	return o.TotalCost
+	return f.TotalCost
 }
 
-func (o *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
-	if o == nil {
+func (f *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
+	if f == nil {
 		return nil
 	}
-	return o.LineItems
+	return f.LineItems
 }

@@ -23,43 +23,43 @@ func (a ActivityRecord) MarshalJSON() ([]byte, error) {
 }
 
 func (a *ActivityRecord) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ActivityRecord) GetAccount() ActivityRecordAccountInput {
-	if o == nil {
+func (a *ActivityRecord) GetAccount() ActivityRecordAccountInput {
+	if a == nil {
 		return ActivityRecordAccountInput{}
 	}
-	return o.Account
+	return a.Account
 }
 
-func (o *ActivityRecord) GetEvent() ActivityRecordEventInput {
-	if o == nil {
+func (a *ActivityRecord) GetEvent() ActivityRecordEventInput {
+	if a == nil {
 		return ActivityRecordEventInput{}
 	}
-	return o.Event
+	return a.Event
 }
 
-func (o *ActivityRecord) GetTimestamp() time.Time {
-	if o == nil {
+func (a *ActivityRecord) GetTimestamp() time.Time {
+	if a == nil {
 		return time.Time{}
 	}
-	return o.Timestamp
+	return a.Timestamp
 }
 
-func (o *ActivityRecord) GetSourceAppID() string {
-	if o == nil {
+func (a *ActivityRecord) GetSourceAppID() string {
+	if a == nil {
 		return ""
 	}
-	return o.SourceAppID
+	return a.SourceAppID
 }
 
-func (o *ActivityRecord) GetApp() *ActivityRecordAppInput {
-	if o == nil {
+func (a *ActivityRecord) GetApp() *ActivityRecordAppInput {
+	if a == nil {
 		return nil
 	}
-	return o.App
+	return a.App
 }

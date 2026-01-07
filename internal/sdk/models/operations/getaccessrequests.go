@@ -30,59 +30,59 @@ func (g GetAccessRequestsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetAccessRequestsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetAccessRequestsRequest) GetTargetUserID() *string {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetTargetUserID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.TargetUserID
+	return g.TargetUserID
 }
 
-func (o *GetAccessRequestsRequest) GetRequesterUserID() *string {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetRequesterUserID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.RequesterUserID
+	return g.RequesterUserID
 }
 
-func (o *GetAccessRequestsRequest) GetUserID() *string {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetUserID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.UserID
+	return g.UserID
 }
 
-func (o *GetAccessRequestsRequest) GetStatuses() []shared.SupportRequestStatus {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetStatuses() []shared.SupportRequestStatus {
+	if g == nil {
 		return nil
 	}
-	return o.Statuses
+	return g.Statuses
 }
 
-func (o *GetAccessRequestsRequest) GetSort() *string {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetSort() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Sort
+	return g.Sort
 }
 
-func (o *GetAccessRequestsRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetAccessRequestsRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetAccessRequestsRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetAccessRequestsResponse struct {
@@ -98,37 +98,37 @@ type GetAccessRequestsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAccessRequestsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAccessRequestsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAccessRequestsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAccessRequestsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAccessRequestsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAccessRequestsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAccessRequestsResponse) GetPageAccessRequest() *shared.PageAccessRequest {
-	if o == nil {
+func (g *GetAccessRequestsResponse) GetPageAccessRequest() *shared.PageAccessRequest {
+	if g == nil {
 		return nil
 	}
-	return o.PageAccessRequest
+	return g.PageAccessRequest
 }
 
-func (o *GetAccessRequestsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAccessRequestsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

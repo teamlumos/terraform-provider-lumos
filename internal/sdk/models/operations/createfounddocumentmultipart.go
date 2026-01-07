@@ -14,25 +14,25 @@ type Files struct {
 	Content  []byte `multipartForm:"content"`
 }
 
-func (o *Files) GetFileName() string {
-	if o == nil {
+func (f *Files) GetFileName() string {
+	if f == nil {
 		return ""
 	}
-	return o.FileName
+	return f.FileName
 }
 
-func (o *Files) GetContent() []byte {
-	if o == nil {
+func (f *Files) GetContent() []byte {
+	if f == nil {
 		return []byte{}
 	}
-	return o.Content
+	return f.Content
 }
 
 type CreateFoundDocumentMultipartRequestBody struct {
 	// A unique identifier for the contract being uploaded. This can be an ID from an external system like Coupa, an internal ID such as a PO number, or simply the name of the file.
 	UniqueIdentifier string `multipartForm:"name=unique_identifier"`
 	// A list of files related to a vendor agreement. For example, the Order Form, Quote, MSA, or Terms and Conditions.
-	Files []Files `multipartForm:"name=files"`
+	Files []Files `multipartForm:"file,name=files"`
 	// The name of the vendor associated with this document
 	VendorName *string `multipartForm:"name=vendor_name"`
 	// The start date of the attached contract
@@ -48,52 +48,52 @@ func (c CreateFoundDocumentMultipartRequestBody) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateFoundDocumentMultipartRequestBody) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetUniqueIdentifier() string {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetUniqueIdentifier() string {
+	if c == nil {
 		return ""
 	}
-	return o.UniqueIdentifier
+	return c.UniqueIdentifier
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetFiles() []Files {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetFiles() []Files {
+	if c == nil {
 		return []Files{}
 	}
-	return o.Files
+	return c.Files
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetVendorName() *string {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetVendorName() *string {
+	if c == nil {
 		return nil
 	}
-	return o.VendorName
+	return c.VendorName
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetStartDate() *types.Date {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetStartDate() *types.Date {
+	if c == nil {
 		return nil
 	}
-	return o.StartDate
+	return c.StartDate
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetEndDate() *types.Date {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetEndDate() *types.Date {
+	if c == nil {
 		return nil
 	}
-	return o.EndDate
+	return c.EndDate
 }
 
-func (o *CreateFoundDocumentMultipartRequestBody) GetSourceAppID() *string {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartRequestBody) GetSourceAppID() *string {
+	if c == nil {
 		return nil
 	}
-	return o.SourceAppID
+	return c.SourceAppID
 }
 
 type CreateFoundDocumentMultipartResponse struct {
@@ -109,37 +109,37 @@ type CreateFoundDocumentMultipartResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CreateFoundDocumentMultipartResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateFoundDocumentMultipartResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateFoundDocumentMultipartResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateFoundDocumentMultipartResponse) GetAny() any {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartResponse) GetAny() any {
+	if c == nil {
 		return nil
 	}
-	return o.Any
+	return c.Any
 }
 
-func (o *CreateFoundDocumentMultipartResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CreateFoundDocumentMultipartResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }

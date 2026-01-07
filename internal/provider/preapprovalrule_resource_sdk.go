@@ -11,6 +11,117 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
+func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(ctx context.Context, resp *shared.PreApprovalRuleOutput) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.AppClassID = types.StringValue(resp.AppClassID)
+		r.AppID = types.StringValue(resp.AppID)
+		r.AppInstanceID = types.StringValue(resp.AppInstanceID)
+		r.ID = types.StringPointerValue(resp.ID)
+		r.Justification = types.StringValue(resp.Justification)
+		r.PreapprovalWebhooks = []tfTypes.BaseInlineWebhook{}
+
+		for _, preapprovalWebhooksItem := range resp.PreapprovalWebhooks {
+			var preapprovalWebhooks tfTypes.BaseInlineWebhook
+
+			preapprovalWebhooks.Description = types.StringPointerValue(preapprovalWebhooksItem.Description)
+			preapprovalWebhooks.HookType = types.StringValue(string(preapprovalWebhooksItem.HookType))
+			preapprovalWebhooks.ID = types.StringValue(preapprovalWebhooksItem.ID)
+			preapprovalWebhooks.Name = types.StringValue(preapprovalWebhooksItem.Name)
+
+			r.PreapprovalWebhooks = append(r.PreapprovalWebhooks, preapprovalWebhooks)
+		}
+		r.PreapprovedGroups = []tfTypes.Group{}
+
+		for _, preapprovedGroupsItem := range resp.PreapprovedGroups {
+			var preapprovedGroups tfTypes.Group
+
+			preapprovedGroups.AppID = types.StringPointerValue(preapprovedGroupsItem.AppID)
+			preapprovedGroups.Description = types.StringPointerValue(preapprovedGroupsItem.Description)
+			if preapprovedGroupsItem.GroupLifecycle != nil {
+				preapprovedGroups.GroupLifecycle = types.StringValue(string(*preapprovedGroupsItem.GroupLifecycle))
+			} else {
+				preapprovedGroups.GroupLifecycle = types.StringNull()
+			}
+			preapprovedGroups.ID = types.StringPointerValue(preapprovedGroupsItem.ID)
+			preapprovedGroups.IntegrationSpecificID = types.StringPointerValue(preapprovedGroupsItem.IntegrationSpecificID)
+			preapprovedGroups.Name = types.StringPointerValue(preapprovedGroupsItem.Name)
+			preapprovedGroups.SourceAppID = types.StringPointerValue(preapprovedGroupsItem.SourceAppID)
+
+			r.PreapprovedGroups = append(r.PreapprovedGroups, preapprovedGroups)
+		}
+		r.PreapprovedPermissions = []tfTypes.RequestablePermissionBase{}
+
+		for _, preapprovedPermissionsItem := range resp.PreapprovedPermissions {
+			var preapprovedPermissions tfTypes.RequestablePermissionBase
+
+			preapprovedPermissions.AppClassID = types.StringValue(preapprovedPermissionsItem.AppClassID)
+			preapprovedPermissions.AppID = types.StringValue(preapprovedPermissionsItem.AppID)
+			preapprovedPermissions.AppInstanceID = types.StringValue(preapprovedPermissionsItem.AppInstanceID)
+			preapprovedPermissions.ID = types.StringPointerValue(preapprovedPermissionsItem.ID)
+			preapprovedPermissions.Label = types.StringValue(preapprovedPermissionsItem.Label)
+			if preapprovedPermissionsItem.Type != nil {
+				preapprovedPermissions.Type = types.StringValue(string(*preapprovedPermissionsItem.Type))
+			} else {
+				preapprovedPermissions.Type = types.StringNull()
+			}
+
+			r.PreapprovedPermissions = append(r.PreapprovedPermissions, preapprovedPermissions)
+		}
+		r.PreapprovedUsersByAttribute = []tfTypes.AttributeEqualityRule{}
+
+		for _, preapprovedUsersByAttributeItem := range resp.PreapprovedUsersByAttribute {
+			var preapprovedUsersByAttribute tfTypes.AttributeEqualityRule
+
+			preapprovedUsersByAttribute.Attribute = types.StringValue(preapprovedUsersByAttributeItem.Attribute)
+			preapprovedUsersByAttribute.Value = types.StringValue(preapprovedUsersByAttributeItem.Value)
+
+			r.PreapprovedUsersByAttribute = append(r.PreapprovedUsersByAttribute, preapprovedUsersByAttribute)
+		}
+		r.TimeBasedAccess = make([]types.String, 0, len(resp.TimeBasedAccess))
+		for _, v := range resp.TimeBasedAccess {
+			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(string(v)))
+		}
+	}
+
+	return diags
+}
+
+func (r *PreApprovalRuleResourceModel) ToOperationsDeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest(ctx context.Context) (*operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
+		ID: id,
+	}
+
+	return &out, diags
+}
+
+func (r *PreApprovalRuleResourceModel) ToOperationsUpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest(ctx context.Context) (*operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	preApprovalRuleUpdateInput, preApprovalRuleUpdateInputDiags := r.ToSharedPreApprovalRuleUpdateInput(ctx)
+	diags.Append(preApprovalRuleUpdateInputDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest{
+		ID:                         id,
+		PreApprovalRuleUpdateInput: *preApprovalRuleUpdateInput,
+	}
+
+	return &out, diags
+}
+
 func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.Context) (*shared.PreApprovalRuleInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -25,22 +136,22 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.
 	appID = r.AppID.ValueString()
 
 	preapprovedGroups := make([]shared.BaseGroup, 0, len(r.PreapprovedGroups))
-	for _, preapprovedGroupsItem := range r.PreapprovedGroups {
+	for preapprovedGroupsIndex := range r.PreapprovedGroups {
 		id := new(string)
-		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
-			*id = preapprovedGroupsItem.ID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].ID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].ID.IsNull() {
+			*id = r.PreapprovedGroups[preapprovedGroupsIndex].ID.ValueString()
 		} else {
 			id = nil
 		}
 		appId1 := new(string)
-		if !preapprovedGroupsItem.AppID.IsUnknown() && !preapprovedGroupsItem.AppID.IsNull() {
-			*appId1 = preapprovedGroupsItem.AppID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].AppID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].AppID.IsNull() {
+			*appId1 = r.PreapprovedGroups[preapprovedGroupsIndex].AppID.ValueString()
 		} else {
 			appId1 = nil
 		}
 		integrationSpecificID := new(string)
-		if !preapprovedGroupsItem.IntegrationSpecificID.IsUnknown() && !preapprovedGroupsItem.IntegrationSpecificID.IsNull() {
-			*integrationSpecificID = preapprovedGroupsItem.IntegrationSpecificID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.IsNull() {
+			*integrationSpecificID = r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.ValueString()
 		} else {
 			integrationSpecificID = nil
 		}
@@ -51,10 +162,10 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.
 		})
 	}
 	preapprovedPermissions := make([]shared.RequestablePermissionBase, 0, len(r.PreapprovedPermissions))
-	for _, preapprovedPermissionsItem := range r.PreapprovedPermissions {
+	for preapprovedPermissionsIndex := range r.PreapprovedPermissions {
 		id1 := new(string)
-		if !preapprovedPermissionsItem.ID.IsUnknown() && !preapprovedPermissionsItem.ID.IsNull() {
-			*id1 = preapprovedPermissionsItem.ID.ValueString()
+		if !r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.IsUnknown() && !r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.IsNull() {
+			*id1 = r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.ValueString()
 		} else {
 			id1 = nil
 		}
@@ -63,12 +174,12 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.
 		})
 	}
 	preapprovedUsersByAttribute := make([]shared.AttributeEqualityRule, 0, len(r.PreapprovedUsersByAttribute))
-	for _, preapprovedUsersByAttributeItem := range r.PreapprovedUsersByAttribute {
+	for preapprovedUsersByAttributeIndex := range r.PreapprovedUsersByAttribute {
 		var attribute string
-		attribute = preapprovedUsersByAttributeItem.Attribute.ValueString()
+		attribute = r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeIndex].Attribute.ValueString()
 
 		var value string
-		value = preapprovedUsersByAttributeItem.Value.ValueString()
+		value = r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeIndex].Value.ValueString()
 
 		preapprovedUsersByAttribute = append(preapprovedUsersByAttribute, shared.AttributeEqualityRule{
 			Attribute: attribute,
@@ -76,9 +187,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.
 		})
 	}
 	preapprovalWebhooks := make([]shared.BaseInlineWebhook, 0, len(r.PreapprovalWebhooks))
-	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
+	for preapprovalWebhooksIndex := range r.PreapprovalWebhooks {
 		var id2 string
-		id2 = preapprovalWebhooksItem.ID.ValueString()
+		id2 = r.PreapprovalWebhooks[preapprovalWebhooksIndex].ID.ValueString()
 
 		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
@@ -108,22 +219,22 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
 	}
 	preapprovedGroups := make([]shared.BaseGroup, 0, len(r.PreapprovedGroups))
-	for _, preapprovedGroupsItem := range r.PreapprovedGroups {
+	for preapprovedGroupsIndex := range r.PreapprovedGroups {
 		id := new(string)
-		if !preapprovedGroupsItem.ID.IsUnknown() && !preapprovedGroupsItem.ID.IsNull() {
-			*id = preapprovedGroupsItem.ID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].ID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].ID.IsNull() {
+			*id = r.PreapprovedGroups[preapprovedGroupsIndex].ID.ValueString()
 		} else {
 			id = nil
 		}
 		appID := new(string)
-		if !preapprovedGroupsItem.AppID.IsUnknown() && !preapprovedGroupsItem.AppID.IsNull() {
-			*appID = preapprovedGroupsItem.AppID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].AppID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].AppID.IsNull() {
+			*appID = r.PreapprovedGroups[preapprovedGroupsIndex].AppID.ValueString()
 		} else {
 			appID = nil
 		}
 		integrationSpecificID := new(string)
-		if !preapprovedGroupsItem.IntegrationSpecificID.IsUnknown() && !preapprovedGroupsItem.IntegrationSpecificID.IsNull() {
-			*integrationSpecificID = preapprovedGroupsItem.IntegrationSpecificID.ValueString()
+		if !r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.IsUnknown() && !r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.IsNull() {
+			*integrationSpecificID = r.PreapprovedGroups[preapprovedGroupsIndex].IntegrationSpecificID.ValueString()
 		} else {
 			integrationSpecificID = nil
 		}
@@ -134,10 +245,10 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 		})
 	}
 	preapprovedPermissions := make([]shared.RequestablePermissionBase, 0, len(r.PreapprovedPermissions))
-	for _, preapprovedPermissionsItem := range r.PreapprovedPermissions {
+	for preapprovedPermissionsIndex := range r.PreapprovedPermissions {
 		id1 := new(string)
-		if !preapprovedPermissionsItem.ID.IsUnknown() && !preapprovedPermissionsItem.ID.IsNull() {
-			*id1 = preapprovedPermissionsItem.ID.ValueString()
+		if !r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.IsUnknown() && !r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.IsNull() {
+			*id1 = r.PreapprovedPermissions[preapprovedPermissionsIndex].ID.ValueString()
 		} else {
 			id1 = nil
 		}
@@ -146,12 +257,12 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 		})
 	}
 	preapprovedUsersByAttribute := make([]shared.AttributeEqualityRule, 0, len(r.PreapprovedUsersByAttribute))
-	for _, preapprovedUsersByAttributeItem := range r.PreapprovedUsersByAttribute {
+	for preapprovedUsersByAttributeIndex := range r.PreapprovedUsersByAttribute {
 		var attribute string
-		attribute = preapprovedUsersByAttributeItem.Attribute.ValueString()
+		attribute = r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeIndex].Attribute.ValueString()
 
 		var value string
-		value = preapprovedUsersByAttributeItem.Value.ValueString()
+		value = r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeIndex].Value.ValueString()
 
 		preapprovedUsersByAttribute = append(preapprovedUsersByAttribute, shared.AttributeEqualityRule{
 			Attribute: attribute,
@@ -159,9 +270,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 		})
 	}
 	preapprovalWebhooks := make([]shared.BaseInlineWebhook, 0, len(r.PreapprovalWebhooks))
-	for _, preapprovalWebhooksItem := range r.PreapprovalWebhooks {
+	for preapprovalWebhooksIndex := range r.PreapprovalWebhooks {
 		var id2 string
-		id2 = preapprovalWebhooksItem.ID.ValueString()
+		id2 = r.PreapprovalWebhooks[preapprovalWebhooksIndex].ID.ValueString()
 
 		preapprovalWebhooks = append(preapprovalWebhooks, shared.BaseInlineWebhook{
 			ID: id2,
@@ -177,146 +288,4 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 	}
 
 	return &out, diags
-}
-
-func (r *PreApprovalRuleResourceModel) ToOperationsUpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest(ctx context.Context) (*operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	preApprovalRuleUpdateInput, preApprovalRuleUpdateInputDiags := r.ToSharedPreApprovalRuleUpdateInput(ctx)
-	diags.Append(preApprovalRuleUpdateInputDiags...)
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	out := operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest{
-		ID:                         id,
-		PreApprovalRuleUpdateInput: *preApprovalRuleUpdateInput,
-	}
-
-	return &out, diags
-}
-
-func (r *PreApprovalRuleResourceModel) ToOperationsDeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest(ctx context.Context) (*operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	out := operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest{
-		ID: id,
-	}
-
-	return &out, diags
-}
-
-func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(ctx context.Context, resp *shared.PreApprovalRuleOutput) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.AppClassID = types.StringValue(resp.AppClassID)
-		r.AppID = types.StringValue(resp.AppID)
-		r.AppInstanceID = types.StringValue(resp.AppInstanceID)
-		r.ID = types.StringPointerValue(resp.ID)
-		r.Justification = types.StringValue(resp.Justification)
-		r.PreapprovalWebhooks = []tfTypes.BaseInlineWebhook{}
-		if len(r.PreapprovalWebhooks) > len(resp.PreapprovalWebhooks) {
-			r.PreapprovalWebhooks = r.PreapprovalWebhooks[:len(resp.PreapprovalWebhooks)]
-		}
-		for preapprovalWebhooksCount, preapprovalWebhooksItem := range resp.PreapprovalWebhooks {
-			var preapprovalWebhooks tfTypes.BaseInlineWebhook
-			preapprovalWebhooks.Description = types.StringPointerValue(preapprovalWebhooksItem.Description)
-			preapprovalWebhooks.HookType = types.StringValue(string(preapprovalWebhooksItem.HookType))
-			preapprovalWebhooks.ID = types.StringValue(preapprovalWebhooksItem.ID)
-			preapprovalWebhooks.Name = types.StringValue(preapprovalWebhooksItem.Name)
-			if preapprovalWebhooksCount+1 > len(r.PreapprovalWebhooks) {
-				r.PreapprovalWebhooks = append(r.PreapprovalWebhooks, preapprovalWebhooks)
-			} else {
-				r.PreapprovalWebhooks[preapprovalWebhooksCount].Description = preapprovalWebhooks.Description
-				r.PreapprovalWebhooks[preapprovalWebhooksCount].HookType = preapprovalWebhooks.HookType
-				r.PreapprovalWebhooks[preapprovalWebhooksCount].ID = preapprovalWebhooks.ID
-				r.PreapprovalWebhooks[preapprovalWebhooksCount].Name = preapprovalWebhooks.Name
-			}
-		}
-		r.PreapprovedGroups = []tfTypes.Group{}
-		if len(r.PreapprovedGroups) > len(resp.PreapprovedGroups) {
-			r.PreapprovedGroups = r.PreapprovedGroups[:len(resp.PreapprovedGroups)]
-		}
-		for preapprovedGroupsCount, preapprovedGroupsItem := range resp.PreapprovedGroups {
-			var preapprovedGroups tfTypes.Group
-			preapprovedGroups.AppID = types.StringPointerValue(preapprovedGroupsItem.AppID)
-			preapprovedGroups.Description = types.StringPointerValue(preapprovedGroupsItem.Description)
-			if preapprovedGroupsItem.GroupLifecycle != nil {
-				preapprovedGroups.GroupLifecycle = types.StringValue(string(*preapprovedGroupsItem.GroupLifecycle))
-			} else {
-				preapprovedGroups.GroupLifecycle = types.StringNull()
-			}
-			preapprovedGroups.ID = types.StringPointerValue(preapprovedGroupsItem.ID)
-			preapprovedGroups.IntegrationSpecificID = types.StringPointerValue(preapprovedGroupsItem.IntegrationSpecificID)
-			preapprovedGroups.Name = types.StringPointerValue(preapprovedGroupsItem.Name)
-			preapprovedGroups.SourceAppID = types.StringPointerValue(preapprovedGroupsItem.SourceAppID)
-			if preapprovedGroupsCount+1 > len(r.PreapprovedGroups) {
-				r.PreapprovedGroups = append(r.PreapprovedGroups, preapprovedGroups)
-			} else {
-				r.PreapprovedGroups[preapprovedGroupsCount].AppID = preapprovedGroups.AppID
-				r.PreapprovedGroups[preapprovedGroupsCount].Description = preapprovedGroups.Description
-				r.PreapprovedGroups[preapprovedGroupsCount].GroupLifecycle = preapprovedGroups.GroupLifecycle
-				r.PreapprovedGroups[preapprovedGroupsCount].ID = preapprovedGroups.ID
-				r.PreapprovedGroups[preapprovedGroupsCount].IntegrationSpecificID = preapprovedGroups.IntegrationSpecificID
-				r.PreapprovedGroups[preapprovedGroupsCount].Name = preapprovedGroups.Name
-				r.PreapprovedGroups[preapprovedGroupsCount].SourceAppID = preapprovedGroups.SourceAppID
-			}
-		}
-		r.PreapprovedPermissions = []tfTypes.RequestablePermissionBase{}
-		if len(r.PreapprovedPermissions) > len(resp.PreapprovedPermissions) {
-			r.PreapprovedPermissions = r.PreapprovedPermissions[:len(resp.PreapprovedPermissions)]
-		}
-		for preapprovedPermissionsCount, preapprovedPermissionsItem := range resp.PreapprovedPermissions {
-			var preapprovedPermissions tfTypes.RequestablePermissionBase
-			preapprovedPermissions.AppClassID = types.StringValue(preapprovedPermissionsItem.AppClassID)
-			preapprovedPermissions.AppID = types.StringValue(preapprovedPermissionsItem.AppID)
-			preapprovedPermissions.AppInstanceID = types.StringValue(preapprovedPermissionsItem.AppInstanceID)
-			preapprovedPermissions.ID = types.StringPointerValue(preapprovedPermissionsItem.ID)
-			preapprovedPermissions.Label = types.StringValue(preapprovedPermissionsItem.Label)
-			if preapprovedPermissionsItem.Type != nil {
-				preapprovedPermissions.Type = types.StringValue(string(*preapprovedPermissionsItem.Type))
-			} else {
-				preapprovedPermissions.Type = types.StringNull()
-			}
-			if preapprovedPermissionsCount+1 > len(r.PreapprovedPermissions) {
-				r.PreapprovedPermissions = append(r.PreapprovedPermissions, preapprovedPermissions)
-			} else {
-				r.PreapprovedPermissions[preapprovedPermissionsCount].AppClassID = preapprovedPermissions.AppClassID
-				r.PreapprovedPermissions[preapprovedPermissionsCount].AppID = preapprovedPermissions.AppID
-				r.PreapprovedPermissions[preapprovedPermissionsCount].AppInstanceID = preapprovedPermissions.AppInstanceID
-				r.PreapprovedPermissions[preapprovedPermissionsCount].ID = preapprovedPermissions.ID
-				r.PreapprovedPermissions[preapprovedPermissionsCount].Label = preapprovedPermissions.Label
-				r.PreapprovedPermissions[preapprovedPermissionsCount].Type = preapprovedPermissions.Type
-			}
-		}
-		r.PreapprovedUsersByAttribute = []tfTypes.AttributeEqualityRule{}
-		if len(r.PreapprovedUsersByAttribute) > len(resp.PreapprovedUsersByAttribute) {
-			r.PreapprovedUsersByAttribute = r.PreapprovedUsersByAttribute[:len(resp.PreapprovedUsersByAttribute)]
-		}
-		for preapprovedUsersByAttributeCount, preapprovedUsersByAttributeItem := range resp.PreapprovedUsersByAttribute {
-			var preapprovedUsersByAttribute tfTypes.AttributeEqualityRule
-			preapprovedUsersByAttribute.Attribute = types.StringValue(preapprovedUsersByAttributeItem.Attribute)
-			preapprovedUsersByAttribute.Value = types.StringValue(preapprovedUsersByAttributeItem.Value)
-			if preapprovedUsersByAttributeCount+1 > len(r.PreapprovedUsersByAttribute) {
-				r.PreapprovedUsersByAttribute = append(r.PreapprovedUsersByAttribute, preapprovedUsersByAttribute)
-			} else {
-				r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeCount].Attribute = preapprovedUsersByAttribute.Attribute
-				r.PreapprovedUsersByAttribute[preapprovedUsersByAttributeCount].Value = preapprovedUsersByAttribute.Value
-			}
-		}
-		r.TimeBasedAccess = make([]types.String, 0, len(resp.TimeBasedAccess))
-		for _, v := range resp.TimeBasedAccess {
-			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(string(v)))
-		}
-	}
-
-	return diags
 }

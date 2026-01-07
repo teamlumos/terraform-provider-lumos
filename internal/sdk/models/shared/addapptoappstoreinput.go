@@ -11,30 +11,30 @@ type AddAppToAppStoreInput struct {
 	AppID string `json:"app_id"`
 }
 
-func (o *AddAppToAppStoreInput) GetCustomRequestInstructions() *string {
-	if o == nil {
+func (a *AddAppToAppStoreInput) GetCustomRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.CustomRequestInstructions
+	return a.CustomRequestInstructions
 }
 
-func (o *AddAppToAppStoreInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
-	if o == nil {
+func (a *AddAppToAppStoreInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
+	if a == nil {
 		return nil
 	}
-	return o.RequestFlow
+	return a.RequestFlow
 }
 
-func (o *AddAppToAppStoreInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
-	if o == nil {
+func (a *AddAppToAppStoreInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
+	if a == nil {
 		return nil
 	}
-	return o.Provisioning
+	return a.Provisioning
 }
 
-func (o *AddAppToAppStoreInput) GetAppID() string {
-	if o == nil {
+func (a *AddAppToAppStoreInput) GetAppID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppID
+	return a.AppID
 }

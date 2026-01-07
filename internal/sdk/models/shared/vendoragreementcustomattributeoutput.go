@@ -17,8 +17,8 @@ const (
 
 // Value - The value of the attribute for an individual Order
 type Value struct {
-	Str         *string `queryParam:"inline"`
-	ArrayOfUser []User  `queryParam:"inline"`
+	Str         *string `queryParam:"inline" union:"member"`
+	ArrayOfUser []User  `queryParam:"inline" union:"member"`
 
 	Type ValueType
 }
@@ -43,17 +43,43 @@ func CreateValueArrayOfUser(arrayOfUser []User) Value {
 
 func (u *Value) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
-		u.Str = &str
-		u.Type = ValueTypeStr
-		return nil
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ValueTypeStr,
+			Value: &str,
+		})
 	}
 
 	var arrayOfUser []User = []User{}
-	if err := utils.UnmarshalJSON(data, &arrayOfUser, "", true, true); err == nil {
-		u.ArrayOfUser = arrayOfUser
-		u.Type = ValueTypeArrayOfUser
+	if err := utils.UnmarshalJSON(data, &arrayOfUser, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  ValueTypeArrayOfUser,
+			Value: arrayOfUser,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Value", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Value", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(ValueType)
+	switch best.Type {
+	case ValueTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case ValueTypeArrayOfUser:
+		u.ArrayOfUser = best.Value.([]User)
 		return nil
 	}
 
@@ -78,16 +104,16 @@ type VendorAgreementCustomAttributeOutput struct {
 	Value *Value `json:"value,omitempty"`
 }
 
-func (o *VendorAgreementCustomAttributeOutput) GetType() VendorAgreementCustomAttributeType {
-	if o == nil {
+func (v *VendorAgreementCustomAttributeOutput) GetType() VendorAgreementCustomAttributeType {
+	if v == nil {
 		return VendorAgreementCustomAttributeType("")
 	}
-	return o.Type
+	return v.Type
 }
 
-func (o *VendorAgreementCustomAttributeOutput) GetValue() *Value {
-	if o == nil {
+func (v *VendorAgreementCustomAttributeOutput) GetValue() *Value {
+	if v == nil {
 		return nil
 	}
-	return o.Value
+	return v.Value
 }

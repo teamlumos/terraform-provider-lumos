@@ -15,37 +15,37 @@ type RequestablePermissionInput struct {
 	RequestConfig *RequestConfigInputCreate `json:"request_config,omitempty"`
 }
 
-func (o *RequestablePermissionInput) GetAppID() string {
-	if o == nil {
+func (r *RequestablePermissionInput) GetAppID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppID
+	return r.AppID
 }
 
-func (o *RequestablePermissionInput) GetAppClassID() *string {
-	if o == nil {
+func (r *RequestablePermissionInput) GetAppClassID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.AppClassID
+	return r.AppClassID
 }
 
-func (o *RequestablePermissionInput) GetAppInstanceID() *string {
-	if o == nil {
+func (r *RequestablePermissionInput) GetAppInstanceID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.AppInstanceID
+	return r.AppInstanceID
 }
 
-func (o *RequestablePermissionInput) GetLabel() string {
-	if o == nil {
+func (r *RequestablePermissionInput) GetLabel() string {
+	if r == nil {
 		return ""
 	}
-	return o.Label
+	return r.Label
 }
 
-func (o *RequestablePermissionInput) GetRequestConfig() *RequestConfigInputCreate {
-	if o == nil {
+func (r *RequestablePermissionInput) GetRequestConfig() *RequestConfigInputCreate {
+	if r == nil {
 		return nil
 	}
-	return o.RequestConfig
+	return r.RequestConfig
 }

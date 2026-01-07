@@ -7,9 +7,9 @@ type ActivityRecordInput struct {
 	Records []ActivityRecord `json:"records"`
 }
 
-func (o *ActivityRecordInput) GetRecords() []ActivityRecord {
-	if o == nil {
+func (a *ActivityRecordInput) GetRecords() []ActivityRecord {
+	if a == nil {
 		return []ActivityRecord{}
 	}
-	return o.Records
+	return a.Records
 }

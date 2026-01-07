@@ -18,51 +18,51 @@ type AppStoreAppSettingsProvisioningInput struct {
 	AccessRemovalInlineWebhook *BaseInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetGroupsProvisioning() *GroupProvisioningOption {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetGroupsProvisioning() *GroupProvisioningOption {
+	if a == nil {
 		return nil
 	}
-	return o.GroupsProvisioning
+	return a.GroupsProvisioning
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if a == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
+	return a.TimeBasedAccess
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetAllowMultiplePermissionSelection() *bool {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetAllowMultiplePermissionSelection() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.AllowMultiplePermissionSelection
+	return a.AllowMultiplePermissionSelection
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetManualStepsNeeded() *bool {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetManualStepsNeeded() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.ManualStepsNeeded
+	return a.ManualStepsNeeded
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetCustomProvisioningInstructions() *string {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetCustomProvisioningInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.CustomProvisioningInstructions
+	return a.CustomProvisioningInstructions
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetProvisioningWebhook() *BaseInlineWebhook {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetProvisioningWebhook() *BaseInlineWebhook {
+	if a == nil {
 		return nil
 	}
-	return o.ProvisioningWebhook
+	return a.ProvisioningWebhook
 }
 
-func (o *AppStoreAppSettingsProvisioningInput) GetAccessRemovalInlineWebhook() *BaseInlineWebhook {
-	if o == nil {
+func (a *AppStoreAppSettingsProvisioningInput) GetAccessRemovalInlineWebhook() *BaseInlineWebhook {
+	if a == nil {
 		return nil
 	}
-	return o.AccessRemovalInlineWebhook
+	return a.AccessRemovalInlineWebhook
 }

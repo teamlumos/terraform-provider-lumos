@@ -46,7 +46,7 @@ resource "lumos_app" "my_app" {
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `links` (Attributes) (see [below for nested schema](#nestedatt--links))
 - `sources` (List of String) The sources of this app.
-- `status` (String) must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String)
 - `user_friendly_label` (String) The user-friendly label of this app.
 
 <a id="nestedatt--links"></a>
@@ -61,6 +61,17 @@ Read-Only:
 
 Import is supported using the following syntax:
 
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = lumos_app.my_lumos_app
+  id = "..."
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-terraform import lumos_app.my_lumos_app ""
+terraform import lumos_app.my_lumos_app "..."
 ```

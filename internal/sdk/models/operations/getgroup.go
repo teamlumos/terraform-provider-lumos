@@ -11,11 +11,11 @@ type GetGroupRequest struct {
 	GroupID string `pathParam:"style=simple,explode=false,name=group_id"`
 }
 
-func (o *GetGroupRequest) GetGroupID() string {
-	if o == nil {
+func (g *GetGroupRequest) GetGroupID() string {
+	if g == nil {
 		return ""
 	}
-	return o.GroupID
+	return g.GroupID
 }
 
 type GetGroupResponse struct {
@@ -31,37 +31,37 @@ type GetGroupResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetGroupResponse) GetContentType() string {
-	if o == nil {
+func (g *GetGroupResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetGroupResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetGroupResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetGroupResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetGroupResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetGroupResponse) GetGroup() *shared.Group {
-	if o == nil {
+func (g *GetGroupResponse) GetGroup() *shared.Group {
+	if g == nil {
 		return nil
 	}
-	return o.Group
+	return g.Group
 }
 
-func (o *GetGroupResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetGroupResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

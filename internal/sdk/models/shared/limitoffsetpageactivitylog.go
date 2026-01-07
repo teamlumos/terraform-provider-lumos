@@ -10,37 +10,37 @@ type LimitOffsetPageActivityLog struct {
 	Links  Links         `json:"links"`
 }
 
-func (o *LimitOffsetPageActivityLog) GetItems() []ActivityLog {
-	if o == nil {
+func (l *LimitOffsetPageActivityLog) GetItems() []ActivityLog {
+	if l == nil {
 		return []ActivityLog{}
 	}
-	return o.Items
+	return l.Items
 }
 
-func (o *LimitOffsetPageActivityLog) GetTotal() *int64 {
-	if o == nil {
+func (l *LimitOffsetPageActivityLog) GetTotal() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Total
+	return l.Total
 }
 
-func (o *LimitOffsetPageActivityLog) GetLimit() *int64 {
-	if o == nil {
+func (l *LimitOffsetPageActivityLog) GetLimit() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Limit
+	return l.Limit
 }
 
-func (o *LimitOffsetPageActivityLog) GetOffset() *int64 {
-	if o == nil {
+func (l *LimitOffsetPageActivityLog) GetOffset() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Offset
+	return l.Offset
 }
 
-func (o *LimitOffsetPageActivityLog) GetLinks() Links {
-	if o == nil {
+func (l *LimitOffsetPageActivityLog) GetLinks() Links {
+	if l == nil {
 		return Links{}
 	}
-	return o.Links
+	return l.Links
 }

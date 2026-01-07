@@ -10,37 +10,37 @@ type PageAppStoreApp struct {
 	Pages *int64        `json:"pages,omitempty"`
 }
 
-func (o *PageAppStoreApp) GetItems() []AppStoreApp {
-	if o == nil {
+func (p *PageAppStoreApp) GetItems() []AppStoreApp {
+	if p == nil {
 		return []AppStoreApp{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageAppStoreApp) GetTotal() *int64 {
-	if o == nil {
+func (p *PageAppStoreApp) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageAppStoreApp) GetPage() *int64 {
-	if o == nil {
+func (p *PageAppStoreApp) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageAppStoreApp) GetSize() *int64 {
-	if o == nil {
+func (p *PageAppStoreApp) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageAppStoreApp) GetPages() *int64 {
-	if o == nil {
+func (p *PageAppStoreApp) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

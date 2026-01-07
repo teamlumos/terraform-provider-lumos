@@ -23,6 +23,7 @@ func NewAppDataSource() datasource.DataSource {
 
 // AppDataSource is the data source implementation.
 type AppDataSource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -71,7 +72,8 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				Description: `The user-facing description of the app`,
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: `The ID of this app.`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,

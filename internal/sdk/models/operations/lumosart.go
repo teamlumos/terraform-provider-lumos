@@ -17,30 +17,30 @@ type LumosArtResponse struct {
 	Res *string
 }
 
-func (o *LumosArtResponse) GetContentType() string {
-	if o == nil {
+func (l *LumosArtResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *LumosArtResponse) GetStatusCode() int {
-	if o == nil {
+func (l *LumosArtResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *LumosArtResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *LumosArtResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *LumosArtResponse) GetRes() *string {
-	if o == nil {
+func (l *LumosArtResponse) GetRes() *string {
+	if l == nil {
 		return nil
 	}
-	return o.Res
+	return l.Res
 }

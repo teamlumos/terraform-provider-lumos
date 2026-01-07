@@ -30,7 +30,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.8.0"
+      version = "0.9.3"
     }
   }
 }
@@ -83,6 +83,23 @@ provider_installation {
 ```
 <!-- End Testing the provider locally [usage] -->
 
+<!-- Start Authentication [security] -->
+## Authentication
+
+This provider supports authentication configuration via environment variables and provider configuration.
+
+The configuration precedence is:
+
+- Provider configuration
+- Environment variables
+
+Available configuration:
+
+| Provider Attribute | Description |
+|---|---|
+| `http_bearer` | HTTP Bearer. Configurable via environment variable `LUMOS_ACCESS_TOKEN`. |
+<!-- End Authentication [security] -->
+
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
@@ -116,8 +133,10 @@ Lumos: The Lumos provider allows you to manage resources such as Apps, Permissio
 ## Table of Contents
 <!-- $toc-max-depth=2 -->
 * [Lumos](#lumos)
+  * [Generating the Provider](#generating-the-provider)
   * [Installation](#installation)
   * [Testing the provider locally](#testing-the-provider-locally)
+  * [Authentication](#authentication)
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
 
 <!-- End Table of Contents [toc] -->

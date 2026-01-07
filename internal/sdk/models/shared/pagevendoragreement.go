@@ -10,37 +10,37 @@ type PageVendorAgreement struct {
 	Pages *int64            `json:"pages,omitempty"`
 }
 
-func (o *PageVendorAgreement) GetItems() []VendorAgreement {
-	if o == nil {
+func (p *PageVendorAgreement) GetItems() []VendorAgreement {
+	if p == nil {
 		return []VendorAgreement{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageVendorAgreement) GetTotal() *int64 {
-	if o == nil {
+func (p *PageVendorAgreement) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageVendorAgreement) GetPage() *int64 {
-	if o == nil {
+func (p *PageVendorAgreement) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageVendorAgreement) GetSize() *int64 {
-	if o == nil {
+func (p *PageVendorAgreement) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageVendorAgreement) GetPages() *int64 {
-	if o == nil {
+func (p *PageVendorAgreement) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

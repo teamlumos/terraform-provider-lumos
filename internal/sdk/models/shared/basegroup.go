@@ -11,23 +11,23 @@ type BaseGroup struct {
 	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
 }
 
-func (o *BaseGroup) GetID() *string {
-	if o == nil {
+func (b *BaseGroup) GetID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.ID
+	return b.ID
 }
 
-func (o *BaseGroup) GetAppID() *string {
-	if o == nil {
+func (b *BaseGroup) GetAppID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.AppID
+	return b.AppID
 }
 
-func (o *BaseGroup) GetIntegrationSpecificID() *string {
-	if o == nil {
+func (b *BaseGroup) GetIntegrationSpecificID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.IntegrationSpecificID
+	return b.IntegrationSpecificID
 }

@@ -26,45 +26,45 @@ func (l ListUsersRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (l *ListUsersRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ListUsersRequest) GetSearchTerm() *string {
-	if o == nil {
+func (l *ListUsersRequest) GetSearchTerm() *string {
+	if l == nil {
 		return nil
 	}
-	return o.SearchTerm
+	return l.SearchTerm
 }
 
-func (o *ListUsersRequest) GetExactMatch() *bool {
-	if o == nil {
+func (l *ListUsersRequest) GetExactMatch() *bool {
+	if l == nil {
 		return nil
 	}
-	return o.ExactMatch
+	return l.ExactMatch
 }
 
-func (o *ListUsersRequest) GetExpand() []string {
-	if o == nil {
+func (l *ListUsersRequest) GetExpand() []string {
+	if l == nil {
 		return nil
 	}
-	return o.Expand
+	return l.Expand
 }
 
-func (o *ListUsersRequest) GetPage() *int64 {
-	if o == nil {
+func (l *ListUsersRequest) GetPage() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Page
+	return l.Page
 }
 
-func (o *ListUsersRequest) GetSize() *int64 {
-	if o == nil {
+func (l *ListUsersRequest) GetSize() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Size
+	return l.Size
 }
 
 type ListUsersResponse struct {
@@ -80,37 +80,37 @@ type ListUsersResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ListUsersResponse) GetContentType() string {
-	if o == nil {
+func (l *ListUsersResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListUsersResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListUsersResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListUsersResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListUsersResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListUsersResponse) GetPageUser() *shared.PageUser {
-	if o == nil {
+func (l *ListUsersResponse) GetPageUser() *shared.PageUser {
+	if l == nil {
 		return nil
 	}
-	return o.PageUser
+	return l.PageUser
 }
 
-func (o *ListUsersResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (l *ListUsersResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if l == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return l.HTTPValidationError
 }

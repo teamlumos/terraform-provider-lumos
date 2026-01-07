@@ -9,16 +9,16 @@ type AppAdminsOutput struct {
 	Users []User `json:"users,omitempty"`
 }
 
-func (o *AppAdminsOutput) GetGroups() []Group {
-	if o == nil {
+func (a *AppAdminsOutput) GetGroups() []Group {
+	if a == nil {
 		return nil
 	}
-	return o.Groups
+	return a.Groups
 }
 
-func (o *AppAdminsOutput) GetUsers() []User {
-	if o == nil {
+func (a *AppAdminsOutput) GetUsers() []User {
+	if a == nil {
 		return nil
 	}
-	return o.Users
+	return a.Users
 }

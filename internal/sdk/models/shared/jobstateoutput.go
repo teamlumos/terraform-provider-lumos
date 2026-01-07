@@ -8,16 +8,16 @@ type JobStateOutput struct {
 	State *FlowState `json:"state,omitempty"`
 }
 
-func (o *JobStateOutput) GetJobID() string {
-	if o == nil {
+func (j *JobStateOutput) GetJobID() string {
+	if j == nil {
 		return ""
 	}
-	return o.JobID
+	return j.JobID
 }
 
-func (o *JobStateOutput) GetState() *FlowState {
-	if o == nil {
+func (j *JobStateOutput) GetState() *FlowState {
+	if j == nil {
 		return nil
 	}
-	return o.State
+	return j.State
 }

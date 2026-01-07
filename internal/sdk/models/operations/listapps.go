@@ -24,38 +24,38 @@ func (l ListAppsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (l *ListAppsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ListAppsRequest) GetNameSearch() *string {
-	if o == nil {
+func (l *ListAppsRequest) GetNameSearch() *string {
+	if l == nil {
 		return nil
 	}
-	return o.NameSearch
+	return l.NameSearch
 }
 
-func (o *ListAppsRequest) GetExactMatch() *bool {
-	if o == nil {
+func (l *ListAppsRequest) GetExactMatch() *bool {
+	if l == nil {
 		return nil
 	}
-	return o.ExactMatch
+	return l.ExactMatch
 }
 
-func (o *ListAppsRequest) GetPage() *int64 {
-	if o == nil {
+func (l *ListAppsRequest) GetPage() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Page
+	return l.Page
 }
 
-func (o *ListAppsRequest) GetSize() *int64 {
-	if o == nil {
+func (l *ListAppsRequest) GetSize() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Size
+	return l.Size
 }
 
 type ListAppsResponse struct {
@@ -71,37 +71,37 @@ type ListAppsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ListAppsResponse) GetContentType() string {
-	if o == nil {
+func (l *ListAppsResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListAppsResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListAppsResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListAppsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListAppsResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListAppsResponse) GetPageApp() *shared.PageApp {
-	if o == nil {
+func (l *ListAppsResponse) GetPageApp() *shared.PageApp {
+	if l == nil {
 		return nil
 	}
-	return o.PageApp
+	return l.PageApp
 }
 
-func (o *ListAppsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (l *ListAppsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if l == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return l.HTTPValidationError
 }

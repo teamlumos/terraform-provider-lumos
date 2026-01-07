@@ -7,9 +7,9 @@ type ActivityRecordAppInput struct {
 	InstanceIdentifier string `json:"instance_identifier"`
 }
 
-func (o *ActivityRecordAppInput) GetInstanceIdentifier() string {
-	if o == nil {
+func (a *ActivityRecordAppInput) GetInstanceIdentifier() string {
+	if a == nil {
 		return ""
 	}
-	return o.InstanceIdentifier
+	return a.InstanceIdentifier
 }

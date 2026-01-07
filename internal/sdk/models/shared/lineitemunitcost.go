@@ -6,9 +6,9 @@ type LineItemUnitCost struct {
 	PerMonth Cost `json:"per_month"`
 }
 
-func (o *LineItemUnitCost) GetPerMonth() Cost {
-	if o == nil {
+func (l *LineItemUnitCost) GetPerMonth() Cost {
+	if l == nil {
 		return Cost{}
 	}
-	return o.PerMonth
+	return l.PerMonth
 }

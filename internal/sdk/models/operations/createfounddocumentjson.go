@@ -20,37 +20,37 @@ type CreateFoundDocumentJSONResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CreateFoundDocumentJSONResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateFoundDocumentJSONResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateFoundDocumentJSONResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateFoundDocumentJSONResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateFoundDocumentJSONResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateFoundDocumentJSONResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateFoundDocumentJSONResponse) GetAny() any {
-	if o == nil {
+func (c *CreateFoundDocumentJSONResponse) GetAny() any {
+	if c == nil {
 		return nil
 	}
-	return o.Any
+	return c.Any
 }
 
-func (o *CreateFoundDocumentJSONResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CreateFoundDocumentJSONResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }

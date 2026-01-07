@@ -10,37 +10,37 @@ type PageRequestablePermissionOutput struct {
 	Pages *int64                        `json:"pages,omitempty"`
 }
 
-func (o *PageRequestablePermissionOutput) GetItems() []RequestablePermissionOutput {
-	if o == nil {
+func (p *PageRequestablePermissionOutput) GetItems() []RequestablePermissionOutput {
+	if p == nil {
 		return []RequestablePermissionOutput{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageRequestablePermissionOutput) GetTotal() *int64 {
-	if o == nil {
+func (p *PageRequestablePermissionOutput) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageRequestablePermissionOutput) GetPage() *int64 {
-	if o == nil {
+func (p *PageRequestablePermissionOutput) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageRequestablePermissionOutput) GetSize() *int64 {
-	if o == nil {
+func (p *PageRequestablePermissionOutput) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageRequestablePermissionOutput) GetPages() *int64 {
-	if o == nil {
+func (p *PageRequestablePermissionOutput) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

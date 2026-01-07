@@ -7,9 +7,9 @@ type BaseInlineWebhook struct {
 	ID string `json:"id"`
 }
 
-func (o *BaseInlineWebhook) GetID() string {
-	if o == nil {
+func (b *BaseInlineWebhook) GetID() string {
+	if b == nil {
 		return ""
 	}
-	return o.ID
+	return b.ID
 }

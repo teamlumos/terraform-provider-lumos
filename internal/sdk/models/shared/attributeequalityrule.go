@@ -9,16 +9,16 @@ type AttributeEqualityRule struct {
 	Value string `json:"value"`
 }
 
-func (o *AttributeEqualityRule) GetAttribute() string {
-	if o == nil {
+func (a *AttributeEqualityRule) GetAttribute() string {
+	if a == nil {
 		return ""
 	}
-	return o.Attribute
+	return a.Attribute
 }
 
-func (o *AttributeEqualityRule) GetValue() string {
-	if o == nil {
+func (a *AttributeEqualityRule) GetValue() string {
+	if a == nil {
 		return ""
 	}
-	return o.Value
+	return a.Value
 }

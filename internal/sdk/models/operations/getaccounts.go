@@ -27,59 +27,59 @@ func (g GetAccountsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetAccountsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetAccountsRequest) GetAppID() *string {
-	if o == nil {
+func (g *GetAccountsRequest) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *GetAccountsRequest) GetDiscoveredBefore() *time.Time {
-	if o == nil {
+func (g *GetAccountsRequest) GetDiscoveredBefore() *time.Time {
+	if g == nil {
 		return nil
 	}
-	return o.DiscoveredBefore
+	return g.DiscoveredBefore
 }
 
-func (o *GetAccountsRequest) GetDiscoveredAfter() *time.Time {
-	if o == nil {
+func (g *GetAccountsRequest) GetDiscoveredAfter() *time.Time {
+	if g == nil {
 		return nil
 	}
-	return o.DiscoveredAfter
+	return g.DiscoveredAfter
 }
 
-func (o *GetAccountsRequest) GetSources() []shared.DiscoverySource {
-	if o == nil {
+func (g *GetAccountsRequest) GetSources() []shared.DiscoverySource {
+	if g == nil {
 		return nil
 	}
-	return o.Sources
+	return g.Sources
 }
 
-func (o *GetAccountsRequest) GetExpand() []string {
-	if o == nil {
+func (g *GetAccountsRequest) GetExpand() []string {
+	if g == nil {
 		return nil
 	}
-	return o.Expand
+	return g.Expand
 }
 
-func (o *GetAccountsRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetAccountsRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetAccountsRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetAccountsRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetAccountsResponse struct {
@@ -95,37 +95,37 @@ type GetAccountsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAccountsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAccountsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAccountsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAccountsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAccountsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAccountsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAccountsResponse) GetPageAccount() *shared.PageAccount {
-	if o == nil {
+func (g *GetAccountsResponse) GetPageAccount() *shared.PageAccount {
+	if g == nil {
 		return nil
 	}
-	return o.PageAccount
+	return g.PageAccount
 }
 
-func (o *GetAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

@@ -10,23 +10,23 @@ type ApproverInput struct {
 	Group *BaseGroup `json:"group,omitempty"`
 }
 
-func (o *ApproverInput) GetType() *ApproverType {
-	if o == nil {
+func (a *ApproverInput) GetType() *ApproverType {
+	if a == nil {
 		return nil
 	}
-	return o.Type
+	return a.Type
 }
 
-func (o *ApproverInput) GetUser() *BaseUser {
-	if o == nil {
+func (a *ApproverInput) GetUser() *BaseUser {
+	if a == nil {
 		return nil
 	}
-	return o.User
+	return a.User
 }
 
-func (o *ApproverInput) GetGroup() *BaseGroup {
-	if o == nil {
+func (a *ApproverInput) GetGroup() *BaseGroup {
+	if a == nil {
 		return nil
 	}
-	return o.Group
+	return a.Group
 }

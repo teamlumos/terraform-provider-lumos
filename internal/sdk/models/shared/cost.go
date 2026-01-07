@@ -9,16 +9,16 @@ type Cost struct {
 	Value float64 `json:"value"`
 }
 
-func (o *Cost) GetCurrency() *string {
-	if o == nil {
+func (c *Cost) GetCurrency() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Currency
+	return c.Currency
 }
 
-func (o *Cost) GetValue() float64 {
-	if o == nil {
+func (c *Cost) GetValue() float64 {
+	if c == nil {
 		return 0.0
 	}
-	return o.Value
+	return c.Value
 }

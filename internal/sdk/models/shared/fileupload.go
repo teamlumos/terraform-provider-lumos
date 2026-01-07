@@ -8,16 +8,16 @@ type FileUpload struct {
 	Value string `json:"value"`
 }
 
-func (o *FileUpload) GetType() FileUploadType {
-	if o == nil {
+func (f *FileUpload) GetType() FileUploadType {
+	if f == nil {
 		return FileUploadType("")
 	}
-	return o.Type
+	return f.Type
 }
 
-func (o *FileUpload) GetValue() string {
-	if o == nil {
+func (f *FileUpload) GetValue() string {
+	if f == nil {
 		return ""
 	}
-	return o.Value
+	return f.Value
 }

@@ -17,44 +17,44 @@ type AppInputCreate struct {
 	RequestInstructions *string `json:"request_instructions,omitempty"`
 }
 
-func (o *AppInputCreate) GetName() string {
-	if o == nil {
+func (a *AppInputCreate) GetName() string {
+	if a == nil {
 		return ""
 	}
-	return o.Name
+	return a.Name
 }
 
-func (o *AppInputCreate) GetCategory() string {
-	if o == nil {
+func (a *AppInputCreate) GetCategory() string {
+	if a == nil {
 		return ""
 	}
-	return o.Category
+	return a.Category
 }
 
-func (o *AppInputCreate) GetDescription() string {
-	if o == nil {
+func (a *AppInputCreate) GetDescription() string {
+	if a == nil {
 		return ""
 	}
-	return o.Description
+	return a.Description
 }
 
-func (o *AppInputCreate) GetLogoURL() *string {
-	if o == nil {
+func (a *AppInputCreate) GetLogoURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.LogoURL
+	return a.LogoURL
 }
 
-func (o *AppInputCreate) GetWebsiteURL() *string {
-	if o == nil {
+func (a *AppInputCreate) GetWebsiteURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.WebsiteURL
+	return a.WebsiteURL
 }
 
-func (o *AppInputCreate) GetRequestInstructions() *string {
-	if o == nil {
+func (a *AppInputCreate) GetRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.RequestInstructions
+	return a.RequestInstructions
 }

@@ -28,52 +28,52 @@ func (g GetGroupsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetGroupsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetGroupsRequest) GetIntegrationSpecificID() *string {
-	if o == nil {
+func (g *GetGroupsRequest) GetIntegrationSpecificID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.IntegrationSpecificID
+	return g.IntegrationSpecificID
 }
 
-func (o *GetGroupsRequest) GetName() *string {
-	if o == nil {
+func (g *GetGroupsRequest) GetName() *string {
+	if g == nil {
 		return nil
 	}
-	return o.Name
+	return g.Name
 }
 
-func (o *GetGroupsRequest) GetExactMatch() *bool {
-	if o == nil {
+func (g *GetGroupsRequest) GetExactMatch() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.ExactMatch
+	return g.ExactMatch
 }
 
-func (o *GetGroupsRequest) GetAppID() *string {
-	if o == nil {
+func (g *GetGroupsRequest) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *GetGroupsRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetGroupsRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetGroupsRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetGroupsRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetGroupsResponse struct {
@@ -89,37 +89,37 @@ type GetGroupsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetGroupsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetGroupsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetGroupsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetGroupsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetGroupsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetGroupsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetGroupsResponse) GetPageGroup() *shared.PageGroup {
-	if o == nil {
+func (g *GetGroupsResponse) GetPageGroup() *shared.PageGroup {
+	if g == nil {
 		return nil
 	}
-	return o.PageGroup
+	return g.PageGroup
 }
 
-func (o *GetGroupsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetGroupsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

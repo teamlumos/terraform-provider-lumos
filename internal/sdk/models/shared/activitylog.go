@@ -33,64 +33,64 @@ func (a ActivityLog) MarshalJSON() ([]byte, error) {
 }
 
 func (a *ActivityLog) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ActivityLog) GetEventHash() string {
-	if o == nil {
+func (a *ActivityLog) GetEventHash() string {
+	if a == nil {
 		return ""
 	}
-	return o.EventHash
+	return a.EventHash
 }
 
-func (o *ActivityLog) GetEventType() string {
-	if o == nil {
+func (a *ActivityLog) GetEventType() string {
+	if a == nil {
 		return ""
 	}
-	return o.EventType
+	return a.EventType
 }
 
-func (o *ActivityLog) GetEventTypeUserFriendly() string {
-	if o == nil {
+func (a *ActivityLog) GetEventTypeUserFriendly() string {
+	if a == nil {
 		return ""
 	}
-	return o.EventTypeUserFriendly
+	return a.EventTypeUserFriendly
 }
 
-func (o *ActivityLog) GetOutcome() string {
-	if o == nil {
+func (a *ActivityLog) GetOutcome() string {
+	if a == nil {
 		return ""
 	}
-	return o.Outcome
+	return a.Outcome
 }
 
-func (o *ActivityLog) GetTargets() []Targets {
-	if o == nil {
+func (a *ActivityLog) GetTargets() []Targets {
+	if a == nil {
 		return []Targets{}
 	}
-	return o.Targets
+	return a.Targets
 }
 
-func (o *ActivityLog) GetActor() Actor {
-	if o == nil {
+func (a *ActivityLog) GetActor() Actor {
+	if a == nil {
 		return Actor{}
 	}
-	return o.Actor
+	return a.Actor
 }
 
-func (o *ActivityLog) GetEventBeganAt() *time.Time {
-	if o == nil {
+func (a *ActivityLog) GetEventBeganAt() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.EventBeganAt
+	return a.EventBeganAt
 }
 
-func (o *ActivityLog) GetEventMetadata() EventMetadata {
-	if o == nil {
+func (a *ActivityLog) GetEventMetadata() EventMetadata {
+	if a == nil {
 		return EventMetadata{}
 	}
-	return o.EventMetadata
+	return a.EventMetadata
 }

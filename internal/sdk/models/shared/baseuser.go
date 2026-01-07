@@ -7,9 +7,9 @@ type BaseUser struct {
 	ID string `json:"id"`
 }
 
-func (o *BaseUser) GetID() string {
-	if o == nil {
+func (b *BaseUser) GetID() string {
+	if b == nil {
 		return ""
 	}
-	return o.ID
+	return b.ID
 }

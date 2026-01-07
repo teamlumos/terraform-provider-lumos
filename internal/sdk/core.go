@@ -63,7 +63,7 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "listApps",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -85,7 +85,7 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -123,11 +123,13 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -241,6 +243,7 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -285,7 +288,7 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "createApp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -348,11 +351,13 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -510,7 +515,7 @@ func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) 
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAppCategories",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -566,11 +571,13 @@ func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) 
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -707,7 +714,7 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getApp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -763,11 +770,13 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -881,6 +890,7 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -925,7 +935,7 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateApp",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputCreate", "json", `request:"mediaType=application/json"`)
@@ -988,11 +998,13 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1150,7 +1162,7 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAppSettings",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1206,11 +1218,13 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1368,7 +1382,7 @@ func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateA
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateAppSettings",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppSettingInput", "json", `request:"mediaType=application/json"`)
@@ -1431,11 +1445,13 @@ func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateA
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1593,7 +1609,7 @@ func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*ope
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "currentUser",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1649,11 +1665,13 @@ func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*ope
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1790,7 +1808,7 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "listUsers",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -1812,7 +1830,7 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -1850,11 +1868,13 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -1968,6 +1988,7 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -2012,7 +2033,7 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getUser",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2068,11 +2089,13 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2186,6 +2209,7 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -2230,7 +2254,7 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getUserAccounts",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2252,7 +2276,7 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -2290,11 +2314,13 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2452,7 +2478,7 @@ func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...o
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "get_inline_webhooks_inline_webhooks_get",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2508,11 +2534,13 @@ func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...o
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2649,7 +2677,7 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getAccounts",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2671,7 +2699,7 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -2709,11 +2737,13 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -2871,7 +2901,7 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getGroupMembership",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -2893,7 +2923,7 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -2931,11 +2961,13 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3093,7 +3125,7 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getGroup",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3149,11 +3181,13 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3267,6 +3301,7 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -3311,7 +3346,7 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getGroups",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3333,7 +3368,7 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -3371,11 +3406,13 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3489,6 +3526,7 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 404:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -3533,7 +3571,7 @@ func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUplo
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getUploadJobState",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3589,11 +3627,13 @@ func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUplo
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3751,7 +3791,7 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getActivityLogs",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -3773,7 +3813,7 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
 
-	if err := utils.PopulateQueryParams(ctx, req, request, nil); err != nil {
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
 		return nil, fmt.Errorf("error populating query params: %w", err)
 	}
 
@@ -3811,11 +3851,13 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -3973,7 +4015,7 @@ func (s *Core) PostAccounts(ctx context.Context, request any, opts ...operations
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "postAccounts",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -4036,11 +4078,13 @@ func (s *Core) PostAccounts(ctx context.Context, request any, opts ...operations
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -4198,7 +4242,7 @@ func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecor
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "activityRecords",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "Request", "json", `request:"mediaType=application/json"`)
@@ -4261,11 +4305,13 @@ func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecor
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -4423,7 +4469,7 @@ func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operation
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getActivityRecordsJobState",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -4479,11 +4525,13 @@ func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operation
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 

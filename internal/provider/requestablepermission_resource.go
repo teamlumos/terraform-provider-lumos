@@ -38,6 +38,7 @@ func NewRequestablePermissionResource() resource.Resource {
 
 // RequestablePermissionResource defines the resource implementation.
 type RequestablePermissionResource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -124,16 +125,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"PRE_APPROVAL",
-										"PROVISION",
-										"DEPROVISION",
-										"REQUEST_VALIDATION",
-										"SIEM",
-									),
-								},
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -197,13 +188,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-											Validators: []validator.String{
-												stringvalidator.OneOf(
-													"SYNCED",
-													"NATIVE",
-												),
-											},
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -326,13 +311,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"SYNCED",
-															"NATIVE",
-														),
-													},
+													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
@@ -419,21 +398,14 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"STAGED",
-															"ACTIVE",
-															"SUSPENDED",
-															"INACTIVE",
-														),
-													},
+													Description: `The status of this user.`,
 												},
 											},
 										},
 										Description: `Users assigned as support request approvers.`,
 									},
 								},
+								Description: `AppStore App approvers assigned.`,
 							},
 							"approvers_stage_2": schema.SingleNestedAttribute{
 								Computed: true,
@@ -476,13 +448,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"SYNCED",
-															"NATIVE",
-														),
-													},
+													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
@@ -569,21 +535,14 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"STAGED",
-															"ACTIVE",
-															"SUSPENDED",
-															"INACTIVE",
-														),
-													},
+													Description: `The status of this user.`,
 												},
 											},
 										},
 										Description: `Users assigned as support request approvers.`,
 									},
 								},
+								Description: `AppStore App stage 2 approvers assigned.`,
 							},
 							"custom_approval_message": schema.StringAttribute{
 								Computed: true,
@@ -686,13 +645,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]`,
-										Validators: []validator.String{
-											stringvalidator.OneOf(
-												"SYNCED",
-												"NATIVE",
-											),
-										},
+										Description: `The lifecycle of this group.`,
 									},
 									"id": schema.StringAttribute{
 										Computed: true,
@@ -747,16 +700,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Computed: true,
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-										},
-										Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-										Validators: []validator.String{
-											stringvalidator.OneOf(
-												"PRE_APPROVAL",
-												"PROVISION",
-												"DEPROVISION",
-												"REQUEST_VALIDATION",
-												"SIEM",
-											),
 										},
 									},
 									"id": schema.StringAttribute{
@@ -819,16 +762,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]`,
-								Validators: []validator.String{
-									stringvalidator.OneOf(
-										"PRE_APPROVAL",
-										"PROVISION",
-										"DEPROVISION",
-										"REQUEST_VALIDATION",
-										"SIEM",
-									),
-								},
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -862,13 +795,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"SYNCED",
-						"NATIVE",
-					),
-				},
+				Description: `The type of this requestable permission.`,
 			},
 		},
 	}
@@ -1104,7 +1031,10 @@ func (r *RequestablePermissionResource) Delete(ctx context.Context, req resource
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 204 {
+	switch res.StatusCode {
+	case 204, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}

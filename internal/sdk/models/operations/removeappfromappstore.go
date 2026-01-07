@@ -11,11 +11,11 @@ type RemoveAppFromAppStoreRequest struct {
 	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
 }
 
-func (o *RemoveAppFromAppStoreRequest) GetAppID() string {
-	if o == nil {
+func (r *RemoveAppFromAppStoreRequest) GetAppID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppID
+	return r.AppID
 }
 
 type RemoveAppFromAppStoreResponse struct {
@@ -31,37 +31,37 @@ type RemoveAppFromAppStoreResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *RemoveAppFromAppStoreResponse) GetContentType() string {
-	if o == nil {
+func (r *RemoveAppFromAppStoreResponse) GetContentType() string {
+	if r == nil {
 		return ""
 	}
-	return o.ContentType
+	return r.ContentType
 }
 
-func (o *RemoveAppFromAppStoreResponse) GetStatusCode() int {
-	if o == nil {
+func (r *RemoveAppFromAppStoreResponse) GetStatusCode() int {
+	if r == nil {
 		return 0
 	}
-	return o.StatusCode
+	return r.StatusCode
 }
 
-func (o *RemoveAppFromAppStoreResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (r *RemoveAppFromAppStoreResponse) GetRawResponse() *http.Response {
+	if r == nil {
 		return nil
 	}
-	return o.RawResponse
+	return r.RawResponse
 }
 
-func (o *RemoveAppFromAppStoreResponse) GetAny() any {
-	if o == nil {
+func (r *RemoveAppFromAppStoreResponse) GetAny() any {
+	if r == nil {
 		return nil
 	}
-	return o.Any
+	return r.Any
 }
 
-func (o *RemoveAppFromAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (r *RemoveAppFromAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if r == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return r.HTTPValidationError
 }

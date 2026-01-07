@@ -9,16 +9,16 @@ type AppLinks struct {
 	AdminURL string `json:"admin_url"`
 }
 
-func (o *AppLinks) GetSelf() string {
-	if o == nil {
+func (a *AppLinks) GetSelf() string {
+	if a == nil {
 		return ""
 	}
-	return o.Self
+	return a.Self
 }
 
-func (o *AppLinks) GetAdminURL() string {
-	if o == nil {
+func (a *AppLinks) GetAdminURL() string {
+	if a == nil {
 		return ""
 	}
-	return o.AdminURL
+	return a.AdminURL
 }

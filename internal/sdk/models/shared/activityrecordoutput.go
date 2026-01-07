@@ -6,9 +6,9 @@ type ActivityRecordOutput struct {
 	Job SyncTaskOutput `json:"job"`
 }
 
-func (o *ActivityRecordOutput) GetJob() SyncTaskOutput {
-	if o == nil {
+func (a *ActivityRecordOutput) GetJob() SyncTaskOutput {
+	if a == nil {
 		return SyncTaskOutput{}
 	}
-	return o.Job
+	return a.Job
 }

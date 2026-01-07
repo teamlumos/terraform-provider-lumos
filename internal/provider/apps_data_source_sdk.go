@@ -11,6 +11,44 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
+func (r *AppsDataSourceModel) RefreshFromSharedPageApp(ctx context.Context, resp *shared.PageApp) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Items = []tfTypes.App{}
+
+		for _, itemsItem := range resp.Items {
+			var items tfTypes.App
+
+			items.AllowMultiplePermissionSelection = types.BoolValue(itemsItem.AllowMultiplePermissionSelection)
+			items.AppClassID = types.StringValue(itemsItem.AppClassID)
+			items.Category = types.StringPointerValue(itemsItem.Category)
+			items.Description = types.StringPointerValue(itemsItem.Description)
+			items.ID = types.StringValue(itemsItem.ID)
+			items.InstanceID = types.StringValue(itemsItem.InstanceID)
+			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
+			items.Links.Self = types.StringValue(itemsItem.Links.Self)
+			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
+			items.RequestInstructions = types.StringPointerValue(itemsItem.RequestInstructions)
+			items.Sources = make([]types.String, 0, len(itemsItem.Sources))
+			for _, v := range itemsItem.Sources {
+				items.Sources = append(items.Sources, types.StringValue(string(v)))
+			}
+			items.Status = types.StringValue(string(itemsItem.Status))
+			items.UserFriendlyLabel = types.StringValue(itemsItem.UserFriendlyLabel)
+			items.WebsiteURL = types.StringPointerValue(itemsItem.WebsiteURL)
+
+			r.Items = append(r.Items, items)
+		}
+		r.Page = types.Int64PointerValue(resp.Page)
+		r.Pages = types.Int64PointerValue(resp.Pages)
+		r.Size = types.Int64PointerValue(resp.Size)
+		r.Total = types.Int64PointerValue(resp.Total)
+	}
+
+	return diags
+}
+
 func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (*operations.ListAppsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -46,58 +84,4 @@ func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (
 	}
 
 	return &out, diags
-}
-
-func (r *AppsDataSourceModel) RefreshFromSharedPageApp(ctx context.Context, resp *shared.PageApp) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Items = []tfTypes.App{}
-		if len(r.Items) > len(resp.Items) {
-			r.Items = r.Items[:len(resp.Items)]
-		}
-		for itemsCount, itemsItem := range resp.Items {
-			var items tfTypes.App
-			items.AllowMultiplePermissionSelection = types.BoolValue(itemsItem.AllowMultiplePermissionSelection)
-			items.AppClassID = types.StringValue(itemsItem.AppClassID)
-			items.Category = types.StringPointerValue(itemsItem.Category)
-			items.Description = types.StringPointerValue(itemsItem.Description)
-			items.ID = types.StringValue(itemsItem.ID)
-			items.InstanceID = types.StringValue(itemsItem.InstanceID)
-			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
-			items.Links.Self = types.StringValue(itemsItem.Links.Self)
-			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
-			items.RequestInstructions = types.StringPointerValue(itemsItem.RequestInstructions)
-			items.Sources = make([]types.String, 0, len(itemsItem.Sources))
-			for _, v := range itemsItem.Sources {
-				items.Sources = append(items.Sources, types.StringValue(string(v)))
-			}
-			items.Status = types.StringValue(string(itemsItem.Status))
-			items.UserFriendlyLabel = types.StringValue(itemsItem.UserFriendlyLabel)
-			items.WebsiteURL = types.StringPointerValue(itemsItem.WebsiteURL)
-			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items)
-			} else {
-				r.Items[itemsCount].AllowMultiplePermissionSelection = items.AllowMultiplePermissionSelection
-				r.Items[itemsCount].AppClassID = items.AppClassID
-				r.Items[itemsCount].Category = items.Category
-				r.Items[itemsCount].Description = items.Description
-				r.Items[itemsCount].ID = items.ID
-				r.Items[itemsCount].InstanceID = items.InstanceID
-				r.Items[itemsCount].Links = items.Links
-				r.Items[itemsCount].LogoURL = items.LogoURL
-				r.Items[itemsCount].RequestInstructions = items.RequestInstructions
-				r.Items[itemsCount].Sources = items.Sources
-				r.Items[itemsCount].Status = items.Status
-				r.Items[itemsCount].UserFriendlyLabel = items.UserFriendlyLabel
-				r.Items[itemsCount].WebsiteURL = items.WebsiteURL
-			}
-		}
-		r.Page = types.Int64PointerValue(resp.Page)
-		r.Pages = types.Int64PointerValue(resp.Pages)
-		r.Size = types.Int64PointerValue(resp.Size)
-		r.Total = types.Int64PointerValue(resp.Total)
-	}
-
-	return diags
 }

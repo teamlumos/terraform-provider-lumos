@@ -78,7 +78,7 @@ resource "lumos_requestable_permission" "aws" {
 ### Read-Only
 
 - `id` (String) The ID of this requestable permission.
-- `type` (String) The type of this requestable permission. must be one of ["SYNCED", "NATIVE"]
+- `type` (String) The type of this requestable permission.
 
 <a id="nestedatt--request_config"></a>
 ### Nested Schema for `request_config`
@@ -103,7 +103,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 
@@ -127,7 +127,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -138,8 +138,8 @@ Read-Only:
 
 Optional:
 
-- `approvers` (Attributes) (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
-- `approvers_stage_2` (Attributes) (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
+- `approvers` (Attributes) AppStore App approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers))
+- `approvers_stage_2` (Attributes) AppStore App stage 2 approvers assigned. (see [below for nested schema](#nestedatt--request_config--request_approval_config--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
 - `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]
@@ -166,7 +166,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -183,7 +183,7 @@ Read-Only:
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -207,7 +207,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -224,7 +224,7 @@ Read-Only:
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -253,7 +253,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -268,7 +268,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 
@@ -283,13 +283,24 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 ## Import
 
 Import is supported using the following syntax:
 
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = lumos_requestable_permission.my_lumos_requestable_permission
+  id = "..."
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-terraform import lumos_requestable_permission.my_lumos_requestable_permission ""
+terraform import lumos_requestable_permission.my_lumos_requestable_permission "..."
 ```

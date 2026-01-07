@@ -13,18 +13,18 @@ type CancelAccessRequestRequest struct {
 	Reason *string `queryParam:"style=form,explode=true,name=reason"`
 }
 
-func (o *CancelAccessRequestRequest) GetID() string {
-	if o == nil {
+func (c *CancelAccessRequestRequest) GetID() string {
+	if c == nil {
 		return ""
 	}
-	return o.ID
+	return c.ID
 }
 
-func (o *CancelAccessRequestRequest) GetReason() *string {
-	if o == nil {
+func (c *CancelAccessRequestRequest) GetReason() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Reason
+	return c.Reason
 }
 
 type CancelAccessRequestResponse struct {
@@ -38,30 +38,30 @@ type CancelAccessRequestResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CancelAccessRequestResponse) GetContentType() string {
-	if o == nil {
+func (c *CancelAccessRequestResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CancelAccessRequestResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CancelAccessRequestResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CancelAccessRequestResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CancelAccessRequestResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CancelAccessRequestResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CancelAccessRequestResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }
