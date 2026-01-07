@@ -6,6 +6,20 @@
 
 <no value>
 
+## Generating the Provider
+
+This provider is generated from the Lumos OpenAPI specification using [Speakeasy](https://speakeasyapi.dev/). To regenerate the provider, update the `original-openapi.json` with the latest OpenAPI JSON and/or update the `overlay.yaml` with any modifications, then run:
+
+```sh
+speakeasy run
+```
+
+This command reads the configuration from `.speakeasy/workflow.yaml` and uses:
+- `original-openapi.json` - The upstream OpenAPI specification
+- `overlay.yaml` - Custom modifications and configurations for the Terraform provider
+
+The generated code will be output to the `internal/` directory. After regeneration, you may need to run `go mod tidy` to update dependencies.
+
 <!-- Start Installation [installation] -->
 ## Installation
 
