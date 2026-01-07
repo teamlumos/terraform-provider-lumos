@@ -120,7 +120,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 - `logo_url` (String) The URL of the logo of this app.
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
-- `status` (String) must be one of ["DISCOVERED", "IN_REVIEW", "NEEDS_REVIEW", "APPROVED", "BLOCKLISTED", "DEPRECATED"]
+- `status` (String)
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
 
@@ -147,7 +147,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 
@@ -161,7 +161,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 
@@ -201,7 +201,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -218,7 +218,7 @@ Read-Only:
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -242,7 +242,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -268,7 +268,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -285,7 +285,7 @@ Read-Only:
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -309,7 +309,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this group.
-- `group_lifecycle` (String) The lifecycle of this group. must be one of ["SYNCED", "NATIVE"]
+- `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
 - `source_app_id` (String) The ID of the app that sources this group.
 
@@ -326,7 +326,7 @@ Read-Only:
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
-- `status` (String) The status of this user. must be one of ["STAGED", "ACTIVE", "SUSPENDED", "INACTIVE"]
+- `status` (String) The status of this user.
 
 
 
@@ -340,7 +340,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String) must be one of ["PRE_APPROVAL", "PROVISION", "DEPROVISION", "REQUEST_VALIDATION", "SIEM"]
+- `hook_type` (String)
 - `name` (String) The name of this inline webhook.
 
 
@@ -357,6 +357,17 @@ Read-Only:
 
 Import is supported using the following syntax:
 
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = lumos_app_store_app.my_lumos_app_store_app
+  id = "..."
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
 ```shell
-terraform import lumos_app_store_app.my_lumos_app_store_app ""
+terraform import lumos_app_store_app.my_lumos_app_store_app "..."
 ```

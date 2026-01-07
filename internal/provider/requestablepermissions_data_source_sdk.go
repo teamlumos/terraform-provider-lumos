@@ -11,74 +11,15 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *RequestablePermissionsDataSourceModel) ToOperationsGetAppstorePermissionsAppstoreRequestablePermissionsGetRequest(ctx context.Context) (*operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	appID := new(string)
-	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
-		*appID = r.AppID.ValueString()
-	} else {
-		appID = nil
-	}
-	searchTerm := new(string)
-	if !r.SearchTerm.IsUnknown() && !r.SearchTerm.IsNull() {
-		*searchTerm = r.SearchTerm.ValueString()
-	} else {
-		searchTerm = nil
-	}
-	exactMatch := new(bool)
-	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
-		*exactMatch = r.ExactMatch.ValueBool()
-	} else {
-		exactMatch = nil
-	}
-	inAppStore := new(bool)
-	if !r.InAppStore.IsUnknown() && !r.InAppStore.IsNull() {
-		*inAppStore = r.InAppStore.ValueBool()
-	} else {
-		inAppStore = nil
-	}
-	includeInheritedConfigs := new(bool)
-	if !r.IncludeInheritedConfigs.IsUnknown() && !r.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = r.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
-	}
-	page := new(int64)
-	if !r.Page.IsUnknown() && !r.Page.IsNull() {
-		*page = r.Page.ValueInt64()
-	} else {
-		page = nil
-	}
-	size := new(int64)
-	if !r.Size.IsUnknown() && !r.Size.IsNull() {
-		*size = r.Size.ValueInt64()
-	} else {
-		size = nil
-	}
-	out := operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest{
-		AppID:                   appID,
-		SearchTerm:              searchTerm,
-		ExactMatch:              exactMatch,
-		InAppStore:              inAppStore,
-		IncludeInheritedConfigs: includeInheritedConfigs,
-		Page:                    page,
-		Size:                    size,
-	}
-
-	return &out, diags
-}
-
 func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestablePermissionOutput(ctx context.Context, resp *shared.PageRequestablePermissionOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
 		r.Items = []tfTypes.RequestablePermissionOutput{}
-		if len(r.Items) > len(resp.Items) {
-			r.Items = r.Items[:len(resp.Items)]
-		}
-		for itemsCount, itemsItem := range resp.Items {
+
+		for _, itemsItem := range resp.Items {
 			var items tfTypes.RequestablePermissionOutput
+
 			items.AppClassID = types.StringValue(itemsItem.AppClassID)
 			items.AppID = types.StringValue(itemsItem.AppID)
 			items.AppInstanceID = types.StringValue(itemsItem.AppInstanceID)
@@ -98,8 +39,10 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			} else {
 				items.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 				items.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
-				for groupsCount, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
+
+				for _, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
 					var groups tfTypes.Group
+
 					groups.AppID = types.StringPointerValue(groupsItem.AppID)
 					groups.Description = types.StringPointerValue(groupsItem.Description)
 					if groupsItem.GroupLifecycle != nil {
@@ -111,17 +54,8 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
 					groups.Name = types.StringPointerValue(groupsItem.Name)
 					groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
-					if groupsCount+1 > len(items.RequestConfig.AllowedGroups.Groups) {
-						items.RequestConfig.AllowedGroups.Groups = append(items.RequestConfig.AllowedGroups.Groups, groups)
-					} else {
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].AppID = groups.AppID
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].Description = groups.Description
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].GroupLifecycle = groups.GroupLifecycle
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].ID = groups.ID
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].IntegrationSpecificID = groups.IntegrationSpecificID
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].Name = groups.Name
-						items.RequestConfig.AllowedGroups.Groups[groupsCount].SourceAppID = groups.SourceAppID
-					}
+
+					items.RequestConfig.AllowedGroups.Groups = append(items.RequestConfig.AllowedGroups.Groups, groups)
 				}
 				if itemsItem.RequestConfig.AllowedGroups.Type != nil {
 					items.RequestConfig.AllowedGroups.Type = types.StringValue(string(*itemsItem.RequestConfig.AllowedGroups.Type))
@@ -144,8 +78,10 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				} else {
 					items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 					items.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
-					for groupsCount1, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
+
+					for _, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
 						var groups1 tfTypes.Group
+
 						groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
 						groups1.Description = types.StringPointerValue(groupsItem1.Description)
 						if groupsItem1.GroupLifecycle != nil {
@@ -157,21 +93,14 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 						groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
 						groups1.Name = types.StringPointerValue(groupsItem1.Name)
 						groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
-						if groupsCount1+1 > len(items.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(items.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
-						} else {
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].AppID = groups1.AppID
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Description = groups1.Description
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].GroupLifecycle = groups1.GroupLifecycle
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].ID = groups1.ID
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].IntegrationSpecificID = groups1.IntegrationSpecificID
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Name = groups1.Name
-							items.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].SourceAppID = groups1.SourceAppID
-						}
+
+						items.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(items.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
 					}
 					items.RequestConfig.RequestApprovalConfig.Approvers.Users = []tfTypes.User{}
-					for usersCount, usersItem := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Users {
+
+					for _, usersItem := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Users {
 						var users tfTypes.User
+
 						users.Email = types.StringPointerValue(usersItem.Email)
 						users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
 						users.GivenName = types.StringPointerValue(usersItem.GivenName)
@@ -181,15 +110,8 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 						} else {
 							users.Status = types.StringNull()
 						}
-						if usersCount+1 > len(items.RequestConfig.RequestApprovalConfig.Approvers.Users) {
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users = append(items.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
-						} else {
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Email = users.Email
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].FamilyName = users.FamilyName
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].GivenName = users.GivenName
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].ID = users.ID
-							items.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Status = users.Status
-						}
+
+						items.RequestConfig.RequestApprovalConfig.Approvers.Users = append(items.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
 					}
 				}
 				if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
@@ -197,8 +119,10 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				} else {
 					items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 					items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
-					for groupsCount2, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
+
+					for _, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
 						var groups2 tfTypes.Group
+
 						groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
 						groups2.Description = types.StringPointerValue(groupsItem2.Description)
 						if groupsItem2.GroupLifecycle != nil {
@@ -210,21 +134,14 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 						groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
 						groups2.Name = types.StringPointerValue(groupsItem2.Name)
 						groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
-						if groupsCount2+1 > len(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
-						} else {
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].AppID = groups2.AppID
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Description = groups2.Description
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].GroupLifecycle = groups2.GroupLifecycle
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].ID = groups2.ID
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].IntegrationSpecificID = groups2.IntegrationSpecificID
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Name = groups2.Name
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].SourceAppID = groups2.SourceAppID
-						}
+
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
 					}
 					items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = []tfTypes.User{}
-					for usersCount1, usersItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
+
+					for _, usersItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
 						var users1 tfTypes.User
+
 						users1.Email = types.StringPointerValue(usersItem1.Email)
 						users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
 						users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
@@ -234,15 +151,8 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 						} else {
 							users1.Status = types.StringNull()
 						}
-						if usersCount1+1 > len(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users) {
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
-						} else {
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Email = users1.Email
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].FamilyName = users1.FamilyName
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].GivenName = users1.GivenName
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].ID = users1.ID
-							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Status = users1.Status
-						}
+
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
 					}
 				}
 				items.RequestConfig.RequestApprovalConfig.CustomApprovalMessage = types.StringPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.CustomApprovalMessage)
@@ -306,17 +216,8 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			} else {
 				items.Type = types.StringNull()
 			}
-			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items)
-			} else {
-				r.Items[itemsCount].AppClassID = items.AppClassID
-				r.Items[itemsCount].AppID = items.AppID
-				r.Items[itemsCount].AppInstanceID = items.AppInstanceID
-				r.Items[itemsCount].ID = items.ID
-				r.Items[itemsCount].Label = items.Label
-				r.Items[itemsCount].RequestConfig = items.RequestConfig
-				r.Items[itemsCount].Type = items.Type
-			}
+
+			r.Items = append(r.Items, items)
 		}
 		r.Page = types.Int64PointerValue(resp.Page)
 		r.Pages = types.Int64PointerValue(resp.Pages)
@@ -325,4 +226,62 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 	}
 
 	return diags
+}
+
+func (r *RequestablePermissionsDataSourceModel) ToOperationsGetAppstorePermissionsAppstoreRequestablePermissionsGetRequest(ctx context.Context) (*operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	appID := new(string)
+	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
+		*appID = r.AppID.ValueString()
+	} else {
+		appID = nil
+	}
+	searchTerm := new(string)
+	if !r.SearchTerm.IsUnknown() && !r.SearchTerm.IsNull() {
+		*searchTerm = r.SearchTerm.ValueString()
+	} else {
+		searchTerm = nil
+	}
+	exactMatch := new(bool)
+	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
+		*exactMatch = r.ExactMatch.ValueBool()
+	} else {
+		exactMatch = nil
+	}
+	inAppStore := new(bool)
+	if !r.InAppStore.IsUnknown() && !r.InAppStore.IsNull() {
+		*inAppStore = r.InAppStore.ValueBool()
+	} else {
+		inAppStore = nil
+	}
+	includeInheritedConfigs := new(bool)
+	if !r.IncludeInheritedConfigs.IsUnknown() && !r.IncludeInheritedConfigs.IsNull() {
+		*includeInheritedConfigs = r.IncludeInheritedConfigs.ValueBool()
+	} else {
+		includeInheritedConfigs = nil
+	}
+	page := new(int64)
+	if !r.Page.IsUnknown() && !r.Page.IsNull() {
+		*page = r.Page.ValueInt64()
+	} else {
+		page = nil
+	}
+	size := new(int64)
+	if !r.Size.IsUnknown() && !r.Size.IsNull() {
+		*size = r.Size.ValueInt64()
+	} else {
+		size = nil
+	}
+	out := operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest{
+		AppID:                   appID,
+		SearchTerm:              searchTerm,
+		ExactMatch:              exactMatch,
+		InAppStore:              inAppStore,
+		IncludeInheritedConfigs: includeInheritedConfigs,
+		Page:                    page,
+		Size:                    size,
+	}
+
+	return &out, diags
 }

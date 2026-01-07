@@ -10,23 +10,23 @@ type LineItemUpload struct {
 	UnitCost Cost  `json:"unit_cost"`
 }
 
-func (o *LineItemUpload) GetName() string {
-	if o == nil {
+func (l *LineItemUpload) GetName() string {
+	if l == nil {
 		return ""
 	}
-	return o.Name
+	return l.Name
 }
 
-func (o *LineItemUpload) GetQuantity() int64 {
-	if o == nil {
+func (l *LineItemUpload) GetQuantity() int64 {
+	if l == nil {
 		return 0
 	}
-	return o.Quantity
+	return l.Quantity
 }
 
-func (o *LineItemUpload) GetUnitCost() Cost {
-	if o == nil {
+func (l *LineItemUpload) GetUnitCost() Cost {
+	if l == nil {
 		return Cost{}
 	}
-	return o.UnitCost
+	return l.UnitCost
 }

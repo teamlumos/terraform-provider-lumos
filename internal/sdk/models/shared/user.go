@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type User struct {
 	// The ID of this user.
 	ID string `json:"id"`
@@ -15,37 +19,48 @@ type User struct {
 	Status *UserLifecycleStatus `json:"status,omitempty"`
 }
 
-func (o *User) GetID() string {
-	if o == nil {
+func (u User) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *User) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) GetID() string {
+	if u == nil {
 		return ""
 	}
-	return o.ID
+	return u.ID
 }
 
-func (o *User) GetEmail() *string {
-	if o == nil {
+func (u *User) GetEmail() *string {
+	if u == nil {
 		return nil
 	}
-	return o.Email
+	return u.Email
 }
 
-func (o *User) GetGivenName() *string {
-	if o == nil {
+func (u *User) GetGivenName() *string {
+	if u == nil {
 		return nil
 	}
-	return o.GivenName
+	return u.GivenName
 }
 
-func (o *User) GetFamilyName() *string {
-	if o == nil {
+func (u *User) GetFamilyName() *string {
+	if u == nil {
 		return nil
 	}
-	return o.FamilyName
+	return u.FamilyName
 }
 
-func (o *User) GetStatus() *UserLifecycleStatus {
-	if o == nil {
+func (u *User) GetStatus() *UserLifecycleStatus {
+	if u == nil {
 		return nil
 	}
-	return o.Status
+	return u.Status
 }

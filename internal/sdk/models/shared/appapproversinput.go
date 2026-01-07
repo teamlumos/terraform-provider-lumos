@@ -18,22 +18,22 @@ func (a AppApproversInput) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AppApproversInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AppApproversInput) GetGroups() []BaseGroup {
-	if o == nil {
+func (a *AppApproversInput) GetGroups() []BaseGroup {
+	if a == nil {
 		return nil
 	}
-	return o.Groups
+	return a.Groups
 }
 
-func (o *AppApproversInput) GetUsers() []BaseUser {
-	if o == nil {
+func (a *AppApproversInput) GetUsers() []BaseUser {
+	if a == nil {
 		return nil
 	}
-	return o.Users
+	return a.Users
 }

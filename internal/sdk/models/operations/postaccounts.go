@@ -20,37 +20,37 @@ type PostAccountsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *PostAccountsResponse) GetContentType() string {
-	if o == nil {
+func (p *PostAccountsResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PostAccountsResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PostAccountsResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PostAccountsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PostAccountsResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *PostAccountsResponse) GetJobStateOutput() *shared.JobStateOutput {
-	if o == nil {
+func (p *PostAccountsResponse) GetJobStateOutput() *shared.JobStateOutput {
+	if p == nil {
 		return nil
 	}
-	return o.JobStateOutput
+	return p.JobStateOutput
 }
 
-func (o *PostAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (p *PostAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if p == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return p.HTTPValidationError
 }

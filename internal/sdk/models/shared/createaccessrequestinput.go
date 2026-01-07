@@ -20,58 +20,58 @@ type CreateAccessRequestInput struct {
 	RequestablePermissionIds []string `json:"requestable_permission_ids,omitempty"`
 }
 
-func (o *CreateAccessRequestInput) GetAppID() string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetAppID() string {
+	if c == nil {
 		return ""
 	}
-	return o.AppID
+	return c.AppID
 }
 
-func (o *CreateAccessRequestInput) GetRequesterUserID() *string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetRequesterUserID() *string {
+	if c == nil {
 		return nil
 	}
-	return o.RequesterUserID
+	return c.RequesterUserID
 }
 
-func (o *CreateAccessRequestInput) GetTargetUserID() *string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetTargetUserID() *string {
+	if c == nil {
 		return nil
 	}
-	return o.TargetUserID
+	return c.TargetUserID
 }
 
-func (o *CreateAccessRequestInput) GetNote() *string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetNote() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Note
+	return c.Note
 }
 
-func (o *CreateAccessRequestInput) GetBusinessJustification() *string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetBusinessJustification() *string {
+	if c == nil {
 		return nil
 	}
-	return o.BusinessJustification
+	return c.BusinessJustification
 }
 
-func (o *CreateAccessRequestInput) GetExpirationInSeconds() *int64 {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetExpirationInSeconds() *int64 {
+	if c == nil {
 		return nil
 	}
-	return o.ExpirationInSeconds
+	return c.ExpirationInSeconds
 }
 
-func (o *CreateAccessRequestInput) GetAccessLength() *string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetAccessLength() *string {
+	if c == nil {
 		return nil
 	}
-	return o.AccessLength
+	return c.AccessLength
 }
 
-func (o *CreateAccessRequestInput) GetRequestablePermissionIds() []string {
-	if o == nil {
+func (c *CreateAccessRequestInput) GetRequestablePermissionIds() []string {
+	if c == nil {
 		return nil
 	}
-	return o.RequestablePermissionIds
+	return c.RequestablePermissionIds
 }

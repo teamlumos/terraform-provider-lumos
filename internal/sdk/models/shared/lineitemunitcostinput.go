@@ -17,8 +17,8 @@ const (
 
 // LineItemUnitCostInputValue - The cost in terms of the specified currency (4 decimal places supported)
 type LineItemUnitCostInputValue struct {
-	Number *float64 `queryParam:"inline"`
-	Str    *string  `queryParam:"inline"`
+	Number *float64 `queryParam:"inline" union:"member"`
+	Str    *string  `queryParam:"inline" union:"member"`
 
 	Type LineItemUnitCostInputValueType
 }
@@ -43,17 +43,43 @@ func CreateLineItemUnitCostInputValueStr(str string) LineItemUnitCostInputValue 
 
 func (u *LineItemUnitCostInputValue) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var number float64 = float64(0)
-	if err := utils.UnmarshalJSON(data, &number, "", true, true); err == nil {
-		u.Number = &number
-		u.Type = LineItemUnitCostInputValueTypeNumber
-		return nil
+	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LineItemUnitCostInputValueTypeNumber,
+			Value: &number,
+		})
 	}
 
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
-		u.Str = &str
-		u.Type = LineItemUnitCostInputValueTypeStr
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LineItemUnitCostInputValueTypeStr,
+			Value: &str,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LineItemUnitCostInputValue", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for LineItemUnitCostInputValue", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(LineItemUnitCostInputValueType)
+	switch best.Type {
+	case LineItemUnitCostInputValueTypeNumber:
+		u.Number = best.Value.(*float64)
+		return nil
+	case LineItemUnitCostInputValueTypeStr:
+		u.Str = best.Value.(*string)
 		return nil
 	}
 
@@ -79,16 +105,16 @@ type LineItemUnitCostInput struct {
 	Value LineItemUnitCostInputValue `json:"value"`
 }
 
-func (o *LineItemUnitCostInput) GetPeriod() string {
-	if o == nil {
+func (l *LineItemUnitCostInput) GetPeriod() string {
+	if l == nil {
 		return ""
 	}
-	return o.Period
+	return l.Period
 }
 
-func (o *LineItemUnitCostInput) GetValue() LineItemUnitCostInputValue {
-	if o == nil {
+func (l *LineItemUnitCostInput) GetValue() LineItemUnitCostInputValue {
+	if l == nil {
 		return LineItemUnitCostInputValue{}
 	}
-	return o.Value
+	return l.Value
 }

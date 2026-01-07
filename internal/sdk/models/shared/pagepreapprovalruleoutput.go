@@ -10,37 +10,37 @@ type PagePreApprovalRuleOutput struct {
 	Pages *int64                  `json:"pages,omitempty"`
 }
 
-func (o *PagePreApprovalRuleOutput) GetItems() []PreApprovalRuleOutput {
-	if o == nil {
+func (p *PagePreApprovalRuleOutput) GetItems() []PreApprovalRuleOutput {
+	if p == nil {
 		return []PreApprovalRuleOutput{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PagePreApprovalRuleOutput) GetTotal() *int64 {
-	if o == nil {
+func (p *PagePreApprovalRuleOutput) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PagePreApprovalRuleOutput) GetPage() *int64 {
-	if o == nil {
+func (p *PagePreApprovalRuleOutput) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PagePreApprovalRuleOutput) GetSize() *int64 {
-	if o == nil {
+func (p *PagePreApprovalRuleOutput) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PagePreApprovalRuleOutput) GetPages() *int64 {
-	if o == nil {
+func (p *PagePreApprovalRuleOutput) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

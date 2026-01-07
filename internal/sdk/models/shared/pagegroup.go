@@ -10,37 +10,37 @@ type PageGroup struct {
 	Pages *int64  `json:"pages,omitempty"`
 }
 
-func (o *PageGroup) GetItems() []Group {
-	if o == nil {
+func (p *PageGroup) GetItems() []Group {
+	if p == nil {
 		return []Group{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageGroup) GetTotal() *int64 {
-	if o == nil {
+func (p *PageGroup) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageGroup) GetPage() *int64 {
-	if o == nil {
+func (p *PageGroup) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageGroup) GetSize() *int64 {
-	if o == nil {
+func (p *PageGroup) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageGroup) GetPages() *int64 {
-	if o == nil {
+func (p *PageGroup) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

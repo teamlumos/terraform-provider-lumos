@@ -12,18 +12,18 @@ type ProcessAirbaseMilestoneEventRequest struct {
 	AirbasePurchaseRequestEvent shared.AirbasePurchaseRequestEvent `request:"mediaType=application/json"`
 }
 
-func (o *ProcessAirbaseMilestoneEventRequest) GetDomainAppUUID() string {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventRequest) GetDomainAppUUID() string {
+	if p == nil {
 		return ""
 	}
-	return o.DomainAppUUID
+	return p.DomainAppUUID
 }
 
-func (o *ProcessAirbaseMilestoneEventRequest) GetAirbasePurchaseRequestEvent() shared.AirbasePurchaseRequestEvent {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventRequest) GetAirbasePurchaseRequestEvent() shared.AirbasePurchaseRequestEvent {
+	if p == nil {
 		return shared.AirbasePurchaseRequestEvent{}
 	}
-	return o.AirbasePurchaseRequestEvent
+	return p.AirbasePurchaseRequestEvent
 }
 
 type ProcessAirbaseMilestoneEventResponse struct {
@@ -39,37 +39,37 @@ type ProcessAirbaseMilestoneEventResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ProcessAirbaseMilestoneEventResponse) GetContentType() string {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *ProcessAirbaseMilestoneEventResponse) GetStatusCode() int {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *ProcessAirbaseMilestoneEventResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }
 
-func (o *ProcessAirbaseMilestoneEventResponse) GetAny() any {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventResponse) GetAny() any {
+	if p == nil {
 		return nil
 	}
-	return o.Any
+	return p.Any
 }
 
-func (o *ProcessAirbaseMilestoneEventResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (p *ProcessAirbaseMilestoneEventResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if p == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return p.HTTPValidationError
 }

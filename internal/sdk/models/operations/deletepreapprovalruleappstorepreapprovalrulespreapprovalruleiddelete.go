@@ -11,11 +11,11 @@ type DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest
 	ID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest) GetID() string {
-	if o == nil {
+func (d *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest) GetID() string {
+	if d == nil {
 		return ""
 	}
-	return o.ID
+	return d.ID
 }
 
 type DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse struct {
@@ -29,30 +29,30 @@ type DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRespons
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetContentType() string {
-	if o == nil {
+func (d *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }
 
-func (o *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (d *DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if d == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return d.HTTPValidationError
 }

@@ -11,11 +11,11 @@ type GetAppSettingsRequest struct {
 	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
 }
 
-func (o *GetAppSettingsRequest) GetAppID() string {
-	if o == nil {
+func (g *GetAppSettingsRequest) GetAppID() string {
+	if g == nil {
 		return ""
 	}
-	return o.AppID
+	return g.AppID
 }
 
 type GetAppSettingsResponse struct {
@@ -31,37 +31,37 @@ type GetAppSettingsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAppSettingsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAppSettingsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAppSettingsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAppSettingsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAppSettingsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAppSettingsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
-	if o == nil {
+func (g *GetAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
+	if g == nil {
 		return nil
 	}
-	return o.AppSettingOutput
+	return g.AppSettingOutput
 }
 
-func (o *GetAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

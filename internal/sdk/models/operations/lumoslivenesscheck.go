@@ -21,30 +21,30 @@ type LumosLivenessCheckResponse struct {
 	ResponseLumosLivenessCheck *LumosLivenessCheckResponseLumosLivenessCheck
 }
 
-func (o *LumosLivenessCheckResponse) GetContentType() string {
-	if o == nil {
+func (l *LumosLivenessCheckResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *LumosLivenessCheckResponse) GetStatusCode() int {
-	if o == nil {
+func (l *LumosLivenessCheckResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *LumosLivenessCheckResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *LumosLivenessCheckResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *LumosLivenessCheckResponse) GetResponseLumosLivenessCheck() *LumosLivenessCheckResponseLumosLivenessCheck {
-	if o == nil {
+func (l *LumosLivenessCheckResponse) GetResponseLumosLivenessCheck() *LumosLivenessCheckResponseLumosLivenessCheck {
+	if l == nil {
 		return nil
 	}
-	return o.ResponseLumosLivenessCheck
+	return l.ResponseLumosLivenessCheck
 }

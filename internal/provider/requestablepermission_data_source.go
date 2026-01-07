@@ -23,6 +23,7 @@ func NewRequestablePermissionDataSource() datasource.DataSource {
 
 // RequestablePermissionDataSource is the data source implementation.
 type RequestablePermissionDataSource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -62,7 +63,8 @@ func (r *RequestablePermissionDataSource) Schema(ctx context.Context, req dataso
 				Description: `The ID of the instance associated with this requestable permission. This may be an empty string.`,
 			},
 			"id": schema.StringAttribute{
-				Required: true,
+				Required:    true,
+				Description: `The ID of this requestable permission.`,
 			},
 			"include_inherited_configs": schema.BoolAttribute{
 				Optional:    true,

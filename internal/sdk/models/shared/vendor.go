@@ -7,9 +7,9 @@ type Vendor struct {
 	Name string `json:"name"`
 }
 
-func (o *Vendor) GetName() string {
-	if o == nil {
+func (v *Vendor) GetName() string {
+	if v == nil {
 		return ""
 	}
-	return o.Name
+	return v.Name
 }

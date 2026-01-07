@@ -20,24 +20,24 @@ func (l ListVendorAgreementsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (l *ListVendorAgreementsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *ListVendorAgreementsRequest) GetPage() *int64 {
-	if o == nil {
+func (l *ListVendorAgreementsRequest) GetPage() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Page
+	return l.Page
 }
 
-func (o *ListVendorAgreementsRequest) GetSize() *int64 {
-	if o == nil {
+func (l *ListVendorAgreementsRequest) GetSize() *int64 {
+	if l == nil {
 		return nil
 	}
-	return o.Size
+	return l.Size
 }
 
 type ListVendorAgreementsResponse struct {
@@ -53,37 +53,37 @@ type ListVendorAgreementsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ListVendorAgreementsResponse) GetContentType() string {
-	if o == nil {
+func (l *ListVendorAgreementsResponse) GetContentType() string {
+	if l == nil {
 		return ""
 	}
-	return o.ContentType
+	return l.ContentType
 }
 
-func (o *ListVendorAgreementsResponse) GetStatusCode() int {
-	if o == nil {
+func (l *ListVendorAgreementsResponse) GetStatusCode() int {
+	if l == nil {
 		return 0
 	}
-	return o.StatusCode
+	return l.StatusCode
 }
 
-func (o *ListVendorAgreementsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (l *ListVendorAgreementsResponse) GetRawResponse() *http.Response {
+	if l == nil {
 		return nil
 	}
-	return o.RawResponse
+	return l.RawResponse
 }
 
-func (o *ListVendorAgreementsResponse) GetPageVendorAgreement() *shared.PageVendorAgreement {
-	if o == nil {
+func (l *ListVendorAgreementsResponse) GetPageVendorAgreement() *shared.PageVendorAgreement {
+	if l == nil {
 		return nil
 	}
-	return o.PageVendorAgreement
+	return l.PageVendorAgreement
 }
 
-func (o *ListVendorAgreementsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (l *ListVendorAgreementsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if l == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return l.HTTPValidationError
 }

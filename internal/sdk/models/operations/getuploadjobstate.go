@@ -11,11 +11,11 @@ type GetUploadJobStateRequest struct {
 	JobID string `pathParam:"style=simple,explode=false,name=job_id"`
 }
 
-func (o *GetUploadJobStateRequest) GetJobID() string {
-	if o == nil {
+func (g *GetUploadJobStateRequest) GetJobID() string {
+	if g == nil {
 		return ""
 	}
-	return o.JobID
+	return g.JobID
 }
 
 type GetUploadJobStateResponse struct {
@@ -31,37 +31,37 @@ type GetUploadJobStateResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetUploadJobStateResponse) GetContentType() string {
-	if o == nil {
+func (g *GetUploadJobStateResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetUploadJobStateResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetUploadJobStateResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetUploadJobStateResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetUploadJobStateResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetUploadJobStateResponse) GetJobStateOutput() *shared.JobStateOutput {
-	if o == nil {
+func (g *GetUploadJobStateResponse) GetJobStateOutput() *shared.JobStateOutput {
+	if g == nil {
 		return nil
 	}
-	return o.JobStateOutput
+	return g.JobStateOutput
 }
 
-func (o *GetUploadJobStateResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetUploadJobStateResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

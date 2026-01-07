@@ -34,78 +34,78 @@ func (a Account) MarshalJSON() ([]byte, error) {
 }
 
 func (a *Account) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Account) GetAppID() string {
-	if o == nil {
+func (a *Account) GetAppID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppID
+	return a.AppID
 }
 
-func (o *Account) GetApp() *App {
-	if o == nil {
+func (a *Account) GetApp() *App {
+	if a == nil {
 		return nil
 	}
-	return o.App
+	return a.App
 }
 
-func (o *Account) GetUniqueIdentifier() string {
-	if o == nil {
+func (a *Account) GetUniqueIdentifier() string {
+	if a == nil {
 		return ""
 	}
-	return o.UniqueIdentifier
+	return a.UniqueIdentifier
 }
 
-func (o *Account) GetAccountType() AccountType {
-	if o == nil {
+func (a *Account) GetAccountType() AccountType {
+	if a == nil {
 		return AccountType("")
 	}
-	return o.AccountType
+	return a.AccountType
 }
 
-func (o *Account) GetEmail() *string {
-	if o == nil {
+func (a *Account) GetEmail() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Email
+	return a.Email
 }
 
-func (o *Account) GetUserID() *string {
-	if o == nil {
+func (a *Account) GetUserID() *string {
+	if a == nil {
 		return nil
 	}
-	return o.UserID
+	return a.UserID
 }
 
-func (o *Account) GetDiscoveredAt() *time.Time {
-	if o == nil {
+func (a *Account) GetDiscoveredAt() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.DiscoveredAt
+	return a.DiscoveredAt
 }
 
-func (o *Account) GetLastLogin() *time.Time {
-	if o == nil {
+func (a *Account) GetLastLogin() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.LastLogin
+	return a.LastLogin
 }
 
-func (o *Account) GetLastActivity() *time.Time {
-	if o == nil {
+func (a *Account) GetLastActivity() *time.Time {
+	if a == nil {
 		return nil
 	}
-	return o.LastActivity
+	return a.LastActivity
 }
 
-func (o *Account) GetSources() []DiscoverySource {
-	if o == nil {
+func (a *Account) GetSources() []DiscoverySource {
+	if a == nil {
 		return nil
 	}
-	return o.Sources
+	return a.Sources
 }

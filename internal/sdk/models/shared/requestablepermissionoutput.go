@@ -49,51 +49,51 @@ type RequestablePermissionOutput struct {
 	RequestConfig RequestConfigOutput `json:"request_config"`
 }
 
-func (o *RequestablePermissionOutput) GetID() *string {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.ID
+	return r.ID
 }
 
-func (o *RequestablePermissionOutput) GetType() *TypePermissionType {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetType() *TypePermissionType {
+	if r == nil {
 		return nil
 	}
-	return o.Type
+	return r.Type
 }
 
-func (o *RequestablePermissionOutput) GetLabel() string {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetLabel() string {
+	if r == nil {
 		return ""
 	}
-	return o.Label
+	return r.Label
 }
 
-func (o *RequestablePermissionOutput) GetAppID() string {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetAppID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppID
+	return r.AppID
 }
 
-func (o *RequestablePermissionOutput) GetAppClassID() string {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetAppClassID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppClassID
+	return r.AppClassID
 }
 
-func (o *RequestablePermissionOutput) GetAppInstanceID() string {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetAppInstanceID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppInstanceID
+	return r.AppInstanceID
 }
 
-func (o *RequestablePermissionOutput) GetRequestConfig() RequestConfigOutput {
-	if o == nil {
+func (r *RequestablePermissionOutput) GetRequestConfig() RequestConfigOutput {
+	if r == nil {
 		return RequestConfigOutput{}
 	}
-	return o.RequestConfig
+	return r.RequestConfig
 }

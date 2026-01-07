@@ -19,65 +19,65 @@ type AppStoreAppSettingsRequestFlowOutput struct {
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetDiscoverability() *AppStoreVisibility {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetDiscoverability() *AppStoreVisibility {
+	if a == nil {
 		return nil
 	}
-	return o.Discoverability
+	return a.Discoverability
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetCustomApprovalMessage() *string {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetCustomApprovalMessage() *string {
+	if a == nil {
 		return nil
 	}
-	return o.CustomApprovalMessage
+	return a.CustomApprovalMessage
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetRequireManagerApproval() *bool {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireManagerApproval() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.RequireManagerApproval
+	return a.RequireManagerApproval
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetRequireAdditionalApproval() *bool {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireAdditionalApproval() *bool {
+	if a == nil {
 		return nil
 	}
-	return o.RequireAdditionalApproval
+	return a.RequireAdditionalApproval
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
+	if a == nil {
 		return nil
 	}
-	return o.AllowedGroups
+	return a.AllowedGroups
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetApprovers() *AppApproversOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetApprovers() *AppApproversOutput {
+	if a == nil {
 		return nil
 	}
-	return o.Approvers
+	return a.Approvers
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetApproversStage2() *AppApproversOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetApproversStage2() *AppApproversOutput {
+	if a == nil {
 		return nil
 	}
-	return o.ApproversStage2
+	return a.ApproversStage2
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetAdmins() *AppAdminsOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetAdmins() *AppAdminsOutput {
+	if a == nil {
 		return nil
 	}
-	return o.Admins
+	return a.Admins
 }
 
-func (o *AppStoreAppSettingsRequestFlowOutput) GetRequestValidationInlineWebhook() *InlineWebhook {
-	if o == nil {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetRequestValidationInlineWebhook() *InlineWebhook {
+	if a == nil {
 		return nil
 	}
-	return o.RequestValidationInlineWebhook
+	return a.RequestValidationInlineWebhook
 }

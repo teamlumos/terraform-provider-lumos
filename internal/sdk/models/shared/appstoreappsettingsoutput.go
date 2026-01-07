@@ -9,23 +9,23 @@ type AppStoreAppSettingsOutput struct {
 	Provisioning              *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
 }
 
-func (o *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
-	if o == nil {
+func (a *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.CustomRequestInstructions
+	return a.CustomRequestInstructions
 }
 
-func (o *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsRequestFlowOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsRequestFlowOutput {
+	if a == nil {
 		return nil
 	}
-	return o.RequestFlow
+	return a.RequestFlow
 }
 
-func (o *AppStoreAppSettingsOutput) GetProvisioning() *AppStoreAppSettingsProvisioningOutput {
-	if o == nil {
+func (a *AppStoreAppSettingsOutput) GetProvisioning() *AppStoreAppSettingsProvisioningOutput {
+	if a == nil {
 		return nil
 	}
-	return o.Provisioning
+	return a.Provisioning
 }

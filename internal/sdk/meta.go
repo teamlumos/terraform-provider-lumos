@@ -62,7 +62,7 @@ func (s *Meta) LumosArt(ctx context.Context, opts ...operations.Option) (*operat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "Lumos Art.",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -118,11 +118,13 @@ func (s *Meta) LumosArt(ctx context.Context, opts ...operations.Option) (*operat
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 
@@ -255,7 +257,7 @@ func (s *Meta) LumosLivenessCheck(ctx context.Context, opts ...operations.Option
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "Lumos liveness check",
-		OAuth2Scopes:     []string{},
+		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -311,11 +313,13 @@ func (s *Meta) LumosLivenessCheck(ctx context.Context, opts ...operations.Option
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
-			if req.Body != nil {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
 				copyBody, err := req.GetBody()
+
 				if err != nil {
 					return nil, err
 				}
+
 				req.Body = copyBody
 			}
 

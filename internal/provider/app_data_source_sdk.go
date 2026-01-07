@@ -10,19 +10,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppDataSourceModel) ToOperationsGetAppRequest(ctx context.Context) (*operations.GetAppRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	out := operations.GetAppRequest{
-		ID: id,
-	}
-
-	return &out, diags
-}
-
 func (r *AppDataSourceModel) RefreshFromSharedApp(ctx context.Context, resp *shared.App) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -47,4 +34,17 @@ func (r *AppDataSourceModel) RefreshFromSharedApp(ctx context.Context, resp *sha
 	}
 
 	return diags
+}
+
+func (r *AppDataSourceModel) ToOperationsGetAppRequest(ctx context.Context) (*operations.GetAppRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.GetAppRequest{
+		ID: id,
+	}
+
+	return &out, diags
 }

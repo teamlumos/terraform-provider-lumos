@@ -16,8 +16,8 @@ const (
 )
 
 type Loc struct {
-	Str     *string `queryParam:"inline"`
-	Integer *int64  `queryParam:"inline"`
+	Str     *string `queryParam:"inline" union:"member"`
+	Integer *int64  `queryParam:"inline" union:"member"`
 
 	Type LocType
 }
@@ -42,17 +42,43 @@ func CreateLocInteger(integer int64) Loc {
 
 func (u *Loc) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
-		u.Str = &str
-		u.Type = LocTypeStr
-		return nil
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LocTypeStr,
+			Value: &str,
+		})
 	}
 
 	var integer int64 = int64(0)
-	if err := utils.UnmarshalJSON(data, &integer, "", true, true); err == nil {
-		u.Integer = &integer
-		u.Type = LocTypeInteger
+	if err := utils.UnmarshalJSON(data, &integer, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  LocTypeInteger,
+			Value: &integer,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Loc", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Loc", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(LocType)
+	switch best.Type {
+	case LocTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case LocTypeInteger:
+		u.Integer = best.Value.(*int64)
 		return nil
 	}
 
@@ -77,23 +103,34 @@ type ValidationError struct {
 	Type string `json:"type"`
 }
 
-func (o *ValidationError) GetLoc() []Loc {
-	if o == nil {
+func (v ValidationError) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *ValidationError) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (v *ValidationError) GetLoc() []Loc {
+	if v == nil {
 		return []Loc{}
 	}
-	return o.Loc
+	return v.Loc
 }
 
-func (o *ValidationError) GetMsg() string {
-	if o == nil {
+func (v *ValidationError) GetMsg() string {
+	if v == nil {
 		return ""
 	}
-	return o.Msg
+	return v.Msg
 }
 
-func (o *ValidationError) GetType() string {
-	if o == nil {
+func (v *ValidationError) GetType() string {
+	if v == nil {
 		return ""
 	}
-	return o.Type
+	return v.Type
 }

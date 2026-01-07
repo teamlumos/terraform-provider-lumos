@@ -11,6 +11,38 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
+func (r *GroupsDataSourceModel) RefreshFromSharedPageGroup(ctx context.Context, resp *shared.PageGroup) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Items = []tfTypes.Group{}
+
+		for _, itemsItem := range resp.Items {
+			var items tfTypes.Group
+
+			items.AppID = types.StringPointerValue(itemsItem.AppID)
+			items.Description = types.StringPointerValue(itemsItem.Description)
+			if itemsItem.GroupLifecycle != nil {
+				items.GroupLifecycle = types.StringValue(string(*itemsItem.GroupLifecycle))
+			} else {
+				items.GroupLifecycle = types.StringNull()
+			}
+			items.ID = types.StringPointerValue(itemsItem.ID)
+			items.IntegrationSpecificID = types.StringPointerValue(itemsItem.IntegrationSpecificID)
+			items.Name = types.StringPointerValue(itemsItem.Name)
+			items.SourceAppID = types.StringPointerValue(itemsItem.SourceAppID)
+
+			r.Items = append(r.Items, items)
+		}
+		r.Page = types.Int64PointerValue(resp.Page)
+		r.Pages = types.Int64PointerValue(resp.Pages)
+		r.Size = types.Int64PointerValue(resp.Size)
+		r.Total = types.Int64PointerValue(resp.Total)
+	}
+
+	return diags
+}
+
 func (r *GroupsDataSourceModel) ToOperationsGetGroupsRequest(ctx context.Context) (*operations.GetGroupsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -60,46 +92,4 @@ func (r *GroupsDataSourceModel) ToOperationsGetGroupsRequest(ctx context.Context
 	}
 
 	return &out, diags
-}
-
-func (r *GroupsDataSourceModel) RefreshFromSharedPageGroup(ctx context.Context, resp *shared.PageGroup) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Items = []tfTypes.Group{}
-		if len(r.Items) > len(resp.Items) {
-			r.Items = r.Items[:len(resp.Items)]
-		}
-		for itemsCount, itemsItem := range resp.Items {
-			var items tfTypes.Group
-			items.AppID = types.StringPointerValue(itemsItem.AppID)
-			items.Description = types.StringPointerValue(itemsItem.Description)
-			if itemsItem.GroupLifecycle != nil {
-				items.GroupLifecycle = types.StringValue(string(*itemsItem.GroupLifecycle))
-			} else {
-				items.GroupLifecycle = types.StringNull()
-			}
-			items.ID = types.StringPointerValue(itemsItem.ID)
-			items.IntegrationSpecificID = types.StringPointerValue(itemsItem.IntegrationSpecificID)
-			items.Name = types.StringPointerValue(itemsItem.Name)
-			items.SourceAppID = types.StringPointerValue(itemsItem.SourceAppID)
-			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items)
-			} else {
-				r.Items[itemsCount].AppID = items.AppID
-				r.Items[itemsCount].Description = items.Description
-				r.Items[itemsCount].GroupLifecycle = items.GroupLifecycle
-				r.Items[itemsCount].ID = items.ID
-				r.Items[itemsCount].IntegrationSpecificID = items.IntegrationSpecificID
-				r.Items[itemsCount].Name = items.Name
-				r.Items[itemsCount].SourceAppID = items.SourceAppID
-			}
-		}
-		r.Page = types.Int64PointerValue(resp.Page)
-		r.Pages = types.Int64PointerValue(resp.Pages)
-		r.Size = types.Int64PointerValue(resp.Size)
-		r.Total = types.Int64PointerValue(resp.Total)
-	}
-
-	return diags
 }

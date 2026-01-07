@@ -12,18 +12,18 @@ type UpdateAppSettingsRequest struct {
 	AppSettingInput shared.AppSettingInput `request:"mediaType=application/json"`
 }
 
-func (o *UpdateAppSettingsRequest) GetAppID() string {
-	if o == nil {
+func (u *UpdateAppSettingsRequest) GetAppID() string {
+	if u == nil {
 		return ""
 	}
-	return o.AppID
+	return u.AppID
 }
 
-func (o *UpdateAppSettingsRequest) GetAppSettingInput() shared.AppSettingInput {
-	if o == nil {
+func (u *UpdateAppSettingsRequest) GetAppSettingInput() shared.AppSettingInput {
+	if u == nil {
 		return shared.AppSettingInput{}
 	}
-	return o.AppSettingInput
+	return u.AppSettingInput
 }
 
 type UpdateAppSettingsResponse struct {
@@ -39,37 +39,37 @@ type UpdateAppSettingsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *UpdateAppSettingsResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateAppSettingsResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateAppSettingsResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateAppSettingsResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateAppSettingsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateAppSettingsResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UpdateAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
-	if o == nil {
+func (u *UpdateAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
+	if u == nil {
 		return nil
 	}
-	return o.AppSettingOutput
+	return u.AppSettingOutput
 }
 
-func (o *UpdateAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (u *UpdateAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if u == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return u.HTTPValidationError
 }

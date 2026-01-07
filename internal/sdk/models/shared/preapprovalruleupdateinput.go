@@ -17,44 +17,44 @@ type PreApprovalRuleUpdateInput struct {
 	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
 }
 
-func (o *PreApprovalRuleUpdateInput) GetJustification() string {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetJustification() string {
+	if p == nil {
 		return ""
 	}
-	return o.Justification
+	return p.Justification
 }
 
-func (o *PreApprovalRuleUpdateInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if p == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
+	return p.TimeBasedAccess
 }
 
-func (o *PreApprovalRuleUpdateInput) GetPreapprovedGroups() []BaseGroup {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetPreapprovedGroups() []BaseGroup {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedGroups
+	return p.PreapprovedGroups
 }
 
-func (o *PreApprovalRuleUpdateInput) GetPreapprovedPermissions() []RequestablePermissionBase {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetPreapprovedPermissions() []RequestablePermissionBase {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedPermissions
+	return p.PreapprovedPermissions
 }
 
-func (o *PreApprovalRuleUpdateInput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetPreapprovedUsersByAttribute() []AttributeEqualityRule {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovedUsersByAttribute
+	return p.PreapprovedUsersByAttribute
 }
 
-func (o *PreApprovalRuleUpdateInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
-	if o == nil {
+func (p *PreApprovalRuleUpdateInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
+	if p == nil {
 		return nil
 	}
-	return o.PreapprovalWebhooks
+	return p.PreapprovalWebhooks
 }

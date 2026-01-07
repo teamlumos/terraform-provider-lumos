@@ -10,19 +10,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppStoreAppDataSourceModel) ToOperationsGetAppStoreAppRequest(ctx context.Context) (*operations.GetAppStoreAppRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var appID string
-	appID = r.AppID.ValueString()
-
-	out := operations.GetAppStoreAppRequest{
-		AppID: appID,
-	}
-
-	return &out, diags
-}
-
 func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreApp(ctx context.Context, resp *shared.AppStoreApp) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -47,4 +34,17 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreApp(ctx context.Co
 	}
 
 	return diags
+}
+
+func (r *AppStoreAppDataSourceModel) ToOperationsGetAppStoreAppRequest(ctx context.Context) (*operations.GetAppStoreAppRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var appID string
+	appID = r.AppID.ValueString()
+
+	out := operations.GetAppStoreAppRequest{
+		AppID: appID,
+	}
+
+	return &out, diags
 }

@@ -20,37 +20,37 @@ type CreateAccessRequestResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CreateAccessRequestResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateAccessRequestResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateAccessRequestResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateAccessRequestResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateAccessRequestResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateAccessRequestResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateAccessRequestResponse) GetResponseCreateaccessrequest() []shared.AccessRequest {
-	if o == nil {
+func (c *CreateAccessRequestResponse) GetResponseCreateaccessrequest() []shared.AccessRequest {
+	if c == nil {
 		return nil
 	}
-	return o.ResponseCreateaccessrequest
+	return c.ResponseCreateaccessrequest
 }
 
-func (o *CreateAccessRequestResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CreateAccessRequestResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }

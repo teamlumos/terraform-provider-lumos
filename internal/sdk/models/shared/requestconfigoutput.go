@@ -19,51 +19,51 @@ type RequestConfigOutput struct {
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
-func (o *RequestConfigOutput) GetAppstoreVisibility() *AppStoreVisibilityOption {
-	if o == nil {
+func (r *RequestConfigOutput) GetAppstoreVisibility() *AppStoreVisibilityOption {
+	if r == nil {
 		return nil
 	}
-	return o.AppstoreVisibility
+	return r.AppstoreVisibility
 }
 
-func (o *RequestConfigOutput) GetAllowedGroupsOverride() *bool {
-	if o == nil {
+func (r *RequestConfigOutput) GetAllowedGroupsOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.AllowedGroupsOverride
+	return r.AllowedGroupsOverride
 }
 
-func (o *RequestConfigOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
-	if o == nil {
+func (r *RequestConfigOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
+	if r == nil {
 		return nil
 	}
-	return o.AllowedGroups
+	return r.AllowedGroups
 }
 
-func (o *RequestConfigOutput) GetRequestApprovalConfig() *RequestApprovalConfigOutput {
-	if o == nil {
+func (r *RequestConfigOutput) GetRequestApprovalConfig() *RequestApprovalConfigOutput {
+	if r == nil {
 		return nil
 	}
-	return o.RequestApprovalConfig
+	return r.RequestApprovalConfig
 }
 
-func (o *RequestConfigOutput) GetRequestFulfillmentConfig() *RequestFulfillmentConfigOutput {
-	if o == nil {
+func (r *RequestConfigOutput) GetRequestFulfillmentConfig() *RequestFulfillmentConfigOutput {
+	if r == nil {
 		return nil
 	}
-	return o.RequestFulfillmentConfig
+	return r.RequestFulfillmentConfig
 }
 
-func (o *RequestConfigOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
-	if o == nil {
+func (r *RequestConfigOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.AccessRemovalInlineWebhook
+	return r.AccessRemovalInlineWebhook
 }
 
-func (o *RequestConfigOutput) GetRequestValidationInlineWebhook() *InlineWebhook {
-	if o == nil {
+func (r *RequestConfigOutput) GetRequestValidationInlineWebhook() *InlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.RequestValidationInlineWebhook
+	return r.RequestValidationInlineWebhook
 }

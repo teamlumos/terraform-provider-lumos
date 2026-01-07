@@ -3,325 +3,1295 @@ id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
   docChecksum: 202efb5efa77d6252219deefbc704540
   docVersion: 0.1.0
-  speakeasyVersion: 1.554.1
-  generationVersion: 2.616.1
-  releaseVersion: 0.8.0
-  configChecksum: 45600e20829dcab69253c4a39241546e
+  speakeasyVersion: 1.682.0
+  generationVersion: 2.791.1
+  releaseVersion: 0.9.3
+  configChecksum: b4eedc539d3c364a4689a44877ee4434
+persistentEdits:
+  generation_id: 17c69630-3065-4b63-87a3-2276ec72623e
+  pristine_commit_hash: c8d6d8d06a330546fbed802282edc3472258475a
+  pristine_tree_hash: 90e02fabb9db4614b3bd6733e4166b09ef1de5f4
 features:
   terraform:
     additionalDependencies: 0.1.0
-    constsAndDefaults: 0.2.1
-    core: 3.41.10
-    globalSecurity: 2.81.12
-    globalServerURLs: 2.82.2
+    constsAndDefaults: 0.3.0
+    core: 3.46.27
+    globalSecurity: 2.82.1
+    globalServerURLs: 2.83.0
     nameOverrides: 2.81.3
     nullables: 0.0.0
-    retries: 2.81.2
+    retries: 2.81.4
     sets: 0.1.2
-    unions: 2.81.17
-generatedFiles:
-  - .gitattributes
-  - USAGE.md
-  - examples/README.md
-  - examples/data-sources/lumos_app/data-source.tf
-  - examples/data-sources/lumos_app_store_app/data-source.tf
-  - examples/data-sources/lumos_app_store_app_settings/data-source.tf
-  - examples/data-sources/lumos_apps/data-source.tf
-  - examples/data-sources/lumos_group/data-source.tf
-  - examples/data-sources/lumos_groups/data-source.tf
-  - examples/data-sources/lumos_requestable_permission/data-source.tf
-  - examples/data-sources/lumos_requestable_permissions/data-source.tf
-  - examples/data-sources/lumos_user/data-source.tf
-  - examples/data-sources/lumos_users/data-source.tf
-  - examples/provider/provider.tf
-  - examples/resources/lumos_app/import.sh
-  - examples/resources/lumos_app/resource.tf
-  - examples/resources/lumos_app_store_app/import.sh
-  - examples/resources/lumos_app_store_app/resource.tf
-  - examples/resources/lumos_pre_approval_rule/resource.tf
-  - examples/resources/lumos_requestable_permission/import.sh
-  - go.mod
-  - go.sum
-  - internal/planmodifiers/boolplanmodifier/suppress_diff.go
-  - internal/planmodifiers/float32planmodifier/suppress_diff.go
-  - internal/planmodifiers/float64planmodifier/suppress_diff.go
-  - internal/planmodifiers/int32planmodifier/suppress_diff.go
-  - internal/planmodifiers/int64planmodifier/suppress_diff.go
-  - internal/planmodifiers/listplanmodifier/suppress_diff.go
-  - internal/planmodifiers/mapplanmodifier/suppress_diff.go
-  - internal/planmodifiers/numberplanmodifier/suppress_diff.go
-  - internal/planmodifiers/objectplanmodifier/suppress_diff.go
-  - internal/planmodifiers/setplanmodifier/suppress_diff.go
-  - internal/planmodifiers/stringplanmodifier/suppress_diff.go
-  - internal/planmodifiers/utils/state_check.go
-  - internal/provider/app_data_source.go
-  - internal/provider/app_data_source_sdk.go
-  - internal/provider/app_resource.go
-  - internal/provider/app_resource_sdk.go
-  - internal/provider/apps_data_source.go
-  - internal/provider/apps_data_source_sdk.go
-  - internal/provider/appstoreapp_data_source.go
-  - internal/provider/appstoreapp_data_source_sdk.go
-  - internal/provider/appstoreapp_resource.go
-  - internal/provider/appstoreapp_resource_sdk.go
-  - internal/provider/appstoreappsettings_data_source.go
-  - internal/provider/appstoreappsettings_data_source_sdk.go
-  - internal/provider/group_data_source.go
-  - internal/provider/group_data_source_sdk.go
-  - internal/provider/groups_data_source.go
-  - internal/provider/groups_data_source_sdk.go
-  - internal/provider/preapprovalrule_resource.go
-  - internal/provider/preapprovalrule_resource_sdk.go
-  - internal/provider/provider.go
-  - internal/provider/reflect/diags.go
-  - internal/provider/reflect/doc.go
-  - internal/provider/reflect/generic_attr_value.go
-  - internal/provider/reflect/helpers.go
-  - internal/provider/reflect/interfaces.go
-  - internal/provider/reflect/into.go
-  - internal/provider/reflect/map.go
-  - internal/provider/reflect/number.go
-  - internal/provider/reflect/options.go
-  - internal/provider/reflect/outof.go
-  - internal/provider/reflect/pointer.go
-  - internal/provider/reflect/primitive.go
-  - internal/provider/reflect/slice.go
-  - internal/provider/reflect/struct.go
-  - internal/provider/requestablepermission_data_source.go
-  - internal/provider/requestablepermission_data_source_sdk.go
-  - internal/provider/requestablepermission_resource.go
-  - internal/provider/requestablepermission_resource_sdk.go
-  - internal/provider/requestablepermissions_data_source.go
-  - internal/provider/requestablepermissions_data_source_sdk.go
-  - internal/provider/typeconvert/date.go
-  - internal/provider/typeconvert/datetime.go
-  - internal/provider/typeconvert/int32.go
-  - internal/provider/types/allowed_groups_config_input.go
-  - internal/provider/types/app.go
-  - internal/provider/types/app_admins_input.go
-  - internal/provider/types/app_approvers_input.go
-  - internal/provider/types/app_links.go
-  - internal/provider/types/app_store_app_settings_provisioning_input.go
-  - internal/provider/types/app_store_app_settings_request_flow_input.go
-  - internal/provider/types/attribute_equality_rule.go
-  - internal/provider/types/base_inline_webhook.go
-  - internal/provider/types/group.go
-  - internal/provider/types/request_approval_config_input.go
-  - internal/provider/types/request_approval_config_output.go
-  - internal/provider/types/request_config_input_create.go
-  - internal/provider/types/request_config_output.go
-  - internal/provider/types/request_fulfillment_config_input.go
-  - internal/provider/types/requestable_permission_base.go
-  - internal/provider/types/requestable_permission_output.go
-  - internal/provider/types/user.go
-  - internal/provider/user_data_source.go
-  - internal/provider/user_data_source_sdk.go
-  - internal/provider/users_data_source.go
-  - internal/provider/users_data_source_sdk.go
-  - internal/provider/utils.go
-  - internal/sdk/.gitattributes
-  - internal/sdk/appstore.go
-  - internal/sdk/core.go
-  - internal/sdk/docs/models/operations/option.md
-  - internal/sdk/integrationwebhooks.go
-  - internal/sdk/internal/config/sdkconfiguration.go
-  - internal/sdk/internal/hooks/hooks.go
-  - internal/sdk/internal/utils/contenttype.go
-  - internal/sdk/internal/utils/env.go
-  - internal/sdk/internal/utils/form.go
-  - internal/sdk/internal/utils/headers.go
-  - internal/sdk/internal/utils/json.go
-  - internal/sdk/internal/utils/pathparams.go
-  - internal/sdk/internal/utils/queryparams.go
-  - internal/sdk/internal/utils/requestbody.go
-  - internal/sdk/internal/utils/retries.go
-  - internal/sdk/internal/utils/security.go
-  - internal/sdk/internal/utils/utils.go
-  - internal/sdk/lumos.go
-  - internal/sdk/meta.go
-  - internal/sdk/models/errors/sdkerror.go
-  - internal/sdk/models/operations/activityrecords.go
-  - internal/sdk/models/operations/addapptoappstore.go
-  - internal/sdk/models/operations/cancelaccessrequest.go
-  - internal/sdk/models/operations/createaccessrequest.go
-  - internal/sdk/models/operations/createapp.go
-  - internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go
-  - internal/sdk/models/operations/createfounddocumentjson.go
-  - internal/sdk/models/operations/createfounddocumentmultipart.go
-  - internal/sdk/models/operations/createorder.go
-  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
-  - internal/sdk/models/operations/currentuser.go
-  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
-  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
-  - internal/sdk/models/operations/getaccessrequest.go
-  - internal/sdk/models/operations/getaccessrequests.go
-  - internal/sdk/models/operations/getaccounts.go
-  - internal/sdk/models/operations/getactivitylogs.go
-  - internal/sdk/models/operations/getactivityrecordsjobstate.go
-  - internal/sdk/models/operations/getapp.go
-  - internal/sdk/models/operations/getappcategories.go
-  - internal/sdk/models/operations/getappsettings.go
-  - internal/sdk/models/operations/getappstoreapp.go
-  - internal/sdk/models/operations/getappstoreapps.go
-  - internal/sdk/models/operations/getappstoreappsettings.go
-  - internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go
-  - internal/sdk/models/operations/getappstorepermissionsappstorerequestablepermissionsget.go
-  - internal/sdk/models/operations/getappstorepermissionsforappappstoreappsappidrequestablepermissionsget.go
-  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
-  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
-  - internal/sdk/models/operations/getgroup.go
-  - internal/sdk/models/operations/getgroupmembership.go
-  - internal/sdk/models/operations/getgroups.go
-  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
-  - internal/sdk/models/operations/getuploadjobstate.go
-  - internal/sdk/models/operations/getuser.go
-  - internal/sdk/models/operations/getuseraccounts.go
-  - internal/sdk/models/operations/listapps.go
-  - internal/sdk/models/operations/listusers.go
-  - internal/sdk/models/operations/listvendoragreements.go
-  - internal/sdk/models/operations/lumosart.go
-  - internal/sdk/models/operations/lumoslivenesscheck.go
-  - internal/sdk/models/operations/options.go
-  - internal/sdk/models/operations/postaccounts.go
-  - internal/sdk/models/operations/processairbasemilestoneevent.go
-  - internal/sdk/models/operations/processvendrrequestcompletedwebhooksvendrrequestcompleteddomainappuuidpost.go
-  - internal/sdk/models/operations/removeappfromappstore.go
-  - internal/sdk/models/operations/updateapp.go
-  - internal/sdk/models/operations/updateappsettings.go
-  - internal/sdk/models/operations/updateappstoreappsettings.go
-  - internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go
-  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
-  - internal/sdk/models/shared/accessrequest.go
-  - internal/sdk/models/shared/account.go
-  - internal/sdk/models/shared/accounttype.go
-  - internal/sdk/models/shared/activitylog.go
-  - internal/sdk/models/shared/activityrecord.go
-  - internal/sdk/models/shared/activityrecordaccountinput.go
-  - internal/sdk/models/shared/activityrecordappinput.go
-  - internal/sdk/models/shared/activityrecordeventinput.go
-  - internal/sdk/models/shared/activityrecordeventtype.go
-  - internal/sdk/models/shared/activityrecordinput.go
-  - internal/sdk/models/shared/activityrecordoutput.go
-  - internal/sdk/models/shared/addapptoappstoreinput.go
-  - internal/sdk/models/shared/airbasepurchaserequestevent.go
-  - internal/sdk/models/shared/allowedgroupsconfiginput.go
-  - internal/sdk/models/shared/allowedgroupsconfigoutput.go
-  - internal/sdk/models/shared/allowedgroupsconfigtype.go
-  - internal/sdk/models/shared/app.go
-  - internal/sdk/models/shared/appadminsinput.go
-  - internal/sdk/models/shared/appadminsoutput.go
-  - internal/sdk/models/shared/appapproversinput.go
-  - internal/sdk/models/shared/appapproversoutput.go
-  - internal/sdk/models/shared/appinputcreate.go
-  - internal/sdk/models/shared/applinks.go
-  - internal/sdk/models/shared/approverinput.go
-  - internal/sdk/models/shared/approveroutput.go
-  - internal/sdk/models/shared/approvertype.go
-  - internal/sdk/models/shared/appsettinginput.go
-  - internal/sdk/models/shared/appsettingoutput.go
-  - internal/sdk/models/shared/appstoreapp.go
-  - internal/sdk/models/shared/appstoreappsettingsinput.go
-  - internal/sdk/models/shared/appstoreappsettingsoutput.go
-  - internal/sdk/models/shared/appstoreappsettingsprovisioninginput.go
-  - internal/sdk/models/shared/appstoreappsettingsprovisioningoutput.go
-  - internal/sdk/models/shared/appstoreappsettingsrequestflowinput.go
-  - internal/sdk/models/shared/appstoreappsettingsrequestflowoutput.go
-  - internal/sdk/models/shared/appstorevisibility.go
-  - internal/sdk/models/shared/appstorevisibilityoption.go
-  - internal/sdk/models/shared/attributeequalityrule.go
-  - internal/sdk/models/shared/basegroup.go
-  - internal/sdk/models/shared/baseinlinewebhook.go
-  - internal/sdk/models/shared/baseuser.go
-  - internal/sdk/models/shared/cost.go
-  - internal/sdk/models/shared/createaccessrequestinput.go
-  - internal/sdk/models/shared/discoverysource.go
-  - internal/sdk/models/shared/domainappstatus.go
-  - internal/sdk/models/shared/fileupload.go
-  - internal/sdk/models/shared/fileuploadtype.go
-  - internal/sdk/models/shared/flowstate.go
-  - internal/sdk/models/shared/founddocumentsupload.go
-  - internal/sdk/models/shared/group.go
-  - internal/sdk/models/shared/groupprovisioningoption.go
-  - internal/sdk/models/shared/httpvalidationerror.go
-  - internal/sdk/models/shared/inlinewebhook.go
-  - internal/sdk/models/shared/inlinewebhooktype.go
-  - internal/sdk/models/shared/jobstateoutput.go
-  - internal/sdk/models/shared/lifecycle.go
-  - internal/sdk/models/shared/limitoffsetpageactivitylog.go
-  - internal/sdk/models/shared/lineitem.go
-  - internal/sdk/models/shared/lineiteminput.go
-  - internal/sdk/models/shared/lineitemunitcost.go
-  - internal/sdk/models/shared/lineitemunitcostinput.go
-  - internal/sdk/models/shared/lineitemupload.go
-  - internal/sdk/models/shared/links.go
-  - internal/sdk/models/shared/managerapprovaloption.go
-  - internal/sdk/models/shared/orderinput.go
-  - internal/sdk/models/shared/pageaccessrequest.go
-  - internal/sdk/models/shared/pageaccount.go
-  - internal/sdk/models/shared/pageapp.go
-  - internal/sdk/models/shared/pageappstoreapp.go
-  - internal/sdk/models/shared/pagegroup.go
-  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
-  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
-  - internal/sdk/models/shared/pageuser.go
-  - internal/sdk/models/shared/pagevendoragreement.go
-  - internal/sdk/models/shared/permissiontype.go
-  - internal/sdk/models/shared/preapprovalruleinput.go
-  - internal/sdk/models/shared/preapprovalruleoutput.go
-  - internal/sdk/models/shared/preapprovalruleupdateinput.go
-  - internal/sdk/models/shared/requestablepermissionbase.go
-  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
-  - internal/sdk/models/shared/requestablepermissioninput.go
-  - internal/sdk/models/shared/requestablepermissioninputupdate.go
-  - internal/sdk/models/shared/requestablepermissionoutput.go
-  - internal/sdk/models/shared/requestapprovalconfiginput.go
-  - internal/sdk/models/shared/requestapprovalconfigoutput.go
-  - internal/sdk/models/shared/requestapprovalstageinput.go
-  - internal/sdk/models/shared/requestapprovalstageoutput.go
-  - internal/sdk/models/shared/requestconfiginputcreate.go
-  - internal/sdk/models/shared/requestconfiginputupdate.go
-  - internal/sdk/models/shared/requestconfigoutput.go
-  - internal/sdk/models/shared/requestfulfillmentconfiginput.go
-  - internal/sdk/models/shared/requestfulfillmentconfiginputupdate.go
-  - internal/sdk/models/shared/requestfulfillmentconfigoutput.go
-  - internal/sdk/models/shared/runinfostatus.go
-  - internal/sdk/models/shared/security.go
-  - internal/sdk/models/shared/supportrequeststatus.go
-  - internal/sdk/models/shared/synctaskoutput.go
-  - internal/sdk/models/shared/timebasedaccessoptions.go
-  - internal/sdk/models/shared/user.go
-  - internal/sdk/models/shared/userlifecyclestatus.go
-  - internal/sdk/models/shared/validationerror.go
-  - internal/sdk/models/shared/vendor.go
-  - internal/sdk/models/shared/vendoragreement.go
-  - internal/sdk/models/shared/vendoragreementcustomattributeinput.go
-  - internal/sdk/models/shared/vendoragreementcustomattributeoutput.go
-  - internal/sdk/models/shared/vendoragreementcustomattributetype.go
-  - internal/sdk/retry/config.go
-  - internal/sdk/types/bigint.go
-  - internal/sdk/types/date.go
-  - internal/sdk/types/datetime.go
-  - internal/sdk/types/decimal.go
-  - internal/sdk/types/pointers.go
-  - internal/sdk/vendormanagement.go
-  - internal/validators/DateValidator.go
-  - internal/validators/ExactlyOneChild.go
-  - internal/validators/JSONParseValidator.go
-  - internal/validators/RFC3339Validator.go
-  - internal/validators/boolvalidators/not_null.go
-  - internal/validators/float32validators/not_null.go
-  - internal/validators/float64validators/not_null.go
-  - internal/validators/int32validators/not_null.go
-  - internal/validators/int64validators/not_null.go
-  - internal/validators/listvalidators/not_null.go
-  - internal/validators/mapvalidators/not_null.go
-  - internal/validators/numbervalidators/not_null.go
-  - internal/validators/objectvalidators/not_null.go
-  - internal/validators/setvalidators/not_null.go
-  - internal/validators/stringvalidators/not_null.go
-  - main.go
-  - terraform-registry-manifest.json
-  - tools/tools.go
+    unions: 2.82.6
+trackedFiles:
+  .gitattributes:
+    id: 24139dae6567
+    last_write_checksum: sha1:84b0115789fc3ea52e31df701d8a27f76077e29f
+    pristine_git_object: e6a994416d0f527912d2d272e2583458f4fc9bcb
+  USAGE.md:
+    id: 3aed33ce6e6f
+    last_write_checksum: sha1:02c32c9430f37507b3eacd41cdc36f080809e92d
+    pristine_git_object: 8e707bb129af1da185ba30b4c289b0160819c437
+  examples/data-sources/lumos_app/data-source.tf:
+    id: 2d249d5c5c8d
+    last_write_checksum: sha1:0e1f9c167780a7cecbfdb889ab26e1f1fd195939
+    pristine_git_object: 4da16679918e15e09215b518fbcf783ac0f46bc7
+  examples/data-sources/lumos_app_store_app/data-source.tf:
+    id: 918f37305980
+    last_write_checksum: sha1:dbb10a1d115732b5577844a1df08ec640da3e1da
+    pristine_git_object: 882629746e9e20cccfcdce42db05c276a29feb07
+  examples/data-sources/lumos_app_store_app_settings/data-source.tf:
+    id: 0e29a56c5cdd
+    last_write_checksum: sha1:ebc42757c88414f958ec7508f56feeb17c3d9b66
+    pristine_git_object: 0966f0b1e19a1015885557144a681c270cb6203a
+  examples/data-sources/lumos_apps/data-source.tf:
+    id: 85bd4335c685
+    last_write_checksum: sha1:163450b5d80b55eca67274ecbf1b16076fd893b9
+    pristine_git_object: 685cdc47b11d412f12c72fa0caf9ce3279315067
+  examples/data-sources/lumos_group/data-source.tf:
+    id: ed886dd25d10
+    last_write_checksum: sha1:52ce8805a85e4580e47b2de8be458b6e238b275e
+    pristine_git_object: dc4e7406ec6970f2ce880c1a1615479bb4a5063b
+  examples/data-sources/lumos_groups/data-source.tf:
+    id: 549927ed46bd
+    last_write_checksum: sha1:670d8fd5478ddb221ce918e5256d15d2f8895546
+    pristine_git_object: 5f54f7c41351981f5be8d6d4ef8d9ccdc0943ab2
+  examples/data-sources/lumos_requestable_permission/data-source.tf:
+    id: 6b2c6f9c2875
+    last_write_checksum: sha1:d88423d770d4d16326cd6bdaad1ca85be0f15748
+    pristine_git_object: e7b1653c439254de4e595c5972ac79be90b505a2
+  examples/data-sources/lumos_requestable_permissions/data-source.tf:
+    id: 5fb6b9f2c29c
+    last_write_checksum: sha1:e9d0886e01e115964f93e1fd26fd77f06727fece
+    pristine_git_object: 1b3e07813c24d114b9af898f45b1db8ec378e55f
+  examples/data-sources/lumos_user/data-source.tf:
+    id: 34730bcc46c6
+    last_write_checksum: sha1:c0138822c3e5a657a79e896c94db3e51e58d202b
+    pristine_git_object: a1bee0395472a0a8db4a71aee43afb56249ef351
+  examples/data-sources/lumos_users/data-source.tf:
+    id: d0d41039b013
+    last_write_checksum: sha1:8e26b89ec8be08b327bcd1a0d86ee8d4b09b1561
+    pristine_git_object: ee93b441d8ba27af724f23bf8366b691531e3258
+  examples/provider/provider.tf:
+    id: 954e955c0240
+    last_write_checksum: sha1:36353c575413a6fac335669ea0de56221a80aefa
+    pristine_git_object: 0f4306516df0c1b24f7c4b47814135d21a0bd7b9
+  examples/resources/lumos_app/import-by-string-id.tf:
+    id: b51b27d0b782
+    last_write_checksum: sha1:9547022088400dbedd1c7109af0ef9fd64660949
+    pristine_git_object: 8510534d3e94a4b7ac19b594085e874c3980792e
+  examples/resources/lumos_app/import.sh:
+    id: a3bc2bcc10b8
+    last_write_checksum: sha1:f64d4cecbe67c32f147d402e6942a1bbae063786
+    pristine_git_object: 8c653f2bd36f6a579329b7209246e1162961a9b1
+  examples/resources/lumos_app/resource.tf:
+    id: 43e596bef493
+    last_write_checksum: sha1:49bf3708750a86702275830badeff3f1b1f32e09
+    pristine_git_object: 0e64858e3a00170d7f5ce6daa3beb4530adcf51b
+  examples/resources/lumos_app_store_app/import-by-string-id.tf:
+    id: 13b9de9b86f2
+    last_write_checksum: sha1:da749a15107bde2304569427c3c488003e623dfa
+    pristine_git_object: 7ad731ac7906dd4497b91acc71139595dbe8534b
+  examples/resources/lumos_app_store_app/import.sh:
+    id: b551f5ec24f0
+    last_write_checksum: sha1:81233c4ab2e17e00f8675390f6ec5ea03f05ee09
+    pristine_git_object: 89e63b26e8329c9fe4cfb7b4d659ee1615fac90d
+  examples/resources/lumos_app_store_app/resource.tf:
+    id: ffa0e8920d6f
+    last_write_checksum: sha1:532e1c723187d7d8320c47f1871bc970b45cf7b2
+    pristine_git_object: 807db202aa15dd952fe113b96dc604a45c3b53c5
+  examples/resources/lumos_pre_approval_rule/resource.tf:
+    id: f422905fdf3c
+    last_write_checksum: sha1:6d90d9256a0024cf1083c56bb27cf8cec134bf1e
+    pristine_git_object: 93489e289d6addcc893cad174f4d1c1c508e8de8
+  examples/resources/lumos_requestable_permission/import-by-string-id.tf:
+    id: 51a850a7d4dc
+    last_write_checksum: sha1:baa801f7158fc4836668f62421e89b7ff6c1ef64
+    pristine_git_object: 997ba4d9b65ed28a303bcd6a93321193157db5a8
+  examples/resources/lumos_requestable_permission/import.sh:
+    id: 6e819d931b75
+    last_write_checksum: sha1:78dc37f0471e97c0a91432e3441b4625c5724c28
+    pristine_git_object: 8e3681e43e04a8e7367da07151648f15a0243166
+  go.mod:
+    id: c47645c391ad
+    last_write_checksum: sha1:dabf73058e312afa6f87bc64ee465b9848a47581
+    pristine_git_object: 277c6bec36ba56caf48426d6c02f13fc8e6b1de8
+  internal/planmodifiers/boolplanmodifier/suppress_diff.go:
+    id: 3cf85b98963e
+    last_write_checksum: sha1:e87080901a76c1442c1adf2b56e4ff6d1bce9c61
+    pristine_git_object: 8746f42485be9bdb9ba37a9a7c91e3e8007f98ea
+  internal/planmodifiers/boolplanmodifier/use_config_value.go:
+    id: c0a10558e419
+    last_write_checksum: sha1:506e2cac3ec4075a8837403860ef0b07e19bc337
+    pristine_git_object: 210846ca24831a6bda811d3e8a42326716d7bf97
+  internal/planmodifiers/float32planmodifier/suppress_diff.go:
+    id: b7f3f671e479
+    last_write_checksum: sha1:03f05ba85ffe59dba56f1b968b3adaf70bccc8b8
+    pristine_git_object: 0253a01ce484423e2e0630506f1e817be7bc6f4e
+  internal/planmodifiers/float32planmodifier/use_config_value.go:
+    id: e75edfe23c08
+    last_write_checksum: sha1:2683d9de3605886cb01438a9015c8e8b02b4e069
+    pristine_git_object: 0aafffa779b10b01d1e9c831c3a4bda3e6d97789
+  internal/planmodifiers/float64planmodifier/suppress_diff.go:
+    id: 7ae872c2243d
+    last_write_checksum: sha1:56e4368d60076e274037a5ada3250dd72913e387
+    pristine_git_object: e3e3c8a718477f29ca771eae4ade6bd3cfe5083f
+  internal/planmodifiers/float64planmodifier/use_config_value.go:
+    id: 8fd8670f7434
+    last_write_checksum: sha1:cc1f1cadfd17a0b9b1e729029dccc03f17d734a5
+    pristine_git_object: ecd655b8d658d84aa5cbcc3e1808b69674071325
+  internal/planmodifiers/int32planmodifier/suppress_diff.go:
+    id: 3ee3ede7dc9d
+    last_write_checksum: sha1:96ab3818bd59cbe3e5c0e7523023d911b80e716d
+    pristine_git_object: d09b5f7e6eb94f610e1bac4b59b6509e8084b76f
+  internal/planmodifiers/int32planmodifier/use_config_value.go:
+    id: 40be4e07e289
+    last_write_checksum: sha1:019ba1949b00493bf1a866821f9331d50c8a1f09
+    pristine_git_object: ebc98aae308008b2cda39d5f4cfa781982afa44f
+  internal/planmodifiers/int64planmodifier/suppress_diff.go:
+    id: fade0cc85582
+    last_write_checksum: sha1:5f7fa3200d31f327b907cdd6fc07973cb4c0b159
+    pristine_git_object: de5b22eceef50cc80d57ce63012250a3cdd47e53
+  internal/planmodifiers/int64planmodifier/use_config_value.go:
+    id: e38d6f43d093
+    last_write_checksum: sha1:b5a63f0c356cd72698e25e1b4f4fc3e29b35d482
+    pristine_git_object: 2ec2d53d3ac13f58f64feb32b7fb07ca37b8fe99
+  internal/planmodifiers/listplanmodifier/suppress_diff.go:
+    id: 7b93ed9460b9
+    last_write_checksum: sha1:aaf91d9136ee0bd5b951c96f06fb617e4378589b
+    pristine_git_object: c16cb7e2285b3f680d85c810694957361aa4f9e8
+  internal/planmodifiers/listplanmodifier/use_config_value.go:
+    id: c9b31b246860
+    last_write_checksum: sha1:c56e2d23520ac7023f800328bb7599e7eba2f202
+    pristine_git_object: 7e851c7613c71921fd4ccf7ca1f95b8b22ce9745
+  internal/planmodifiers/mapplanmodifier/suppress_diff.go:
+    id: 37bee37da583
+    last_write_checksum: sha1:05691f17b7b2310175fb1164e6ef2eede2011fae
+    pristine_git_object: b3b201a42dd193d8e6b34ebba7df60782e9ce19e
+  internal/planmodifiers/mapplanmodifier/use_config_value.go:
+    id: 8fef370eccaa
+    last_write_checksum: sha1:7c2163c8fa4be8e8f7e7499cdb08cc5ed1924b39
+    pristine_git_object: 0f2a717f45ca60218f4b8d9e81a6a5cd01494905
+  internal/planmodifiers/numberplanmodifier/suppress_diff.go:
+    id: 0debe6a63221
+    last_write_checksum: sha1:787bf247926decdb3eafa1bf18220e1dce6e9d58
+    pristine_git_object: 38ad20ada11b175b0108833e74bb72c6a7088f4e
+  internal/planmodifiers/numberplanmodifier/use_config_value.go:
+    id: e6b779d30d26
+    last_write_checksum: sha1:9b92d53a4a5f57e211e6f41ebb6c36cb12357ae6
+    pristine_git_object: e93c117a0665121b4c43c4a0fd5faec999ad016e
+  internal/planmodifiers/objectplanmodifier/suppress_diff.go:
+    id: c5bc1c3980dd
+    last_write_checksum: sha1:92b99964fb8bda818b8fff69a0c424f141ce12d1
+    pristine_git_object: f8cf45447bdf279019755e82906f4f2fbaa351cc
+  internal/planmodifiers/objectplanmodifier/use_config_value.go:
+    id: 7f103d324869
+    last_write_checksum: sha1:1f2b6727605c0b56ff2212ab2e2528046f05b157
+    pristine_git_object: eaf24076aeaf233c342886079be38561b94d3856
+  internal/planmodifiers/setplanmodifier/suppress_diff.go:
+    id: 2db9381ea39f
+    last_write_checksum: sha1:1d9c112c0cff8deb3841d4031fb86eea7e205158
+    pristine_git_object: 882593cb50e1b01566035eb07b14bc6e9d3612c6
+  internal/planmodifiers/setplanmodifier/use_config_value.go:
+    id: 62a591230001
+    last_write_checksum: sha1:fe02165f8fd260bbce09f34adfa378376363422f
+    pristine_git_object: a95de11e54a028586b41352c084de59fdc7af66c
+  internal/planmodifiers/stringplanmodifier/suppress_diff.go:
+    id: 05379039a176
+    last_write_checksum: sha1:160b9b72eae41e5244e4090950b4b52b92d85b8e
+    pristine_git_object: 49dbb2b9b7bc329c5734bef93e680300d649f1d2
+  internal/planmodifiers/stringplanmodifier/use_config_value.go:
+    id: a783ed056524
+    last_write_checksum: sha1:250673402508661f9d12cfa026dc029d5e7855d9
+    pristine_git_object: 8b4457aeb6b22b7f2b581434762e71f3f782897b
+  internal/planmodifiers/utils/state_check.go:
+    id: ead742412d0f
+    last_write_checksum: sha1:acc38ad698bf4fa8c51aa662076cf57b79024bd5
+    pristine_git_object: 0ea64fbeb1fd7709d7241a8e06d34bfe9d0323d3
+  internal/provider/app_data_source.go:
+    id: 9be0efb8662d
+    last_write_checksum: sha1:adc226d72ec454fd0562c91417ebd5ea28f89edd
+    pristine_git_object: 99ee662847bc72e566ed38ea1c94bc1f82b20528
+  internal/provider/app_data_source_sdk.go:
+    id: 65fc22dbcfcd
+    last_write_checksum: sha1:5f9f350d108b03a6de5109871dc41994a272bbeb
+    pristine_git_object: 6182f21d550556960606eae7d590f6466c221f71
+  internal/provider/app_resource.go:
+    id: fe737c3962ce
+    last_write_checksum: sha1:c50fb0a7eeeb84cb603b76685e0617a74994aee8
+    pristine_git_object: fe4d25192d63985b28fc297e98f8b906690d4073
+  internal/provider/app_resource_sdk.go:
+    id: 8ae9bedb585c
+    last_write_checksum: sha1:7abcc7435c2aae0dfd8b41bad69301500b0760ac
+    pristine_git_object: ec9120f7fe18c2cc3922337f35595d8e734c546e
+  internal/provider/apps_data_source.go:
+    id: 4e833a50901e
+    last_write_checksum: sha1:0c09b3b8ae1aa100cb657542937a8cb42ac06e2e
+    pristine_git_object: 080fc838137c33faccd5375cbbdcfbf8f43f35a9
+  internal/provider/apps_data_source_sdk.go:
+    id: 01863a22d298
+    last_write_checksum: sha1:73a1ca4df3977b0706424499f36ad3b47a8768fc
+    pristine_git_object: 4ab1f7b00b78a660e80d497d3307c6493792a818
+  internal/provider/appstoreapp_data_source.go:
+    id: 313fda2734f4
+    last_write_checksum: sha1:d6507c11b046b8ff918c6e2f49ecbb3ccda7e0b6
+    pristine_git_object: 4a3e830e40abd8176e4905c0bbffd879352894dd
+  internal/provider/appstoreapp_data_source_sdk.go:
+    id: 850292fc14d3
+    last_write_checksum: sha1:13640ccaa9cf9700454e868b67e55ecbc17805d4
+    pristine_git_object: eafc1ebf2b62ec5344253742b4eeb69bb90e11b0
+  internal/provider/appstoreapp_resource.go:
+    id: a9caac9725ec
+    last_write_checksum: sha1:3d14503c1f92eae277210472b53dd28d20f6af42
+    pristine_git_object: 04cf5be4a90904bc929ecc66c39e279b74933a3c
+  internal/provider/appstoreapp_resource_sdk.go:
+    id: decb26a5b1d6
+    last_write_checksum: sha1:dcb325335044e4a1aba7a34af4e984b9023b84ab
+    pristine_git_object: 1cef6190620242c62aa00ff3a4a0272179b3d918
+  internal/provider/appstoreappsettings_data_source.go:
+    id: c264a618126c
+    last_write_checksum: sha1:d802f68bf55e59597cd427d6a211c200c00501ac
+    pristine_git_object: 7b11cae3420f2dc2ae6ada2cf2d04e2323e22bc3
+  internal/provider/appstoreappsettings_data_source_sdk.go:
+    id: 2609e7024818
+    last_write_checksum: sha1:a8048c3da7699ccc21fbb98ad5a0e0186376e26c
+    pristine_git_object: eb24c8ea02274be4be7f42b8c4d30a761ae28542
+  internal/provider/group_data_source.go:
+    id: 42985a05e298
+    last_write_checksum: sha1:525e511db43028961f5a630209448d63f6679503
+    pristine_git_object: 719687f5d3e5b6610a76ae48af9a0734f3a030f0
+  internal/provider/group_data_source_sdk.go:
+    id: 987dcf32f584
+    last_write_checksum: sha1:c01b220245a16b26768a33eef58311742e149e89
+    pristine_git_object: 328300048ae7318eee51cce993b3f960a33e7994
+  internal/provider/groups_data_source.go:
+    id: 27daea122431
+    last_write_checksum: sha1:dc95585f07f702d5310f3e402c55fedeffa790a2
+    pristine_git_object: a936631ea417591757d375d8689a586e7d385654
+  internal/provider/groups_data_source_sdk.go:
+    id: 0efc10f248ea
+    last_write_checksum: sha1:d5b539a8b2d1ec7de5d84629a24d34e5e0514c88
+    pristine_git_object: 65d315a625c701030ee3885f1f2c19f38101a486
+  internal/provider/preapprovalrule_resource.go:
+    id: 12a780baaff9
+    last_write_checksum: sha1:4b0d1e9e07eb322c79ac3c36915b8d04df7206cf
+    pristine_git_object: f3c9201dfcb1a836fe9e5a90f66d595335b859d3
+  internal/provider/preapprovalrule_resource_sdk.go:
+    id: 08b666ec6393
+    last_write_checksum: sha1:afe37f9c5c42b6dcb5886b1ef966e7b3315a5c7f
+    pristine_git_object: 4f6d89a45c466ff784739b30973bcfe4a6d8e67b
+  internal/provider/provider.go:
+    id: 1e7e86841cf3
+    last_write_checksum: sha1:814b5b750aabe899758c9558d63a5b79b81efa67
+    pristine_git_object: d4e47eea6e479f973132490709713463a23152d5
+  internal/provider/reflect/diags.go:
+    id: 35b6b44972e2
+    last_write_checksum: sha1:ace8bc53054bb1d8ee8689acf3e4323de75a6297
+    pristine_git_object: 50c50c8c2ee48a2e0bd9f7e01e9de02489c887d8
+  internal/provider/reflect/doc.go:
+    id: cbfb54ee320b
+    last_write_checksum: sha1:67814656717ff0d0ff38fd9db09872e28666642b
+    pristine_git_object: e384126d4201af70574ce3a9fb8102edaa3b932e
+  internal/provider/reflect/generic_attr_value.go:
+    id: e422f9e35e9e
+    last_write_checksum: sha1:33300f91738c9b79e41ea4d8f3581d6800ac06ef
+    pristine_git_object: 48824d543386df6c125ed86da32d85d24659454c
+  internal/provider/reflect/helpers.go:
+    id: 3c19b91a8408
+    last_write_checksum: sha1:3a2083aa9f84f5a54638803f2225daf86408d360
+    pristine_git_object: 8085789a770637a76b1728b0f89b30c564696ca6
+  internal/provider/reflect/interfaces.go:
+    id: d1096171c6f2
+    last_write_checksum: sha1:e03017ee98ee8d1bd64fde7a025975638bcfaed7
+    pristine_git_object: ff4416e40b7dd139a553979327b0dac70aff37c5
+  internal/provider/reflect/into.go:
+    id: 50e3644442fc
+    last_write_checksum: sha1:7a29c6e2fd31069faddc441132ff04a92a6198be
+    pristine_git_object: 29a437fe2bdb30a956b8c7668d11032962962472
+  internal/provider/reflect/map.go:
+    id: 0d8232fb373f
+    last_write_checksum: sha1:803a218b09d4d9de46d27a5c0227ed3fc6617f62
+    pristine_git_object: 91e27a6c1d51441d6091752a0e199c300c1f09dc
+  internal/provider/reflect/number.go:
+    id: f7e5eb196c35
+    last_write_checksum: sha1:ff756986a30b648c423b9af8996584ffc5983514
+    pristine_git_object: 53673b8476a3115f39f7ed03921221243bbe29a3
+  internal/provider/reflect/options.go:
+    id: ae46de5fdb32
+    last_write_checksum: sha1:735603671bc13388dca9edeb7fefc0b229196793
+    pristine_git_object: 002addd9ab508962b4dc80b0b1f788c738cb8382
+  internal/provider/reflect/outof.go:
+    id: 2b83f83dde82
+    last_write_checksum: sha1:46f09acf317888545161fc1cd288113bd3836ead
+    pristine_git_object: 215406a5867a4b5b6e0978a1664492049cc3738a
+  internal/provider/reflect/pointer.go:
+    id: b758e7c3bf1c
+    last_write_checksum: sha1:92cc23f30396e1a9204f70ac68ebfe7d58cbb967
+    pristine_git_object: 215653e7c5d5ba9863ef5053d9084c9d69eba5ca
+  internal/provider/reflect/primitive.go:
+    id: c302568a3411
+    last_write_checksum: sha1:8b7708414f8be915065952b31986869feaa2fae6
+    pristine_git_object: adf648e88b61a8234951db180e4c25bbb7c1b353
+  internal/provider/reflect/slice.go:
+    id: cd2dec5ab676
+    last_write_checksum: sha1:70ce36709e204b74e3ded36c4683df7e48df294f
+    pristine_git_object: 79ad6b80c2a9492522820c3060a89f2de1131e92
+  internal/provider/reflect/struct.go:
+    id: 973d7dbf96c1
+    last_write_checksum: sha1:504fa0ca7711df0887f8c265c7acb3774e89afe7
+    pristine_git_object: c588f768bd7b39be33962188f97d81e1c4c25f4b
+  internal/provider/requestablepermission_data_source.go:
+    id: 13510caef3a4
+    last_write_checksum: sha1:0540779046a72a11e18c6e5cc9516d477eed81b8
+    pristine_git_object: 8dbd05af1a12e6821a7c9a99a926d3bfafa6d062
+  internal/provider/requestablepermission_data_source_sdk.go:
+    id: 42b4e85e3193
+    last_write_checksum: sha1:cafc21a6321794a36b55345520f15f3ebbb1028e
+    pristine_git_object: 7c2bdb23c1b04c942c829bc69d2c3e2cb348d92b
+  internal/provider/requestablepermission_resource.go:
+    id: 3d192a0504f1
+    last_write_checksum: sha1:e4d68b5da2979f6199256dff9668f43c6d57b501
+    pristine_git_object: 22bb423cc5ea2cd7723aa04b681813262accb884
+  internal/provider/requestablepermission_resource_sdk.go:
+    id: f91e9c9a73f7
+    last_write_checksum: sha1:84280da439f41bbd36217614e0890f754c663fe7
+    pristine_git_object: 6196c281cafc1fe0a8f16136a52abf6bf3f62a75
+  internal/provider/requestablepermissions_data_source.go:
+    id: bbc12c30e87f
+    last_write_checksum: sha1:3313ed6e0a6eb30650717c9809e5c67c6f18aa68
+    pristine_git_object: 869929ceff114b9b602bce449ffbfec11ae303ae
+  internal/provider/requestablepermissions_data_source_sdk.go:
+    id: a90937fff24b
+    last_write_checksum: sha1:c4721cabf5efb43ba2005f8e62e2cbaee564fce5
+    pristine_git_object: 35828dd892ec0340e3d62aa8e1488a71c64e4069
+  internal/provider/typeconvert/date.go:
+    id: dfe2bc95ad1b
+    last_write_checksum: sha1:efd7534e6c23668a558aa70bdc9f5f2ca8fbdb48
+    pristine_git_object: a3b20b40e109cdd0557c665d8ac37b36696be2ad
+  internal/provider/typeconvert/datetime.go:
+    id: d2fb73d4f01c
+    last_write_checksum: sha1:a2a20e6785f1e12c3f94c016cbc106e54942e981
+    pristine_git_object: 7bfdc553a393a1db69a25574998eb6cc5df79566
+  internal/provider/typeconvert/int.go:
+    id: c44fcd78fccc
+    last_write_checksum: sha1:c28123f17006dc96a233f916a17c38408e37b71f
+    pristine_git_object: 54763e7a7555fae6d8bf51c4590220ff610202aa
+  internal/provider/types/allowed_groups_config_input.go:
+    id: 9c825ae8144d
+    last_write_checksum: sha1:05aa80fe7b4866208b41103bb6c7ad929c19dd99
+    pristine_git_object: c4e45d9ecbb34591b552463d5071c38152bf52dc
+  internal/provider/types/app.go:
+    id: 8fba21246fc9
+    last_write_checksum: sha1:38ae870182f54d20b14823c9f3a37629a34d1192
+    pristine_git_object: 68e1158434963698e348bc7e89cd5b9f2ed8120b
+  internal/provider/types/app_admins_input.go:
+    id: 30919af32d9d
+    last_write_checksum: sha1:9efb8e621b6253920944b86db13cb478ff8d77e6
+    pristine_git_object: 549c61808fb22136628ddbd8e423c077486fa169
+  internal/provider/types/app_approvers_input.go:
+    id: 5db9329a639f
+    last_write_checksum: sha1:ab8f93b26c182b03c32d1193a3c525526ac50aa3
+    pristine_git_object: 07b2fa4097650b8b38374632eed20fc276dde32a
+  internal/provider/types/app_links.go:
+    id: 918947ed86f3
+    last_write_checksum: sha1:0167112d6466b9e4864fe278b4d9ef596ee87f37
+    pristine_git_object: 41826dae30d43bce1e0610804ab513ff89df8c04
+  internal/provider/types/app_store_app_settings_provisioning_input.go:
+    id: 9fccbdd66c7c
+    last_write_checksum: sha1:d209e1488e891fcebc857e82e6b88adf5531ea03
+    pristine_git_object: 830e962a3a2bfd088608b9113ba2c4f95d0bea2f
+  internal/provider/types/app_store_app_settings_request_flow_input.go:
+    id: 3277dbe06080
+    last_write_checksum: sha1:fe330f735a1d8a2018eb62e342b9a9d38abcaaf9
+    pristine_git_object: fabff1f7911f3ecafcd3bbecf317fac3f2f1f11c
+  internal/provider/types/attribute_equality_rule.go:
+    id: 0b04fda9fa49
+    last_write_checksum: sha1:85c37179377a5361a01da7625222969d6517f429
+    pristine_git_object: 39a5a289c1c9e93d72e0aa56bc0de7b28bd40e11
+  internal/provider/types/base_inline_webhook.go:
+    id: d9b8c8a8096b
+    last_write_checksum: sha1:a1fd8d72e9e069af7177ef5711cb989bb40ccdac
+    pristine_git_object: 87cc5a039cd7437e149f0ac1cadcce2ca09e35ad
+  internal/provider/types/group.go:
+    id: d73edf066222
+    last_write_checksum: sha1:b5bc8e8740625f8ef8b67b8adccfdf01658c2c54
+    pristine_git_object: dea95555dc016f374cadd89ccc9a24fdfa216620
+  internal/provider/types/request_approval_config_input.go:
+    id: 8159f0455c10
+    last_write_checksum: sha1:fa3aed181741e38546b6aa4a91057ac2760b855b
+    pristine_git_object: 0190e6ebefe8c54d76f222e7c2e81a028ea8cebd
+  internal/provider/types/request_approval_config_output.go:
+    id: 067bfb109f6b
+    last_write_checksum: sha1:447b114bdd973602aebdc4f1a44b81ec776abfd0
+    pristine_git_object: 46262eaf73383458e0a7565a34ac0da535417205
+  internal/provider/types/request_config_input_create.go:
+    id: aa60a1d11941
+    last_write_checksum: sha1:9a3d6899be63a4022dbe104d091d53eef4cef7a3
+    pristine_git_object: 18a4f720d0cefbe3b5bb5b6cdff6b62b0d70f3fe
+  internal/provider/types/request_config_output.go:
+    id: 9c71d7625097
+    last_write_checksum: sha1:3ffbdad84d4a9158227e639b892231abe76d906f
+    pristine_git_object: a9eff61fb88e11c45df8d87ac1a38bddc6ea4cdd
+  internal/provider/types/request_fulfillment_config_input.go:
+    id: 5bc9df1ce73b
+    last_write_checksum: sha1:1a0f80dff67f847704729f70a5b8aa0ad3680c4f
+    pristine_git_object: 9af86787398db0b26a2b45a83d77b31b2554b64d
+  internal/provider/types/requestable_permission_base.go:
+    id: c807dab38d5e
+    last_write_checksum: sha1:8f228b2a65af897867c0421685726711829ac76e
+    pristine_git_object: 2618c2185b19154b635db82675147d393b369e43
+  internal/provider/types/requestable_permission_output.go:
+    id: d14dac5a3c55
+    last_write_checksum: sha1:93a3c51519e7ad8baeec994e629f0d19d5bdb648
+    pristine_git_object: 7cf2db52ebe1f80e2e1e7c2042b559f9d84035d6
+  internal/provider/types/user.go:
+    id: 76bcb6fc77f1
+    last_write_checksum: sha1:5ed9380ba776453b3d2f8df6742ac2988bd26f8f
+    pristine_git_object: db4a19ce04b44213345cade27b0ba8994a1058ce
+  internal/provider/user_data_source.go:
+    id: e54600b67b40
+    last_write_checksum: sha1:d257c865e168c9632f1bd8fa9ab0ff18fb32e5a6
+    pristine_git_object: 18ccfe67385582d8b3fd4edef14712998a9f65e2
+  internal/provider/user_data_source_sdk.go:
+    id: bc522866ae9a
+    last_write_checksum: sha1:bd1de89adf78020c6d3ee4406ee261705ea8b5cf
+    pristine_git_object: e818d27b492ed0ba5b183f2db105fd9dc6a90676
+  internal/provider/users_data_source.go:
+    id: b4cff32925ff
+    last_write_checksum: sha1:e5b29f534ea14d3f832d9d8760077cf09d6ba2c4
+    pristine_git_object: ffa207b0fa588a106e402c2a5aede35cbbe6b4c9
+  internal/provider/users_data_source_sdk.go:
+    id: 5928d6289078
+    last_write_checksum: sha1:f2a2856729c47bf7c49147100d2b589ee1a0266a
+    pristine_git_object: 775976172bef0097046e4ecc1da571ee906e1746
+  internal/provider/utils.go:
+    id: 312d50f148af
+    last_write_checksum: sha1:ab5970b9a4ff9b76bb3ef8506aa7c8717bf60498
+    pristine_git_object: 6d740fe793efe21270d25e01cbeda02b23669b63
+  internal/sdk/.gitattributes:
+    id: 1ea4c4e0a39d
+    last_write_checksum: sha1:84b0115789fc3ea52e31df701d8a27f76077e29f
+    pristine_git_object: e6a994416d0f527912d2d272e2583458f4fc9bcb
+  internal/sdk/appstore.go:
+    id: 22f6a0edcfa7
+    last_write_checksum: sha1:988cca766ef2aa53a3d8b449e91d40f66d928172
+    pristine_git_object: ea33c58647f92957acc8ce0b73cd5f56ffb5bcfb
+  internal/sdk/core.go:
+    id: ffe0c96da0ab
+    last_write_checksum: sha1:84dada19b10fdc90673b79c1e578e100ec044689
+    pristine_git_object: 7228f3b623c8e3d6547ef9b43a045f2900d5bd94
+  internal/sdk/docs/models/operations/option.md:
+    id: a35737eb2e35
+    last_write_checksum: sha1:08cfee5d266c9d82987e448f6c98a143aa42c5f8
+    pristine_git_object: 35d8a1e2ad48a64702c6a654ac8880dabec053b0
+  internal/sdk/integrationwebhooks.go:
+    id: df17a1301f6f
+    last_write_checksum: sha1:0d06c4fb98b83c96d55e8ee3fec338581c399eb5
+    pristine_git_object: 5f1a50396f823fd8ed5211e20a5b7dd46d653adc
+  internal/sdk/internal/config/sdkconfiguration.go:
+    id: 6af0bc8635d9
+    last_write_checksum: sha1:4ec48e52c5bf73b2962087971807f19ee03867bb
+    pristine_git_object: bfcb67f86301fcd13b64f1f0f884652f08d5fb02
+  internal/sdk/internal/hooks/hooks.go:
+    id: 4e88208e997f
+    last_write_checksum: sha1:4d97758884a582a27c963ffda92656ceead57038
+    pristine_git_object: d5a836916798ee6e059cb64724c88a96ed8d07b4
+  internal/sdk/internal/utils/contenttype.go:
+    id: b767d5c02609
+    last_write_checksum: sha1:ab5cfd860d02c6e6a37f89e2b5649a9859947fb1
+    pristine_git_object: f6487e01eb987c0aa49e7aa50b5ff24830314c63
+  internal/sdk/internal/utils/env.go:
+    id: 4b4be1422b75
+    last_write_checksum: sha1:1e0bcb2d2caed9f3657f1dbc99b55811bed0298c
+    pristine_git_object: 110d464eacf2387b347bad1cb903666354a339e9
+  internal/sdk/internal/utils/form.go:
+    id: a29055426367
+    last_write_checksum: sha1:9f57e4ce4ab7f1025928b1c4213c0b6bcb18e070
+    pristine_git_object: ab53b80e321cfb9318d671883f98e8737ec47e25
+  internal/sdk/internal/utils/headers.go:
+    id: f035883ac0ff
+    last_write_checksum: sha1:47ab6bc6f2ab69f2cba47361fbebcc7fcefcfa81
+    pristine_git_object: ba5f6f046a6fbdefedbbca04e33df7bb9b11ee15
+  internal/sdk/internal/utils/json.go:
+    id: 2231afac3add
+    last_write_checksum: sha1:845af73916a1d609aa5c2927370e2c5fad5303ae
+    pristine_git_object: 8ceb8bb7c2472d92063a843dbc7145f40a4ee4fb
+  internal/sdk/internal/utils/pathparams.go:
+    id: e7fec2afe4a6
+    last_write_checksum: sha1:ee964140ebf503717e03176c5c17446e3727c0d4
+    pristine_git_object: 35f9c3c3af2d0145eb919c620aa52ded3d5a134b
+  internal/sdk/internal/utils/queryparams.go:
+    id: fb88ad971185
+    last_write_checksum: sha1:8da5dd51558946c4e1afa3fb772b5639a799bc1b
+    pristine_git_object: af7f05fed630978d2bcdf7e51ecfb41c6df17177
+  internal/sdk/internal/utils/requestbody.go:
+    id: c971a8b3bbf5
+    last_write_checksum: sha1:6539681755876d9653971202fbad461298ad9af4
+    pristine_git_object: abc88ecbcf5b023ee74cccd820fffc9b88145d0f
+  internal/sdk/internal/utils/retries.go:
+    id: 6832c2142453
+    last_write_checksum: sha1:4811af09bf6f61b3c985393a660f9df7d56536d3
+    pristine_git_object: 9e293d4fd1116a34d411f1a99037493f963aa78c
+  internal/sdk/internal/utils/security.go:
+    id: 6ebe9eaeb99b
+    last_write_checksum: sha1:bb9cc1870101f6d2a990766f3eb0ea37292f7507
+    pristine_git_object: 19dfa6f4607dea64b1dd61c211e072212e7a3cb2
+  internal/sdk/internal/utils/union.go:
+    id: 183142835cfe
+    last_write_checksum: sha1:8c53c95a0515f9e29dca47ae4556d8684770043d
+    pristine_git_object: 0b512bc7d66c4f004838f6ffbc05a2a9e13619fa
+  internal/sdk/internal/utils/union_test.go:
+    id: 4c885192f6f0
+    last_write_checksum: sha1:83ac73c1901de4c6db90f65cf5879163f3d47a00
+    pristine_git_object: f66814c73ace94d8e71d785fd6161fb405745754
+  internal/sdk/internal/utils/utils.go:
+    id: feefcdf75dbd
+    last_write_checksum: sha1:d88d96cc244301d137581432095043f27a3e17b0
+    pristine_git_object: 0415b536598baa76c5d1a8fc32816ed1b83f9137
+  internal/sdk/lumos.go:
+    id: 146a43b83b47
+    last_write_checksum: sha1:8380be9eff1f01c5a5ef19bdb6731b8a84b7c5c2
+    pristine_git_object: 7b90a1c30232eb069405f14e2a6ec0a5a878269f
+  internal/sdk/meta.go:
+    id: 88371e7fe431
+    last_write_checksum: sha1:008286610427d4a1f193c549582dfe6e07c20ab4
+    pristine_git_object: 973eafa0206d0fe7b0984d4a7091384b83884906
+  internal/sdk/models/errors/sdkerror.go:
+    id: 19b5a8d3586b
+    last_write_checksum: sha1:5d65fce5049df7c5113e11c9ccb1e4c46b91901c
+    pristine_git_object: c633d568d96b5297c7d2edfc9d22fc717428edf1
+  internal/sdk/models/operations/activityrecords.go:
+    id: 36e4be8901a6
+    last_write_checksum: sha1:7cef36a413866947066753ff9e1434906630fa2e
+    pristine_git_object: a36d0d5a9218eaa3128f2f304b5f658c961fe104
+  internal/sdk/models/operations/addapptoappstore.go:
+    id: b73f0e29c266
+    last_write_checksum: sha1:f4e91f344c2d62b47f221cf538895aa664844450
+    pristine_git_object: 504ce5eec0b96be3120e505acb10254904475806
+  internal/sdk/models/operations/cancelaccessrequest.go:
+    id: 99162e4b87f6
+    last_write_checksum: sha1:ece9641efb5b18798bc569c292914fa6e0fa8945
+    pristine_git_object: 0891d1ee635d2bc8c3c52226d09cb31301ac1429
+  internal/sdk/models/operations/createaccessrequest.go:
+    id: cb04aed13d0c
+    last_write_checksum: sha1:ccfbe5247e02742790c06978c579e655a98a4f11
+    pristine_git_object: 847f329a06ea983e906e536f244145067278c2c3
+  internal/sdk/models/operations/createapp.go:
+    id: d21d08fcea72
+    last_write_checksum: sha1:4f7784c622dc84c290f4c47f4caf41e834d5ffab
+    pristine_git_object: 39b8a389c4d1914c899f6d45d851c5a98c168277
+  internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go:
+    id: a0ab60cc7b9b
+    last_write_checksum: sha1:bdd3dd4b44a7242657f2493de44de8a7ab3a0016
+    pristine_git_object: dd3a5b4de809ee5007b5d4ef026887edeb58677d
+  internal/sdk/models/operations/createfounddocumentjson.go:
+    id: 2b063d693e9a
+    last_write_checksum: sha1:a9594ef951ed3b969b89c6c7c1bddb90d93811b0
+    pristine_git_object: 26183ca5d0589253ca49f79992888fb93a5bce76
+  internal/sdk/models/operations/createfounddocumentmultipart.go:
+    id: 1ef1939b21da
+    last_write_checksum: sha1:5e1ca08d9f470bdb7eb972d4d4b8b003943e00e6
+    pristine_git_object: 9aa2775ecaa43c426d8bdb3a718905e83e8af64d
+  internal/sdk/models/operations/createorder.go:
+    id: 9b0dc10cc70f
+    last_write_checksum: sha1:f305065d993440d6edf805ac9cf24f1cb0e3481f
+    pristine_git_object: 8c1c0f7e504c7bad383b878e7206d09325d66740
+  internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go:
+    id: d28803e60e38
+    last_write_checksum: sha1:219f08ad6ecdb349e520e321c9287bac22f8db8e
+    pristine_git_object: 7db741a31e46ee6b0c51e6944b246006ed10921d
+  internal/sdk/models/operations/currentuser.go:
+    id: a14d8823b3a6
+    last_write_checksum: sha1:5dabdd000276b94e47dc8213a7db6e0a62eba020
+    pristine_git_object: 44836948a53967d782347e3ff45a92425dba4d42
+  internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go:
+    id: 7d2d3ace6568
+    last_write_checksum: sha1:2dc56aa2d3ce805457fd5bfa20ef07412d6f3669
+    pristine_git_object: 834a4168b2e4e6770baa6d21eadc0596f41078d8
+  internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go:
+    id: c47e3ba97308
+    last_write_checksum: sha1:955224cb69a3963318fadae7d327d4470bdb8cb6
+    pristine_git_object: 9938027ebf7619fadaffd9f00fda7cab26f2d99a
+  internal/sdk/models/operations/getaccessrequest.go:
+    id: 52721e9172c1
+    last_write_checksum: sha1:6330c2451b829dd9466ebed24a131383893de08e
+    pristine_git_object: 9d94062f7866396816f846c44504f2bd3a7266ac
+  internal/sdk/models/operations/getaccessrequests.go:
+    id: eb2d21420f1d
+    last_write_checksum: sha1:dfca3356af1eaa506e2f693171be70e1a1d598f0
+    pristine_git_object: ec1f774eb87c8eaeea9ba88adb368a88f76a2adb
+  internal/sdk/models/operations/getaccounts.go:
+    id: c8235aa0756a
+    last_write_checksum: sha1:d796123395edce02f01f4eea003fd4274be5072f
+    pristine_git_object: 494e8b5057f66496cdf76e282f65534ea7787a9f
+  internal/sdk/models/operations/getactivitylogs.go:
+    id: e8115ba25d77
+    last_write_checksum: sha1:7db832ca439831598bd359a2f965594df36d0e0b
+    pristine_git_object: 67e9322c42e2defbdffd686cd5047b9d5ef364f1
+  internal/sdk/models/operations/getactivityrecordsjobstate.go:
+    id: 445c5e44bb6d
+    last_write_checksum: sha1:2204a961b4792d47fb9db0de6dbee32a1ed474f1
+    pristine_git_object: 7d6a564a679a1317ffac3ee4e06fbfb23b3f58bf
+  internal/sdk/models/operations/getapp.go:
+    id: 02f86203f0e1
+    last_write_checksum: sha1:f74427cb6106c038fce47abec838e1dce938bbac
+    pristine_git_object: b181accad976a8fcc60403e883f551d0a89a4bc5
+  internal/sdk/models/operations/getappcategories.go:
+    id: e702330daff0
+    last_write_checksum: sha1:8c008b6750118bd12c024fbb0c9ee07982a9bf0e
+    pristine_git_object: 1cc4c4bcc72cdcef142b58bb50a9b410d14d831b
+  internal/sdk/models/operations/getappsettings.go:
+    id: 86b806f45bb1
+    last_write_checksum: sha1:31944c4a2131bef31a920180194827c8c97929b8
+    pristine_git_object: 80b67e08184de6b6f50d7c93377376cc6d659265
+  internal/sdk/models/operations/getappstoreapp.go:
+    id: 78cd594d6952
+    last_write_checksum: sha1:33cf7c325462f984d25c6afc66096f573d23714f
+    pristine_git_object: 482fbb0c5623c63cd71d5a3475ea2cbcdc1ec4ca
+  internal/sdk/models/operations/getappstoreapps.go:
+    id: 6bfa0d410b7f
+    last_write_checksum: sha1:119a0bc31a5fa93d8740b9df0d256d32e5332c26
+    pristine_git_object: d95bd2024f0958e1081d479927e42745ff8d06c7
+  internal/sdk/models/operations/getappstoreappsettings.go:
+    id: b23ae958dab4
+    last_write_checksum: sha1:dac2aff0f19889af61ce6513129bf47d8bfba20f
+    pristine_git_object: 1517081106108cc293ffe275596a6371c7dd2023
+  internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go:
+    id: 8a91c2e42026
+    last_write_checksum: sha1:e5e5243fb9b188235aef969578b72448fbf3d9c7
+    pristine_git_object: af3b9ba80819385e4b10428b98d08b07476cd242
+  internal/sdk/models/operations/getappstorepermissionsappstorerequestablepermissionsget.go:
+    id: 406bdf2b0fce
+    last_write_checksum: sha1:0b563231017ed6a942143072b834f83e5e66b0b2
+    pristine_git_object: 5538420c81cf5c61965ae403e7d1ef779882351c
+  internal/sdk/models/operations/getappstorepermissionsforappappstoreappsappidrequestablepermissionsget.go:
+    id: 4a02d1e094ab
+    last_write_checksum: sha1:ddcfa502ac1d1574808d8c782eb6d4296b104316
+    pristine_git_object: af806a240b77a2ec49ab3b56a1adb2374f76b835
+  internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go:
+    id: 0cec36442b57
+    last_write_checksum: sha1:ea990d1a5b8fc5ebb9e61923ec59cc1757cd2584
+    pristine_git_object: 58a296deb03f8033ffaa15167755d9ff0013bcf3
+  internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go:
+    id: 415afdf2b0f9
+    last_write_checksum: sha1:57c0708b40c114baa403a82d6b2ea2eb6c12970a
+    pristine_git_object: 03a748c6aac2bf30c9870f349201ce44dc9f9240
+  internal/sdk/models/operations/getgroup.go:
+    id: 9dd8a5ce6f45
+    last_write_checksum: sha1:9e2fbe7cd85c4b3fc8619e37036e1b8624ecd043
+    pristine_git_object: 05bfb639ff707493ff315c4406c182639d20568a
+  internal/sdk/models/operations/getgroupmembership.go:
+    id: 6a5c210f1e77
+    last_write_checksum: sha1:5efede895c8594256cdf9607e03c2a818bc52070
+    pristine_git_object: 7d1f6af94f19f1371b894c0ca06121fe5648a0f6
+  internal/sdk/models/operations/getgroups.go:
+    id: 1c6d519e6a39
+    last_write_checksum: sha1:38c5ce8dd28246c6d3b5276ef666654d124e0338
+    pristine_git_object: 4f2f583563d8e8793298f52fe226566c143974ed
+  internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go:
+    id: 812b2ee8676f
+    last_write_checksum: sha1:0aa041e6471fb98a4c6c4698e60b0b4a18320dca
+    pristine_git_object: 8d6b4f1038d242746a5bf818705e4ef597a94c5e
+  internal/sdk/models/operations/getuploadjobstate.go:
+    id: bae132bb07ae
+    last_write_checksum: sha1:daaf6948b8448b6115802721fb07ba9ee7afcaa3
+    pristine_git_object: 070eb67dfc04cf5ab136f549f973cdb6ad8b9c87
+  internal/sdk/models/operations/getuser.go:
+    id: e85bc544815c
+    last_write_checksum: sha1:2e77330b2d6fec6f83749d30f36d3b259aef83ca
+    pristine_git_object: 95d7d68120d781b638c58205cd76d9f9ee1771ff
+  internal/sdk/models/operations/getuseraccounts.go:
+    id: 02c2677240f2
+    last_write_checksum: sha1:9ef7af6defa690ef78effe2e2f1b2801a43e7917
+    pristine_git_object: 38ba9daad5a8d33c15c446e8ae64ff3f76090d7e
+  internal/sdk/models/operations/listapps.go:
+    id: cf9a8caa3bdc
+    last_write_checksum: sha1:7a7e146602a54cda62280e11afb761556c5608b3
+    pristine_git_object: 328f3923e92f23def3cfb29dae5be642f3c9f110
+  internal/sdk/models/operations/listusers.go:
+    id: f4b407021954
+    last_write_checksum: sha1:5ac961371d285cf9a78f4c1227f50db0cc011202
+    pristine_git_object: 6626ce764fdbe6eb84a29928f45435723f76dc97
+  internal/sdk/models/operations/listvendoragreements.go:
+    id: 7e8f51d6f206
+    last_write_checksum: sha1:4e8a4611b0d4391192b23e69c18349b76d48a378
+    pristine_git_object: 713e237c1f68f9a4e3cd80d9749ef59fef0df5ff
+  internal/sdk/models/operations/lumosart.go:
+    id: 709afe6b9561
+    last_write_checksum: sha1:e2e217b3fda1b0e6d09d73254626c6f5b4dd5185
+    pristine_git_object: fc0bf613b36b9e72b7c72aed9ade51da62615b13
+  internal/sdk/models/operations/lumoslivenesscheck.go:
+    id: d321b4fe607a
+    last_write_checksum: sha1:154e3c6ff25c80eb8d538a336c3ee643379a7a40
+    pristine_git_object: eefd6af177c8f6d75a0c2ccf796b5a8df67f804b
+  internal/sdk/models/operations/options.go:
+    id: 6d0d29414e00
+    last_write_checksum: sha1:6e727cf5a9ec0d3403f351c1642b70d0349b12de
+    pristine_git_object: 147b0a9a6ef7ba1a4a23415debe1681166fed293
+  internal/sdk/models/operations/postaccounts.go:
+    id: 698d31280362
+    last_write_checksum: sha1:0c9538df3fc5a243c091c6a2e2dcdd97b6944a96
+    pristine_git_object: 222875f2d82a749a614a1700d8f5b6b3ef2f87c0
+  internal/sdk/models/operations/processairbasemilestoneevent.go:
+    id: db0e82c314c0
+    last_write_checksum: sha1:070bcab5c89d2251f737607f212190424c9538d6
+    pristine_git_object: 8a08af2697a01f793945a1e3fb1818154d723448
+  internal/sdk/models/operations/processvendrrequestcompletedwebhooksvendrrequestcompleteddomainappuuidpost.go:
+    id: 519a5a55da66
+    last_write_checksum: sha1:87ef80d8d59e1d4799a59669d9b336c1ea28ad29
+    pristine_git_object: e7a098bd568f82a4dee7a54c847ceb2439023ee7
+  internal/sdk/models/operations/removeappfromappstore.go:
+    id: b2a851185f88
+    last_write_checksum: sha1:0f22c6dd18cd6e31e391d89113fbdae31841f37e
+    pristine_git_object: 81fa50907590536d7c04c6904f6b6de8c85a18c9
+  internal/sdk/models/operations/updateapp.go:
+    id: ac3eb0b05e0d
+    last_write_checksum: sha1:e13d3d0a1e245d4f1edd033d4c81fd28038d53c3
+    pristine_git_object: 10e49eb0c3a40377281b8dba02ba4e5b77e9b5eb
+  internal/sdk/models/operations/updateappsettings.go:
+    id: b0320ee9a810
+    last_write_checksum: sha1:a9bc2043fea93f98ad7c0bb001374d38890bdf17
+    pristine_git_object: 80b752d433081b78f645168bec24ab79d3d75c79
+  internal/sdk/models/operations/updateappstoreappsettings.go:
+    id: 1b3e06d70fe4
+    last_write_checksum: sha1:6b10626b71ad56649f141e13306e24dda9f72a9c
+    pristine_git_object: ccbc460992ab631c1fbcd1fefab3832ec6cb569c
+  internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go:
+    id: bd863a9e259b
+    last_write_checksum: sha1:f1fe52a8c1de3831290daf0e060165c51507fa01
+    pristine_git_object: f8d3a8da45bb7e2b110c1cc539c6dec2566a05d4
+  internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go:
+    id: 1b7c0ec556f2
+    last_write_checksum: sha1:f509f08e049e2ff63dd5d39fa0c887d73fb6a4a1
+    pristine_git_object: f227b110d9a1dae9e34e59a2d1688da98ad8ad93
+  internal/sdk/models/shared/accessrequest.go:
+    id: e26a4ed10d6c
+    last_write_checksum: sha1:1bc986d95637b79bf07b7484e9f65413845019cb
+    pristine_git_object: 8c30f7e2f8787cf236a12bceeb3fcc003aabafeb
+  internal/sdk/models/shared/account.go:
+    id: 9a214a8640b4
+    last_write_checksum: sha1:f7ae82a160a83d71a48c571efdef8882c6eea931
+    pristine_git_object: 376afe379f94002c8e01efffb2bb5abba45913aa
+  internal/sdk/models/shared/accounttype.go:
+    id: 87f2766b40c1
+    last_write_checksum: sha1:00c23ef64d44fbfcaebe7c8475ee9b9da945417f
+    pristine_git_object: ce2726dcdf161694c44da35811e8884955299a3b
+  internal/sdk/models/shared/activitylog.go:
+    id: 148a52da2ba4
+    last_write_checksum: sha1:00bd00d38047e44e2f7ad750b8d7942df1a74adf
+    pristine_git_object: f9917cfca1a02196a5a0b4104418ed05b1e84964
+  internal/sdk/models/shared/activityrecord.go:
+    id: 825919c3f672
+    last_write_checksum: sha1:78d52c0f4f9ed84c9585856485c8f1ac5b5e5b4d
+    pristine_git_object: be2143c908493e1cb0d34d67f76752b5f170a2c2
+  internal/sdk/models/shared/activityrecordaccountinput.go:
+    id: 88fb8729d9be
+    last_write_checksum: sha1:585142dc8a98073c55ac61142e85a132dab94626
+    pristine_git_object: 50dc09bdb8ea31613cafcf69d491e3b47c054c1c
+  internal/sdk/models/shared/activityrecordappinput.go:
+    id: a75a00e664db
+    last_write_checksum: sha1:21eff07edce74a96244f1e0d507558927cc1f73a
+    pristine_git_object: 3259b73a98f2eebaabc5b8b23868ec6f9c727c3e
+  internal/sdk/models/shared/activityrecordeventinput.go:
+    id: 4212fa8e3ce4
+    last_write_checksum: sha1:12e3ad8d93d4c9f5f8de9a22393f71cd52b5638d
+    pristine_git_object: cddbe8bea9b096d619f3771d7a0984a73ad0519b
+  internal/sdk/models/shared/activityrecordeventtype.go:
+    id: 5b0bfb477283
+    last_write_checksum: sha1:dbb6b90e9e0c0a0d198b887ba7b92d81a77f1bc4
+    pristine_git_object: 733e037f2eca89f13c738af84208251f71684dbf
+  internal/sdk/models/shared/activityrecordinput.go:
+    id: 866e80766172
+    last_write_checksum: sha1:e6305903b1986ed52e70a2cab091440e3efb50e2
+    pristine_git_object: 3994b85f097c84d41e38d14a827d13c6f6d53797
+  internal/sdk/models/shared/activityrecordoutput.go:
+    id: e5978ed84353
+    last_write_checksum: sha1:b097603fda9b5efcfdc79107d9881323d2212588
+    pristine_git_object: b309350184c4b2f00227c9f018f49774dfa88b95
+  internal/sdk/models/shared/addapptoappstoreinput.go:
+    id: 2a336cd9ce55
+    last_write_checksum: sha1:d04927d4c819e6d766ed26c00336a2f542a2f093
+    pristine_git_object: 68f58429fc6e6895e38770c4da9f000d1949c477
+  internal/sdk/models/shared/airbasepurchaserequestevent.go:
+    id: edc018d20b37
+    last_write_checksum: sha1:778229aedbc23671a33d9025351213ba4673fb1b
+    pristine_git_object: 45c4d8d84b00ee0598b108062fbe6c643cde9f98
+  internal/sdk/models/shared/allowedgroupsconfiginput.go:
+    id: 1ac671d308e7
+    last_write_checksum: sha1:307ef5dd6ed0bbd6ac2e6248a6946b0e57295473
+    pristine_git_object: 55ca7ac2a8be2653392411d3fc6ebb453e8672c5
+  internal/sdk/models/shared/allowedgroupsconfigoutput.go:
+    id: 713ea521a302
+    last_write_checksum: sha1:7fd13d462048462d7e1b6d66df50175d760f1faa
+    pristine_git_object: 50bc79eec9955f603444ac0fbda2e49b690d36bb
+  internal/sdk/models/shared/allowedgroupsconfigtype.go:
+    id: a51df24e61d4
+    last_write_checksum: sha1:55c0ec7aaa801d48c2e2592b0bbd5b444c3ffef8
+    pristine_git_object: b7be83dd99ac7f145cb05cce920e2ac354ed5d45
+  internal/sdk/models/shared/app.go:
+    id: 595aa09b4211
+    last_write_checksum: sha1:fe3e02ea9b66a0d77b26daf2a92cec69789a4de7
+    pristine_git_object: 776caff03b84bbc6ade5f9a4487824ed733e31ae
+  internal/sdk/models/shared/appadminsinput.go:
+    id: 9817aa425ffa
+    last_write_checksum: sha1:c50f66ad4ee32141e20f3cabb89fc98f0c3aa0e0
+    pristine_git_object: bb6788749839983649261691897908dda2800c40
+  internal/sdk/models/shared/appadminsoutput.go:
+    id: 207fabb3505e
+    last_write_checksum: sha1:1b7043431d50a4ccea29dc67d3ed942bb0313f8e
+    pristine_git_object: fb28f70e984450459b113f4d1a85bc25e5f5875d
+  internal/sdk/models/shared/appapproversinput.go:
+    id: b624494489f7
+    last_write_checksum: sha1:ab59359f7b579d56a640f49dd3eebc583ccf103f
+    pristine_git_object: 86568ebbded366c28b3b507fefcfcf7ba56407fa
+  internal/sdk/models/shared/appapproversoutput.go:
+    id: ba160bd5b1a1
+    last_write_checksum: sha1:e81d196dcc107e554ecfc428b7e54617855c326b
+    pristine_git_object: b6fd1ed3ff35299699e813ccfeaf3ebadb48ccb7
+  internal/sdk/models/shared/appinputcreate.go:
+    id: fb145fbbdab7
+    last_write_checksum: sha1:8d5f2b1e35327c0394e1166f223638f37d763c59
+    pristine_git_object: d1635f27ad334e92051f363cb6adfe5a94cbff3e
+  internal/sdk/models/shared/applinks.go:
+    id: b3799ee2e571
+    last_write_checksum: sha1:9c88318d71a6ab290fbb325cf97de6af367bd9fa
+    pristine_git_object: 3c5469d6da79346e326a80e336b51d91510e220b
+  internal/sdk/models/shared/approverinput.go:
+    id: 0cf73c9efeb4
+    last_write_checksum: sha1:a6ae5f817511fcecee36b00e42f576d6f9548c6f
+    pristine_git_object: 9d4a16ba45efe67d0a80f318b471a5b22d3cbbd8
+  internal/sdk/models/shared/approveroutput.go:
+    id: af3c20c0f15f
+    last_write_checksum: sha1:122743fcb351b0d08012b88baa8ab79c4eea4629
+    pristine_git_object: 5632e7ccd34aecdc1958f8871010f82b838872cb
+  internal/sdk/models/shared/approvertype.go:
+    id: bddb84c8eb49
+    last_write_checksum: sha1:d6709ba91c57dbac498022724f26f116a9b13300
+    pristine_git_object: 2a1a999dab41861590a0bf98f01a1d7fa2afe75c
+  internal/sdk/models/shared/appsettinginput.go:
+    id: 8a028a445044
+    last_write_checksum: sha1:69fef9095e6d0f0052751dea1a913ef456b6d942
+    pristine_git_object: 623e93b6d03611779c03daba4634f3544ef19135
+  internal/sdk/models/shared/appsettingoutput.go:
+    id: 8a975ca9ad81
+    last_write_checksum: sha1:c51039308a6c2e93a442441ffce07f0a8b8e463b
+    pristine_git_object: 2754495369ddf936f41ad0596ecf47ed0ebb9fdb
+  internal/sdk/models/shared/appstoreapp.go:
+    id: 0a211e1583d6
+    last_write_checksum: sha1:6e3cdca3f58977cbfd823023095d30d1252c8e32
+    pristine_git_object: ea9f3e0e9aa578b0b074dbdbf31df0692f68a5e9
+  internal/sdk/models/shared/appstoreappsettingsinput.go:
+    id: 14c1b3dff6a6
+    last_write_checksum: sha1:676cea4fed620eda2fc4d9b8295b1e1ad8d636a1
+    pristine_git_object: c2766aa11ad35db2f0b32cdd00f66f1781009213
+  internal/sdk/models/shared/appstoreappsettingsoutput.go:
+    id: d8a6b1020c9a
+    last_write_checksum: sha1:4273e6782bcf1a5494b1f7386675256181a3c8a6
+    pristine_git_object: 36da460863ec9da03341faadfeff7bdeef062869
+  internal/sdk/models/shared/appstoreappsettingsprovisioninginput.go:
+    id: ccd45a286fa3
+    last_write_checksum: sha1:bd5e44f4b5f2a41a1d31c7ddb55427eb3610c923
+    pristine_git_object: b5076b0e74ef084a5ed8324168a67414df58c9fb
+  internal/sdk/models/shared/appstoreappsettingsprovisioningoutput.go:
+    id: ce82211cddcf
+    last_write_checksum: sha1:6e36bd890d017254149df7ae413b5fe8ec22804e
+    pristine_git_object: 15550c8e8a9213e166881cf1fdb296ec4511205d
+  internal/sdk/models/shared/appstoreappsettingsrequestflowinput.go:
+    id: f327cd9a7a9e
+    last_write_checksum: sha1:09f93579e8b785d187f52803978870180df65c8b
+    pristine_git_object: bdf5c36d65e95c8ae10b93eda3d333607507f1c2
+  internal/sdk/models/shared/appstoreappsettingsrequestflowoutput.go:
+    id: 70f5adf8d341
+    last_write_checksum: sha1:8e6596dee62af612941844ea6cc5ef80df747c21
+    pristine_git_object: c714c485be23525357f73b6ff22cf7ba8080312d
+  internal/sdk/models/shared/appstorevisibility.go:
+    id: 48dc3d6e6b3e
+    last_write_checksum: sha1:0667fca2843e39fd72d2a912c35b8b3fca36d678
+    pristine_git_object: 8b3c940d5bced903ae0692030954d4f425abd3da
+  internal/sdk/models/shared/appstorevisibilityoption.go:
+    id: aaad59ea08e9
+    last_write_checksum: sha1:11e4220b9f94752934b7c4a6faba8c8968b88267
+    pristine_git_object: 0a9175937d0c541c63d81b20663628d237d8dc5f
+  internal/sdk/models/shared/attributeequalityrule.go:
+    id: 028dbd378f64
+    last_write_checksum: sha1:fa4a020aa8179684d7cb0591ea711a393b8a5721
+    pristine_git_object: a956bb15100d86598faa72ad80a020b014b9a580
+  internal/sdk/models/shared/basegroup.go:
+    id: cf9fe6a8ca54
+    last_write_checksum: sha1:d711bdac412f012010d645f42054a6861c0d06bd
+    pristine_git_object: 55e77298b3fc5ac26b825cb81473a0a4caa1c663
+  internal/sdk/models/shared/baseinlinewebhook.go:
+    id: 2bbfeb161d8a
+    last_write_checksum: sha1:a8bd993309fdffda416d7da50c11fefb92b7023d
+    pristine_git_object: 682a6c44bec5d2958e1a5e8d18eedda926552abd
+  internal/sdk/models/shared/baseuser.go:
+    id: 7190dd0b27ef
+    last_write_checksum: sha1:128e9191c2e33fc0c8f5cc3e2d8f01aa4fe948fe
+    pristine_git_object: 6e1b5c3138430a127ed1edbb90af77c377d36d0e
+  internal/sdk/models/shared/cost.go:
+    id: f725218d4f26
+    last_write_checksum: sha1:1bd8ed74d2d45b9bcae3ca42d03b406d8c3f4210
+    pristine_git_object: 08f32b1d5ebb3c77a428286eee7310de980dc9b6
+  internal/sdk/models/shared/createaccessrequestinput.go:
+    id: 10321a9099cd
+    last_write_checksum: sha1:ca6febe828ae079e8648c18223db6fd8d402d8dd
+    pristine_git_object: 56289b569b3dc3e320263c45750383bd44b7dd5f
+  internal/sdk/models/shared/discoverysource.go:
+    id: 90581ff41f18
+    last_write_checksum: sha1:ce39e7930298ebee0e70bb86c05c4cac36b99308
+    pristine_git_object: 4175e7acededbbe48e11ba09d9b92f01e0c2e4f8
+  internal/sdk/models/shared/domainappstatus.go:
+    id: c2e8ade76c19
+    last_write_checksum: sha1:5abfd59f9513e08a23569319b1b1656b91d2a370
+    pristine_git_object: a66d309f87c4ac28c48a8fbc77727706ac1d496e
+  internal/sdk/models/shared/fileupload.go:
+    id: ec23d5e2de55
+    last_write_checksum: sha1:e36c4ef70b122c3e1dbb0a56c4cbbcc698668f8f
+    pristine_git_object: cfeaa6a8160415278e295d739bfa9adc6c86a1b0
+  internal/sdk/models/shared/fileuploadtype.go:
+    id: 8e35166315ea
+    last_write_checksum: sha1:179a40c694d111ed5de5ee4a8832f49a617e1809
+    pristine_git_object: 87ce94f197bb40369f2166510fede8809a56705f
+  internal/sdk/models/shared/flowstate.go:
+    id: "790128528655"
+    last_write_checksum: sha1:70f3d03198d7628786ce6503cc0f68c6379d975e
+    pristine_git_object: 5cffc6f859c7dd6a99e49b0fc2d6a2e80eedbb60
+  internal/sdk/models/shared/founddocumentsupload.go:
+    id: 607789fef749
+    last_write_checksum: sha1:73a26ad172bd7c107abeae33eaa4092daa34a458
+    pristine_git_object: 3d373bd6b8ae990c2692d3a5b34cb4607f230fb2
+  internal/sdk/models/shared/group.go:
+    id: 941f75eafff0
+    last_write_checksum: sha1:a7ba71723dc0fc9e7dd30ea8c19e208f4318a819
+    pristine_git_object: 855a6ed3510c68a1d6d2b62667bba62c70fa9d47
+  internal/sdk/models/shared/groupprovisioningoption.go:
+    id: 78e08a0c175e
+    last_write_checksum: sha1:565a42fb3b9aba060d984d627f9dc88df1fedadf
+    pristine_git_object: 215588c12c3ff1796261e0734cc4c542e4740541
+  internal/sdk/models/shared/httpvalidationerror.go:
+    id: e86ca2e3a6be
+    last_write_checksum: sha1:5edf11968f420bd06ad9d6c3981086c0551bffd9
+    pristine_git_object: 7d170bb2e2c078a73e2451b55a48f86e2160e377
+  internal/sdk/models/shared/inlinewebhook.go:
+    id: 1efd0f413df4
+    last_write_checksum: sha1:bcddd16f4871d8599593aa2d6a9fe84285d94df3
+    pristine_git_object: 1d46e5c71a4f56205375086e38d0e1eeb0cce450
+  internal/sdk/models/shared/inlinewebhooktype.go:
+    id: ccbe8f479691
+    last_write_checksum: sha1:0f4226e841ce0d0108f04b25778932042f675f15
+    pristine_git_object: 631c30d5bff3dea72fd1ed687511840d6d52e42d
+  internal/sdk/models/shared/jobstateoutput.go:
+    id: 4af80ac474db
+    last_write_checksum: sha1:3fee3365913b064b312a2d87a518d8ec9111af50
+    pristine_git_object: 9d2aa31ce1403670284d7e1e6e5fd6654efc3fd8
+  internal/sdk/models/shared/lifecycle.go:
+    id: 90ebd9cea397
+    last_write_checksum: sha1:1afd0013c3bba5ba1da07d32ca0b7623721758df
+    pristine_git_object: 3d27656365574624e15c24c58f2859cd94ec902a
+  internal/sdk/models/shared/limitoffsetpageactivitylog.go:
+    id: d32551b272c4
+    last_write_checksum: sha1:073a001197ec69aec54e53f466ca2f173c47c83b
+    pristine_git_object: 91f1435a45f61312882db9d01efdcd3cac0c3f0c
+  internal/sdk/models/shared/lineitem.go:
+    id: f22347dc8d47
+    last_write_checksum: sha1:f2582feffe02d4af38a065bf586d29efe6ed035f
+    pristine_git_object: e769a52bb57d2132767073196300592dfa5f28eb
+  internal/sdk/models/shared/lineiteminput.go:
+    id: 7d32d222fea0
+    last_write_checksum: sha1:1dc26aff1603dc3aca9dd751942af796e374c0bc
+    pristine_git_object: e8d3e954531b166e85ef547ff1ff51837facea72
+  internal/sdk/models/shared/lineitemunitcost.go:
+    id: e47c7ecdefb6
+    last_write_checksum: sha1:ddf31de2a9c2ffe1edf9b9faa4ea46068a11481c
+    pristine_git_object: a3ee0ae7d7bb2abee153b27d8cfdc3e6f8f2cc02
+  internal/sdk/models/shared/lineitemunitcostinput.go:
+    id: 6c6a49bd97f2
+    last_write_checksum: sha1:516cdfb237b2e89f13b075a4e2d3ecf4ca7f1bd5
+    pristine_git_object: 97c7d53246fcb2d03142100fde5006e8d9e1264d
+  internal/sdk/models/shared/lineitemupload.go:
+    id: feb012b058c4
+    last_write_checksum: sha1:1d0b6485e769a53838e486eaad00539b92d34c75
+    pristine_git_object: 8a3aed3e12b3634ab577aae4093070cc12c53721
+  internal/sdk/models/shared/links.go:
+    id: 3387d4d6f5bf
+    last_write_checksum: sha1:c6059c42296b8b4664807191b914d9bd6b6d694c
+    pristine_git_object: 5c5dff2a19f9aec06da9c028a16045b3458254f2
+  internal/sdk/models/shared/managerapprovaloption.go:
+    id: d7e13567648c
+    last_write_checksum: sha1:188579148bef25983d5c0581a2581b355057e690
+    pristine_git_object: be2b05f2d451b35b39e8a4e23398588bb041f677
+  internal/sdk/models/shared/orderinput.go:
+    id: e4dbde0959b9
+    last_write_checksum: sha1:e1a531ee4560a9180e3ed999ef80478caea5e333
+    pristine_git_object: 6be061a418fe8b826e0a2a0dfc81223659d705be
+  internal/sdk/models/shared/pageaccessrequest.go:
+    id: 0d0a932defbc
+    last_write_checksum: sha1:267df68bee1bbdeaee25e36b84359883c5b388b0
+    pristine_git_object: 7baaf05596e8f61f274e9f931c60a6d88a26e17f
+  internal/sdk/models/shared/pageaccount.go:
+    id: 78d19ab0e8b2
+    last_write_checksum: sha1:34fb7275d6ed8edab5ddc47a2a75a1f7c73e6712
+    pristine_git_object: 3924fbee0893f10e3c86938ab05125c8bf968f1a
+  internal/sdk/models/shared/pageapp.go:
+    id: 083184420a92
+    last_write_checksum: sha1:7a29c302cb5e48c29d9ce35b997dbbfe273edc42
+    pristine_git_object: 9b495e23040bb9e85f68279c81a3c98b7149d64a
+  internal/sdk/models/shared/pageappstoreapp.go:
+    id: ccb232b4f2ae
+    last_write_checksum: sha1:d0261c8bddae2c5b343ecadfab1c08d34526d367
+    pristine_git_object: e4bce7f249e26382ff5c973ad94d191642526476
+  internal/sdk/models/shared/pagegroup.go:
+    id: 4fe51ff9de2d
+    last_write_checksum: sha1:d6bf4232f12bc34ddf0b0fedaa1dea0878eea46e
+    pristine_git_object: 6995062377e89b27209efe8ba8402d8f3b16dc08
+  internal/sdk/models/shared/pagepreapprovalruleoutput.go:
+    id: 9688ba39263b
+    last_write_checksum: sha1:445cf61582887e9eb70f488c8d42725eef619866
+    pristine_git_object: 4f5cb3c8a3bd70b0f13551d604f5ced5dd3e017f
+  internal/sdk/models/shared/pagerequestablepermissionoutput.go:
+    id: 04b4f2127bb8
+    last_write_checksum: sha1:1f05ed86b401d742898cb27710e8e94e2d2dbcb1
+    pristine_git_object: 4feed7e6b67c77df923440ab36d0efca53f37e1a
+  internal/sdk/models/shared/pageuser.go:
+    id: c67b4c9ce0a9
+    last_write_checksum: sha1:03b5f2b35ce6fc13d60073709aec49621edc252b
+    pristine_git_object: ee279bd340a53158f5569f65e297009d0bd9036d
+  internal/sdk/models/shared/pagevendoragreement.go:
+    id: e61f0d6cd783
+    last_write_checksum: sha1:1f7ca6e45fdcc410f7f2ff62ab0b70a00ac07b08
+    pristine_git_object: 399c6ede5368b0c939fea658ea7052cac4825a7c
+  internal/sdk/models/shared/permissiontype.go:
+    id: f3c59921fccf
+    last_write_checksum: sha1:85360869e01c36a4fabf941452e16f6cf4606899
+    pristine_git_object: 92f0cd8b593a290868ffcaf5a98d560059cdbf58
+  internal/sdk/models/shared/preapprovalruleinput.go:
+    id: dbba198cd025
+    last_write_checksum: sha1:2f9304397bf8b3ce23187b1f8d126a9c21d6812e
+    pristine_git_object: 9b9c3ab336d9a0c06a49c52f8c781f8b054c1c51
+  internal/sdk/models/shared/preapprovalruleoutput.go:
+    id: 4fc94becefe5
+    last_write_checksum: sha1:4cde7524a74d1f174f60174c3c107fd8dfe8eaef
+    pristine_git_object: 068b93551fab618e7656bdcf296744ca37da0d17
+  internal/sdk/models/shared/preapprovalruleupdateinput.go:
+    id: 118590d111f0
+    last_write_checksum: sha1:752cd05b0d92a6f7517b65e31a6e3f0081544ae5
+    pristine_git_object: 137123a62a63794b86a716d359453530eed3ab94
+  internal/sdk/models/shared/requestablepermissionbase.go:
+    id: 09b35647a902
+    last_write_checksum: sha1:22e9a9d93a1cc41a769acc22b25ae1d0827d7efa
+    pristine_git_object: c1144d781024661b8bf1284bdac5283b57ef7464
+  internal/sdk/models/shared/requestablepermissionbaseoutput.go:
+    id: 436a30a98575
+    last_write_checksum: sha1:6d004f5c2584e3b9787b11126f65c416e9b0972c
+    pristine_git_object: fe13a3126d1872e4cb2566af03c7fe54619d95f5
+  internal/sdk/models/shared/requestablepermissioninput.go:
+    id: 9585586b4698
+    last_write_checksum: sha1:d399069544c787315f73d9f28df83f48d2f7cb56
+    pristine_git_object: f307ecfed91362474ca183eff14fe918f2bdbda3
+  internal/sdk/models/shared/requestablepermissioninputupdate.go:
+    id: c5a54ae3f4ca
+    last_write_checksum: sha1:6a6cbb42cdc011b82b2fbc0d16436fcdcb55522e
+    pristine_git_object: 0bf838bea689115bb4120c57140231f5985750c7
+  internal/sdk/models/shared/requestablepermissionoutput.go:
+    id: cfef8b3e5a03
+    last_write_checksum: sha1:e63815dd15165dfc9e9066447ef2225fea9dcbf0
+    pristine_git_object: ccd7c734df127a084059054ed095c6bd4de570e1
+  internal/sdk/models/shared/requestapprovalconfiginput.go:
+    id: e8bdd2aea4b3
+    last_write_checksum: sha1:325f54898d19f1764c1d886e793c490d7a05d5c6
+    pristine_git_object: fc243cca2468a5e881bf59c8bcd5d01c44658d80
+  internal/sdk/models/shared/requestapprovalconfigoutput.go:
+    id: 4c9e3ccd9fdd
+    last_write_checksum: sha1:9667d959a5e6c716464b928828f04954bcbdc1a8
+    pristine_git_object: 3ff3ad4051cf18dd77eaa3157c61e01112872ebb
+  internal/sdk/models/shared/requestapprovalstageinput.go:
+    id: 08df335c56bb
+    last_write_checksum: sha1:4b7e20e32074b6428a25f380aca180ccf7f8dccf
+    pristine_git_object: b93f5b11702b2a15a91515c5c77cbb8deefbb03c
+  internal/sdk/models/shared/requestapprovalstageoutput.go:
+    id: 0543968be1de
+    last_write_checksum: sha1:d5c3f45dc3acc5e792a0c2f4d75a877dbeadf533
+    pristine_git_object: 0d2899ce2e4e67b1421ce61bc27d211e804bce11
+  internal/sdk/models/shared/requestconfiginputcreate.go:
+    id: d48aade00827
+    last_write_checksum: sha1:91a2eefbe75ad512060859e8d5b6fef4dd846c2f
+    pristine_git_object: ff90339befbcade7c06d118dc0ffee6fcaf7e35f
+  internal/sdk/models/shared/requestconfiginputupdate.go:
+    id: 6d9e87407b94
+    last_write_checksum: sha1:f4415d66e78dad1f28ab67e62fc319e1a546ef2d
+    pristine_git_object: cb9923d56a44370b20836c44d8c5827da275900e
+  internal/sdk/models/shared/requestconfigoutput.go:
+    id: 70328409fcf0
+    last_write_checksum: sha1:de5587a0a89111299fe15155821ed5bce6a5cc08
+    pristine_git_object: ec055bc2a4ee6ede9fac48bcdda9323016eb7078
+  internal/sdk/models/shared/requestfulfillmentconfiginput.go:
+    id: 0890c1837a91
+    last_write_checksum: sha1:644ff480b1dc8cc62fab44a875244b14c8ca8cc5
+    pristine_git_object: 98c450c598fe62afe93cb34bd3014ac14e63cdb0
+  internal/sdk/models/shared/requestfulfillmentconfiginputupdate.go:
+    id: 7134460d209d
+    last_write_checksum: sha1:658e0ce51f0b9ea4688dc5c39b1ce9d3142bdff1
+    pristine_git_object: 82d968d78dbefd8f94d92a8d849758c38ee4d4c2
+  internal/sdk/models/shared/requestfulfillmentconfigoutput.go:
+    id: 416916c60e37
+    last_write_checksum: sha1:e59613c0e4f89b1e1789671f400f9671a7ef2a76
+    pristine_git_object: 79b5ce256765513fb0a9e5796b5ffb5bd54b7b28
+  internal/sdk/models/shared/runinfostatus.go:
+    id: 5b5be33a424e
+    last_write_checksum: sha1:2b8e17be850f68418feefc3023308d1fca93ba90
+    pristine_git_object: 79d95d7a5fb9e73bb27ccd6bf7f4184be037ece2
+  internal/sdk/models/shared/security.go:
+    id: 9098af98367e
+    last_write_checksum: sha1:ef6b813e99f3c7693e206508f641fcce46108951
+    pristine_git_object: 3619f09887108255f5341bd8733335930c9baf2f
+  internal/sdk/models/shared/supportrequeststatus.go:
+    id: c839ff0aaa6d
+    last_write_checksum: sha1:b462a7fb8bbbb43ec5e6491ee90aa17b1035a0de
+    pristine_git_object: e9f22ffbd48a08872f83a8e4c092f720b1fc6263
+  internal/sdk/models/shared/synctaskoutput.go:
+    id: f2ab31aee06f
+    last_write_checksum: sha1:013e4a999f0eac2ccd317440b2f1a9c8dee922f4
+    pristine_git_object: ee18dab7e8e726a1c852072d3a7dd38a368ace33
+  internal/sdk/models/shared/timebasedaccessoptions.go:
+    id: 92e612a69f9f
+    last_write_checksum: sha1:e476e4020ef81dbe6faffa747fd7d86164c86210
+    pristine_git_object: 433e9dd46272f532a4c7700648d41abf03b9b512
+  internal/sdk/models/shared/user.go:
+    id: 9a5b526115dc
+    last_write_checksum: sha1:4b3ad083c92367b410e425541591b67f94996c1c
+    pristine_git_object: 3e97ef53ada540a729e9b805eb5d2fa3459cd8fb
+  internal/sdk/models/shared/userlifecyclestatus.go:
+    id: 07a48343f7db
+    last_write_checksum: sha1:b76fbd655cac9eaafc52573ff86a1076a94b0ad5
+    pristine_git_object: 573c9a51f6a4b0c73304975ca276f0b88e9cc2cb
+  internal/sdk/models/shared/validationerror.go:
+    id: a2a78500f3df
+    last_write_checksum: sha1:8cf462840469f7664745999f556d50f72a131a23
+    pristine_git_object: 9678b36860a62415c7b3468238cf86782efaa31f
+  internal/sdk/models/shared/vendor.go:
+    id: 3480beb32d3e
+    last_write_checksum: sha1:e07ac107bd99ee4fa48703166dcd12d93ab7d53d
+    pristine_git_object: f47ac55a8a31de59d5744f8711ba864e83e8cdad
+  internal/sdk/models/shared/vendoragreement.go:
+    id: 6a41ce8a0d6d
+    last_write_checksum: sha1:8d04b166adf4732449a2bbf2ed63aa5d33199d1d
+    pristine_git_object: 577fb1fa772f17d4b8df5b6ee3978762c07d66ee
+  internal/sdk/models/shared/vendoragreementcustomattributeinput.go:
+    id: d8f943571395
+    last_write_checksum: sha1:556946763c728f2b9f7206e8ecda06b61a72724a
+    pristine_git_object: 88f37da5d47b44f95fd827d96ae91dbbb9e89233
+  internal/sdk/models/shared/vendoragreementcustomattributeoutput.go:
+    id: 6bfd7fa72afe
+    last_write_checksum: sha1:deb49bf634ff01d26630135fa707b3df9f97be08
+    pristine_git_object: d7139a3fe6b60da29fb192b6bcc8215f2fa88f1e
+  internal/sdk/models/shared/vendoragreementcustomattributetype.go:
+    id: 4901c332eb2e
+    last_write_checksum: sha1:157f3342dd26b35f914ae7fae1f8a81f689a026a
+    pristine_git_object: 4fedab5774d5e60d033b14651f7b0bd7ceadefe4
+  internal/sdk/optionalnullable/optionalnullable.go:
+    id: 4b83aa3f3df3
+    last_write_checksum: sha1:d6aff1a420c31e025ea21d46cf056e305ae76fe8
+    pristine_git_object: c6739be0619b6726565e0f11855ffe44b0e5607e
+  internal/sdk/optionalnullable/optionalnullable_test.go:
+    id: 3920a41dfc4c
+    last_write_checksum: sha1:2e9433eff1651ac77d6678ea76880d9a4980cbc2
+    pristine_git_object: e6e5a01c6e721e879e24a38a1f97e3e27d4686d4
+  internal/sdk/retry/config.go:
+    id: 7ea5fa9128b6
+    last_write_checksum: sha1:f565273be789ffe0e3c160de1ac72a63cfe67fbe
+    pristine_git_object: aa809fccb3445b1e2530a979dad620512f50e70f
+  internal/sdk/types/bigint.go:
+    id: fc530b70337e
+    last_write_checksum: sha1:49b004005d0461fb04b846eca062b070b0360b31
+    pristine_git_object: 9c6a086d51595888a6ff787ebcb8693559afee95
+  internal/sdk/types/date.go:
+    id: c4bff082c66f
+    last_write_checksum: sha1:3036a2e1ed15a1d484c093367eba000c38f384d0
+    pristine_git_object: 5b2782f219efe6bfbce46fc2dec68998eb759438
+  internal/sdk/types/datetime.go:
+    id: a8109857c712
+    last_write_checksum: sha1:196d050af6450669214e9ae4fd28e56263ae2b5d
+    pristine_git_object: 3eff332daa04e34cec5ffb10add670bafd8ac454
+  internal/sdk/types/pointers.go:
+    id: 2f3f971639f6
+    last_write_checksum: sha1:fc2275ea006257ba9ba4ff6f2a2cdb6205371eef
+    pristine_git_object: 35c439d2661e08fcb6a854096fd7b9a8561b3938
+  internal/sdk/vendormanagement.go:
+    id: 740f49df8121
+    last_write_checksum: sha1:30087ac10e91a1a1ff69234aad5c90055694c42d
+    pristine_git_object: fcdb329d2ddc6279e79e34dea728835dccc8dd9f
+  internal/validators/DateValidator.go:
+    id: 4fdfa187ab97
+    last_write_checksum: sha1:4c23c5a1f843bec999f40d2e6510c2f8ea6b30ac
+    pristine_git_object: 23b352efaf305554d40f79fcae1aa24d3950e164
+  internal/validators/ExactlyOneChild.go:
+    id: 66e7bd50b47d
+    last_write_checksum: sha1:ab8e18d1763fbd5b262c3e7d917c81ac40ba839f
+    pristine_git_object: 1765a3a0b83d38a6cc8f118ea2cfab67ab44c910
+  internal/validators/JSONParseValidator.go:
+    id: ce72f37482f5
+    last_write_checksum: sha1:77af551821798350f868410aab90352f7ec7b370
+    pristine_git_object: b8bb96b5e0930635eb754f169b3eaf285d48dd1c
+  internal/validators/RFC3339Validator.go:
+    id: 0cf126c9a956
+    last_write_checksum: sha1:8d9accfc3aa477a74b0f927652f5e2ae3d28061d
+    pristine_git_object: f5e61466b5c639cb17d0cb2cfe28611957297ce9
+  internal/validators/boolvalidators/not_null.go:
+    id: 865145e65396
+    last_write_checksum: sha1:89a7362be9d519ed7c9fb7c4989d273a3aa5f279
+    pristine_git_object: 6eca17e0cff87f7682f8baa2cd81cd33bc972f4c
+  internal/validators/float32validators/not_null.go:
+    id: 330748f4ff91
+    last_write_checksum: sha1:4f0a859aa9d7348056c6559bad9ca336104beaef
+    pristine_git_object: c9a8973c7dc830b9c5aac546ea7cbe6021f01629
+  internal/validators/float64validators/not_null.go:
+    id: 8f5e6362f0f5
+    last_write_checksum: sha1:f2436a4a1323d58ffcff3b153167c4e463325c12
+    pristine_git_object: 8f786d278597ffac3c525755e429c9a3caa60b20
+  internal/validators/int32validators/not_null.go:
+    id: ea876d1f8b07
+    last_write_checksum: sha1:d08335af46ab809d0076da8543b3455662fb66a0
+    pristine_git_object: ec9a3f10adfdd29c3cca40e53dc42db329cf37d7
+  internal/validators/int64validators/not_null.go:
+    id: d3f822eb4c69
+    last_write_checksum: sha1:b5bf5b539f2631813ee8771cf00d8ea9744c6dd3
+    pristine_git_object: 707ff9573f026b7b7ee3f59462c7a8ba10a1aba9
+  internal/validators/listvalidators/not_null.go:
+    id: b3ee156dafa7
+    last_write_checksum: sha1:11f33dfa3cb1b9eadc7e4a8287518135ddae191e
+    pristine_git_object: 9b88e520b7d58c14c6844d3dbc26ce4f96d39af1
+  internal/validators/mapvalidators/not_null.go:
+    id: 9cff80d0791c
+    last_write_checksum: sha1:64117afe6cdb1a0e1b57df970da8df0e18d10442
+    pristine_git_object: dc6959e9cdadb16e0e1ea90f98b2d27f2d357b64
+  internal/validators/numbervalidators/not_null.go:
+    id: b335c948bcf4
+    last_write_checksum: sha1:54d925f13a630f21e14709ce6181e5eaf96bd6e3
+    pristine_git_object: 57d4da0ae000f671698384abc550196744884871
+  internal/validators/objectvalidators/not_null.go:
+    id: dd14631b3a38
+    last_write_checksum: sha1:5f897f5dcd2686d43c9bd683900572a8d7ef6473
+    pristine_git_object: bf0189497acb3b1214f2480e9db071186d85ecad
+  internal/validators/setvalidators/not_null.go:
+    id: e612a6618fac
+    last_write_checksum: sha1:de772bcb14615735a8ebd2a9ffaae06f464a86d5
+    pristine_git_object: f859d64810168dd4ec7bfb1ea1c0186c551f8987
+  internal/validators/stringvalidators/not_null.go:
+    id: 80be7ffedf6c
+    last_write_checksum: sha1:df498b49dd87f9508f3eaec3a63ed0a08ae3c16e
+    pristine_git_object: 1e40ac1b6ce68540327e01910f0dc91a60b62607
+  main.go:
+    id: 0607f785dfa3
+    last_write_checksum: sha1:2005f7a324ee20c16126236dd9c45eeb4093d54c
+    pristine_git_object: 59a8b25e3b4d8b2a32050089a1190f66807a4b49
+  terraform-registry-manifest.json:
+    id: fc3d63fd06e1
+    last_write_checksum: sha1:45b609f3f65164bc2f00b6e2b24faf64627e15b8
+    pristine_git_object: fec2a5691e493a1941bd79b312b3925403a91aa6
+  tools/tools.go:
+    id: 683390d33800
+    last_write_checksum: sha1:8239addbb5e66af0488adc7dc4aba098e4634d88
+    pristine_git_object: 36b25801b3a26b57ee042a610a3c35ca65b1376a
 examples:
   listApps:
     speakeasy-default-list-apps:
@@ -782,7 +1752,7 @@ examples:
           application/json: {}
     speakeasy-default-create-found-document-multipart:
       requestBody:
-        multipart/form-data: {"unique_identifier": "<value>", "files": [{"": "0x70a6C9a86c"}]}
+        multipart/form-data: {"unique_identifier": "<value>", "files": ["x-file: example.file"]}
       responses:
         "200":
           application/json: "<value>"
@@ -831,3 +1801,306 @@ examples:
           application/json: {}
 examplesVersion: 1.0.2
 generatedTests: {}
+generatedFiles:
+  - .gitattributes
+  - USAGE.md
+  - examples/README.md
+  - examples/data-sources/lumos_app/data-source.tf
+  - examples/data-sources/lumos_app_store_app/data-source.tf
+  - examples/data-sources/lumos_app_store_app_settings/data-source.tf
+  - examples/data-sources/lumos_apps/data-source.tf
+  - examples/data-sources/lumos_group/data-source.tf
+  - examples/data-sources/lumos_groups/data-source.tf
+  - examples/data-sources/lumos_requestable_permission/data-source.tf
+  - examples/data-sources/lumos_requestable_permissions/data-source.tf
+  - examples/data-sources/lumos_user/data-source.tf
+  - examples/data-sources/lumos_users/data-source.tf
+  - examples/provider/provider.tf
+  - examples/resources/lumos_app/import.sh
+  - examples/resources/lumos_app/resource.tf
+  - examples/resources/lumos_app_store_app/import.sh
+  - examples/resources/lumos_app_store_app/resource.tf
+  - examples/resources/lumos_pre_approval_rule/resource.tf
+  - examples/resources/lumos_requestable_permission/import.sh
+  - go.mod
+  - go.sum
+  - internal/planmodifiers/boolplanmodifier/suppress_diff.go
+  - internal/planmodifiers/float32planmodifier/suppress_diff.go
+  - internal/planmodifiers/float64planmodifier/suppress_diff.go
+  - internal/planmodifiers/int32planmodifier/suppress_diff.go
+  - internal/planmodifiers/int64planmodifier/suppress_diff.go
+  - internal/planmodifiers/listplanmodifier/suppress_diff.go
+  - internal/planmodifiers/mapplanmodifier/suppress_diff.go
+  - internal/planmodifiers/numberplanmodifier/suppress_diff.go
+  - internal/planmodifiers/objectplanmodifier/suppress_diff.go
+  - internal/planmodifiers/setplanmodifier/suppress_diff.go
+  - internal/planmodifiers/stringplanmodifier/suppress_diff.go
+  - internal/planmodifiers/utils/state_check.go
+  - internal/provider/app_data_source.go
+  - internal/provider/app_data_source_sdk.go
+  - internal/provider/app_resource.go
+  - internal/provider/app_resource_sdk.go
+  - internal/provider/apps_data_source.go
+  - internal/provider/apps_data_source_sdk.go
+  - internal/provider/appstoreapp_data_source.go
+  - internal/provider/appstoreapp_data_source_sdk.go
+  - internal/provider/appstoreapp_resource.go
+  - internal/provider/appstoreapp_resource_sdk.go
+  - internal/provider/appstoreappsettings_data_source.go
+  - internal/provider/appstoreappsettings_data_source_sdk.go
+  - internal/provider/group_data_source.go
+  - internal/provider/group_data_source_sdk.go
+  - internal/provider/groups_data_source.go
+  - internal/provider/groups_data_source_sdk.go
+  - internal/provider/preapprovalrule_resource.go
+  - internal/provider/preapprovalrule_resource_sdk.go
+  - internal/provider/provider.go
+  - internal/provider/reflect/diags.go
+  - internal/provider/reflect/doc.go
+  - internal/provider/reflect/generic_attr_value.go
+  - internal/provider/reflect/helpers.go
+  - internal/provider/reflect/interfaces.go
+  - internal/provider/reflect/into.go
+  - internal/provider/reflect/map.go
+  - internal/provider/reflect/number.go
+  - internal/provider/reflect/options.go
+  - internal/provider/reflect/outof.go
+  - internal/provider/reflect/pointer.go
+  - internal/provider/reflect/primitive.go
+  - internal/provider/reflect/slice.go
+  - internal/provider/reflect/struct.go
+  - internal/provider/requestablepermission_data_source.go
+  - internal/provider/requestablepermission_data_source_sdk.go
+  - internal/provider/requestablepermission_resource.go
+  - internal/provider/requestablepermission_resource_sdk.go
+  - internal/provider/requestablepermissions_data_source.go
+  - internal/provider/requestablepermissions_data_source_sdk.go
+  - internal/provider/typeconvert/date.go
+  - internal/provider/typeconvert/datetime.go
+  - internal/provider/typeconvert/int32.go
+  - internal/provider/types/allowed_groups_config_input.go
+  - internal/provider/types/app.go
+  - internal/provider/types/app_admins_input.go
+  - internal/provider/types/app_approvers_input.go
+  - internal/provider/types/app_links.go
+  - internal/provider/types/app_store_app_settings_provisioning_input.go
+  - internal/provider/types/app_store_app_settings_request_flow_input.go
+  - internal/provider/types/attribute_equality_rule.go
+  - internal/provider/types/base_inline_webhook.go
+  - internal/provider/types/group.go
+  - internal/provider/types/request_approval_config_input.go
+  - internal/provider/types/request_approval_config_output.go
+  - internal/provider/types/request_config_input_create.go
+  - internal/provider/types/request_config_output.go
+  - internal/provider/types/request_fulfillment_config_input.go
+  - internal/provider/types/requestable_permission_base.go
+  - internal/provider/types/requestable_permission_output.go
+  - internal/provider/types/user.go
+  - internal/provider/user_data_source.go
+  - internal/provider/user_data_source_sdk.go
+  - internal/provider/users_data_source.go
+  - internal/provider/users_data_source_sdk.go
+  - internal/provider/utils.go
+  - internal/sdk/.gitattributes
+  - internal/sdk/appstore.go
+  - internal/sdk/core.go
+  - internal/sdk/docs/models/operations/option.md
+  - internal/sdk/integrationwebhooks.go
+  - internal/sdk/internal/config/sdkconfiguration.go
+  - internal/sdk/internal/hooks/hooks.go
+  - internal/sdk/internal/utils/contenttype.go
+  - internal/sdk/internal/utils/env.go
+  - internal/sdk/internal/utils/form.go
+  - internal/sdk/internal/utils/headers.go
+  - internal/sdk/internal/utils/json.go
+  - internal/sdk/internal/utils/pathparams.go
+  - internal/sdk/internal/utils/queryparams.go
+  - internal/sdk/internal/utils/requestbody.go
+  - internal/sdk/internal/utils/retries.go
+  - internal/sdk/internal/utils/security.go
+  - internal/sdk/internal/utils/utils.go
+  - internal/sdk/lumos.go
+  - internal/sdk/meta.go
+  - internal/sdk/models/errors/sdkerror.go
+  - internal/sdk/models/operations/activityrecords.go
+  - internal/sdk/models/operations/addapptoappstore.go
+  - internal/sdk/models/operations/cancelaccessrequest.go
+  - internal/sdk/models/operations/createaccessrequest.go
+  - internal/sdk/models/operations/createapp.go
+  - internal/sdk/models/operations/createappstorerequestablepermissionappstorerequestablepermissionspost.go
+  - internal/sdk/models/operations/createfounddocumentjson.go
+  - internal/sdk/models/operations/createfounddocumentmultipart.go
+  - internal/sdk/models/operations/createorder.go
+  - internal/sdk/models/operations/createpreapprovalruleappstorepreapprovalrulespost.go
+  - internal/sdk/models/operations/currentuser.go
+  - internal/sdk/models/operations/deleteappstorepermissionappstorerequestablepermissionspermissioniddelete.go
+  - internal/sdk/models/operations/deletepreapprovalruleappstorepreapprovalrulespreapprovalruleiddelete.go
+  - internal/sdk/models/operations/getaccessrequest.go
+  - internal/sdk/models/operations/getaccessrequests.go
+  - internal/sdk/models/operations/getaccounts.go
+  - internal/sdk/models/operations/getactivitylogs.go
+  - internal/sdk/models/operations/getactivityrecordsjobstate.go
+  - internal/sdk/models/operations/getapp.go
+  - internal/sdk/models/operations/getappcategories.go
+  - internal/sdk/models/operations/getappsettings.go
+  - internal/sdk/models/operations/getappstoreapp.go
+  - internal/sdk/models/operations/getappstoreapps.go
+  - internal/sdk/models/operations/getappstoreappsettings.go
+  - internal/sdk/models/operations/getappstorepermissionappstorerequestablepermissionspermissionidget.go
+  - internal/sdk/models/operations/getappstorepermissionsappstorerequestablepermissionsget.go
+  - internal/sdk/models/operations/getappstorepermissionsforappappstoreappsappidrequestablepermissionsget.go
+  - internal/sdk/models/operations/getappstorepreapprovalruleappstorepreapprovalrulespreapprovalruleidget.go
+  - internal/sdk/models/operations/getappstorepreapprovalrulesforappappstorepreapprovalrulesget.go
+  - internal/sdk/models/operations/getgroup.go
+  - internal/sdk/models/operations/getgroupmembership.go
+  - internal/sdk/models/operations/getgroups.go
+  - internal/sdk/models/operations/getinlinewebhooksinlinewebhooksget.go
+  - internal/sdk/models/operations/getuploadjobstate.go
+  - internal/sdk/models/operations/getuser.go
+  - internal/sdk/models/operations/getuseraccounts.go
+  - internal/sdk/models/operations/listapps.go
+  - internal/sdk/models/operations/listusers.go
+  - internal/sdk/models/operations/listvendoragreements.go
+  - internal/sdk/models/operations/lumosart.go
+  - internal/sdk/models/operations/lumoslivenesscheck.go
+  - internal/sdk/models/operations/options.go
+  - internal/sdk/models/operations/postaccounts.go
+  - internal/sdk/models/operations/processairbasemilestoneevent.go
+  - internal/sdk/models/operations/processvendrrequestcompletedwebhooksvendrrequestcompleteddomainappuuidpost.go
+  - internal/sdk/models/operations/removeappfromappstore.go
+  - internal/sdk/models/operations/updateapp.go
+  - internal/sdk/models/operations/updateappsettings.go
+  - internal/sdk/models/operations/updateappstoreappsettings.go
+  - internal/sdk/models/operations/updateappstorepermissionappstorerequestablepermissionspermissionidpatch.go
+  - internal/sdk/models/operations/updatepreapprovalruleappstorepreapprovalrulespreapprovalruleidpatch.go
+  - internal/sdk/models/shared/accessrequest.go
+  - internal/sdk/models/shared/account.go
+  - internal/sdk/models/shared/accounttype.go
+  - internal/sdk/models/shared/activitylog.go
+  - internal/sdk/models/shared/activityrecord.go
+  - internal/sdk/models/shared/activityrecordaccountinput.go
+  - internal/sdk/models/shared/activityrecordappinput.go
+  - internal/sdk/models/shared/activityrecordeventinput.go
+  - internal/sdk/models/shared/activityrecordeventtype.go
+  - internal/sdk/models/shared/activityrecordinput.go
+  - internal/sdk/models/shared/activityrecordoutput.go
+  - internal/sdk/models/shared/addapptoappstoreinput.go
+  - internal/sdk/models/shared/airbasepurchaserequestevent.go
+  - internal/sdk/models/shared/allowedgroupsconfiginput.go
+  - internal/sdk/models/shared/allowedgroupsconfigoutput.go
+  - internal/sdk/models/shared/allowedgroupsconfigtype.go
+  - internal/sdk/models/shared/app.go
+  - internal/sdk/models/shared/appadminsinput.go
+  - internal/sdk/models/shared/appadminsoutput.go
+  - internal/sdk/models/shared/appapproversinput.go
+  - internal/sdk/models/shared/appapproversoutput.go
+  - internal/sdk/models/shared/appinputcreate.go
+  - internal/sdk/models/shared/applinks.go
+  - internal/sdk/models/shared/approverinput.go
+  - internal/sdk/models/shared/approveroutput.go
+  - internal/sdk/models/shared/approvertype.go
+  - internal/sdk/models/shared/appsettinginput.go
+  - internal/sdk/models/shared/appsettingoutput.go
+  - internal/sdk/models/shared/appstoreapp.go
+  - internal/sdk/models/shared/appstoreappsettingsinput.go
+  - internal/sdk/models/shared/appstoreappsettingsoutput.go
+  - internal/sdk/models/shared/appstoreappsettingsprovisioninginput.go
+  - internal/sdk/models/shared/appstoreappsettingsprovisioningoutput.go
+  - internal/sdk/models/shared/appstoreappsettingsrequestflowinput.go
+  - internal/sdk/models/shared/appstoreappsettingsrequestflowoutput.go
+  - internal/sdk/models/shared/appstorevisibility.go
+  - internal/sdk/models/shared/appstorevisibilityoption.go
+  - internal/sdk/models/shared/attributeequalityrule.go
+  - internal/sdk/models/shared/basegroup.go
+  - internal/sdk/models/shared/baseinlinewebhook.go
+  - internal/sdk/models/shared/baseuser.go
+  - internal/sdk/models/shared/cost.go
+  - internal/sdk/models/shared/createaccessrequestinput.go
+  - internal/sdk/models/shared/discoverysource.go
+  - internal/sdk/models/shared/domainappstatus.go
+  - internal/sdk/models/shared/fileupload.go
+  - internal/sdk/models/shared/fileuploadtype.go
+  - internal/sdk/models/shared/flowstate.go
+  - internal/sdk/models/shared/founddocumentsupload.go
+  - internal/sdk/models/shared/group.go
+  - internal/sdk/models/shared/groupprovisioningoption.go
+  - internal/sdk/models/shared/httpvalidationerror.go
+  - internal/sdk/models/shared/inlinewebhook.go
+  - internal/sdk/models/shared/inlinewebhooktype.go
+  - internal/sdk/models/shared/jobstateoutput.go
+  - internal/sdk/models/shared/lifecycle.go
+  - internal/sdk/models/shared/limitoffsetpageactivitylog.go
+  - internal/sdk/models/shared/lineitem.go
+  - internal/sdk/models/shared/lineiteminput.go
+  - internal/sdk/models/shared/lineitemunitcost.go
+  - internal/sdk/models/shared/lineitemunitcostinput.go
+  - internal/sdk/models/shared/lineitemupload.go
+  - internal/sdk/models/shared/links.go
+  - internal/sdk/models/shared/managerapprovaloption.go
+  - internal/sdk/models/shared/orderinput.go
+  - internal/sdk/models/shared/pageaccessrequest.go
+  - internal/sdk/models/shared/pageaccount.go
+  - internal/sdk/models/shared/pageapp.go
+  - internal/sdk/models/shared/pageappstoreapp.go
+  - internal/sdk/models/shared/pagegroup.go
+  - internal/sdk/models/shared/pagepreapprovalruleoutput.go
+  - internal/sdk/models/shared/pagerequestablepermissionoutput.go
+  - internal/sdk/models/shared/pageuser.go
+  - internal/sdk/models/shared/pagevendoragreement.go
+  - internal/sdk/models/shared/permissiontype.go
+  - internal/sdk/models/shared/preapprovalruleinput.go
+  - internal/sdk/models/shared/preapprovalruleoutput.go
+  - internal/sdk/models/shared/preapprovalruleupdateinput.go
+  - internal/sdk/models/shared/requestablepermissionbase.go
+  - internal/sdk/models/shared/requestablepermissionbaseoutput.go
+  - internal/sdk/models/shared/requestablepermissioninput.go
+  - internal/sdk/models/shared/requestablepermissioninputupdate.go
+  - internal/sdk/models/shared/requestablepermissionoutput.go
+  - internal/sdk/models/shared/requestapprovalconfiginput.go
+  - internal/sdk/models/shared/requestapprovalconfigoutput.go
+  - internal/sdk/models/shared/requestapprovalstageinput.go
+  - internal/sdk/models/shared/requestapprovalstageoutput.go
+  - internal/sdk/models/shared/requestconfiginputcreate.go
+  - internal/sdk/models/shared/requestconfiginputupdate.go
+  - internal/sdk/models/shared/requestconfigoutput.go
+  - internal/sdk/models/shared/requestfulfillmentconfiginput.go
+  - internal/sdk/models/shared/requestfulfillmentconfiginputupdate.go
+  - internal/sdk/models/shared/requestfulfillmentconfigoutput.go
+  - internal/sdk/models/shared/runinfostatus.go
+  - internal/sdk/models/shared/security.go
+  - internal/sdk/models/shared/supportrequeststatus.go
+  - internal/sdk/models/shared/synctaskoutput.go
+  - internal/sdk/models/shared/timebasedaccessoptions.go
+  - internal/sdk/models/shared/user.go
+  - internal/sdk/models/shared/userlifecyclestatus.go
+  - internal/sdk/models/shared/validationerror.go
+  - internal/sdk/models/shared/vendor.go
+  - internal/sdk/models/shared/vendoragreement.go
+  - internal/sdk/models/shared/vendoragreementcustomattributeinput.go
+  - internal/sdk/models/shared/vendoragreementcustomattributeoutput.go
+  - internal/sdk/models/shared/vendoragreementcustomattributetype.go
+  - internal/sdk/retry/config.go
+  - internal/sdk/types/bigint.go
+  - internal/sdk/types/date.go
+  - internal/sdk/types/datetime.go
+  - internal/sdk/types/decimal.go
+  - internal/sdk/types/pointers.go
+  - internal/sdk/vendormanagement.go
+  - internal/validators/DateValidator.go
+  - internal/validators/ExactlyOneChild.go
+  - internal/validators/JSONParseValidator.go
+  - internal/validators/RFC3339Validator.go
+  - internal/validators/boolvalidators/not_null.go
+  - internal/validators/float32validators/not_null.go
+  - internal/validators/float64validators/not_null.go
+  - internal/validators/int32validators/not_null.go
+  - internal/validators/int64validators/not_null.go
+  - internal/validators/listvalidators/not_null.go
+  - internal/validators/mapvalidators/not_null.go
+  - internal/validators/numbervalidators/not_null.go
+  - internal/validators/objectvalidators/not_null.go
+  - internal/validators/setvalidators/not_null.go
+  - internal/validators/stringvalidators/not_null.go
+  - main.go
+  - terraform-registry-manifest.json
+  - tools/tools.go

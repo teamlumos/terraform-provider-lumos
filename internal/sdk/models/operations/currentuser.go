@@ -18,30 +18,30 @@ type CurrentUserResponse struct {
 	User *shared.User
 }
 
-func (o *CurrentUserResponse) GetContentType() string {
-	if o == nil {
+func (c *CurrentUserResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CurrentUserResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CurrentUserResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CurrentUserResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CurrentUserResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CurrentUserResponse) GetUser() *shared.User {
-	if o == nil {
+func (c *CurrentUserResponse) GetUser() *shared.User {
+	if c == nil {
 		return nil
 	}
-	return o.User
+	return c.User
 }

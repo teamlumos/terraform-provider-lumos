@@ -17,22 +17,22 @@ func (a AllowedGroupsConfigOutput) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AllowedGroupsConfigOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *AllowedGroupsConfigOutput) GetType() *AllowedGroupsConfigType {
-	if o == nil {
+func (a *AllowedGroupsConfigOutput) GetType() *AllowedGroupsConfigType {
+	if a == nil {
 		return nil
 	}
-	return o.Type
+	return a.Type
 }
 
-func (o *AllowedGroupsConfigOutput) GetGroups() []Group {
-	if o == nil {
+func (a *AllowedGroupsConfigOutput) GetGroups() []Group {
+	if a == nil {
 		return nil
 	}
-	return o.Groups
+	return a.Groups
 }

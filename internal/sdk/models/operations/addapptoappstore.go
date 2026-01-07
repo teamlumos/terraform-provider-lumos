@@ -20,37 +20,37 @@ type AddAppToAppStoreResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *AddAppToAppStoreResponse) GetContentType() string {
-	if o == nil {
+func (a *AddAppToAppStoreResponse) GetContentType() string {
+	if a == nil {
 		return ""
 	}
-	return o.ContentType
+	return a.ContentType
 }
 
-func (o *AddAppToAppStoreResponse) GetStatusCode() int {
-	if o == nil {
+func (a *AddAppToAppStoreResponse) GetStatusCode() int {
+	if a == nil {
 		return 0
 	}
-	return o.StatusCode
+	return a.StatusCode
 }
 
-func (o *AddAppToAppStoreResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (a *AddAppToAppStoreResponse) GetRawResponse() *http.Response {
+	if a == nil {
 		return nil
 	}
-	return o.RawResponse
+	return a.RawResponse
 }
 
-func (o *AddAppToAppStoreResponse) GetAppStoreAppSettingsOutput() *shared.AppStoreAppSettingsOutput {
-	if o == nil {
+func (a *AddAppToAppStoreResponse) GetAppStoreAppSettingsOutput() *shared.AppStoreAppSettingsOutput {
+	if a == nil {
 		return nil
 	}
-	return o.AppStoreAppSettingsOutput
+	return a.AppStoreAppSettingsOutput
 }
 
-func (o *AddAppToAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (a *AddAppToAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if a == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return a.HTTPValidationError
 }

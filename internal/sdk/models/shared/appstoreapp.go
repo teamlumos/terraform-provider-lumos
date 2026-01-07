@@ -29,93 +29,93 @@ type AppStoreApp struct {
 	Links    AppLinks `json:"links"`
 }
 
-func (o *AppStoreApp) GetID() string {
-	if o == nil {
+func (a *AppStoreApp) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
 }
 
-func (o *AppStoreApp) GetAppClassID() string {
-	if o == nil {
+func (a *AppStoreApp) GetAppClassID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppClassID
+	return a.AppClassID
 }
 
-func (o *AppStoreApp) GetInstanceID() string {
-	if o == nil {
+func (a *AppStoreApp) GetInstanceID() string {
+	if a == nil {
 		return ""
 	}
-	return o.InstanceID
+	return a.InstanceID
 }
 
-func (o *AppStoreApp) GetUserFriendlyLabel() string {
-	if o == nil {
+func (a *AppStoreApp) GetUserFriendlyLabel() string {
+	if a == nil {
 		return ""
 	}
-	return o.UserFriendlyLabel
+	return a.UserFriendlyLabel
 }
 
-func (o *AppStoreApp) GetStatus() DomainAppStatus {
-	if o == nil {
+func (a *AppStoreApp) GetStatus() DomainAppStatus {
+	if a == nil {
 		return DomainAppStatus("")
 	}
-	return o.Status
+	return a.Status
 }
 
-func (o *AppStoreApp) GetSources() []DiscoverySource {
-	if o == nil {
+func (a *AppStoreApp) GetSources() []DiscoverySource {
+	if a == nil {
 		return []DiscoverySource{}
 	}
-	return o.Sources
+	return a.Sources
 }
 
-func (o *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
-	if o == nil {
+func (a *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
+	if a == nil {
 		return false
 	}
-	return o.AllowMultiplePermissionSelection
+	return a.AllowMultiplePermissionSelection
 }
 
-func (o *AppStoreApp) GetLogoURL() *string {
-	if o == nil {
+func (a *AppStoreApp) GetLogoURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.LogoURL
+	return a.LogoURL
 }
 
-func (o *AppStoreApp) GetWebsiteURL() *string {
-	if o == nil {
+func (a *AppStoreApp) GetWebsiteURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.WebsiteURL
+	return a.WebsiteURL
 }
 
-func (o *AppStoreApp) GetRequestInstructions() *string {
-	if o == nil {
+func (a *AppStoreApp) GetRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.RequestInstructions
+	return a.RequestInstructions
 }
 
-func (o *AppStoreApp) GetDescription() *string {
-	if o == nil {
+func (a *AppStoreApp) GetDescription() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Description
+	return a.Description
 }
 
-func (o *AppStoreApp) GetCategory() *string {
-	if o == nil {
+func (a *AppStoreApp) GetCategory() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Category
+	return a.Category
 }
 
-func (o *AppStoreApp) GetLinks() AppLinks {
-	if o == nil {
+func (a *AppStoreApp) GetLinks() AppLinks {
+	if a == nil {
 		return AppLinks{}
 	}
-	return o.Links
+	return a.Links
 }

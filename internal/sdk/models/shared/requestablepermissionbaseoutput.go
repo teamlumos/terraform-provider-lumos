@@ -17,44 +17,44 @@ type RequestablePermissionBaseOutput struct {
 	AppInstanceID string `json:"app_instance_id"`
 }
 
-func (o *RequestablePermissionBaseOutput) GetID() *string {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.ID
+	return r.ID
 }
 
-func (o *RequestablePermissionBaseOutput) GetType() *PermissionType {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetType() *PermissionType {
+	if r == nil {
 		return nil
 	}
-	return o.Type
+	return r.Type
 }
 
-func (o *RequestablePermissionBaseOutput) GetLabel() string {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetLabel() string {
+	if r == nil {
 		return ""
 	}
-	return o.Label
+	return r.Label
 }
 
-func (o *RequestablePermissionBaseOutput) GetAppID() string {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetAppID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppID
+	return r.AppID
 }
 
-func (o *RequestablePermissionBaseOutput) GetAppClassID() string {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetAppClassID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppClassID
+	return r.AppClassID
 }
 
-func (o *RequestablePermissionBaseOutput) GetAppInstanceID() string {
-	if o == nil {
+func (r *RequestablePermissionBaseOutput) GetAppInstanceID() string {
+	if r == nil {
 		return ""
 	}
-	return o.AppInstanceID
+	return r.AppInstanceID
 }

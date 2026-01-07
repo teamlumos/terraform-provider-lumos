@@ -10,37 +10,37 @@ type PageAccount struct {
 	Pages *int64    `json:"pages,omitempty"`
 }
 
-func (o *PageAccount) GetItems() []Account {
-	if o == nil {
+func (p *PageAccount) GetItems() []Account {
+	if p == nil {
 		return []Account{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageAccount) GetTotal() *int64 {
-	if o == nil {
+func (p *PageAccount) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageAccount) GetPage() *int64 {
-	if o == nil {
+func (p *PageAccount) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageAccount) GetSize() *int64 {
-	if o == nil {
+func (p *PageAccount) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageAccount) GetPages() *int64 {
-	if o == nil {
+func (p *PageAccount) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

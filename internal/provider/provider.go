@@ -41,8 +41,9 @@ func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"http_bearer": schema.StringAttribute{
-				Optional:  true,
-				Sensitive: true,
+				MarkdownDescription: `HTTP Bearer. Configurable via environment variable ` + "`" + `LUMOS_ACCESS_TOKEN` + "`" + `.`,
+				Optional:            true,
+				Sensitive:           true,
 			},
 			"server_url": schema.StringAttribute{
 				Description: `Server URL (defaults to https://api.lumos.com)`,
@@ -62,10 +63,10 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	ServerURL := data.ServerURL.ValueString()
+	serverUrl := data.ServerURL.ValueString()
 
-	if ServerURL == "" {
-		ServerURL = "https://api.lumos.com"
+	if serverUrl == "" {
+		serverUrl = "https://api.lumos.com"
 	}
 
 	security := shared.Security{}
@@ -94,12 +95,12 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	httpClient.Transport = NewProviderHTTPTransport(providerHTTPTransportOpts)
 
 	opts := []sdk.SDKOption{
-		sdk.WithServerURL(ServerURL),
+		sdk.WithServerURL(serverUrl),
 		sdk.WithSecurity(security),
 		sdk.WithClient(httpClient),
 	}
-	client := sdk.New(opts...)
 
+	client := sdk.New(opts...)
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
 	resp.ResourceData = client

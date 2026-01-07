@@ -29,93 +29,93 @@ type App struct {
 	Links    AppLinks `json:"links"`
 }
 
-func (o *App) GetID() string {
-	if o == nil {
+func (a *App) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
 }
 
-func (o *App) GetAppClassID() string {
-	if o == nil {
+func (a *App) GetAppClassID() string {
+	if a == nil {
 		return ""
 	}
-	return o.AppClassID
+	return a.AppClassID
 }
 
-func (o *App) GetInstanceID() string {
-	if o == nil {
+func (a *App) GetInstanceID() string {
+	if a == nil {
 		return ""
 	}
-	return o.InstanceID
+	return a.InstanceID
 }
 
-func (o *App) GetUserFriendlyLabel() string {
-	if o == nil {
+func (a *App) GetUserFriendlyLabel() string {
+	if a == nil {
 		return ""
 	}
-	return o.UserFriendlyLabel
+	return a.UserFriendlyLabel
 }
 
-func (o *App) GetStatus() DomainAppStatus {
-	if o == nil {
+func (a *App) GetStatus() DomainAppStatus {
+	if a == nil {
 		return DomainAppStatus("")
 	}
-	return o.Status
+	return a.Status
 }
 
-func (o *App) GetSources() []DiscoverySource {
-	if o == nil {
+func (a *App) GetSources() []DiscoverySource {
+	if a == nil {
 		return []DiscoverySource{}
 	}
-	return o.Sources
+	return a.Sources
 }
 
-func (o *App) GetAllowMultiplePermissionSelection() bool {
-	if o == nil {
+func (a *App) GetAllowMultiplePermissionSelection() bool {
+	if a == nil {
 		return false
 	}
-	return o.AllowMultiplePermissionSelection
+	return a.AllowMultiplePermissionSelection
 }
 
-func (o *App) GetLogoURL() *string {
-	if o == nil {
+func (a *App) GetLogoURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.LogoURL
+	return a.LogoURL
 }
 
-func (o *App) GetWebsiteURL() *string {
-	if o == nil {
+func (a *App) GetWebsiteURL() *string {
+	if a == nil {
 		return nil
 	}
-	return o.WebsiteURL
+	return a.WebsiteURL
 }
 
-func (o *App) GetRequestInstructions() *string {
-	if o == nil {
+func (a *App) GetRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-	return o.RequestInstructions
+	return a.RequestInstructions
 }
 
-func (o *App) GetDescription() *string {
-	if o == nil {
+func (a *App) GetDescription() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Description
+	return a.Description
 }
 
-func (o *App) GetCategory() *string {
-	if o == nil {
+func (a *App) GetCategory() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Category
+	return a.Category
 }
 
-func (o *App) GetLinks() AppLinks {
-	if o == nil {
+func (a *App) GetLinks() AppLinks {
+	if a == nil {
 		return AppLinks{}
 	}
-	return o.Links
+	return a.Links
 }

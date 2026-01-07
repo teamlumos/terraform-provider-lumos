@@ -17,44 +17,44 @@ type RequestFulfillmentConfigOutput struct {
 	ProvisioningWebhook *InlineWebhook `json:"provisioning_webhook,omitempty"`
 }
 
-func (o *RequestFulfillmentConfigOutput) GetManualStepsNeeded() *bool {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetManualStepsNeeded() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.ManualStepsNeeded
+	return r.ManualStepsNeeded
 }
 
-func (o *RequestFulfillmentConfigOutput) GetManualInstructions() *string {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetManualInstructions() *string {
+	if r == nil {
 		return nil
 	}
-	return o.ManualInstructions
+	return r.ManualInstructions
 }
 
-func (o *RequestFulfillmentConfigOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if r == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
+	return r.TimeBasedAccess
 }
 
-func (o *RequestFulfillmentConfigOutput) GetTimeBasedAccessOverride() *bool {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetTimeBasedAccessOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.TimeBasedAccessOverride
+	return r.TimeBasedAccessOverride
 }
 
-func (o *RequestFulfillmentConfigOutput) GetProvisioningGroup() *Group {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetProvisioningGroup() *Group {
+	if r == nil {
 		return nil
 	}
-	return o.ProvisioningGroup
+	return r.ProvisioningGroup
 }
 
-func (o *RequestFulfillmentConfigOutput) GetProvisioningWebhook() *InlineWebhook {
-	if o == nil {
+func (r *RequestFulfillmentConfigOutput) GetProvisioningWebhook() *InlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.ProvisioningWebhook
+	return r.ProvisioningWebhook
 }

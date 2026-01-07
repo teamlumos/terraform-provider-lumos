@@ -12,18 +12,18 @@ type UpdateAppRequest struct {
 	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
 }
 
-func (o *UpdateAppRequest) GetID() string {
-	if o == nil {
+func (u *UpdateAppRequest) GetID() string {
+	if u == nil {
 		return ""
 	}
-	return o.ID
+	return u.ID
 }
 
-func (o *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
-	if o == nil {
+func (u *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
+	if u == nil {
 		return shared.AppInputCreate{}
 	}
-	return o.AppInputCreate
+	return u.AppInputCreate
 }
 
 type UpdateAppResponse struct {
@@ -39,37 +39,37 @@ type UpdateAppResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *UpdateAppResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateAppResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateAppResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateAppResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateAppResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateAppResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }
 
-func (o *UpdateAppResponse) GetApp() *shared.App {
-	if o == nil {
+func (u *UpdateAppResponse) GetApp() *shared.App {
+	if u == nil {
 		return nil
 	}
-	return o.App
+	return u.App
 }
 
-func (o *UpdateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (u *UpdateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if u == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return u.HTTPValidationError
 }

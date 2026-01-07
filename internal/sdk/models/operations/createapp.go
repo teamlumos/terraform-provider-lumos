@@ -20,37 +20,37 @@ type CreateAppResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *CreateAppResponse) GetContentType() string {
-	if o == nil {
+func (c *CreateAppResponse) GetContentType() string {
+	if c == nil {
 		return ""
 	}
-	return o.ContentType
+	return c.ContentType
 }
 
-func (o *CreateAppResponse) GetStatusCode() int {
-	if o == nil {
+func (c *CreateAppResponse) GetStatusCode() int {
+	if c == nil {
 		return 0
 	}
-	return o.StatusCode
+	return c.StatusCode
 }
 
-func (o *CreateAppResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (c *CreateAppResponse) GetRawResponse() *http.Response {
+	if c == nil {
 		return nil
 	}
-	return o.RawResponse
+	return c.RawResponse
 }
 
-func (o *CreateAppResponse) GetApp() *shared.App {
-	if o == nil {
+func (c *CreateAppResponse) GetApp() *shared.App {
+	if c == nil {
 		return nil
 	}
-	return o.App
+	return c.App
 }
 
-func (o *CreateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (c *CreateAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if c == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return c.HTTPValidationError
 }

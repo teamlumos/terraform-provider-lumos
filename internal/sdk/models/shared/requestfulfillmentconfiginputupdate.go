@@ -15,37 +15,37 @@ type RequestFulfillmentConfigInputUpdate struct {
 	ProvisioningWebhook *BaseInlineWebhook `json:"provisioning_webhook,omitempty"`
 }
 
-func (o *RequestFulfillmentConfigInputUpdate) GetManualStepsNeeded() *bool {
-	if o == nil {
+func (r *RequestFulfillmentConfigInputUpdate) GetManualStepsNeeded() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.ManualStepsNeeded
+	return r.ManualStepsNeeded
 }
 
-func (o *RequestFulfillmentConfigInputUpdate) GetManualInstructions() *string {
-	if o == nil {
+func (r *RequestFulfillmentConfigInputUpdate) GetManualInstructions() *string {
+	if r == nil {
 		return nil
 	}
-	return o.ManualInstructions
+	return r.ManualInstructions
 }
 
-func (o *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccess() []TimeBasedAccessOptions {
-	if o == nil {
+func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccess() []TimeBasedAccessOptions {
+	if r == nil {
 		return nil
 	}
-	return o.TimeBasedAccess
+	return r.TimeBasedAccess
 }
 
-func (o *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccessOverride() *bool {
-	if o == nil {
+func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccessOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.TimeBasedAccessOverride
+	return r.TimeBasedAccessOverride
 }
 
-func (o *RequestFulfillmentConfigInputUpdate) GetProvisioningWebhook() *BaseInlineWebhook {
-	if o == nil {
+func (r *RequestFulfillmentConfigInputUpdate) GetProvisioningWebhook() *BaseInlineWebhook {
+	if r == nil {
 		return nil
 	}
-	return o.ProvisioningWebhook
+	return r.ProvisioningWebhook
 }

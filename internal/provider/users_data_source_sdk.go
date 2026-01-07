@@ -11,6 +11,36 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
+func (r *UsersDataSourceModel) RefreshFromSharedPageUser(ctx context.Context, resp *shared.PageUser) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Items = []tfTypes.User{}
+
+		for _, itemsItem := range resp.Items {
+			var items tfTypes.User
+
+			items.Email = types.StringPointerValue(itemsItem.Email)
+			items.FamilyName = types.StringPointerValue(itemsItem.FamilyName)
+			items.GivenName = types.StringPointerValue(itemsItem.GivenName)
+			items.ID = types.StringValue(itemsItem.ID)
+			if itemsItem.Status != nil {
+				items.Status = types.StringValue(string(*itemsItem.Status))
+			} else {
+				items.Status = types.StringNull()
+			}
+
+			r.Items = append(r.Items, items)
+		}
+		r.Page = types.Int64PointerValue(resp.Page)
+		r.Pages = types.Int64PointerValue(resp.Pages)
+		r.Size = types.Int64PointerValue(resp.Size)
+		r.Total = types.Int64PointerValue(resp.Total)
+	}
+
+	return diags
+}
+
 func (r *UsersDataSourceModel) ToOperationsListUsersRequest(ctx context.Context) (*operations.ListUsersRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -29,8 +59,8 @@ func (r *UsersDataSourceModel) ToOperationsListUsersRequest(ctx context.Context)
 	var expand []string
 	if r.Expand != nil {
 		expand = make([]string, 0, len(r.Expand))
-		for _, expandItem := range r.Expand {
-			expand = append(expand, expandItem.ValueString())
+		for expandIndex := range r.Expand {
+			expand = append(expand, r.Expand[expandIndex].ValueString())
 		}
 	}
 	page := new(int64)
@@ -54,42 +84,4 @@ func (r *UsersDataSourceModel) ToOperationsListUsersRequest(ctx context.Context)
 	}
 
 	return &out, diags
-}
-
-func (r *UsersDataSourceModel) RefreshFromSharedPageUser(ctx context.Context, resp *shared.PageUser) diag.Diagnostics {
-	var diags diag.Diagnostics
-
-	if resp != nil {
-		r.Items = []tfTypes.User{}
-		if len(r.Items) > len(resp.Items) {
-			r.Items = r.Items[:len(resp.Items)]
-		}
-		for itemsCount, itemsItem := range resp.Items {
-			var items tfTypes.User
-			items.Email = types.StringPointerValue(itemsItem.Email)
-			items.FamilyName = types.StringPointerValue(itemsItem.FamilyName)
-			items.GivenName = types.StringPointerValue(itemsItem.GivenName)
-			items.ID = types.StringValue(itemsItem.ID)
-			if itemsItem.Status != nil {
-				items.Status = types.StringValue(string(*itemsItem.Status))
-			} else {
-				items.Status = types.StringNull()
-			}
-			if itemsCount+1 > len(r.Items) {
-				r.Items = append(r.Items, items)
-			} else {
-				r.Items[itemsCount].Email = items.Email
-				r.Items[itemsCount].FamilyName = items.FamilyName
-				r.Items[itemsCount].GivenName = items.GivenName
-				r.Items[itemsCount].ID = items.ID
-				r.Items[itemsCount].Status = items.Status
-			}
-		}
-		r.Page = types.Int64PointerValue(resp.Page)
-		r.Pages = types.Int64PointerValue(resp.Pages)
-		r.Size = types.Int64PointerValue(resp.Size)
-		r.Total = types.Int64PointerValue(resp.Total)
-	}
-
-	return diags
 }

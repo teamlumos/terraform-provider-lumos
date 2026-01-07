@@ -33,59 +33,59 @@ func (g GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) MarshalJ
 }
 
 func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetAppID() *string {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetSearchTerm() *string {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetSearchTerm() *string {
+	if g == nil {
 		return nil
 	}
-	return o.SearchTerm
+	return g.SearchTerm
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetExactMatch() *bool {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetExactMatch() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.ExactMatch
+	return g.ExactMatch
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetInAppStore() *bool {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetInAppStore() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.InAppStore
+	return g.InAppStore
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetIncludeInheritedConfigs() *bool {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetIncludeInheritedConfigs() *bool {
+	if g == nil {
 		return nil
 	}
-	return o.IncludeInheritedConfigs
+	return g.IncludeInheritedConfigs
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse struct {
@@ -101,37 +101,37 @@ type GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetPageRequestablePermissionOutput() *shared.PageRequestablePermissionOutput {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetPageRequestablePermissionOutput() *shared.PageRequestablePermissionOutput {
+	if g == nil {
 		return nil
 	}
-	return o.PageRequestablePermissionOutput
+	return g.PageRequestablePermissionOutput
 }
 
-func (o *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

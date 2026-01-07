@@ -23,38 +23,38 @@ func (g GetActivityLogsRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetActivityLogsRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetActivityLogsRequest) GetSince() *time.Time {
-	if o == nil {
+func (g *GetActivityLogsRequest) GetSince() *time.Time {
+	if g == nil {
 		return nil
 	}
-	return o.Since
+	return g.Since
 }
 
-func (o *GetActivityLogsRequest) GetUntil() *time.Time {
-	if o == nil {
+func (g *GetActivityLogsRequest) GetUntil() *time.Time {
+	if g == nil {
 		return nil
 	}
-	return o.Until
+	return g.Until
 }
 
-func (o *GetActivityLogsRequest) GetLimit() *int64 {
-	if o == nil {
+func (g *GetActivityLogsRequest) GetLimit() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Limit
+	return g.Limit
 }
 
-func (o *GetActivityLogsRequest) GetOffset() *int64 {
-	if o == nil {
+func (g *GetActivityLogsRequest) GetOffset() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Offset
+	return g.Offset
 }
 
 type GetActivityLogsResponse struct {
@@ -70,37 +70,37 @@ type GetActivityLogsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetActivityLogsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetActivityLogsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetActivityLogsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetActivityLogsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetActivityLogsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetActivityLogsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetActivityLogsResponse) GetLimitOffsetPageActivityLog() *shared.LimitOffsetPageActivityLog {
-	if o == nil {
+func (g *GetActivityLogsResponse) GetLimitOffsetPageActivityLog() *shared.LimitOffsetPageActivityLog {
+	if g == nil {
 		return nil
 	}
-	return o.LimitOffsetPageActivityLog
+	return g.LimitOffsetPageActivityLog
 }
 
-func (o *GetActivityLogsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetActivityLogsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

@@ -22,31 +22,31 @@ func (g GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) Mar
 }
 
 func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetAppID() *string {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetAppID() *string {
+	if g == nil {
 		return nil
 	}
-	return o.AppID
+	return g.AppID
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse struct {
@@ -62,37 +62,37 @@ type GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse struct
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetContentType() string {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetPagePreApprovalRuleOutput() *shared.PagePreApprovalRuleOutput {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetPagePreApprovalRuleOutput() *shared.PagePreApprovalRuleOutput {
+	if g == nil {
 		return nil
 	}
-	return o.PagePreApprovalRuleOutput
+	return g.PagePreApprovalRuleOutput
 }
 
-func (o *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

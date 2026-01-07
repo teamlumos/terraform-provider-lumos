@@ -11,19 +11,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	out := operations.GetAppStoreAppSettingsRequest{
-		ID: id,
-	}
-
-	return &out, diags
-}
-
 func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ctx context.Context, resp *shared.AppStoreAppSettingsOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -73,11 +60,10 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			} else {
 				r.RequestFlow.Admins = &tfTypes.AppAdminsInput{}
 				r.RequestFlow.Admins.Groups = []tfTypes.Group{}
-				if len(r.RequestFlow.Admins.Groups) > len(resp.RequestFlow.Admins.Groups) {
-					r.RequestFlow.Admins.Groups = r.RequestFlow.Admins.Groups[:len(resp.RequestFlow.Admins.Groups)]
-				}
-				for groupsCount, groupsItem := range resp.RequestFlow.Admins.Groups {
+
+				for _, groupsItem := range resp.RequestFlow.Admins.Groups {
 					var groups tfTypes.Group
+
 					groups.AppID = types.StringPointerValue(groupsItem.AppID)
 					groups.Description = types.StringPointerValue(groupsItem.Description)
 					if groupsItem.GroupLifecycle != nil {
@@ -89,24 +75,14 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
 					groups.Name = types.StringPointerValue(groupsItem.Name)
 					groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
-					if groupsCount+1 > len(r.RequestFlow.Admins.Groups) {
-						r.RequestFlow.Admins.Groups = append(r.RequestFlow.Admins.Groups, groups)
-					} else {
-						r.RequestFlow.Admins.Groups[groupsCount].AppID = groups.AppID
-						r.RequestFlow.Admins.Groups[groupsCount].Description = groups.Description
-						r.RequestFlow.Admins.Groups[groupsCount].GroupLifecycle = groups.GroupLifecycle
-						r.RequestFlow.Admins.Groups[groupsCount].ID = groups.ID
-						r.RequestFlow.Admins.Groups[groupsCount].IntegrationSpecificID = groups.IntegrationSpecificID
-						r.RequestFlow.Admins.Groups[groupsCount].Name = groups.Name
-						r.RequestFlow.Admins.Groups[groupsCount].SourceAppID = groups.SourceAppID
-					}
+
+					r.RequestFlow.Admins.Groups = append(r.RequestFlow.Admins.Groups, groups)
 				}
 				r.RequestFlow.Admins.Users = []tfTypes.User{}
-				if len(r.RequestFlow.Admins.Users) > len(resp.RequestFlow.Admins.Users) {
-					r.RequestFlow.Admins.Users = r.RequestFlow.Admins.Users[:len(resp.RequestFlow.Admins.Users)]
-				}
-				for usersCount, usersItem := range resp.RequestFlow.Admins.Users {
+
+				for _, usersItem := range resp.RequestFlow.Admins.Users {
 					var users tfTypes.User
+
 					users.Email = types.StringPointerValue(usersItem.Email)
 					users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
 					users.GivenName = types.StringPointerValue(usersItem.GivenName)
@@ -116,15 +92,8 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					} else {
 						users.Status = types.StringNull()
 					}
-					if usersCount+1 > len(r.RequestFlow.Admins.Users) {
-						r.RequestFlow.Admins.Users = append(r.RequestFlow.Admins.Users, users)
-					} else {
-						r.RequestFlow.Admins.Users[usersCount].Email = users.Email
-						r.RequestFlow.Admins.Users[usersCount].FamilyName = users.FamilyName
-						r.RequestFlow.Admins.Users[usersCount].GivenName = users.GivenName
-						r.RequestFlow.Admins.Users[usersCount].ID = users.ID
-						r.RequestFlow.Admins.Users[usersCount].Status = users.Status
-					}
+
+					r.RequestFlow.Admins.Users = append(r.RequestFlow.Admins.Users, users)
 				}
 			}
 			if resp.RequestFlow.AllowedGroups == nil {
@@ -132,11 +101,10 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			} else {
 				r.RequestFlow.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 				r.RequestFlow.AllowedGroups.Groups = []tfTypes.Group{}
-				if len(r.RequestFlow.AllowedGroups.Groups) > len(resp.RequestFlow.AllowedGroups.Groups) {
-					r.RequestFlow.AllowedGroups.Groups = r.RequestFlow.AllowedGroups.Groups[:len(resp.RequestFlow.AllowedGroups.Groups)]
-				}
-				for groupsCount1, groupsItem1 := range resp.RequestFlow.AllowedGroups.Groups {
+
+				for _, groupsItem1 := range resp.RequestFlow.AllowedGroups.Groups {
 					var groups1 tfTypes.Group
+
 					groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
 					groups1.Description = types.StringPointerValue(groupsItem1.Description)
 					if groupsItem1.GroupLifecycle != nil {
@@ -148,17 +116,8 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
 					groups1.Name = types.StringPointerValue(groupsItem1.Name)
 					groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
-					if groupsCount1+1 > len(r.RequestFlow.AllowedGroups.Groups) {
-						r.RequestFlow.AllowedGroups.Groups = append(r.RequestFlow.AllowedGroups.Groups, groups1)
-					} else {
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].AppID = groups1.AppID
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].Description = groups1.Description
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].GroupLifecycle = groups1.GroupLifecycle
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].ID = groups1.ID
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].IntegrationSpecificID = groups1.IntegrationSpecificID
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].Name = groups1.Name
-						r.RequestFlow.AllowedGroups.Groups[groupsCount1].SourceAppID = groups1.SourceAppID
-					}
+
+					r.RequestFlow.AllowedGroups.Groups = append(r.RequestFlow.AllowedGroups.Groups, groups1)
 				}
 				if resp.RequestFlow.AllowedGroups.Type != nil {
 					r.RequestFlow.AllowedGroups.Type = types.StringValue(string(*resp.RequestFlow.AllowedGroups.Type))
@@ -171,11 +130,10 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			} else {
 				r.RequestFlow.Approvers = &tfTypes.AppApproversInput{}
 				r.RequestFlow.Approvers.Groups = []tfTypes.Group{}
-				if len(r.RequestFlow.Approvers.Groups) > len(resp.RequestFlow.Approvers.Groups) {
-					r.RequestFlow.Approvers.Groups = r.RequestFlow.Approvers.Groups[:len(resp.RequestFlow.Approvers.Groups)]
-				}
-				for groupsCount2, groupsItem2 := range resp.RequestFlow.Approvers.Groups {
+
+				for _, groupsItem2 := range resp.RequestFlow.Approvers.Groups {
 					var groups2 tfTypes.Group
+
 					groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
 					groups2.Description = types.StringPointerValue(groupsItem2.Description)
 					if groupsItem2.GroupLifecycle != nil {
@@ -187,24 +145,14 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
 					groups2.Name = types.StringPointerValue(groupsItem2.Name)
 					groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
-					if groupsCount2+1 > len(r.RequestFlow.Approvers.Groups) {
-						r.RequestFlow.Approvers.Groups = append(r.RequestFlow.Approvers.Groups, groups2)
-					} else {
-						r.RequestFlow.Approvers.Groups[groupsCount2].AppID = groups2.AppID
-						r.RequestFlow.Approvers.Groups[groupsCount2].Description = groups2.Description
-						r.RequestFlow.Approvers.Groups[groupsCount2].GroupLifecycle = groups2.GroupLifecycle
-						r.RequestFlow.Approvers.Groups[groupsCount2].ID = groups2.ID
-						r.RequestFlow.Approvers.Groups[groupsCount2].IntegrationSpecificID = groups2.IntegrationSpecificID
-						r.RequestFlow.Approvers.Groups[groupsCount2].Name = groups2.Name
-						r.RequestFlow.Approvers.Groups[groupsCount2].SourceAppID = groups2.SourceAppID
-					}
+
+					r.RequestFlow.Approvers.Groups = append(r.RequestFlow.Approvers.Groups, groups2)
 				}
 				r.RequestFlow.Approvers.Users = []tfTypes.User{}
-				if len(r.RequestFlow.Approvers.Users) > len(resp.RequestFlow.Approvers.Users) {
-					r.RequestFlow.Approvers.Users = r.RequestFlow.Approvers.Users[:len(resp.RequestFlow.Approvers.Users)]
-				}
-				for usersCount1, usersItem1 := range resp.RequestFlow.Approvers.Users {
+
+				for _, usersItem1 := range resp.RequestFlow.Approvers.Users {
 					var users1 tfTypes.User
+
 					users1.Email = types.StringPointerValue(usersItem1.Email)
 					users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
 					users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
@@ -214,15 +162,8 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					} else {
 						users1.Status = types.StringNull()
 					}
-					if usersCount1+1 > len(r.RequestFlow.Approvers.Users) {
-						r.RequestFlow.Approvers.Users = append(r.RequestFlow.Approvers.Users, users1)
-					} else {
-						r.RequestFlow.Approvers.Users[usersCount1].Email = users1.Email
-						r.RequestFlow.Approvers.Users[usersCount1].FamilyName = users1.FamilyName
-						r.RequestFlow.Approvers.Users[usersCount1].GivenName = users1.GivenName
-						r.RequestFlow.Approvers.Users[usersCount1].ID = users1.ID
-						r.RequestFlow.Approvers.Users[usersCount1].Status = users1.Status
-					}
+
+					r.RequestFlow.Approvers.Users = append(r.RequestFlow.Approvers.Users, users1)
 				}
 			}
 			if resp.RequestFlow.ApproversStage2 == nil {
@@ -230,11 +171,10 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 			} else {
 				r.RequestFlow.ApproversStage2 = &tfTypes.AppApproversInput{}
 				r.RequestFlow.ApproversStage2.Groups = []tfTypes.Group{}
-				if len(r.RequestFlow.ApproversStage2.Groups) > len(resp.RequestFlow.ApproversStage2.Groups) {
-					r.RequestFlow.ApproversStage2.Groups = r.RequestFlow.ApproversStage2.Groups[:len(resp.RequestFlow.ApproversStage2.Groups)]
-				}
-				for groupsCount3, groupsItem3 := range resp.RequestFlow.ApproversStage2.Groups {
+
+				for _, groupsItem3 := range resp.RequestFlow.ApproversStage2.Groups {
 					var groups3 tfTypes.Group
+
 					groups3.AppID = types.StringPointerValue(groupsItem3.AppID)
 					groups3.Description = types.StringPointerValue(groupsItem3.Description)
 					if groupsItem3.GroupLifecycle != nil {
@@ -246,24 +186,14 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					groups3.IntegrationSpecificID = types.StringPointerValue(groupsItem3.IntegrationSpecificID)
 					groups3.Name = types.StringPointerValue(groupsItem3.Name)
 					groups3.SourceAppID = types.StringPointerValue(groupsItem3.SourceAppID)
-					if groupsCount3+1 > len(r.RequestFlow.ApproversStage2.Groups) {
-						r.RequestFlow.ApproversStage2.Groups = append(r.RequestFlow.ApproversStage2.Groups, groups3)
-					} else {
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].AppID = groups3.AppID
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].Description = groups3.Description
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].GroupLifecycle = groups3.GroupLifecycle
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].ID = groups3.ID
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].IntegrationSpecificID = groups3.IntegrationSpecificID
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].Name = groups3.Name
-						r.RequestFlow.ApproversStage2.Groups[groupsCount3].SourceAppID = groups3.SourceAppID
-					}
+
+					r.RequestFlow.ApproversStage2.Groups = append(r.RequestFlow.ApproversStage2.Groups, groups3)
 				}
 				r.RequestFlow.ApproversStage2.Users = []tfTypes.User{}
-				if len(r.RequestFlow.ApproversStage2.Users) > len(resp.RequestFlow.ApproversStage2.Users) {
-					r.RequestFlow.ApproversStage2.Users = r.RequestFlow.ApproversStage2.Users[:len(resp.RequestFlow.ApproversStage2.Users)]
-				}
-				for usersCount2, usersItem2 := range resp.RequestFlow.ApproversStage2.Users {
+
+				for _, usersItem2 := range resp.RequestFlow.ApproversStage2.Users {
 					var users2 tfTypes.User
+
 					users2.Email = types.StringPointerValue(usersItem2.Email)
 					users2.FamilyName = types.StringPointerValue(usersItem2.FamilyName)
 					users2.GivenName = types.StringPointerValue(usersItem2.GivenName)
@@ -273,15 +203,8 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 					} else {
 						users2.Status = types.StringNull()
 					}
-					if usersCount2+1 > len(r.RequestFlow.ApproversStage2.Users) {
-						r.RequestFlow.ApproversStage2.Users = append(r.RequestFlow.ApproversStage2.Users, users2)
-					} else {
-						r.RequestFlow.ApproversStage2.Users[usersCount2].Email = users2.Email
-						r.RequestFlow.ApproversStage2.Users[usersCount2].FamilyName = users2.FamilyName
-						r.RequestFlow.ApproversStage2.Users[usersCount2].GivenName = users2.GivenName
-						r.RequestFlow.ApproversStage2.Users[usersCount2].ID = users2.ID
-						r.RequestFlow.ApproversStage2.Users[usersCount2].Status = users2.Status
-					}
+
+					r.RequestFlow.ApproversStage2.Users = append(r.RequestFlow.ApproversStage2.Users, users2)
 				}
 			}
 			r.RequestFlow.CustomApprovalMessage = types.StringPointerValue(resp.RequestFlow.CustomApprovalMessage)
@@ -305,4 +228,17 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 	}
 
 	return diags
+}
+
+func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.GetAppStoreAppSettingsRequest{
+		ID: id,
+	}
+
+	return &out, diags
 }

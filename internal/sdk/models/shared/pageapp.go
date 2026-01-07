@@ -10,37 +10,37 @@ type PageApp struct {
 	Pages *int64 `json:"pages,omitempty"`
 }
 
-func (o *PageApp) GetItems() []App {
-	if o == nil {
+func (p *PageApp) GetItems() []App {
+	if p == nil {
 		return []App{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageApp) GetTotal() *int64 {
-	if o == nil {
+func (p *PageApp) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageApp) GetPage() *int64 {
-	if o == nil {
+func (p *PageApp) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageApp) GetSize() *int64 {
-	if o == nil {
+func (p *PageApp) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageApp) GetPages() *int64 {
-	if o == nil {
+func (p *PageApp) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

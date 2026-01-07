@@ -20,37 +20,37 @@ type ActivityRecordsResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *ActivityRecordsResponse) GetContentType() string {
-	if o == nil {
+func (a *ActivityRecordsResponse) GetContentType() string {
+	if a == nil {
 		return ""
 	}
-	return o.ContentType
+	return a.ContentType
 }
 
-func (o *ActivityRecordsResponse) GetStatusCode() int {
-	if o == nil {
+func (a *ActivityRecordsResponse) GetStatusCode() int {
+	if a == nil {
 		return 0
 	}
-	return o.StatusCode
+	return a.StatusCode
 }
 
-func (o *ActivityRecordsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (a *ActivityRecordsResponse) GetRawResponse() *http.Response {
+	if a == nil {
 		return nil
 	}
-	return o.RawResponse
+	return a.RawResponse
 }
 
-func (o *ActivityRecordsResponse) GetActivityRecordOutput() *shared.ActivityRecordOutput {
-	if o == nil {
+func (a *ActivityRecordsResponse) GetActivityRecordOutput() *shared.ActivityRecordOutput {
+	if a == nil {
 		return nil
 	}
-	return o.ActivityRecordOutput
+	return a.ActivityRecordOutput
 }
 
-func (o *ActivityRecordsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (a *ActivityRecordsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if a == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return a.HTTPValidationError
 }

@@ -15,37 +15,37 @@ type RequestablePermissionInputUpdate struct {
 	RequestConfig *RequestConfigInputUpdate `json:"request_config,omitempty"`
 }
 
-func (o *RequestablePermissionInputUpdate) GetAppID() *string {
-	if o == nil {
+func (r *RequestablePermissionInputUpdate) GetAppID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.AppID
+	return r.AppID
 }
 
-func (o *RequestablePermissionInputUpdate) GetAppClassID() *string {
-	if o == nil {
+func (r *RequestablePermissionInputUpdate) GetAppClassID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.AppClassID
+	return r.AppClassID
 }
 
-func (o *RequestablePermissionInputUpdate) GetAppInstanceID() *string {
-	if o == nil {
+func (r *RequestablePermissionInputUpdate) GetAppInstanceID() *string {
+	if r == nil {
 		return nil
 	}
-	return o.AppInstanceID
+	return r.AppInstanceID
 }
 
-func (o *RequestablePermissionInputUpdate) GetLabel() *string {
-	if o == nil {
+func (r *RequestablePermissionInputUpdate) GetLabel() *string {
+	if r == nil {
 		return nil
 	}
-	return o.Label
+	return r.Label
 }
 
-func (o *RequestablePermissionInputUpdate) GetRequestConfig() *RequestConfigInputUpdate {
-	if o == nil {
+func (r *RequestablePermissionInputUpdate) GetRequestConfig() *RequestConfigInputUpdate {
+	if r == nil {
 		return nil
 	}
-	return o.RequestConfig
+	return r.RequestConfig
 }

@@ -21,31 +21,31 @@ func (g GetGroupMembershipRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetGroupMembershipRequest) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *GetGroupMembershipRequest) GetGroupID() string {
-	if o == nil {
+func (g *GetGroupMembershipRequest) GetGroupID() string {
+	if g == nil {
 		return ""
 	}
-	return o.GroupID
+	return g.GroupID
 }
 
-func (o *GetGroupMembershipRequest) GetPage() *int64 {
-	if o == nil {
+func (g *GetGroupMembershipRequest) GetPage() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Page
+	return g.Page
 }
 
-func (o *GetGroupMembershipRequest) GetSize() *int64 {
-	if o == nil {
+func (g *GetGroupMembershipRequest) GetSize() *int64 {
+	if g == nil {
 		return nil
 	}
-	return o.Size
+	return g.Size
 }
 
 type GetGroupMembershipResponse struct {
@@ -61,37 +61,37 @@ type GetGroupMembershipResponse struct {
 	HTTPValidationError *shared.HTTPValidationError
 }
 
-func (o *GetGroupMembershipResponse) GetContentType() string {
-	if o == nil {
+func (g *GetGroupMembershipResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetGroupMembershipResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetGroupMembershipResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetGroupMembershipResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetGroupMembershipResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetGroupMembershipResponse) GetPageUser() *shared.PageUser {
-	if o == nil {
+func (g *GetGroupMembershipResponse) GetPageUser() *shared.PageUser {
+	if g == nil {
 		return nil
 	}
-	return o.PageUser
+	return g.PageUser
 }
 
-func (o *GetGroupMembershipResponse) GetHTTPValidationError() *shared.HTTPValidationError {
-	if o == nil {
+func (g *GetGroupMembershipResponse) GetHTTPValidationError() *shared.HTTPValidationError {
+	if g == nil {
 		return nil
 	}
-	return o.HTTPValidationError
+	return g.HTTPValidationError
 }

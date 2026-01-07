@@ -31,71 +31,71 @@ func (v VendorAgreement) MarshalJSON() ([]byte, error) {
 }
 
 func (v *VendorAgreement) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &v, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *VendorAgreement) GetID() string {
-	if o == nil {
+func (v *VendorAgreement) GetID() string {
+	if v == nil {
 		return ""
 	}
-	return o.ID
+	return v.ID
 }
 
-func (o *VendorAgreement) GetVendor() Vendor {
-	if o == nil {
+func (v *VendorAgreement) GetVendor() Vendor {
+	if v == nil {
 		return Vendor{}
 	}
-	return o.Vendor
+	return v.Vendor
 }
 
-func (o *VendorAgreement) GetStartDate() *types.Date {
-	if o == nil {
+func (v *VendorAgreement) GetStartDate() *types.Date {
+	if v == nil {
 		return nil
 	}
-	return o.StartDate
+	return v.StartDate
 }
 
-func (o *VendorAgreement) GetEndDate() *types.Date {
-	if o == nil {
+func (v *VendorAgreement) GetEndDate() *types.Date {
+	if v == nil {
 		return nil
 	}
-	return o.EndDate
+	return v.EndDate
 }
 
-func (o *VendorAgreement) GetOptOutDate() *types.Date {
-	if o == nil {
+func (v *VendorAgreement) GetOptOutDate() *types.Date {
+	if v == nil {
 		return nil
 	}
-	return o.OptOutDate
+	return v.OptOutDate
 }
 
-func (o *VendorAgreement) GetRenewalOwners() []User {
-	if o == nil {
+func (v *VendorAgreement) GetRenewalOwners() []User {
+	if v == nil {
 		return nil
 	}
-	return o.RenewalOwners
+	return v.RenewalOwners
 }
 
-func (o *VendorAgreement) GetTotalContractCost() Cost {
-	if o == nil {
+func (v *VendorAgreement) GetTotalContractCost() Cost {
+	if v == nil {
 		return Cost{}
 	}
-	return o.TotalContractCost
+	return v.TotalContractCost
 }
 
-func (o *VendorAgreement) GetLineItems() []LineItem {
-	if o == nil {
+func (v *VendorAgreement) GetLineItems() []LineItem {
+	if v == nil {
 		return []LineItem{}
 	}
-	return o.LineItems
+	return v.LineItems
 }
 
-func (o *VendorAgreement) GetCustomAttributes() map[string]VendorAgreementCustomAttributeOutput {
-	if o == nil {
+func (v *VendorAgreement) GetCustomAttributes() map[string]VendorAgreementCustomAttributeOutput {
+	if v == nil {
 		return nil
 	}
-	return o.CustomAttributes
+	return v.CustomAttributes
 }

@@ -23,6 +23,7 @@ func NewAppStoreAppDataSource() datasource.DataSource {
 
 // AppStoreAppDataSource is the data source implementation.
 type AppStoreAppDataSource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 

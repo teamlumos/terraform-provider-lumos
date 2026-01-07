@@ -10,37 +10,37 @@ type PageAccessRequest struct {
 	Pages *int64          `json:"pages,omitempty"`
 }
 
-func (o *PageAccessRequest) GetItems() []AccessRequest {
-	if o == nil {
+func (p *PageAccessRequest) GetItems() []AccessRequest {
+	if p == nil {
 		return []AccessRequest{}
 	}
-	return o.Items
+	return p.Items
 }
 
-func (o *PageAccessRequest) GetTotal() *int64 {
-	if o == nil {
+func (p *PageAccessRequest) GetTotal() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Total
+	return p.Total
 }
 
-func (o *PageAccessRequest) GetPage() *int64 {
-	if o == nil {
+func (p *PageAccessRequest) GetPage() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Page
+	return p.Page
 }
 
-func (o *PageAccessRequest) GetSize() *int64 {
-	if o == nil {
+func (p *PageAccessRequest) GetSize() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Size
+	return p.Size
 }
 
-func (o *PageAccessRequest) GetPages() *int64 {
-	if o == nil {
+func (p *PageAccessRequest) GetPages() *int64 {
+	if p == nil {
 		return nil
 	}
-	return o.Pages
+	return p.Pages
 }

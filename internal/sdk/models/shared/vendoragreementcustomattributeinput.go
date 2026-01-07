@@ -17,8 +17,8 @@ const (
 
 // VendorAgreementCustomAttributeInputValue - The value of the attribute for an individual Order
 type VendorAgreementCustomAttributeInputValue struct {
-	Str         *string `queryParam:"inline"`
-	ArrayOfUser []User  `queryParam:"inline"`
+	Str         *string `queryParam:"inline" union:"member"`
+	ArrayOfUser []User  `queryParam:"inline" union:"member"`
 
 	Type VendorAgreementCustomAttributeInputValueType
 }
@@ -43,17 +43,43 @@ func CreateVendorAgreementCustomAttributeInputValueArrayOfUser(arrayOfUser []Use
 
 func (u *VendorAgreementCustomAttributeInputValue) UnmarshalJSON(data []byte) error {
 
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
 	var str string = ""
-	if err := utils.UnmarshalJSON(data, &str, "", true, true); err == nil {
-		u.Str = &str
-		u.Type = VendorAgreementCustomAttributeInputValueTypeStr
-		return nil
+	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  VendorAgreementCustomAttributeInputValueTypeStr,
+			Value: &str,
+		})
 	}
 
 	var arrayOfUser []User = []User{}
-	if err := utils.UnmarshalJSON(data, &arrayOfUser, "", true, true); err == nil {
-		u.ArrayOfUser = arrayOfUser
-		u.Type = VendorAgreementCustomAttributeInputValueTypeArrayOfUser
+	if err := utils.UnmarshalJSON(data, &arrayOfUser, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  VendorAgreementCustomAttributeInputValueTypeArrayOfUser,
+			Value: arrayOfUser,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VendorAgreementCustomAttributeInputValue", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VendorAgreementCustomAttributeInputValue", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(VendorAgreementCustomAttributeInputValueType)
+	switch best.Type {
+	case VendorAgreementCustomAttributeInputValueTypeStr:
+		u.Str = best.Value.(*string)
+		return nil
+	case VendorAgreementCustomAttributeInputValueTypeArrayOfUser:
+		u.ArrayOfUser = best.Value.([]User)
 		return nil
 	}
 
@@ -78,16 +104,16 @@ type VendorAgreementCustomAttributeInput struct {
 	Value *VendorAgreementCustomAttributeInputValue `json:"value,omitempty"`
 }
 
-func (o *VendorAgreementCustomAttributeInput) GetType() VendorAgreementCustomAttributeType {
-	if o == nil {
+func (v *VendorAgreementCustomAttributeInput) GetType() VendorAgreementCustomAttributeType {
+	if v == nil {
 		return VendorAgreementCustomAttributeType("")
 	}
-	return o.Type
+	return v.Type
 }
 
-func (o *VendorAgreementCustomAttributeInput) GetValue() *VendorAgreementCustomAttributeInputValue {
-	if o == nil {
+func (v *VendorAgreementCustomAttributeInput) GetValue() *VendorAgreementCustomAttributeInputValue {
+	if v == nil {
 		return nil
 	}
-	return o.Value
+	return v.Value
 }

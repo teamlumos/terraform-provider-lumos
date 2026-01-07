@@ -17,37 +17,37 @@ type AirbasePurchaseRequestEvent struct {
 	Data        Data   `json:"data"`
 }
 
-func (o *AirbasePurchaseRequestEvent) GetID() string {
-	if o == nil {
+func (a *AirbasePurchaseRequestEvent) GetID() string {
+	if a == nil {
 		return ""
 	}
-	return o.ID
+	return a.ID
 }
 
-func (o *AirbasePurchaseRequestEvent) GetObject() string {
-	if o == nil {
+func (a *AirbasePurchaseRequestEvent) GetObject() string {
+	if a == nil {
 		return ""
 	}
-	return o.Object
+	return a.Object
 }
 
-func (o *AirbasePurchaseRequestEvent) GetType() string {
-	if o == nil {
+func (a *AirbasePurchaseRequestEvent) GetType() string {
+	if a == nil {
 		return ""
 	}
-	return o.Type
+	return a.Type
 }
 
-func (o *AirbasePurchaseRequestEvent) GetCreatedDate() string {
-	if o == nil {
+func (a *AirbasePurchaseRequestEvent) GetCreatedDate() string {
+	if a == nil {
 		return ""
 	}
-	return o.CreatedDate
+	return a.CreatedDate
 }
 
-func (o *AirbasePurchaseRequestEvent) GetData() Data {
-	if o == nil {
+func (a *AirbasePurchaseRequestEvent) GetData() Data {
+	if a == nil {
 		return Data{}
 	}
-	return o.Data
+	return a.Data
 }

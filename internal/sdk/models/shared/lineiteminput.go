@@ -26,50 +26,50 @@ func (l LineItemInput) MarshalJSON() ([]byte, error) {
 }
 
 func (l *LineItemInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &l, "", false, false); err != nil {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *LineItemInput) GetName() string {
-	if o == nil {
+func (l *LineItemInput) GetName() string {
+	if l == nil {
 		return ""
 	}
-	return o.Name
+	return l.Name
 }
 
-func (o *LineItemInput) GetType() string {
-	if o == nil {
+func (l *LineItemInput) GetType() string {
+	if l == nil {
 		return ""
 	}
-	return o.Type
+	return l.Type
 }
 
-func (o *LineItemInput) GetQuantity() int64 {
-	if o == nil {
+func (l *LineItemInput) GetQuantity() int64 {
+	if l == nil {
 		return 0
 	}
-	return o.Quantity
+	return l.Quantity
 }
 
-func (o *LineItemInput) GetUnitCost() LineItemUnitCostInput {
-	if o == nil {
+func (l *LineItemInput) GetUnitCost() LineItemUnitCostInput {
+	if l == nil {
 		return LineItemUnitCostInput{}
 	}
-	return o.UnitCost
+	return l.UnitCost
 }
 
-func (o *LineItemInput) GetStartDate() types.Date {
-	if o == nil {
+func (l *LineItemInput) GetStartDate() types.Date {
+	if l == nil {
 		return types.Date{}
 	}
-	return o.StartDate
+	return l.StartDate
 }
 
-func (o *LineItemInput) GetEndDate() *types.Date {
-	if o == nil {
+func (l *LineItemInput) GetEndDate() *types.Date {
+	if l == nil {
 		return nil
 	}
-	return o.EndDate
+	return l.EndDate
 }

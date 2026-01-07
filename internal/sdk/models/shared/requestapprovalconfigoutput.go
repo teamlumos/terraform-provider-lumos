@@ -21,58 +21,58 @@ type RequestApprovalConfigOutput struct {
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages"`
 }
 
-func (o *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.RequestApprovalConfigOverride
+	return r.RequestApprovalConfigOverride
 }
 
-func (o *RequestApprovalConfigOutput) GetManagerApproval() *ManagerApprovalOption {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetManagerApproval() *ManagerApprovalOption {
+	if r == nil {
 		return nil
 	}
-	return o.ManagerApproval
+	return r.ManagerApproval
 }
 
-func (o *RequestApprovalConfigOutput) GetRequireAdditionalApproval() *bool {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetRequireAdditionalApproval() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.RequireAdditionalApproval
+	return r.RequireAdditionalApproval
 }
 
-func (o *RequestApprovalConfigOutput) GetCustomApprovalMessage() *string {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetCustomApprovalMessage() *string {
+	if r == nil {
 		return nil
 	}
-	return o.CustomApprovalMessage
+	return r.CustomApprovalMessage
 }
 
-func (o *RequestApprovalConfigOutput) GetCustomApprovalMessageOverride() *bool {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetCustomApprovalMessageOverride() *bool {
+	if r == nil {
 		return nil
 	}
-	return o.CustomApprovalMessageOverride
+	return r.CustomApprovalMessageOverride
 }
 
-func (o *RequestApprovalConfigOutput) GetApprovers() *AppApproversOutput {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetApprovers() *AppApproversOutput {
+	if r == nil {
 		return nil
 	}
-	return o.Approvers
+	return r.Approvers
 }
 
-func (o *RequestApprovalConfigOutput) GetApproversStage2() *AppApproversOutput {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetApproversStage2() *AppApproversOutput {
+	if r == nil {
 		return nil
 	}
-	return o.ApproversStage2
+	return r.ApproversStage2
 }
 
-func (o *RequestApprovalConfigOutput) GetRequestApprovalStages() []RequestApprovalStageOutput {
-	if o == nil {
+func (r *RequestApprovalConfigOutput) GetRequestApprovalStages() []RequestApprovalStageOutput {
+	if r == nil {
 		return nil
 	}
-	return o.RequestApprovalStages
+	return r.RequestApprovalStages
 }

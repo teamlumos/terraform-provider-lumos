@@ -11,26 +11,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *RequestablePermissionDataSourceModel) ToOperationsGetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest(ctx context.Context) (*operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	includeInheritedConfigs := new(bool)
-	if !r.IncludeInheritedConfigs.IsUnknown() && !r.IncludeInheritedConfigs.IsNull() {
-		*includeInheritedConfigs = r.IncludeInheritedConfigs.ValueBool()
-	} else {
-		includeInheritedConfigs = nil
-	}
-	out := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
-		ID:                      id,
-		IncludeInheritedConfigs: includeInheritedConfigs,
-	}
-
-	return &out, diags
-}
-
 func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermissionOutput(ctx context.Context, resp *shared.RequestablePermissionOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -54,11 +34,10 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 		} else {
 			r.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 			r.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
-			if len(r.RequestConfig.AllowedGroups.Groups) > len(resp.RequestConfig.AllowedGroups.Groups) {
-				r.RequestConfig.AllowedGroups.Groups = r.RequestConfig.AllowedGroups.Groups[:len(resp.RequestConfig.AllowedGroups.Groups)]
-			}
-			for groupsCount, groupsItem := range resp.RequestConfig.AllowedGroups.Groups {
+
+			for _, groupsItem := range resp.RequestConfig.AllowedGroups.Groups {
 				var groups tfTypes.Group
+
 				groups.AppID = types.StringPointerValue(groupsItem.AppID)
 				groups.Description = types.StringPointerValue(groupsItem.Description)
 				if groupsItem.GroupLifecycle != nil {
@@ -70,17 +49,8 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 				groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
 				groups.Name = types.StringPointerValue(groupsItem.Name)
 				groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
-				if groupsCount+1 > len(r.RequestConfig.AllowedGroups.Groups) {
-					r.RequestConfig.AllowedGroups.Groups = append(r.RequestConfig.AllowedGroups.Groups, groups)
-				} else {
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].AppID = groups.AppID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].Description = groups.Description
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].GroupLifecycle = groups.GroupLifecycle
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].ID = groups.ID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].IntegrationSpecificID = groups.IntegrationSpecificID
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].Name = groups.Name
-					r.RequestConfig.AllowedGroups.Groups[groupsCount].SourceAppID = groups.SourceAppID
-				}
+
+				r.RequestConfig.AllowedGroups.Groups = append(r.RequestConfig.AllowedGroups.Groups, groups)
 			}
 			if resp.RequestConfig.AllowedGroups.Type != nil {
 				r.RequestConfig.AllowedGroups.Type = types.StringValue(string(*resp.RequestConfig.AllowedGroups.Type))
@@ -103,11 +73,10 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			} else {
 				r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
-				if len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) > len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
-					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Groups)]
-				}
-				for groupsCount1, groupsItem1 := range resp.RequestConfig.RequestApprovalConfig.Approvers.Groups {
+
+				for _, groupsItem1 := range resp.RequestConfig.RequestApprovalConfig.Approvers.Groups {
 					var groups1 tfTypes.Group
+
 					groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
 					groups1.Description = types.StringPointerValue(groupsItem1.Description)
 					if groupsItem1.GroupLifecycle != nil {
@@ -119,24 +88,14 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
 					groups1.Name = types.StringPointerValue(groupsItem1.Name)
 					groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
-					if groupsCount1+1 > len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups) {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(r.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
-					} else {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].AppID = groups1.AppID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Description = groups1.Description
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].GroupLifecycle = groups1.GroupLifecycle
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].ID = groups1.ID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].IntegrationSpecificID = groups1.IntegrationSpecificID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].Name = groups1.Name
-						r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsCount1].SourceAppID = groups1.SourceAppID
-					}
+
+					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(r.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
 				}
 				r.RequestConfig.RequestApprovalConfig.Approvers.Users = []tfTypes.User{}
-				if len(r.RequestConfig.RequestApprovalConfig.Approvers.Users) > len(resp.RequestConfig.RequestApprovalConfig.Approvers.Users) {
-					r.RequestConfig.RequestApprovalConfig.Approvers.Users = r.RequestConfig.RequestApprovalConfig.Approvers.Users[:len(resp.RequestConfig.RequestApprovalConfig.Approvers.Users)]
-				}
-				for usersCount, usersItem := range resp.RequestConfig.RequestApprovalConfig.Approvers.Users {
+
+				for _, usersItem := range resp.RequestConfig.RequestApprovalConfig.Approvers.Users {
 					var users tfTypes.User
+
 					users.Email = types.StringPointerValue(usersItem.Email)
 					users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
 					users.GivenName = types.StringPointerValue(usersItem.GivenName)
@@ -146,15 +105,8 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					} else {
 						users.Status = types.StringNull()
 					}
-					if usersCount+1 > len(r.RequestConfig.RequestApprovalConfig.Approvers.Users) {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users = append(r.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
-					} else {
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Email = users.Email
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].FamilyName = users.FamilyName
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].GivenName = users.GivenName
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].ID = users.ID
-						r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersCount].Status = users.Status
-					}
+
+					r.RequestConfig.RequestApprovalConfig.Approvers.Users = append(r.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
 				}
 			}
 			if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
@@ -162,11 +114,10 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			} else {
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
-				if len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) > len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
-					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups)]
-				}
-				for groupsCount2, groupsItem2 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
+
+				for _, groupsItem2 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
 					var groups2 tfTypes.Group
+
 					groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
 					groups2.Description = types.StringPointerValue(groupsItem2.Description)
 					if groupsItem2.GroupLifecycle != nil {
@@ -178,24 +129,14 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
 					groups2.Name = types.StringPointerValue(groupsItem2.Name)
 					groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
-					if groupsCount2+1 > len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups) {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
-					} else {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].AppID = groups2.AppID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Description = groups2.Description
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].GroupLifecycle = groups2.GroupLifecycle
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].ID = groups2.ID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].IntegrationSpecificID = groups2.IntegrationSpecificID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].Name = groups2.Name
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsCount2].SourceAppID = groups2.SourceAppID
-					}
+
+					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
 				}
 				r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = []tfTypes.User{}
-				if len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users) > len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users) {
-					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[:len(resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users)]
-				}
-				for usersCount1, usersItem1 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
+
+				for _, usersItem1 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
 					var users1 tfTypes.User
+
 					users1.Email = types.StringPointerValue(usersItem1.Email)
 					users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
 					users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
@@ -205,15 +146,8 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					} else {
 						users1.Status = types.StringNull()
 					}
-					if usersCount1+1 > len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users) {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
-					} else {
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Email = users1.Email
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].FamilyName = users1.FamilyName
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].GivenName = users1.GivenName
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].ID = users1.ID
-						r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersCount1].Status = users1.Status
-					}
+
+					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
 				}
 			}
 			r.RequestConfig.RequestApprovalConfig.CustomApprovalMessage = types.StringPointerValue(resp.RequestConfig.RequestApprovalConfig.CustomApprovalMessage)
@@ -280,4 +214,24 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 	}
 
 	return diags
+}
+
+func (r *RequestablePermissionDataSourceModel) ToOperationsGetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest(ctx context.Context) (*operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	includeInheritedConfigs := new(bool)
+	if !r.IncludeInheritedConfigs.IsUnknown() && !r.IncludeInheritedConfigs.IsNull() {
+		*includeInheritedConfigs = r.IncludeInheritedConfigs.ValueBool()
+	} else {
+		includeInheritedConfigs = nil
+	}
+	out := operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest{
+		ID:                      id,
+		IncludeInheritedConfigs: includeInheritedConfigs,
+	}
+
+	return &out, diags
 }

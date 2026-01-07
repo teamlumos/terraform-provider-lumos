@@ -5,8 +5,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -23,6 +25,7 @@ func NewUsersDataSource() datasource.DataSource {
 
 // UsersDataSource is the data source implementation.
 type UsersDataSource struct {
+	// Provider configured SDK client.
 	client *sdk.Lumos
 }
 
@@ -89,6 +92,9 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 				Description: `Page number`,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
+				},
 			},
 			"pages": schema.Int64Attribute{
 				Computed: true,
@@ -101,6 +107,9 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed:    true,
 				Optional:    true,
 				Description: `Page size`,
+				Validators: []validator.Int64{
+					int64validator.Between(1, 100),
+				},
 			},
 			"total": schema.Int64Attribute{
 				Computed: true,

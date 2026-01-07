@@ -7,9 +7,9 @@ type RequestApprovalStageOutput struct {
 	Approvers []ApproverOutput `json:"approvers,omitempty"`
 }
 
-func (o *RequestApprovalStageOutput) GetApprovers() []ApproverOutput {
-	if o == nil {
+func (r *RequestApprovalStageOutput) GetApprovers() []ApproverOutput {
+	if r == nil {
 		return nil
 	}
-	return o.Approvers
+	return r.Approvers
 }

@@ -9,16 +9,16 @@ type ActivityRecordAccountInput struct {
 	Email *string `json:"email,omitempty"`
 }
 
-func (o *ActivityRecordAccountInput) GetExternalID() *string {
-	if o == nil {
+func (a *ActivityRecordAccountInput) GetExternalID() *string {
+	if a == nil {
 		return nil
 	}
-	return o.ExternalID
+	return a.ExternalID
 }
 
-func (o *ActivityRecordAccountInput) GetEmail() *string {
-	if o == nil {
+func (a *ActivityRecordAccountInput) GetEmail() *string {
+	if a == nil {
 		return nil
 	}
-	return o.Email
+	return a.Email
 }

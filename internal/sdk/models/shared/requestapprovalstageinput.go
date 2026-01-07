@@ -7,9 +7,9 @@ type RequestApprovalStageInput struct {
 	Approvers []ApproverInput `json:"approvers,omitempty"`
 }
 
-func (o *RequestApprovalStageInput) GetApprovers() []ApproverInput {
-	if o == nil {
+func (r *RequestApprovalStageInput) GetApprovers() []ApproverInput {
+	if r == nil {
 		return nil
 	}
-	return o.Approvers
+	return r.Approvers
 }
