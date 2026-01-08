@@ -32,13 +32,14 @@ type AppsDataSource struct {
 
 // AppsDataSourceModel describes the data model.
 type AppsDataSourceModel struct {
-	ExactMatch types.Bool    `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
-	Items      []tfTypes.App `tfsdk:"items"`
-	NameSearch types.String  `queryParam:"style=form,explode=true,name=name_search" tfsdk:"name_search"`
-	Page       types.Int64   `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages      types.Int64   `tfsdk:"pages"`
-	Size       types.Int64   `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total      types.Int64   `tfsdk:"total"`
+	ExactMatch types.Bool                        `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	Expand     []types.String                    `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	Items      []tfTypes.AppWithCustomAttributes `tfsdk:"items"`
+	NameSearch types.String                      `queryParam:"style=form,explode=true,name=name_search" tfsdk:"name_search"`
+	Page       types.Int64                       `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
+	Pages      types.Int64                       `tfsdk:"pages"`
+	Size       types.Int64                       `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	Total      types.Int64                       `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
@@ -56,6 +57,11 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 				Optional:    true,
 				Description: `Search filter should be an exact match.`,
 			},
+			"expand": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Fields to expand. Supported fields: custom_attributes.`,
+			},
 			"items": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -71,6 +77,59 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"category": schema.StringAttribute{
 							Computed:    true,
 							Description: `The category of the app, as shown in the AppStore`,
+						},
+						"custom_attributes": schema.MapNestedAttribute{
+							Computed: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"type": schema.StringAttribute{
+										Computed: true,
+									},
+									"value": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"array_of_user": schema.ListNestedAttribute{
+												Computed: true,
+												NestedObject: schema.NestedAttributeObject{
+													Attributes: map[string]schema.Attribute{
+														"email": schema.StringAttribute{
+															Computed:    true,
+															Description: `The email of this user.`,
+														},
+														"family_name": schema.StringAttribute{
+															Computed:    true,
+															Description: `The family name of this user.`,
+														},
+														"given_name": schema.StringAttribute{
+															Computed:    true,
+															Description: `The given name of this user.`,
+														},
+														"id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of this user.`,
+														},
+														"status": schema.StringAttribute{
+															Computed:    true,
+															Description: `The status of this user.`,
+														},
+													},
+												},
+											},
+											"date_time": schema.StringAttribute{
+												Computed: true,
+											},
+											"integer": schema.Int64Attribute{
+												Computed: true,
+											},
+											"str": schema.StringAttribute{
+												Computed: true,
+											},
+										},
+										Description: `The value of the attribute for an individual Order`,
+									},
+								},
+							},
+							Description: `Custom attributes configured on the app`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -214,11 +273,11 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.PageApp != nil) {
+	if !(res.PageAppWithCustomAttributes != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedPageApp(ctx, res.PageApp)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageAppWithCustomAttributes(ctx, res.PageAppWithCustomAttributes)...)
 
 	if resp.Diagnostics.HasError() {
 		return

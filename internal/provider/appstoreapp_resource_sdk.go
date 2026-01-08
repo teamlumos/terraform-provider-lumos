@@ -251,6 +251,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ct
 			}
 			r.RequestFlow.RequireAdditionalApproval = types.BoolPointerValue(resp.RequestFlow.RequireAdditionalApproval)
 			r.RequestFlow.RequireManagerApproval = types.BoolPointerValue(resp.RequestFlow.RequireManagerApproval)
+			r.RequestFlow.ResponseDescribesEntireApprovalWorkflow = types.BoolPointerValue(resp.RequestFlow.ResponseDescribesEntireApprovalWorkflow)
 		}
 	}
 

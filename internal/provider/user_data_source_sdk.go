@@ -7,14 +7,56 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider/typeconvert"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *UserDataSourceModel) RefreshFromSharedUser(ctx context.Context, resp *shared.User) diag.Diagnostics {
+func (r *UserDataSourceModel) RefreshFromSharedUserWithCustomAttributes(ctx context.Context, resp *shared.UserWithCustomAttributes) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
+		if resp.CustomAttributes != nil {
+			r.CustomAttributes = make(map[string]tfTypes.CustomAttribute, len(resp.CustomAttributes))
+			for customAttributeKey, customAttributeValue := range resp.CustomAttributes {
+				var customAttributeResult tfTypes.CustomAttribute
+				customAttributeResult.Type = types.StringValue(string(customAttributeValue.Type))
+				if customAttributeValue.Value != nil {
+					customAttributeResult.Value = &tfTypes.Value{}
+					if customAttributeValue.Value.Str != nil {
+						customAttributeResult.Value.Str = types.StringPointerValue(customAttributeValue.Value.Str)
+					}
+					if customAttributeValue.Value.ArrayOfUser != nil {
+						customAttributeResult.Value.ArrayOfUser = []tfTypes.User{}
+
+						for _, arrayOfUserItem := range customAttributeValue.Value.ArrayOfUser {
+							var arrayOfUser tfTypes.User
+
+							arrayOfUser.Email = types.StringPointerValue(arrayOfUserItem.Email)
+							arrayOfUser.FamilyName = types.StringPointerValue(arrayOfUserItem.FamilyName)
+							arrayOfUser.GivenName = types.StringPointerValue(arrayOfUserItem.GivenName)
+							arrayOfUser.ID = types.StringValue(arrayOfUserItem.ID)
+							if arrayOfUserItem.Status != nil {
+								arrayOfUser.Status = types.StringValue(string(*arrayOfUserItem.Status))
+							} else {
+								arrayOfUser.Status = types.StringNull()
+							}
+
+							customAttributeResult.Value.ArrayOfUser = append(customAttributeResult.Value.ArrayOfUser, arrayOfUser)
+						}
+					}
+					if customAttributeValue.Value.DateTime != nil {
+						customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
+					}
+					if customAttributeValue.Value.Integer != nil {
+						customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
+					}
+				}
+
+				r.CustomAttributes[customAttributeKey] = customAttributeResult
+			}
+		}
 		r.Email = types.StringPointerValue(resp.Email)
 		r.FamilyName = types.StringPointerValue(resp.FamilyName)
 		r.GivenName = types.StringPointerValue(resp.GivenName)
@@ -35,8 +77,16 @@ func (r *UserDataSourceModel) ToOperationsGetUserRequest(ctx context.Context) (*
 	var userID string
 	userID = r.UserID.ValueString()
 
+	var expand []string
+	if r.Expand != nil {
+		expand = make([]string, 0, len(r.Expand))
+		for expandIndex := range r.Expand {
+			expand = append(expand, r.Expand[expandIndex].ValueString())
+		}
+	}
 	out := operations.GetUserRequest{
 		UserID: userID,
+		Expand: expand,
 	}
 
 	return &out, diags

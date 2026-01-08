@@ -591,6 +591,13 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								},
 								Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
 							},
+							"response_describes_entire_approval_workflow": schema.BoolAttribute{
+								Computed: true,
+								PlanModifiers: []planmodifier.Bool{
+									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
+								},
+								Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.`,
+							},
 						},
 						Description: `A request approval config can be optionally associated with this config`,
 					},

@@ -28,6 +28,8 @@ type Account struct {
 	LastActivity *time.Time `json:"last_activity,omitempty"`
 	// The discovery methods through which Lumos identified this account
 	Sources []DiscoverySource `json:"sources,omitempty"`
+	// The status of the account.
+	Status *AccountLifecycleStatus `json:"status,omitempty"`
 }
 
 func (a Account) MarshalJSON() ([]byte, error) {
@@ -109,4 +111,11 @@ func (a *Account) GetSources() []DiscoverySource {
 		return nil
 	}
 	return a.Sources
+}
+
+func (a *Account) GetStatus() *AccountLifecycleStatus {
+	if a == nil {
+		return nil
+	}
+	return a.Status
 }

@@ -8,11 +8,12 @@ import (
 )
 
 type RequestApprovalConfigOutput struct {
-	Approvers                     *AppApproversInput `tfsdk:"approvers"`
-	ApproversStage2               *AppApproversInput `tfsdk:"approvers_stage_2"`
-	CustomApprovalMessage         types.String       `tfsdk:"custom_approval_message"`
-	CustomApprovalMessageOverride types.Bool         `tfsdk:"custom_approval_message_override"`
-	ManagerApproval               types.String       `tfsdk:"manager_approval"`
-	RequestApprovalConfigOverride types.Bool         `tfsdk:"request_approval_config_override"`
-	RequireAdditionalApproval     types.Bool         `tfsdk:"require_additional_approval"`
+	Approvers                               *AppApproversInput `tfsdk:"approvers"`
+	ApproversStage2                         *AppApproversInput `tfsdk:"approvers_stage_2"`
+	CustomApprovalMessage                   types.String       `tfsdk:"custom_approval_message"`
+	CustomApprovalMessageOverride           types.Bool         `tfsdk:"custom_approval_message_override"`
+	ManagerApproval                         types.String       `tfsdk:"manager_approval"`
+	RequestApprovalConfigOverride           types.Bool         `tfsdk:"request_approval_config_override"`
+	RequireAdditionalApproval               types.Bool         `tfsdk:"require_additional_approval"`
+	ResponseDescribesEntireApprovalWorkflow types.Bool         `tfsdk:"response_describes_entire_approval_workflow"`
 }

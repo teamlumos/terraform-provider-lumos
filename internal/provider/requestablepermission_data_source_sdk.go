@@ -160,6 +160,7 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 			}
 			r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride = types.BoolPointerValue(resp.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride)
 			r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval = types.BoolPointerValue(resp.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval)
+			r.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow = types.BoolPointerValue(resp.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow)
 		}
 		if resp.RequestConfig.RequestFulfillmentConfig == nil {
 			r.RequestConfig.RequestFulfillmentConfig = nil

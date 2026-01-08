@@ -802,6 +802,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						},
 						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.`,
 					},
+					"response_describes_entire_approval_workflow": schema.BoolAttribute{
+						Computed:    true,
+						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.`,
+					},
 				},
 				Description: `Requires replacement if changed.`,
 			},

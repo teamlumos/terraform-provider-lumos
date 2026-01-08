@@ -20,6 +20,8 @@ type RequestApprovalConfigOutput struct {
 	ApproversStage2 *AppApproversOutput `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages"`
+	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
+	ResponseDescribesEntireApprovalWorkflow *bool `json:"response_describes_entire_approval_workflow,omitempty"`
 }
 
 func (r *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
@@ -76,4 +78,11 @@ func (r *RequestApprovalConfigOutput) GetRequestApprovalStages() []RequestApprov
 		return nil
 	}
 	return r.RequestApprovalStages
+}
+
+func (r *RequestApprovalConfigOutput) GetResponseDescribesEntireApprovalWorkflow() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.ResponseDescribesEntireApprovalWorkflow
 }
