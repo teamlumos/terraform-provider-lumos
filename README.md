@@ -30,13 +30,13 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.9.3"
+      version = "0.11.2"
     }
   }
 }
 
 provider "lumos" {
-  # Configuration options
+  server_url = "..." # Optional
 }
 ```
 <!-- End Installation [installation] -->
@@ -105,12 +105,15 @@ Available configuration:
 
 ### Resources
 
+* [lumos_access_policy](docs/resources/access_policy.md)
 * [lumos_app](docs/resources/app.md)
 * [lumos_app_store_app](docs/resources/app_store_app.md)
 * [lumos_pre_approval_rule](docs/resources/pre_approval_rule.md)
 * [lumos_requestable_permission](docs/resources/requestable_permission.md)
 ### Data Sources
 
+* [lumos_access_policies](docs/data-sources/access_policies.md)
+* [lumos_access_policy](docs/data-sources/access_policy.md)
 * [lumos_app](docs/data-sources/app.md)
 * [lumos_apps](docs/data-sources/apps.md)
 * [lumos_app_store_app](docs/data-sources/app_store_app.md)
