@@ -1,10 +1,22 @@
 .PHONY: provider
 provider: overlay.yaml
-	speakeasy run
+	@echo "Running Speakeasy to generate the provider..."
+	speakeasy run --skip-compile
+	@echo "Running go mod tidy..."
+	@go mod tidy
+	@echo "Compiling provider..."
+	@go build ./internal/provider/...
+	@echo "Running tests..."
+	@go test ./internal/provider/...
+	@echo "✓ Successfully generated and compiled the provider and ran tests"
 
-overlay.yaml: openapi.json
-	curl https://raw.githubusercontent.com/teamlumos/lumos-openapi-spec/main/openapi.json > original-openapi.json
+
+.PHONY: overlay
+overlay: openapi.json original-openapi.json
+	@echo "Generating overlay.yaml from openapi.json and original-openapi.json..."
 	speakeasy overlay compare --schemas original-openapi.json --schemas openapi.json > overlay.yaml
+	@echo "✓ overlay.yaml generated"
+
 
 .PHONY: testacc
 testacc:
