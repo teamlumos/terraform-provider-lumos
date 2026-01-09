@@ -3,13 +3,16 @@
 
 package shared
 
+type AccessPolicyInputAccessCondition struct {
+}
+
 type AccessPolicyInput struct {
 	// The name of the access policy.
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition *Condition `json:"access_condition"`
+	AccessCondition *AccessPolicyInputAccessCondition `json:"access_condition,omitempty"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
 }
@@ -28,7 +31,7 @@ func (a *AccessPolicyInput) GetBusinessJustification() string {
 	return a.BusinessJustification
 }
 
-func (a *AccessPolicyInput) GetAccessCondition() *Condition {
+func (a *AccessPolicyInput) GetAccessCondition() *AccessPolicyInputAccessCondition {
 	if a == nil {
 		return nil
 	}

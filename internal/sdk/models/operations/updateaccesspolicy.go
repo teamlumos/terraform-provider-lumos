@@ -9,15 +9,15 @@ import (
 )
 
 type UpdateAccessPolicyRequest struct {
-	AccessPolicyID    string                   `pathParam:"style=simple,explode=false,name=access_policy_id"`
+	ID                string                   `pathParam:"style=simple,explode=false,name=access_policy_id"`
 	AccessPolicyInput shared.AccessPolicyInput `request:"mediaType=application/json"`
 }
 
-func (u *UpdateAccessPolicyRequest) GetAccessPolicyID() string {
+func (u *UpdateAccessPolicyRequest) GetID() string {
 	if u == nil {
 		return ""
 	}
-	return u.AccessPolicyID
+	return u.ID
 }
 
 func (u *UpdateAccessPolicyRequest) GetAccessPolicyInput() shared.AccessPolicyInput {
