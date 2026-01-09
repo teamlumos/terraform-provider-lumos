@@ -5,6 +5,8 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -17,9 +19,10 @@ func (r *AccessPolicyDataSourceModel) RefreshFromSharedAccessPolicyOutput(ctx co
 
 	if resp != nil {
 		if resp.AccessCondition == nil {
-			r.AccessCondition = nil
+			r.AccessCondition = jsontypes.NewNormalizedNull()
 		} else {
-			r.AccessCondition = &tfTypes.AccessPolicyInputAccessCondition{}
+			accessConditionResult, _ := json.Marshal(resp.AccessCondition)
+			r.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
 		}
 		r.Apps = []tfTypes.AccessPolicyAppOutput{}
 
