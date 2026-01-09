@@ -12,7 +12,7 @@ type AccessPolicyInput struct {
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition *AccessPolicyInputAccessCondition `json:"access_condition,omitempty"`
+	AccessCondition *AccessPolicyInputAccessCondition `json:"access_condition"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
 }
