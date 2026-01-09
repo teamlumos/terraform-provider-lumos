@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
@@ -47,6 +48,53 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	}
 
 	return diags
+}
+
+func (r *AccessPolicyResourceModel) ToOperationsDeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest(ctx context.Context) (*operations.DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest{
+		ID: id,
+	}
+
+	return &out, diags
+}
+
+func (r *AccessPolicyResourceModel) ToOperationsGetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest(ctx context.Context) (*operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest{
+		ID: id,
+	}
+
+	return &out, diags
+}
+
+func (r *AccessPolicyResourceModel) ToOperationsUpdateAccessPolicyRequest(ctx context.Context) (*operations.UpdateAccessPolicyRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	accessPolicyInput, accessPolicyInputDiags := r.ToSharedAccessPolicyInput(ctx)
+	diags.Append(accessPolicyInputDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.UpdateAccessPolicyRequest{
+		ID:                id,
+		AccessPolicyInput: *accessPolicyInput,
+	}
+
+	return &out, diags
 }
 
 func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Context) (*shared.AccessPolicyInput, diag.Diagnostics) {
