@@ -4,14 +4,13 @@
 package types
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AccessPolicyOutput struct {
-	AccessCondition       map[string]jsontypes.Normalized `tfsdk:"access_condition"`
-	Apps                  []AccessPolicyAppOutput         `tfsdk:"apps"`
-	BusinessJustification types.String                    `tfsdk:"business_justification"`
-	ID                    types.String                    `tfsdk:"id"`
-	Name                  types.String                    `tfsdk:"name"`
+	AccessCondition       *AccessPolicyInputAccessCondition `tfsdk:"access_condition"`
+	Apps                  []AccessPolicyAppOutput           `tfsdk:"apps"`
+	BusinessJustification types.String                      `tfsdk:"business_justification"`
+	ID                    types.String                      `tfsdk:"id"`
+	Name                  types.String                      `tfsdk:"name"`
 }
