@@ -3,7 +3,114 @@
 
 package shared
 
+import (
+	"errors"
+	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
+type AccessCondition1 struct {
+}
+
+func (a AccessCondition1) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessCondition1) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type AccessPolicyInputAccessConditionType string
+
+const (
+	AccessPolicyInputAccessConditionTypeAccessCondition1 AccessPolicyInputAccessConditionType = "Access Condition_1"
+	AccessPolicyInputAccessConditionTypeMapOfAny         AccessPolicyInputAccessConditionType = "mapOfAny"
+)
+
+// AccessPolicyInputAccessCondition - The condition determining which identities qualify for this policy.
 type AccessPolicyInputAccessCondition struct {
+	AccessCondition1 *AccessCondition1 `queryParam:"inline" union:"member"`
+	MapOfAny         map[string]any    `queryParam:"inline" union:"member"`
+
+	Type AccessPolicyInputAccessConditionType
+}
+
+func CreateAccessPolicyInputAccessConditionAccessCondition1(accessCondition1 AccessCondition1) AccessPolicyInputAccessCondition {
+	typ := AccessPolicyInputAccessConditionTypeAccessCondition1
+
+	return AccessPolicyInputAccessCondition{
+		AccessCondition1: &accessCondition1,
+		Type:             typ,
+	}
+}
+
+func CreateAccessPolicyInputAccessConditionMapOfAny(mapOfAny map[string]any) AccessPolicyInputAccessCondition {
+	typ := AccessPolicyInputAccessConditionTypeMapOfAny
+
+	return AccessPolicyInputAccessCondition{
+		MapOfAny: mapOfAny,
+		Type:     typ,
+	}
+}
+
+func (u *AccessPolicyInputAccessCondition) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var accessCondition1 AccessCondition1 = AccessCondition1{}
+	if err := utils.UnmarshalJSON(data, &accessCondition1, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  AccessPolicyInputAccessConditionTypeAccessCondition1,
+			Value: &accessCondition1,
+		})
+	}
+
+	var mapOfAny map[string]any = map[string]any{}
+	if err := utils.UnmarshalJSON(data, &mapOfAny, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  AccessPolicyInputAccessConditionTypeMapOfAny,
+			Value: mapOfAny,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessPolicyInputAccessCondition", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessPolicyInputAccessCondition", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(AccessPolicyInputAccessConditionType)
+	switch best.Type {
+	case AccessPolicyInputAccessConditionTypeAccessCondition1:
+		u.AccessCondition1 = best.Value.(*AccessCondition1)
+		return nil
+	case AccessPolicyInputAccessConditionTypeMapOfAny:
+		u.MapOfAny = best.Value.(map[string]any)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessPolicyInputAccessCondition", string(data))
+}
+
+func (u AccessPolicyInputAccessCondition) MarshalJSON() ([]byte, error) {
+	if u.AccessCondition1 != nil {
+		return utils.MarshalJSON(u.AccessCondition1, "", true)
+	}
+
+	if u.MapOfAny != nil {
+		return utils.MarshalJSON(u.MapOfAny, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type AccessPolicyInputAccessCondition: all fields are null")
 }
 
 type AccessPolicyInput struct {
@@ -12,7 +119,7 @@ type AccessPolicyInput struct {
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition *AccessPolicyInputAccessCondition `json:"access_condition"`
+	AccessCondition *AccessPolicyInputAccessCondition `json:"access_condition,omitempty"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
 }

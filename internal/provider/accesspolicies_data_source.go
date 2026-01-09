@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -56,7 +57,16 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"access_condition": schema.SingleNestedAttribute{
-							Computed:    true,
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"map_of_any": schema.MapAttribute{
+									Computed:    true,
+									ElementType: jsontypes.NormalizedType{},
+								},
+								"one": schema.SingleNestedAttribute{
+									Computed: true,
+								},
+							},
 							Description: `The condition determining which identities qualify for this policy.`,
 						},
 						"apps": schema.ListNestedAttribute{

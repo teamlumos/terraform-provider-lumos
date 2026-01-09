@@ -5,6 +5,8 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -21,10 +23,20 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 		for _, itemsItem := range resp.Items {
 			var items tfTypes.AccessPolicyOutput
 
-			if itemsItem.AccessCondition == nil {
-				items.AccessCondition = nil
-			} else {
+			if itemsItem.AccessCondition != nil {
 				items.AccessCondition = &tfTypes.AccessPolicyInputAccessCondition{}
+				if itemsItem.AccessCondition.MapOfAny != nil {
+					if len(itemsItem.AccessCondition.MapOfAny) > 0 {
+						items.AccessCondition.MapOfAny = make(map[string]jsontypes.Normalized, len(itemsItem.AccessCondition.MapOfAny))
+						for key, value := range itemsItem.AccessCondition.MapOfAny {
+							result, _ := json.Marshal(value)
+							items.AccessCondition.MapOfAny[key] = jsontypes.NewNormalizedValue(string(result))
+						}
+					}
+				}
+				if itemsItem.AccessCondition.One != nil {
+					items.AccessCondition.One = &tfTypes.One{}
+				}
 			}
 			items.Apps = []tfTypes.AccessPolicyAppOutput{}
 

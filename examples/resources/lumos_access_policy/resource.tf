@@ -1,6 +1,8 @@
 resource "lumos_access_policy" "my_accesspolicy" {
   access_condition = {
-    # ...
+    map_of_any = {
+      key = jsonencode("value")
+    }
   }
   apps = [
     {

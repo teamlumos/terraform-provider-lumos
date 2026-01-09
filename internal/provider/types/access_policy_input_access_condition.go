@@ -3,5 +3,11 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+)
+
 type AccessPolicyInputAccessCondition struct {
+	MapOfAny map[string]jsontypes.Normalized `queryParam:"inline" tfsdk:"map_of_any"`
+	One      *One                            `queryParam:"inline" tfsdk:"one"`
 }
