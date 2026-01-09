@@ -9,14 +9,14 @@ import (
 )
 
 type GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest struct {
-	AccessPolicyID string `pathParam:"style=simple,explode=false,name=access_policy_id"`
+	ID string `pathParam:"style=simple,explode=false,name=access_policy_id"`
 }
 
-func (g *GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest) GetAccessPolicyID() string {
+func (g *GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest) GetID() string {
 	if g == nil {
 		return ""
 	}
-	return g.AccessPolicyID
+	return g.ID
 }
 
 type GetAccessPolicyAccessPoliciesAccessPolicyIDGetResponse struct {
