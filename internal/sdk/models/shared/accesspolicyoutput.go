@@ -3,9 +3,6 @@
 
 package shared
 
-type AccessCondition struct {
-}
-
 // AccessPolicyOutput - The full representation of an access policy returned by the API.
 type AccessPolicyOutput struct {
 	// The unique ID of the access policy.
@@ -17,7 +14,7 @@ type AccessPolicyOutput struct {
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition *AccessCondition `json:"access_condition,omitempty"`
+	AccessCondition map[string]any `json:"access_condition,omitempty"`
 }
 
 func (a *AccessPolicyOutput) GetID() string {
@@ -48,7 +45,7 @@ func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
 	return a.Apps
 }
 
-func (a *AccessPolicyOutput) GetAccessCondition() *AccessCondition {
+func (a *AccessPolicyOutput) GetAccessCondition() map[string]any {
 	if a == nil {
 		return nil
 	}

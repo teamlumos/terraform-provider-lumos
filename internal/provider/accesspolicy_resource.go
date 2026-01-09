@@ -6,7 +6,9 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -17,6 +19,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/validators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -37,11 +40,11 @@ type AccessPolicyResource struct {
 
 // AccessPolicyResourceModel describes the resource data model.
 type AccessPolicyResourceModel struct {
-	AccessCondition       *tfTypes.AccessPolicyInputAccessCondition `tfsdk:"access_condition"`
-	Apps                  []tfTypes.AccessPolicyAppInput            `tfsdk:"apps"`
-	BusinessJustification types.String                              `tfsdk:"business_justification"`
-	ID                    types.String                              `tfsdk:"id"`
-	Name                  types.String                              `tfsdk:"name"`
+	AccessCondition       map[string]jsontypes.Normalized `tfsdk:"access_condition"`
+	Apps                  []tfTypes.AccessPolicyAppInput  `tfsdk:"apps"`
+	BusinessJustification types.String                    `tfsdk:"business_justification"`
+	ID                    types.String                    `tfsdk:"id"`
+	Name                  types.String                    `tfsdk:"name"`
 }
 
 func (r *AccessPolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -52,10 +55,14 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "AccessPolicy Resource",
 		Attributes: map[string]schema.Attribute{
-			"access_condition": schema.SingleNestedAttribute{
+			"access_condition": schema.MapAttribute{
 				Computed:    true,
 				Optional:    true,
+				ElementType: jsontypes.NormalizedType{},
 				Description: `The condition determining which identities qualify for this policy.`,
+				Validators: []validator.Map{
+					mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+				},
 			},
 			"apps": schema.ListNestedAttribute{
 				Required: true,
