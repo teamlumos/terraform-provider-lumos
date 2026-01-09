@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -37,11 +38,11 @@ type AccessPolicyResource struct {
 
 // AccessPolicyResourceModel describes the resource data model.
 type AccessPolicyResourceModel struct {
-	AccessCondition       *tfTypes.AccessPolicyInputAccessCondition `tfsdk:"access_condition"`
-	Apps                  []tfTypes.AccessPolicyAppInput            `tfsdk:"apps"`
-	BusinessJustification types.String                              `tfsdk:"business_justification"`
-	ID                    types.String                              `tfsdk:"id"`
-	Name                  types.String                              `tfsdk:"name"`
+	AccessCondition       jsontypes.Normalized           `tfsdk:"access_condition"`
+	Apps                  []tfTypes.AccessPolicyAppInput `tfsdk:"apps"`
+	BusinessJustification types.String                   `tfsdk:"business_justification"`
+	ID                    types.String                   `tfsdk:"id"`
+	Name                  types.String                   `tfsdk:"name"`
 }
 
 func (r *AccessPolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -52,10 +53,11 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "AccessPolicy Resource",
 		Attributes: map[string]schema.Attribute{
-			"access_condition": schema.SingleNestedAttribute{
+			"access_condition": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				Description: `The condition determining which identities qualify for this policy.`,
+				Description: `The condition determining which identities qualify for this policy. Parsed as JSON.`,
 			},
 			"apps": schema.ListNestedAttribute{
 				Required: true,
