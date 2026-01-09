@@ -5,6 +5,8 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -16,10 +18,20 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		if resp.AccessCondition == nil {
-			r.AccessCondition = nil
-		} else {
+		if resp.AccessCondition != nil {
 			r.AccessCondition = &tfTypes.AccessPolicyInputAccessCondition{}
+			if resp.AccessCondition.MapOfAny != nil {
+				if len(resp.AccessCondition.MapOfAny) > 0 {
+					r.AccessCondition.MapOfAny = make(map[string]jsontypes.Normalized, len(resp.AccessCondition.MapOfAny))
+					for key, value := range resp.AccessCondition.MapOfAny {
+						result, _ := json.Marshal(value)
+						r.AccessCondition.MapOfAny[key] = jsontypes.NewNormalizedValue(string(result))
+					}
+				}
+			}
+			if resp.AccessCondition.One != nil {
+				r.AccessCondition.One = &tfTypes.One{}
+			}
 		}
 		r.Apps = []tfTypes.AccessPolicyAppInput{}
 
@@ -108,7 +120,29 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 
 	var accessCondition *shared.AccessPolicyInputAccessCondition
 	if r.AccessCondition != nil {
-		accessCondition = &shared.AccessPolicyInputAccessCondition{}
+		var accessCondition1 *shared.AccessCondition1
+		if r.AccessCondition.One != nil {
+			accessCondition1 = &shared.AccessCondition1{}
+		}
+		if accessCondition1 != nil {
+			accessCondition = &shared.AccessPolicyInputAccessCondition{
+				AccessCondition1: accessCondition1,
+			}
+		}
+		var mapOfAny map[string]interface{}
+		if r.AccessCondition.MapOfAny != nil {
+			mapOfAny = make(map[string]interface{})
+			for mapOfAnyKey := range r.AccessCondition.MapOfAny {
+				var mapOfAnyInst interface{}
+				_ = json.Unmarshal([]byte(r.AccessCondition.MapOfAny[mapOfAnyKey].ValueString()), &mapOfAnyInst)
+				mapOfAny[mapOfAnyKey] = mapOfAnyInst
+			}
+		}
+		if mapOfAny != nil {
+			accessCondition = &shared.AccessPolicyInputAccessCondition{
+				MapOfAny: mapOfAny,
+			}
+		}
 	}
 	apps := make([]shared.AccessPolicyAppInput, 0, len(r.Apps))
 	for appsIndex := range r.Apps {

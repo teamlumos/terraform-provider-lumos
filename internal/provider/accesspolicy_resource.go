@@ -6,7 +6,10 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -14,9 +17,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	speakeasy_mapplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/mapplanmodifier"
+	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	"github.com/teamlumos/terraform-provider-lumos/internal/validators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -53,8 +59,34 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 		MarkdownDescription: "AccessPolicy Resource",
 		Attributes: map[string]schema.Attribute{
 			"access_condition": schema.SingleNestedAttribute{
-				Computed:    true,
-				Optional:    true,
+				Computed: true,
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"map_of_any": schema.MapAttribute{
+						Optional: true,
+						PlanModifiers: []planmodifier.Map{
+							speakeasy_mapplanmodifier.UseConfigValue(),
+						},
+						ElementType: jsontypes.NormalizedType{},
+						Validators: []validator.Map{
+							mapvalidator.ConflictsWith(path.Expressions{
+								path.MatchRelative().AtParent().AtName("one"),
+							}...),
+							mapvalidator.ValueStringsAre(validators.IsValidJSON()),
+						},
+					},
+					"one": schema.SingleNestedAttribute{
+						Optional: true,
+						PlanModifiers: []planmodifier.Object{
+							speakeasy_objectplanmodifier.UseConfigValue(),
+						},
+						Validators: []validator.Object{
+							objectvalidator.ConflictsWith(path.Expressions{
+								path.MatchRelative().AtParent().AtName("map_of_any"),
+							}...),
+						},
+					},
+				},
 				Description: `The condition determining which identities qualify for this policy.`,
 			},
 			"apps": schema.ListNestedAttribute{

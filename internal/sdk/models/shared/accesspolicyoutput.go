@@ -3,28 +3,128 @@
 
 package shared
 
+import (
+	"errors"
+	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
+type One struct {
+}
+
+func (o One) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *One) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+type AccessConditionType string
+
+const (
+	AccessConditionTypeOne      AccessConditionType = "1"
+	AccessConditionTypeMapOfAny AccessConditionType = "mapOfAny"
+)
+
+// AccessCondition - The condition determining which identities qualify for this policy.
 type AccessCondition struct {
+	One      *One           `queryParam:"inline" union:"member"`
+	MapOfAny map[string]any `queryParam:"inline" union:"member"`
+
+	Type AccessConditionType
+}
+
+func CreateAccessConditionOne(one One) AccessCondition {
+	typ := AccessConditionTypeOne
+
+	return AccessCondition{
+		One:  &one,
+		Type: typ,
+	}
+}
+
+func CreateAccessConditionMapOfAny(mapOfAny map[string]any) AccessCondition {
+	typ := AccessConditionTypeMapOfAny
+
+	return AccessCondition{
+		MapOfAny: mapOfAny,
+		Type:     typ,
+	}
+}
+
+func (u *AccessCondition) UnmarshalJSON(data []byte) error {
+
+	var candidates []utils.UnionCandidate
+
+	// Collect all valid candidates
+	var one One = One{}
+	if err := utils.UnmarshalJSON(data, &one, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  AccessConditionTypeOne,
+			Value: &one,
+		})
+	}
+
+	var mapOfAny map[string]any = map[string]any{}
+	if err := utils.UnmarshalJSON(data, &mapOfAny, "", true, nil); err == nil {
+		candidates = append(candidates, utils.UnionCandidate{
+			Type:  AccessConditionTypeMapOfAny,
+			Value: mapOfAny,
+		})
+	}
+
+	if len(candidates) == 0 {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessCondition", string(data))
+	}
+
+	// Pick the best candidate using multi-stage filtering
+	best := utils.PickBestUnionCandidate(candidates, data)
+	if best == nil {
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessCondition", string(data))
+	}
+
+	// Set the union type and value based on the best candidate
+	u.Type = best.Type.(AccessConditionType)
+	switch best.Type {
+	case AccessConditionTypeOne:
+		u.One = best.Value.(*One)
+		return nil
+	case AccessConditionTypeMapOfAny:
+		u.MapOfAny = best.Value.(map[string]any)
+		return nil
+	}
+
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for AccessCondition", string(data))
+}
+
+func (u AccessCondition) MarshalJSON() ([]byte, error) {
+	if u.One != nil {
+		return utils.MarshalJSON(u.One, "", true)
+	}
+
+	if u.MapOfAny != nil {
+		return utils.MarshalJSON(u.MapOfAny, "", true)
+	}
+
+	return nil, errors.New("could not marshal union type AccessCondition: all fields are null")
 }
 
 // AccessPolicyOutput - The full representation of an access policy returned by the API.
 type AccessPolicyOutput struct {
-	// The unique ID of the access policy.
-	ID string `json:"id"`
 	// The name of the access policy.
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
-	// The list of apps and permissions granted by this access policy.
-	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The condition determining which identities qualify for this policy.
 	AccessCondition *AccessCondition `json:"access_condition,omitempty"`
-}
-
-func (a *AccessPolicyOutput) GetID() string {
-	if a == nil {
-		return ""
-	}
-	return a.ID
+	// The unique ID of the access policy.
+	ID string `json:"id"`
+	// The list of apps and permissions granted by this access policy.
+	Apps []AccessPolicyAppOutput `json:"apps"`
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -41,16 +141,23 @@ func (a *AccessPolicyOutput) GetBusinessJustification() string {
 	return a.BusinessJustification
 }
 
-func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
-	if a == nil {
-		return []AccessPolicyAppOutput{}
-	}
-	return a.Apps
-}
-
 func (a *AccessPolicyOutput) GetAccessCondition() *AccessCondition {
 	if a == nil {
 		return nil
 	}
 	return a.AccessCondition
+}
+
+func (a *AccessPolicyOutput) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
+}
+
+func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
+	if a == nil {
+		return []AccessPolicyAppOutput{}
+	}
+	return a.Apps
 }
