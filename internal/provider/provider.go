@@ -47,8 +47,8 @@ func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 				Sensitive:           true,
 			},
 			"server_url": schema.StringAttribute{
-				Description: `Server URL (defaults to https://api.lumos.com)`,
-				Optional:    true,
+				Description: `Server URL`,
+				Required:    true,
 			},
 		},
 		MarkdownDescription: `Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules`,
@@ -67,7 +67,8 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	serverUrl := data.ServerURL.ValueString()
 
 	if serverUrl == "" {
-		serverUrl = "https://api.lumos.com"
+		resp.Diagnostics.AddError("server_url is required", "The server_url attribute must be provided in the provider configuration.")
+		return
 	}
 
 	security := shared.Security{}
@@ -101,7 +102,8 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		sdk.WithClient(httpClient),
 	}
 
-	client := sdk.New(opts...)
+	client := sdk.New(ServerURL, opts...)
+
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
 	resp.ResourceData = client

@@ -3,11 +3,10 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.1.0 and generator version 2.792.2
+// Generated from OpenAPI doc version 0.1.0 and generator version 2.793.0
 
 import (
 	"context"
-	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/config"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/hooks"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
@@ -16,11 +15,6 @@ import (
 	"net/http"
 	"time"
 )
-
-// ServerList contains the list of servers available to the SDK
-var ServerList = []string{
-	"https://api.lumos.com",
-}
 
 // HTTPClient provides an interface for supplying the SDK with a custom HTTP client
 type HTTPClient interface {
@@ -64,35 +58,6 @@ type Lumos struct {
 
 type SDKOption func(*Lumos)
 
-// WithServerURL allows the overriding of the default server URL
-func WithServerURL(serverURL string) SDKOption {
-	return func(sdk *Lumos) {
-		sdk.sdkConfiguration.ServerURL = serverURL
-	}
-}
-
-// WithTemplatedServerURL allows the overriding of the default server URL with a templated URL populated with the provided parameters
-func WithTemplatedServerURL(serverURL string, params map[string]string) SDKOption {
-	return func(sdk *Lumos) {
-		if params != nil {
-			serverURL = utils.ReplaceParameters(serverURL, params)
-		}
-
-		sdk.sdkConfiguration.ServerURL = serverURL
-	}
-}
-
-// WithServerIndex allows the overriding of the default server by index
-func WithServerIndex(serverIndex int) SDKOption {
-	return func(sdk *Lumos) {
-		if serverIndex < 0 || serverIndex >= len(ServerList) {
-			panic(fmt.Errorf("server index %d out of range", serverIndex))
-		}
-
-		sdk.sdkConfiguration.ServerIndex = serverIndex
-	}
-}
-
 // WithClient allows the overriding of the default HTTP client used by the SDK
 func WithClient(client HTTPClient) SDKOption {
 	return func(sdk *Lumos) {
@@ -129,13 +94,12 @@ func WithTimeout(timeout time.Duration) SDKOption {
 	}
 }
 
-// New creates a new instance of the SDK with the provided options
-func New(opts ...SDKOption) *Lumos {
+// New creates a new instance of the SDK with the provided serverURL and options
+func New(serverURL string, opts ...SDKOption) *Lumos {
 	sdk := &Lumos{
-		SDKVersion: "0.9.6",
+		SDKVersion: "0.10.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.9.6 2.792.2 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
-			ServerList: ServerList,
+			UserAgent: "speakeasy-sdk/terraform 0.10.0 2.793.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 		},
 		hooks: hooks.New(),
 	}
@@ -148,8 +112,10 @@ func New(opts ...SDKOption) *Lumos {
 		sdk.sdkConfiguration.Client = &http.Client{Timeout: 60 * time.Second}
 	}
 
+	sdk.sdkConfiguration.ServerURL = serverURL
+
 	currentServerURL, _ := sdk.sdkConfiguration.GetServerDetails()
-	serverURL := currentServerURL
+	serverURL = currentServerURL
 	serverURL, sdk.sdkConfiguration.Client = sdk.hooks.SDKInit(currentServerURL, sdk.sdkConfiguration.Client)
 	if currentServerURL != serverURL {
 		sdk.sdkConfiguration.ServerURL = serverURL
