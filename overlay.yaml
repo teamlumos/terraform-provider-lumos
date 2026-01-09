@@ -178,6 +178,32 @@ actions:
     update:
       "x-speakeasy-param-suppress-computed-diff": true
 
+  # Access Policies
+  - target: $["paths"]["/access_policies"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "AccessPolicy#create"
+  - target: $["paths"]["/access_policies"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AccessPolicies#read"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AccessPolicy#read"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["put"]
+    update:
+      "x-speakeasy-entity-operation": "AccessPolicy#update"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["delete"]
+    update:
+      "x-speakeasy-entity-operation": "AccessPolicy#delete"
+  - target: $["paths"]["/access_policies/{access_policy_id}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+
   # AppStore Apps
   - target: $["paths"]["/appstore/apps"]["post"]
     update:
@@ -224,13 +250,19 @@ actions:
   - target: $["components"]["schemas"]["Page_RequestablePermissionOutput_"]
     update:
       "x-speakeasy-entity": "RequestablePermissions"
-  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+
+  # Access Policies
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]
     update:
-      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
-  - target: $["components"]["schemas"]["RequestConfigInputUpdate"]
+      "x-speakeasy-entity": "AccessPolicy"
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["id"]
     update:
-      "x-speakeasy-plan-validators": "RequestConfigInputValidator"
-  
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["Page_AccessPolicyOutput_"]
+    update:
+      "x-speakeasy-entity": "AccessPolicies"
+
+
   # Don't attempt to unmarshal 404 respones
   - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]["get"]["responses"]["404"]["content"]
     remove: true
