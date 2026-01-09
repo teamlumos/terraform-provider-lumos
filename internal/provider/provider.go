@@ -109,6 +109,7 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 
 func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewAccessPolicyResource,
 		NewAppResource,
 		NewAppStoreAppResource,
 		NewPreApprovalRuleResource,
