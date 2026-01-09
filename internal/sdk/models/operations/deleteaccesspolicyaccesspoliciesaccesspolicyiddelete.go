@@ -9,14 +9,14 @@ import (
 )
 
 type DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest struct {
-	ID string `pathParam:"style=simple,explode=false,name=access_policy_id"`
+	AccessPolicyID string `pathParam:"style=simple,explode=false,name=access_policy_id"`
 }
 
-func (d *DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest) GetID() string {
+func (d *DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest) GetAccessPolicyID() string {
 	if d == nil {
 		return ""
 	}
-	return d.ID
+	return d.AccessPolicyID
 }
 
 type DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteResponse struct {
