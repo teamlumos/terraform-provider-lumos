@@ -91,13 +91,17 @@ func TestAccPermissionResource(t *testing.T) {
 						appstore_visibility = "HIDDEN"
 						request_approval_config = {
 							request_approval_config_override = true
+							approvers = {
+								users  = [{ id = "%s" }]
+								groups = []
+							}
 							manager_approval = "NONE"
 							custom_approval_message = "test"
 							custom_approval_message_override = true
-							require_additional_approval = true
+							require_additional_approval = false
 						}
 					}
-				}`, os.Getenv("APP_ID")),
+				}`, os.Getenv("APP_ID"), os.Getenv("USER_ID")),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides_3", "label", "Permission with Config Overrides 3"),
 					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides_3", "type", "NATIVE"),
