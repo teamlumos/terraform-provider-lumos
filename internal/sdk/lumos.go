@@ -132,9 +132,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Lumos {
 	sdk := &Lumos{
-		SDKVersion: "0.10.4",
+		SDKVersion: "0.10.5",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.10.4 2.793.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.10.5 2.793.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
