@@ -3,15 +3,32 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type AccessPolicyInput struct {
 	// The name of the access policy.
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
-	// The condition determining which identities qualify for this policy.
-	AccessCondition any `json:"access_condition,omitempty"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
+	// The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True.
+	AccessCondition any `json:"access_condition,omitempty"`
+	// Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided.
+	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
+}
+
+func (a AccessPolicyInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessPolicyInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccessPolicyInput) GetName() string {
@@ -28,6 +45,13 @@ func (a *AccessPolicyInput) GetBusinessJustification() string {
 	return a.BusinessJustification
 }
 
+func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {
+	if a == nil {
+		return []AccessPolicyAppInput{}
+	}
+	return a.Apps
+}
+
 func (a *AccessPolicyInput) GetAccessCondition() any {
 	if a == nil {
 		return nil
@@ -35,9 +59,9 @@ func (a *AccessPolicyInput) GetAccessCondition() any {
 	return a.AccessCondition
 }
 
-func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {
+func (a *AccessPolicyInput) GetIsEveryoneCondition() *bool {
 	if a == nil {
-		return []AccessPolicyAppInput{}
+		return nil
 	}
-	return a.Apps
+	return a.IsEveryoneCondition
 }

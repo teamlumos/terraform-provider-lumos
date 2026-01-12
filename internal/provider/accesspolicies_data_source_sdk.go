@@ -23,12 +23,8 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 		for _, itemsItem := range resp.Items {
 			var items tfTypes.AccessPolicyOutput
 
-			if itemsItem.AccessCondition == nil {
-				items.AccessCondition = jsontypes.NewNormalizedNull()
-			} else {
-				accessConditionResult, _ := json.Marshal(itemsItem.AccessCondition)
-				items.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
-			}
+			accessConditionResult, _ := json.Marshal(itemsItem.AccessCondition)
+			items.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
 			items.Apps = []tfTypes.AccessPolicyAppOutput{}
 
 			for _, appsItem := range itemsItem.Apps {
@@ -50,6 +46,7 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 			}
 			items.BusinessJustification = types.StringValue(itemsItem.BusinessJustification)
 			items.ID = types.StringValue(itemsItem.ID)
+			items.IsEveryoneCondition = types.BoolValue(itemsItem.IsEveryoneCondition)
 			items.Name = types.StringValue(itemsItem.Name)
 
 			r.Items = append(r.Items, items)

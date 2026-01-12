@@ -11,7 +11,7 @@ type AccessPolicyAppInput struct {
 	// Whether approval is required for this app grant.
 	IsPreapproved *bool `json:"is_preapproved,omitempty"`
 	// List of permissions granted for this app. Empty list means app-level grant.
-	Permissions []AccessPolicyPermissionInput `json:"permissions"`
+	Permissions []AccessPolicyPermissionInput `json:"permissions,omitempty"`
 }
 
 func (a *AccessPolicyAppInput) GetID() string {

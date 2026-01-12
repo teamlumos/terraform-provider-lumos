@@ -9,12 +9,13 @@ type AccessPolicyOutput struct {
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
-	// The condition determining which identities qualify for this policy.
-	AccessCondition any `json:"access_condition,omitempty"`
 	// The unique ID of the access policy.
 	ID string `json:"id"`
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
+	// The condition determining which identities qualify for this policy.
+	AccessCondition     any  `json:"access_condition"`
+	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -31,13 +32,6 @@ func (a *AccessPolicyOutput) GetBusinessJustification() string {
 	return a.BusinessJustification
 }
 
-func (a *AccessPolicyOutput) GetAccessCondition() any {
-	if a == nil {
-		return nil
-	}
-	return a.AccessCondition
-}
-
 func (a *AccessPolicyOutput) GetID() string {
 	if a == nil {
 		return ""
@@ -50,4 +44,18 @@ func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
 		return []AccessPolicyAppOutput{}
 	}
 	return a.Apps
+}
+
+func (a *AccessPolicyOutput) GetAccessCondition() any {
+	if a == nil {
+		return nil
+	}
+	return a.AccessCondition
+}
+
+func (a *AccessPolicyOutput) GetIsEveryoneCondition() bool {
+	if a == nil {
+		return false
+	}
+	return a.IsEveryoneCondition
 }

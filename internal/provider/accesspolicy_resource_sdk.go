@@ -18,12 +18,8 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		if resp.AccessCondition == nil {
-			r.AccessCondition = jsontypes.NewNormalizedNull()
-		} else {
-			accessConditionResult, _ := json.Marshal(resp.AccessCondition)
-			r.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
-		}
+		accessConditionResult, _ := json.Marshal(resp.AccessCondition)
+		r.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
 		r.Apps = []tfTypes.AccessPolicyAppInput{}
 
 		for _, appsItem := range resp.Apps {
@@ -47,6 +43,7 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 		}
 		r.BusinessJustification = types.StringValue(resp.BusinessJustification)
 		r.ID = types.StringValue(resp.ID)
+		r.IsEveryoneCondition = types.BoolValue(resp.IsEveryoneCondition)
 		r.Name = types.StringValue(resp.Name)
 	}
 
@@ -109,10 +106,6 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 	var businessJustification string
 	businessJustification = r.BusinessJustification.ValueString()
 
-	var accessCondition interface{}
-	if !r.AccessCondition.IsUnknown() && !r.AccessCondition.IsNull() {
-		_ = json.Unmarshal([]byte(r.AccessCondition.ValueString()), &accessCondition)
-	}
 	apps := make([]shared.AccessPolicyAppInput, 0, len(r.Apps))
 	for appsIndex := range r.Apps {
 		var id string
@@ -145,11 +138,22 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 			Permissions:   permissions,
 		})
 	}
+	var accessCondition interface{}
+	if !r.AccessCondition.IsUnknown() && !r.AccessCondition.IsNull() {
+		_ = json.Unmarshal([]byte(r.AccessCondition.ValueString()), &accessCondition)
+	}
+	isEveryoneCondition := new(bool)
+	if !r.IsEveryoneCondition.IsUnknown() && !r.IsEveryoneCondition.IsNull() {
+		*isEveryoneCondition = r.IsEveryoneCondition.ValueBool()
+	} else {
+		isEveryoneCondition = nil
+	}
 	out := shared.AccessPolicyInput{
 		Name:                  name,
 		BusinessJustification: businessJustification,
-		AccessCondition:       accessCondition,
 		Apps:                  apps,
+		AccessCondition:       accessCondition,
+		IsEveryoneCondition:   isEveryoneCondition,
 	}
 
 	return &out, diags
