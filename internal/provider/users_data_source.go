@@ -6,13 +6,13 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 )
 
@@ -32,12 +32,14 @@ type UsersDataSource struct {
 
 // UsersDataSourceModel describes the data model.
 type UsersDataSourceModel struct {
-	Data       jsontypes.Normalized `tfsdk:"data"`
-	ExactMatch types.Bool           `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
-	Expand     []types.String       `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
-	Page       types.Int64          `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	SearchTerm types.String         `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
-	Size       types.Int64          `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	ExactMatch types.Bool     `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	Expand     []types.String `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	Items      []tfTypes.User `tfsdk:"items"`
+	Page       types.Int64    `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
+	Pages      types.Int64    `tfsdk:"pages"`
+	SearchTerm types.String   `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Size       types.Int64    `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	Total      types.Int64    `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
@@ -51,11 +53,6 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 		MarkdownDescription: "Users DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"data": schema.StringAttribute{
-				CustomType:  jsontypes.NormalizedType{},
-				Computed:    true,
-				Description: `Successful Response. Parsed as JSON.`,
-			},
 			"exact_match": schema.BoolAttribute{
 				Optional:    true,
 				Description: `If a search_term is provided, only accept exact matches.`,
@@ -65,21 +62,56 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				ElementType: types.StringType,
 				Description: `Fields to expand. Supported fields: custom_attributes.`,
 			},
+			"items": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"email": schema.StringAttribute{
+							Computed:    true,
+							Description: `The email of this user.`,
+						},
+						"family_name": schema.StringAttribute{
+							Computed:    true,
+							Description: `The family name of this user.`,
+						},
+						"given_name": schema.StringAttribute{
+							Computed:    true,
+							Description: `The given name of this user.`,
+						},
+						"id": schema.StringAttribute{
+							Computed:    true,
+							Description: `The ID of this user.`,
+						},
+						"status": schema.StringAttribute{
+							Computed:    true,
+							Description: `The status of this user.`,
+						},
+					},
+				},
+			},
 			"page": schema.Int64Attribute{
+				Computed: true,
 				Optional: true,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
 				},
+			},
+			"pages": schema.Int64Attribute{
+				Computed: true,
 			},
 			"search_term": schema.StringAttribute{
 				Optional:    true,
 				Description: `Search for users by name or email.`,
 			},
 			"size": schema.Int64Attribute{
+				Computed: true,
 				Optional: true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 100),
 				},
+			},
+			"total": schema.Int64Attribute{
+				Computed: true,
 			},
 		},
 	}
@@ -145,11 +177,11 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.Any != nil) {
+	if !(res.PageUser != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromInterface(ctx, res.Any)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageUser(ctx, res.PageUser)...)
 
 	if resp.Diagnostics.HasError() {
 		return

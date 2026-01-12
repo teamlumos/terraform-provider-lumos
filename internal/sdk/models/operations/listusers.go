@@ -74,7 +74,7 @@ type ListUsersResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Any any
+	PageUser *shared.PageUser
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -100,11 +100,11 @@ func (l *ListUsersResponse) GetRawResponse() *http.Response {
 	return l.RawResponse
 }
 
-func (l *ListUsersResponse) GetAny() any {
+func (l *ListUsersResponse) GetPageUser() *shared.PageUser {
 	if l == nil {
 		return nil
 	}
-	return l.Any
+	return l.PageUser
 }
 
 func (l *ListUsersResponse) GetHTTPValidationError() *shared.HTTPValidationError {

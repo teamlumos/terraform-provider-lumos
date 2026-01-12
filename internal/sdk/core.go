@@ -1959,12 +1959,12 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 				return nil, err
 			}
 
-			var out any
+			var out shared.PageUser
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Any = out
+			res.PageUser = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
