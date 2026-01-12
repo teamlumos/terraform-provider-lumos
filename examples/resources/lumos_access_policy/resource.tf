@@ -12,5 +12,6 @@ resource "lumos_access_policy" "my_accesspolicy" {
     }
   ]
   business_justification = "...my_business_justification..."
+  is_everyone_condition  = false
   name                   = "...my_name..."
 }

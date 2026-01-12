@@ -97,6 +97,9 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 							Computed:    true,
 							Description: `The unique ID of the access policy.`,
 						},
+						"is_everyone_condition": schema.BoolAttribute{
+							Computed: true,
+						},
 						"name": schema.StringAttribute{
 							Computed:    true,
 							Description: `The name of the access policy.`,

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,6 +43,7 @@ type AccessPolicyResourceModel struct {
 	Apps                  []tfTypes.AccessPolicyAppInput `tfsdk:"apps"`
 	BusinessJustification types.String                   `tfsdk:"business_justification"`
 	ID                    types.String                   `tfsdk:"id"`
+	IsEveryoneCondition   types.Bool                     `tfsdk:"is_everyone_condition"`
 	Name                  types.String                   `tfsdk:"name"`
 }
 
@@ -57,7 +59,7 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				Description: `The condition determining which identities qualify for this policy. Parsed as JSON.`,
+				Description: `The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True. Parsed as JSON.`,
 			},
 			"apps": schema.ListNestedAttribute{
 				Required: true,
@@ -113,6 +115,12 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `The unique ID of the access policy.`,
+			},
+			"is_everyone_condition": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Default:     booldefault.StaticBool(false),
+				Description: `Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided. Default: false`,
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
