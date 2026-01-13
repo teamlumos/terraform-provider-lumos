@@ -3,6 +3,10 @@
 
 package shared
 
+// AccessCondition - The condition determining which identities qualify for this policy.
+type AccessCondition struct {
+}
+
 // AccessPolicyOutput - The full representation of an access policy returned by the API.
 type AccessPolicyOutput struct {
 	// The name of the access policy.
@@ -14,8 +18,8 @@ type AccessPolicyOutput struct {
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition     map[string]any `json:"access_condition"`
-	IsEveryoneCondition bool           `json:"is_everyone_condition"`
+	AccessCondition     AccessCondition `json:"access_condition"`
+	IsEveryoneCondition bool            `json:"is_everyone_condition"`
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -46,9 +50,9 @@ func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
 	return a.Apps
 }
 
-func (a *AccessPolicyOutput) GetAccessCondition() map[string]any {
+func (a *AccessPolicyOutput) GetAccessCondition() AccessCondition {
 	if a == nil {
-		return map[string]any{}
+		return AccessCondition{}
 	}
 	return a.AccessCondition
 }

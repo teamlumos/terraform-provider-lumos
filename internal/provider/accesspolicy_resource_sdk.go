@@ -5,8 +5,6 @@ package provider
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -18,12 +16,9 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		if resp.AccessCondition != nil {
-			r.AccessCondition = make(map[string]jsontypes.Normalized, len(resp.AccessCondition))
-			for key, value := range resp.AccessCondition {
-				result, _ := json.Marshal(value)
-				r.AccessCondition[key] = jsontypes.NewNormalizedValue(string(result))
-			}
+		if r.AccessCondition == nil {
+			r.AccessCondition = &tfTypes.AccessPolicyInputAccessCondition{}
+
 		}
 		r.Apps = []tfTypes.AccessPolicyAppInput{}
 
@@ -143,14 +138,9 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 			Permissions:   permissions,
 		})
 	}
-	var accessCondition map[string]interface{}
+	var accessCondition *shared.AccessPolicyInputAccessCondition
 	if r.AccessCondition != nil {
-		accessCondition = make(map[string]interface{})
-		for accessConditionKey := range r.AccessCondition {
-			var accessConditionInst interface{}
-			_ = json.Unmarshal([]byte(r.AccessCondition[accessConditionKey].ValueString()), &accessConditionInst)
-			accessCondition[accessConditionKey] = accessConditionInst
-		}
+		accessCondition = &shared.AccessPolicyInputAccessCondition{}
 	}
 	isEveryoneCondition := new(bool)
 	if !r.IsEveryoneCondition.IsUnknown() && !r.IsEveryoneCondition.IsNull() {

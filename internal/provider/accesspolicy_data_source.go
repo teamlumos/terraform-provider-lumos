@@ -6,7 +6,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -31,12 +30,12 @@ type AccessPolicyDataSource struct {
 
 // AccessPolicyDataSourceModel describes the data model.
 type AccessPolicyDataSourceModel struct {
-	AccessCondition       map[string]jsontypes.Normalized `tfsdk:"access_condition"`
-	Apps                  []tfTypes.AccessPolicyAppOutput `tfsdk:"apps"`
-	BusinessJustification types.String                    `tfsdk:"business_justification"`
-	ID                    types.String                    `tfsdk:"id"`
-	IsEveryoneCondition   types.Bool                      `tfsdk:"is_everyone_condition"`
-	Name                  types.String                    `tfsdk:"name"`
+	AccessCondition       tfTypes.AccessPolicyInputAccessCondition `tfsdk:"access_condition"`
+	Apps                  []tfTypes.AccessPolicyAppOutput          `tfsdk:"apps"`
+	BusinessJustification types.String                             `tfsdk:"business_justification"`
+	ID                    types.String                             `tfsdk:"id"`
+	IsEveryoneCondition   types.Bool                               `tfsdk:"is_everyone_condition"`
+	Name                  types.String                             `tfsdk:"name"`
 }
 
 // Metadata returns the data source type name.
@@ -50,9 +49,8 @@ func (r *AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Sche
 		MarkdownDescription: "AccessPolicy DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"access_condition": schema.MapAttribute{
+			"access_condition": schema.SingleNestedAttribute{
 				Computed:    true,
-				ElementType: jsontypes.NormalizedType{},
 				Description: `The condition determining which identities qualify for this policy.`,
 			},
 			"apps": schema.ListNestedAttribute{
