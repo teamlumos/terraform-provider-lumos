@@ -1,7 +1,5 @@
 resource "lumos_access_policy" "my_accesspolicy" {
-  access_condition = {
-    key = jsonencode("value")
-  }
+  access_condition = "{ \"see\": \"documentation\" }"
   apps = [
     {
       id             = "...my_id..."
