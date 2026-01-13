@@ -23,13 +23,8 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 		for _, itemsItem := range resp.Items {
 			var items tfTypes.AccessPolicyOutput
 
-			if len(itemsItem.AccessCondition) > 0 {
-				items.AccessCondition = make(map[string]jsontypes.Normalized, len(itemsItem.AccessCondition))
-				for key, value := range itemsItem.AccessCondition {
-					result, _ := json.Marshal(value)
-					items.AccessCondition[key] = jsontypes.NewNormalizedValue(string(result))
-				}
-			}
+			accessConditionResult, _ := json.Marshal(itemsItem.AccessCondition)
+			items.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
 			items.Apps = []tfTypes.AccessPolicyAppOutput{}
 
 			for _, appsItem := range itemsItem.Apps {

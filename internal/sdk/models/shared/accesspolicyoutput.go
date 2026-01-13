@@ -14,8 +14,8 @@ type AccessPolicyOutput struct {
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The condition determining which identities qualify for this policy.
-	AccessCondition     map[string]any `json:"access_condition"`
-	IsEveryoneCondition bool           `json:"is_everyone_condition"`
+	AccessCondition     any  `json:"access_condition"`
+	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -46,9 +46,9 @@ func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
 	return a.Apps
 }
 
-func (a *AccessPolicyOutput) GetAccessCondition() map[string]any {
+func (a *AccessPolicyOutput) GetAccessCondition() any {
 	if a == nil {
-		return map[string]any{}
+		return nil
 	}
 	return a.AccessCondition
 }
