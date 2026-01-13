@@ -56,10 +56,10 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"access_condition": schema.StringAttribute{
-							CustomType:  jsontypes.NormalizedType{},
+						"access_condition": schema.MapAttribute{
 							Computed:    true,
-							Description: `The condition determining which identities qualify for this policy. Parsed as JSON.`,
+							ElementType: jsontypes.NormalizedType{},
+							Description: `The condition determining which identities qualify for this policy.`,
 						},
 						"apps": schema.ListNestedAttribute{
 							Computed: true,

@@ -31,7 +31,7 @@ type AccessPolicyDataSource struct {
 
 // AccessPolicyDataSourceModel describes the data model.
 type AccessPolicyDataSourceModel struct {
-	AccessCondition       jsontypes.Normalized            `tfsdk:"access_condition"`
+	AccessCondition       map[string]jsontypes.Normalized `tfsdk:"access_condition"`
 	Apps                  []tfTypes.AccessPolicyAppOutput `tfsdk:"apps"`
 	BusinessJustification types.String                    `tfsdk:"business_justification"`
 	ID                    types.String                    `tfsdk:"id"`
@@ -50,10 +50,10 @@ func (r *AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Sche
 		MarkdownDescription: "AccessPolicy DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"access_condition": schema.StringAttribute{
-				CustomType:  jsontypes.NormalizedType{},
+			"access_condition": schema.MapAttribute{
 				Computed:    true,
-				Description: `The condition determining which identities qualify for this policy. Parsed as JSON.`,
+				ElementType: jsontypes.NormalizedType{},
+				Description: `The condition determining which identities qualify for this policy.`,
 			},
 			"apps": schema.ListNestedAttribute{
 				Computed: true,

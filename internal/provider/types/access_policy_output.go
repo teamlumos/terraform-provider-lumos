@@ -9,10 +9,10 @@ import (
 )
 
 type AccessPolicyOutput struct {
-	AccessCondition       jsontypes.Normalized    `tfsdk:"access_condition"`
-	Apps                  []AccessPolicyAppOutput `tfsdk:"apps"`
-	BusinessJustification types.String            `tfsdk:"business_justification"`
-	ID                    types.String            `tfsdk:"id"`
-	IsEveryoneCondition   types.Bool              `tfsdk:"is_everyone_condition"`
-	Name                  types.String            `tfsdk:"name"`
+	AccessCondition       map[string]jsontypes.Normalized `tfsdk:"access_condition"`
+	Apps                  []AccessPolicyAppOutput         `tfsdk:"apps"`
+	BusinessJustification types.String                    `tfsdk:"business_justification"`
+	ID                    types.String                    `tfsdk:"id"`
+	IsEveryoneCondition   types.Bool                      `tfsdk:"is_everyone_condition"`
+	Name                  types.String                    `tfsdk:"name"`
 }

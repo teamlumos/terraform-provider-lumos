@@ -18,8 +18,13 @@ func (r *AccessPolicyDataSourceModel) RefreshFromSharedAccessPolicyOutput(ctx co
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		accessConditionResult, _ := json.Marshal(resp.AccessCondition)
-		r.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
+		if len(resp.AccessCondition) > 0 {
+			r.AccessCondition = make(map[string]jsontypes.Normalized, len(resp.AccessCondition))
+			for key, value := range resp.AccessCondition {
+				result, _ := json.Marshal(value)
+				r.AccessCondition[key] = jsontypes.NewNormalizedValue(string(result))
+			}
+		}
 		r.Apps = []tfTypes.AccessPolicyAppOutput{}
 
 		for _, appsItem := range resp.Apps {
