@@ -16,8 +16,10 @@ type ListUsersRequest struct {
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
-	Page   *int64   `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size   *int64   `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (l ListUsersRequest) MarshalJSON() ([]byte, error) {
@@ -74,7 +76,7 @@ type ListUsersResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	PageUser *shared.PageUser
+	PageUserWithCustomAttributes *shared.PageUserWithCustomAttributes
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -100,11 +102,11 @@ func (l *ListUsersResponse) GetRawResponse() *http.Response {
 	return l.RawResponse
 }
 
-func (l *ListUsersResponse) GetPageUser() *shared.PageUser {
+func (l *ListUsersResponse) GetPageUserWithCustomAttributes() *shared.PageUserWithCustomAttributes {
 	if l == nil {
 		return nil
 	}
-	return l.PageUser
+	return l.PageUserWithCustomAttributes
 }
 
 func (l *ListUsersResponse) GetHTTPValidationError() *shared.HTTPValidationError {

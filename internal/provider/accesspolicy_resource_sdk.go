@@ -18,8 +18,13 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		accessConditionResult, _ := json.Marshal(resp.AccessCondition)
-		r.AccessCondition = jsontypes.NewNormalizedValue(string(accessConditionResult))
+		if resp.AccessCondition != nil {
+			r.AccessCondition = make(map[string]jsontypes.Normalized, len(resp.AccessCondition))
+			for key, value := range resp.AccessCondition {
+				result, _ := json.Marshal(value)
+				r.AccessCondition[key] = jsontypes.NewNormalizedValue(string(result))
+			}
+		}
 		r.Apps = []tfTypes.AccessPolicyAppInput{}
 
 		for _, appsItem := range resp.Apps {
@@ -138,9 +143,14 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 			Permissions:   permissions,
 		})
 	}
-	var accessCondition interface{}
-	if !r.AccessCondition.IsUnknown() && !r.AccessCondition.IsNull() {
-		_ = json.Unmarshal([]byte(r.AccessCondition.ValueString()), &accessCondition)
+	var accessCondition map[string]interface{}
+	if r.AccessCondition != nil {
+		accessCondition = make(map[string]interface{})
+		for accessConditionKey := range r.AccessCondition {
+			var accessConditionInst interface{}
+			_ = json.Unmarshal([]byte(r.AccessCondition[accessConditionKey].ValueString()), &accessConditionInst)
+			accessCondition[accessConditionKey] = accessConditionInst
+		}
 	}
 	isEveryoneCondition := new(bool)
 	if !r.IsEveryoneCondition.IsUnknown() && !r.IsEveryoneCondition.IsNull() {
