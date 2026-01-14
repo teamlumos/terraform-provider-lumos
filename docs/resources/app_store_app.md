@@ -181,6 +181,10 @@ Optional:
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.
 
+Read-Only:
+
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false
+
 <a id="nestedatt--request_flow--admins"></a>
 ### Nested Schema for `request_flow.admins`
 

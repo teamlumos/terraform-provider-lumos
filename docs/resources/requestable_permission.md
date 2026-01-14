@@ -146,6 +146,10 @@ Optional:
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 
+Read-Only:
+
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false
+
 <a id="nestedatt--request_config--request_approval_config--approvers"></a>
 ### Nested Schema for `request_config.request_approval_config.approvers`
 

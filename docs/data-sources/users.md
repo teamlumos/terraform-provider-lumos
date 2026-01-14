@@ -46,6 +46,36 @@ data "lumos_users" "my_users" {
 
 Read-Only:
 
+- `custom_attributes` (Attributes Map) Custom attributes configured on the user (see [below for nested schema](#nestedatt--items--custom_attributes))
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
+<a id="nestedatt--items--custom_attributes"></a>
+### Nested Schema for `items.custom_attributes`
+
+Read-Only:
+
+- `type` (String)
+- `value` (Attributes) The value of the attribute for an individual Order (see [below for nested schema](#nestedatt--items--custom_attributes--value))
+
+<a id="nestedatt--items--custom_attributes--value"></a>
+### Nested Schema for `items.custom_attributes.value`
+
+Read-Only:
+
+- `array_of_user` (Attributes List) (see [below for nested schema](#nestedatt--items--custom_attributes--value--array_of_user))
+- `date_time` (String)
+- `integer` (Number)
+- `str` (String)
+
+<a id="nestedatt--items--custom_attributes--value--array_of_user"></a>
+### Nested Schema for `items.custom_attributes.value.array_of_user`
+
+Read-Only:
+
 - `email` (String) The email of this user.
 - `family_name` (String) The family name of this user.
 - `given_name` (String) The given name of this user.
