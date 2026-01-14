@@ -178,6 +178,15 @@ actions:
     update:
       "x-speakeasy-param-suppress-computed-diff": true
 
+  # Access Policies - Add x-speakeasy-type-override to access_condition
+  # so that it can be constructed as a JSON object.
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["access_condition"]
+    update:
+      "x-speakeasy-type-override": "any"
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["access_condition"]
+    update:
+      "x-speakeasy-type-override": "any"
+
   # Access Policies
   - target: $["paths"]["/access_policies"]["post"]
     update:
