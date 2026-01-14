@@ -10,3 +10,4 @@
 *.tfstate.backup
 *.tfstate
 main.tf
+sandbox/
