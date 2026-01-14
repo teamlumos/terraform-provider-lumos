@@ -16,13 +16,13 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.9.3"
+      version = "0.12.1"
     }
   }
 }
 
 provider "lumos" {
-  # Configuration options
+  server_url = "..." # Optional
 }
 ```
 

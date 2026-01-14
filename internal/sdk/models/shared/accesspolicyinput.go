@@ -15,7 +15,7 @@ type AccessPolicyInput struct {
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
 	// The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True. This is a recursive structure that can contain nested conditions using 'and', 'or', and 'not' operators. See the Condition schema for full details.
-	AccessCondition map[string]any `json:"access_condition,omitempty"`
+	AccessCondition any `json:"access_condition,omitempty"`
 	// Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided.
 	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
 }
@@ -52,7 +52,7 @@ func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {
 	return a.Apps
 }
 
-func (a *AccessPolicyInput) GetAccessCondition() map[string]any {
+func (a *AccessPolicyInput) GetAccessCondition() any {
 	if a == nil {
 		return nil
 	}

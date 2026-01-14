@@ -78,6 +78,7 @@ Read-Only:
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 
 <a id="nestedatt--request_flow--admins"></a>
 ### Nested Schema for `request_flow.admins`

@@ -116,6 +116,7 @@ Read-Only:
 - `manager_approval` (String) Manager approval can be configured as necessary to continue
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
 - `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 
 <a id="nestedatt--items--request_config--request_approval_config--approvers"></a>
 ### Nested Schema for `items.request_config.request_approval_config.approvers`
