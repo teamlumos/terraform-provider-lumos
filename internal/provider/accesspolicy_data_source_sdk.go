@@ -48,13 +48,13 @@ func (r *AccessPolicyDataSourceModel) RefreshFromSharedAccessPolicyOutput(ctx co
 	return diags
 }
 
-func (r *AccessPolicyDataSourceModel) ToOperationsGetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest(ctx context.Context) (*operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest, diag.Diagnostics) {
+func (r *AccessPolicyDataSourceModel) ToOperationsGetAccessPolicyRequest(ctx context.Context) (*operations.GetAccessPolicyRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest{
+	out := operations.GetAccessPolicyRequest{
 		ID: id,
 	}
 

@@ -59,7 +59,7 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				Description: `The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True. This is a recursive structure that can contain nested conditions using 'and', 'or', and 'not' operators. See the Condition schema for full details. Parsed as JSON.`,
+				Description: `The Lumos Condition object determining which identities qualify for this policy. Required unless ` + "`" + `is_everyone_condition` + "`" + ` is ` + "`" + `true` + "`" + `. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like ` + "`" + `equals` + "`" + `, ` + "`" + `in` + "`" + `, ` + "`" + `and` + "`" + `, ` + "`" + `or` + "`" + `, and ` + "`" + `not` + "`" + `. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.`,
 			},
 			"apps": schema.ListNestedAttribute{
 				Required: true,
@@ -120,7 +120,7 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				Computed:    true,
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
-				Description: `Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided. Default: false`,
+				Description: `Whether the access policy applies to everyone. If true, ` + "`" + `access_condition` + "`" + ` is ignored. Otherwise, ` + "`" + `access_condition` + "`" + ` must be provided. Default: false`,
 			},
 			"name": schema.StringAttribute{
 				Required:    true,
@@ -174,7 +174,7 @@ func (r *AccessPolicyResource) Create(ctx context.Context, req resource.CreateRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessPolicies.CreateAccessPolicy(ctx, *request)
+	res, err := r.client.Core.CreateAccessPolicy(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -228,13 +228,13 @@ func (r *AccessPolicyResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest(ctx)
+	request, requestDiags := data.ToOperationsGetAccessPolicyRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessPolicies.GetAccessPolicyAccessPoliciesAccessPolicyIDGet(ctx, *request)
+	res, err := r.client.Core.GetAccessPolicy(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -288,7 +288,7 @@ func (r *AccessPolicyResource) Update(ctx context.Context, req resource.UpdateRe
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessPolicies.UpdateAccessPolicy(ctx, *request)
+	res, err := r.client.Core.UpdateAccessPolicy(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -342,13 +342,13 @@ func (r *AccessPolicyResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	request, requestDiags := data.ToOperationsDeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest(ctx)
+	request, requestDiags := data.ToOperationsDeleteAccessPolicyRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessPolicies.DeleteAccessPolicyAccessPoliciesAccessPolicyIDDelete(ctx, *request)
+	res, err := r.client.Core.DeleteAccessPolicy(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
