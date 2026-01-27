@@ -43,8 +43,8 @@ resource "lumos_access_policy" "my_accesspolicy" {
 
 ### Optional
 
-- `access_condition` (String) The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True. This is a recursive structure that can contain nested conditions using 'and', 'or', and 'not' operators. See the Condition schema for full details. Parsed as JSON.
-- `is_everyone_condition` (Boolean) Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided. Default: false
+- `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.
+- `is_everyone_condition` (Boolean) Whether the access policy applies to everyone. If true, `access_condition` is ignored. Otherwise, `access_condition` must be provided. Default: false
 
 ### Read-Only
 

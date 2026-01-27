@@ -51,6 +51,7 @@ type AppStoreAppResourceModel struct {
 	AppClassID                       types.String                                  `tfsdk:"app_class_id"`
 	AppID                            types.String                                  `tfsdk:"app_id"`
 	Category                         types.String                                  `tfsdk:"category"`
+	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
 	ID                               types.String                                  `tfsdk:"id"`
@@ -92,6 +93,59 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"category": schema.StringAttribute{
 				Computed:    true,
 				Description: `The category of the app, as shown in the AppStore`,
+			},
+			"custom_attributes": schema.MapNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Computed: true,
+						},
+						"value": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"array_of_user": schema.ListNestedAttribute{
+									Computed: true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Computed:    true,
+												Description: `The email of this user.`,
+											},
+											"family_name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The family name of this user.`,
+											},
+											"given_name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The given name of this user.`,
+											},
+											"id": schema.StringAttribute{
+												Computed:    true,
+												Description: `The ID of this user.`,
+											},
+											"status": schema.StringAttribute{
+												Computed:    true,
+												Description: `The status of this user.`,
+											},
+										},
+									},
+								},
+								"date_time": schema.StringAttribute{
+									Computed: true,
+								},
+								"integer": schema.Int64Attribute{
+									Computed: true,
+								},
+								"str": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+							Description: `The value of the attribute for an individual Order`,
+						},
+					},
+				},
+				Description: `Custom attributes configured on the app`,
 			},
 			"custom_request_instructions": schema.StringAttribute{
 				Computed: true,

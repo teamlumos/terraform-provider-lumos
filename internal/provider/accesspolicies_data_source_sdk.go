@@ -60,7 +60,7 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 	return diags
 }
 
-func (r *AccessPoliciesDataSourceModel) ToOperationsListAccessPoliciesAccessPoliciesGetRequest(ctx context.Context) (*operations.ListAccessPoliciesAccessPoliciesGetRequest, diag.Diagnostics) {
+func (r *AccessPoliciesDataSourceModel) ToOperationsGetAccessPoliciesRequest(ctx context.Context) (*operations.GetAccessPoliciesRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	page := new(int64)
@@ -81,7 +81,7 @@ func (r *AccessPoliciesDataSourceModel) ToOperationsListAccessPoliciesAccessPoli
 	} else {
 		name = nil
 	}
-	out := operations.ListAccessPoliciesAccessPoliciesGetRequest{
+	out := operations.GetAccessPoliciesRequest{
 		Page: page,
 		Size: size,
 		Name: name,

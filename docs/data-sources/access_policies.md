@@ -40,7 +40,7 @@ data "lumos_access_policies" "my_accesspolicies" {
 
 Read-Only:
 
-- `access_condition` (String) The condition determining which identities qualify for this policy. Parsed as JSON.
+- `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.
 - `apps` (Attributes List) The list of apps and permissions granted by this access policy. (see [below for nested schema](#nestedatt--items--apps))
 - `business_justification` (String) Explanation for why this policy exists.
 - `id` (String) The unique ID of the access policy.

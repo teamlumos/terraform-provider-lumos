@@ -50,26 +50,26 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 	return diags
 }
 
-func (r *AccessPolicyResourceModel) ToOperationsDeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest(ctx context.Context) (*operations.DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest, diag.Diagnostics) {
+func (r *AccessPolicyResourceModel) ToOperationsDeleteAccessPolicyRequest(ctx context.Context) (*operations.DeleteAccessPolicyRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.DeleteAccessPolicyAccessPoliciesAccessPolicyIDDeleteRequest{
+	out := operations.DeleteAccessPolicyRequest{
 		ID: id,
 	}
 
 	return &out, diags
 }
 
-func (r *AccessPolicyResourceModel) ToOperationsGetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest(ctx context.Context) (*operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest, diag.Diagnostics) {
+func (r *AccessPolicyResourceModel) ToOperationsGetAccessPolicyRequest(ctx context.Context) (*operations.GetAccessPolicyRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.GetAccessPolicyAccessPoliciesAccessPolicyIDGetRequest{
+	out := operations.GetAccessPolicyRequest{
 		ID: id,
 	}
 

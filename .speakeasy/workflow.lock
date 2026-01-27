@@ -1,4 +1,4 @@
-speakeasyVersion: 1.685.0
+speakeasyVersion: 1.700.1
 sources:
     FastAPI:
         sourceNamespace: fast-api
