@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.1.0 and generator version 2.794.1
+// Generated from OpenAPI doc version 0.1.0 and generator version 2.801.0
 
 import (
 	"context"
@@ -53,7 +53,6 @@ type Lumos struct {
 	SDKVersion          string
 	Core                *Core
 	AppStore            *AppStore
-	AccessPolicies      *AccessPolicies
 	VendorManagement    *VendorManagement
 	Meta                *Meta
 	IntegrationWebhooks *IntegrationWebhooks
@@ -132,9 +131,9 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Lumos {
 	sdk := &Lumos{
-		SDKVersion: "0.12.1",
+		SDKVersion: "0.12.2",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.12.1 2.794.1 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.12.2 2.801.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),
@@ -157,7 +156,6 @@ func New(opts ...SDKOption) *Lumos {
 
 	sdk.Core = newCore(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AppStore = newAppStore(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.AccessPolicies = newAccessPolicies(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.VendorManagement = newVendorManagement(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Meta = newMeta(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk, sdk.sdkConfiguration, sdk.hooks)

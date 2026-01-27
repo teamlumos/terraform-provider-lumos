@@ -13,7 +13,7 @@ type AccessPolicyOutput struct {
 	ID string `json:"id"`
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
-	// The condition determining which identities qualify for this policy.
+	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
 	AccessCondition     any  `json:"access_condition"`
 	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }

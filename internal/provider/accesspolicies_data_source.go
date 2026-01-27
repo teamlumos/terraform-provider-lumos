@@ -59,7 +59,7 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 						"access_condition": schema.StringAttribute{
 							CustomType:  jsontypes.NormalizedType{},
 							Computed:    true,
-							Description: `The condition determining which identities qualify for this policy. Parsed as JSON.`,
+							Description: `The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.`,
 						},
 						"apps": schema.ListNestedAttribute{
 							Computed: true,
@@ -175,13 +175,13 @@ func (r *AccessPoliciesDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	request, requestDiags := data.ToOperationsListAccessPoliciesAccessPoliciesGetRequest(ctx)
+	request, requestDiags := data.ToOperationsGetAccessPoliciesRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AccessPolicies.ListAccessPoliciesAccessPoliciesGet(ctx, *request)
+	res, err := r.client.Core.GetAccessPolicies(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

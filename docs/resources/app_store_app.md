@@ -113,6 +113,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 - `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
 - `category` (String) The category of the app, as shown in the AppStore
+- `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--custom_attributes))
 - `description` (String) The user-facing description of the app
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
@@ -346,6 +347,38 @@ Read-Only:
 - `description` (String) The description of this inline webhook.
 - `hook_type` (String)
 - `name` (String) The name of this inline webhook.
+
+
+
+<a id="nestedatt--custom_attributes"></a>
+### Nested Schema for `custom_attributes`
+
+Read-Only:
+
+- `type` (String)
+- `value` (Attributes) The value of the attribute for an individual Order (see [below for nested schema](#nestedatt--custom_attributes--value))
+
+<a id="nestedatt--custom_attributes--value"></a>
+### Nested Schema for `custom_attributes.value`
+
+Read-Only:
+
+- `array_of_user` (Attributes List) (see [below for nested schema](#nestedatt--custom_attributes--value--array_of_user))
+- `date_time` (String)
+- `integer` (Number)
+- `str` (String)
+
+<a id="nestedatt--custom_attributes--value--array_of_user"></a>
+### Nested Schema for `custom_attributes.value.array_of_user`
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
 
 
 

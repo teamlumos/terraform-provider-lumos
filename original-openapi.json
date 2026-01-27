@@ -2242,6 +2242,20 @@
             "in": "path",
             "required": true,
             "schema": { "type": "string", "title": "App Id" }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "array", "items": { "type": "string" } },
+                { "type": "null" }
+              ],
+              "description": "Fields to expand. Supported fields: custom_attributes.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand. Supported fields: custom_attributes."
           }
         ],
         "responses": {
@@ -2499,9 +2513,10 @@
     },
     "/access_policies": {
       "get": {
-        "tags": ["Access Policies"],
-        "summary": "List Access Policies",
-        "operationId": "list_access_policies_access_policies_get",
+        "tags": ["Core"],
+        "summary": "Get Access Policies",
+        "description": "Get all access policies. Results are sorted by created time descending by default.",
+        "operationId": "getAccessPolicies",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
@@ -2565,9 +2580,9 @@
         }
       },
       "post": {
-        "tags": ["Access Policies"],
+        "tags": ["Core"],
         "summary": "Create Access Policy",
-        "description": "Create an access policy",
+        "description": "Create a new access policy.",
         "operationId": "createAccessPolicy",
         "security": [{ "HTTPBearer": [] }],
         "requestBody": {
@@ -2600,9 +2615,10 @@
     },
     "/access_policies/{access_policy_id}": {
       "get": {
-        "tags": ["Access Policies"],
+        "tags": ["Core"],
         "summary": "Get Access Policy",
-        "operationId": "get_access_policy_access_policies__access_policy_id__get",
+        "description": "Get an access policy by ID.",
+        "operationId": "getAccessPolicy",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
@@ -2632,9 +2648,10 @@
         }
       },
       "delete": {
-        "tags": ["Access Policies"],
+        "tags": ["Core"],
         "summary": "Delete Access Policy",
-        "operationId": "delete_access_policy_access_policies__access_policy_id__delete",
+        "description": "Delete an access policy by ID.",
+        "operationId": "deleteAccessPolicy",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
@@ -2657,9 +2674,9 @@
         }
       },
       "put": {
-        "tags": ["Access Policies"],
+        "tags": ["Core"],
         "summary": "Update Access Policy",
-        "description": "Update an access policy",
+        "description": "Update an access policy by ID.",
         "operationId": "updateAccessPolicy",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
@@ -3161,12 +3178,12 @@
               { "additionalProperties": true, "type": "object" },
               { "type": "null" }
             ],
-            "description": "The condition determining which identities qualify for this policy. Required if is_everyone_condition is not True. This is a recursive structure that can contain nested conditions using 'and', 'or', and 'not' operators. See the Condition schema for full details."
+            "description": "The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos)."
           },
           "is_everyone_condition": {
             "type": "boolean",
             "title": "Is Everyone Condition",
-            "description": "Whether the access policy applies to everyone. If true, access_condition is ignored. Otherwise, access_condition must be provided.",
+            "description": "Whether the access policy applies to everyone. If true, `access_condition` is ignored. Otherwise, `access_condition` must be provided.",
             "default": false
           }
         },
@@ -3198,9 +3215,8 @@
             "description": "The list of apps and permissions granted by this access policy."
           },
           "access_condition": {
-            "additionalProperties": true,
             "type": "object",
-            "description": "The condition determining which identities qualify for this policy."
+            "description": "The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos)."
           },
           "is_everyone_condition": {
             "type": "boolean",
@@ -3969,6 +3985,19 @@
           "links": {
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
+          },
+          "custom_attributes": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/CustomAttribute"
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "title": "Custom Attributes",
+            "description": "Custom attributes configured on the app"
           }
         },
         "type": "object",
