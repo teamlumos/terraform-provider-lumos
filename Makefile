@@ -9,7 +9,9 @@ provider: overlay.yaml
 	@echo "Running tests..."
 	@go test ./internal/provider/...
 	@echo "Generating documentation..."
+	@if [ -d docs/guides ]; then cp -R docs/guides .docs-guides-backup; fi
 	@go generate ./...
+	@if [ -d .docs-guides-backup ]; then rm -rf docs/guides && mv .docs-guides-backup docs/guides; fi
 	@echo "✓ Successfully generated and compiled the provider and ran tests"
 
 
