@@ -1,7 +1,13 @@
 .PHONY: provider
 provider: overlay.yaml
+	@echo "Syncing gen.yaml version from latest git tag..."
+	@VERSION=$$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//'); \
+	if [ -n "$$VERSION" ]; then \
+	  sed "s/^  version: .*/  version: $$VERSION/" .speakeasy/gen.yaml > .speakeasy/gen.yaml.tmp && mv .speakeasy/gen.yaml.tmp .speakeasy/gen.yaml; \
+	  echo "  Set terraform.version to $$VERSION"; \
+	fi
 	@echo "Running Speakeasy to generate the provider..."
-	speakeasy run --skip-compile
+	speakeasy run --skip-compile --skip-versioning
 	@echo "Running go mod tidy..."
 	@go mod tidy
 	@echo "Compiling provider..."
@@ -9,7 +15,9 @@ provider: overlay.yaml
 	@echo "Running tests..."
 	@go test ./internal/provider/...
 	@echo "Generating documentation..."
+	@if [ -d docs/guides ]; then cp -R docs/guides .docs-guides-backup; fi
 	@go generate ./...
+	@if [ -d .docs-guides-backup ]; then rm -rf docs/guides && mv .docs-guides-backup docs/guides; fi
 	@echo "✓ Successfully generated and compiled the provider and ran tests"
 
 

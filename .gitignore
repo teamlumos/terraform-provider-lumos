@@ -7,6 +7,7 @@
 .terraform*
 *.tfstate*
 .DS_Store
+.docs-guides-backup
 *.tfstate.backup
 *.tfstate
 main.tf
