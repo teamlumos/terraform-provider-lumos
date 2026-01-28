@@ -3,19 +3,19 @@ id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
   docChecksum: f589dd30bb23bb473a63b51b652e3038
   docVersion: 0.1.0
-  speakeasyVersion: 1.700.1
-  generationVersion: 2.801.0
-  releaseVersion: 0.12.2
-  configChecksum: a39c37f8fa7a6abdb9da69ba58ca3c07
+  speakeasyVersion: 1.700.2
+  generationVersion: 2.801.2
+  releaseVersion: 0.9.0
+  configChecksum: 0d3225bbcfa3445ecd0f94a2bee9ecab
 persistentEdits:
-  generation_id: 8c80ae4e-41ed-4a0b-9459-e4076457fe16
-  pristine_commit_hash: 4d765e170975e1571d75c8368caaa45cf6e96552
-  pristine_tree_hash: fc0cab9bf9b0cc94d5b25c8fcf4a6e8e7ea9df4c
+  generation_id: 5a605a8e-04bb-47fa-9013-3cf662e76f07
+  pristine_commit_hash: 3904fc361052c1baadd1b4254760dccd82abb53f
+  pristine_tree_hash: ece7750ce74b999f03955ed92e3730bdccb49e41
 features:
   terraform:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.3.0
-    core: 3.46.29
+    core: 3.46.30
     globalSecurity: 2.82.1
     globalServerURLs: 2.83.0
     nameOverrides: 2.81.3
@@ -83,8 +83,8 @@ trackedFiles:
     pristine_git_object: ee93b441d8ba27af724f23bf8366b691531e3258
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:d4d91642c5bd4a84fbedd63164d5933c31c98b46
-    pristine_git_object: d2029c7980a5a16adf8a57011790bd0f99d6222e
+    last_write_checksum: sha1:c070490bd892cf8ee5535cc731fb5b11b5da2f51
+    pristine_git_object: b4f399fd915bc2907a7d1b988938d18ad9fba018
   examples/resources/lumos_access_policy/import-by-string-id.tf:
     id: b2884d5cbe46
     last_write_checksum: sha1:6b5ff2e87b0625432d42f14d228e4cca1432da0a
@@ -623,8 +623,8 @@ trackedFiles:
     pristine_git_object: cc77d973211d08b0c9930fb4ffd35715d0e5a832
   internal/sdk/lumos.go:
     id: 146a43b83b47
-    last_write_checksum: sha1:aa602ec57ba987891c5ea79073bca5def7c361d6
-    pristine_git_object: 1742bde80e584757562880ae98034768a9bdbe9a
+    last_write_checksum: sha1:3e3f754d2d9e65019dfdae5e2c6c79567f4c1d6a
+    pristine_git_object: 8f060e1ea5eae961fedfa8bfb8d181ebd43b091b
   internal/sdk/meta.go:
     id: 88371e7fe431
     last_write_checksum: sha1:15ce132d7d0676c3e589e05d27e73e7803934daa
