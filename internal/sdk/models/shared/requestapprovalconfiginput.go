@@ -3,17 +3,13 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type RequestApprovalConfigInput struct {
 	// Indicates if approval flow is overridden.
 	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// Manager approval can be configured as necessary to continue
 	ManagerApproval *ManagerApprovalOption `json:"manager_approval,omitempty"`
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
-	RequireAdditionalApproval *bool `default:"false" json:"require_additional_approval"`
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
 	// Indicates if custom_approval_message is overridden.
@@ -22,17 +18,6 @@ type RequestApprovalConfigInput struct {
 	ApproversStage2               *AppApproversInput `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageInput `json:"request_approval_stages,omitempty"`
-}
-
-func (r RequestApprovalConfigInput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(r, "", false)
-}
-
-func (r *RequestApprovalConfigInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *RequestApprovalConfigInput) GetRequestApprovalConfigOverride() *bool {

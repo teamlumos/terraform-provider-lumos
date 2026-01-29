@@ -586,11 +586,10 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							"require_additional_approval": schema.BoolAttribute{
 								Computed: true,
 								Optional: true,
-								Default:  booldefault.StaticBool(false),
 								PlanModifiers: []planmodifier.Bool{
 									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 								},
-								Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience. Default: false`,
+								Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
 							},
 							"response_describes_entire_approval_workflow": schema.BoolAttribute{
 								Computed: true,
