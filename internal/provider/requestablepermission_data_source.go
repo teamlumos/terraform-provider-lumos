@@ -30,14 +30,14 @@ type RequestablePermissionDataSource struct {
 
 // RequestablePermissionDataSourceModel describes the data model.
 type RequestablePermissionDataSourceModel struct {
-	AppClassID              types.String                `tfsdk:"app_class_id"`
-	AppID                   types.String                `tfsdk:"app_id"`
-	AppInstanceID           types.String                `tfsdk:"app_instance_id"`
-	ID                      types.String                `tfsdk:"id"`
-	IncludeInheritedConfigs types.Bool                  `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
-	Label                   types.String                `tfsdk:"label"`
-	RequestConfig           tfTypes.RequestConfigOutput `tfsdk:"request_config"`
-	Type                    types.String                `tfsdk:"type"`
+	AppClassID              types.String                     `tfsdk:"app_class_id"`
+	AppID                   types.String                     `tfsdk:"app_id"`
+	AppInstanceID           types.String                     `tfsdk:"app_instance_id"`
+	ID                      types.String                     `tfsdk:"id"`
+	IncludeInheritedConfigs types.Bool                       `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
+	Label                   types.String                     `tfsdk:"label"`
+	RequestConfig           tfTypes.RequestConfigInputCreate `tfsdk:"request_config"`
+	Type                    types.String                     `tfsdk:"type"`
 }
 
 // Metadata returns the data source type name.

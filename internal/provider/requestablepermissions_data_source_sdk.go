@@ -73,7 +73,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			if itemsItem.RequestConfig.RequestApprovalConfig == nil {
 				items.RequestConfig.RequestApprovalConfig = nil
 			} else {
-				items.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigOutput{}
+				items.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigInput{}
 				if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
 					items.RequestConfig.RequestApprovalConfig.Approvers = nil
 				} else {
