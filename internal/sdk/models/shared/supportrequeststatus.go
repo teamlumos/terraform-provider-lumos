@@ -30,8 +30,6 @@ const (
 	SupportRequestStatusCompleted                   SupportRequestStatus = "COMPLETED"
 	SupportRequestStatusReverting                   SupportRequestStatus = "REVERTING"
 	SupportRequestStatusReverted                    SupportRequestStatus = "REVERTED"
-	SupportRequestStatusTimeBasedExpiredFailed      SupportRequestStatus = "TIME_BASED_EXPIRED_FAILED"
-	SupportRequestStatusTimeBasedExpiredCancelled   SupportRequestStatus = "TIME_BASED_EXPIRED_CANCELLED"
 )
 
 func (e SupportRequestStatus) ToPointer() *SupportRequestStatus {
@@ -80,10 +78,6 @@ func (e *SupportRequestStatus) UnmarshalJSON(data []byte) error {
 	case "REVERTING":
 		fallthrough
 	case "REVERTED":
-		fallthrough
-	case "TIME_BASED_EXPIRED_FAILED":
-		fallthrough
-	case "TIME_BASED_EXPIRED_CANCELLED":
 		*e = SupportRequestStatus(v)
 		return nil
 	default:

@@ -9,40 +9,40 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-type VendorAgreementCustomAttributeOutputValueType string
+type ValueType string
 
 const (
-	VendorAgreementCustomAttributeOutputValueTypeStr         VendorAgreementCustomAttributeOutputValueType = "str"
-	VendorAgreementCustomAttributeOutputValueTypeArrayOfUser VendorAgreementCustomAttributeOutputValueType = "arrayOfUser"
+	ValueTypeStr         ValueType = "str"
+	ValueTypeArrayOfUser ValueType = "arrayOfUser"
 )
 
-// VendorAgreementCustomAttributeOutputValue - The value of the attribute for an individual Order
-type VendorAgreementCustomAttributeOutputValue struct {
+// Value - The value of the attribute for an individual Order
+type Value struct {
 	Str         *string `queryParam:"inline" union:"member"`
 	ArrayOfUser []User  `queryParam:"inline" union:"member"`
 
-	Type VendorAgreementCustomAttributeOutputValueType
+	Type ValueType
 }
 
-func CreateVendorAgreementCustomAttributeOutputValueStr(str string) VendorAgreementCustomAttributeOutputValue {
-	typ := VendorAgreementCustomAttributeOutputValueTypeStr
+func CreateValueStr(str string) Value {
+	typ := ValueTypeStr
 
-	return VendorAgreementCustomAttributeOutputValue{
+	return Value{
 		Str:  &str,
 		Type: typ,
 	}
 }
 
-func CreateVendorAgreementCustomAttributeOutputValueArrayOfUser(arrayOfUser []User) VendorAgreementCustomAttributeOutputValue {
-	typ := VendorAgreementCustomAttributeOutputValueTypeArrayOfUser
+func CreateValueArrayOfUser(arrayOfUser []User) Value {
+	typ := ValueTypeArrayOfUser
 
-	return VendorAgreementCustomAttributeOutputValue{
+	return Value{
 		ArrayOfUser: arrayOfUser,
 		Type:        typ,
 	}
 }
 
-func (u *VendorAgreementCustomAttributeOutputValue) UnmarshalJSON(data []byte) error {
+func (u *Value) UnmarshalJSON(data []byte) error {
 
 	var candidates []utils.UnionCandidate
 
@@ -50,7 +50,7 @@ func (u *VendorAgreementCustomAttributeOutputValue) UnmarshalJSON(data []byte) e
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  VendorAgreementCustomAttributeOutputValueTypeStr,
+			Type:  ValueTypeStr,
 			Value: &str,
 		})
 	}
@@ -58,36 +58,36 @@ func (u *VendorAgreementCustomAttributeOutputValue) UnmarshalJSON(data []byte) e
 	var arrayOfUser []User = []User{}
 	if err := utils.UnmarshalJSON(data, &arrayOfUser, "", true, nil); err == nil {
 		candidates = append(candidates, utils.UnionCandidate{
-			Type:  VendorAgreementCustomAttributeOutputValueTypeArrayOfUser,
+			Type:  ValueTypeArrayOfUser,
 			Value: arrayOfUser,
 		})
 	}
 
 	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VendorAgreementCustomAttributeOutputValue", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Value", string(data))
 	}
 
 	// Pick the best candidate using multi-stage filtering
 	best := utils.PickBestUnionCandidate(candidates, data)
 	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for VendorAgreementCustomAttributeOutputValue", string(data))
+		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Value", string(data))
 	}
 
 	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(VendorAgreementCustomAttributeOutputValueType)
+	u.Type = best.Type.(ValueType)
 	switch best.Type {
-	case VendorAgreementCustomAttributeOutputValueTypeStr:
+	case ValueTypeStr:
 		u.Str = best.Value.(*string)
 		return nil
-	case VendorAgreementCustomAttributeOutputValueTypeArrayOfUser:
+	case ValueTypeArrayOfUser:
 		u.ArrayOfUser = best.Value.([]User)
 		return nil
 	}
 
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for VendorAgreementCustomAttributeOutputValue", string(data))
+	return fmt.Errorf("could not unmarshal `%s` into any supported union types for Value", string(data))
 }
 
-func (u VendorAgreementCustomAttributeOutputValue) MarshalJSON() ([]byte, error) {
+func (u Value) MarshalJSON() ([]byte, error) {
 	if u.Str != nil {
 		return utils.MarshalJSON(u.Str, "", true)
 	}
@@ -96,13 +96,13 @@ func (u VendorAgreementCustomAttributeOutputValue) MarshalJSON() ([]byte, error)
 		return utils.MarshalJSON(u.ArrayOfUser, "", true)
 	}
 
-	return nil, errors.New("could not marshal union type VendorAgreementCustomAttributeOutputValue: all fields are null")
+	return nil, errors.New("could not marshal union type Value: all fields are null")
 }
 
 type VendorAgreementCustomAttributeOutput struct {
 	Type VendorAgreementCustomAttributeType `json:"type"`
 	// The value of the attribute for an individual Order
-	Value *VendorAgreementCustomAttributeOutputValue `json:"value,omitempty"`
+	Value *Value `json:"value,omitempty"`
 }
 
 func (v *VendorAgreementCustomAttributeOutput) GetType() VendorAgreementCustomAttributeType {
@@ -112,7 +112,7 @@ func (v *VendorAgreementCustomAttributeOutput) GetType() VendorAgreementCustomAt
 	return v.Type
 }
 
-func (v *VendorAgreementCustomAttributeOutput) GetValue() *VendorAgreementCustomAttributeOutputValue {
+func (v *VendorAgreementCustomAttributeOutput) GetValue() *Value {
 	if v == nil {
 		return nil
 	}

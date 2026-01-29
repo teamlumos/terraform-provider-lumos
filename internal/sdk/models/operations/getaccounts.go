@@ -11,15 +11,16 @@ import (
 )
 
 type GetAccountsRequest struct {
-	AppID            *string                         `queryParam:"style=form,explode=true,name=app_id"`
-	DiscoveredBefore *time.Time                      `queryParam:"style=form,explode=true,name=discovered_before"`
-	DiscoveredAfter  *time.Time                      `queryParam:"style=form,explode=true,name=discovered_after"`
-	Sources          []shared.DiscoverySource        `queryParam:"style=form,explode=true,name=sources"`
-	Status           []shared.AccountLifecycleStatus `queryParam:"style=form,explode=true,name=status"`
+	AppID            *string                  `queryParam:"style=form,explode=true,name=app_id"`
+	DiscoveredBefore *time.Time               `queryParam:"style=form,explode=true,name=discovered_before"`
+	DiscoveredAfter  *time.Time               `queryParam:"style=form,explode=true,name=discovered_after"`
+	Sources          []shared.DiscoverySource `queryParam:"style=form,explode=true,name=sources"`
 	// Fields to expand. Supported fields: app.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
-	Page   *int64   `default:"1" queryParam:"style=form,explode=true,name=page"`
-	Size   *int64   `default:"50" queryParam:"style=form,explode=true,name=size"`
+	// Page number
+	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
+	// Page size
+	Size *int64 `default:"50" queryParam:"style=form,explode=true,name=size"`
 }
 
 func (g GetAccountsRequest) MarshalJSON() ([]byte, error) {
@@ -61,13 +62,6 @@ func (g *GetAccountsRequest) GetSources() []shared.DiscoverySource {
 	return g.Sources
 }
 
-func (g *GetAccountsRequest) GetStatus() []shared.AccountLifecycleStatus {
-	if g == nil {
-		return nil
-	}
-	return g.Status
-}
-
 func (g *GetAccountsRequest) GetExpand() []string {
 	if g == nil {
 		return nil
@@ -97,7 +91,7 @@ type GetAccountsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Any any
+	PageAccount *shared.PageAccount
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -123,11 +117,11 @@ func (g *GetAccountsResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAccountsResponse) GetAny() any {
+func (g *GetAccountsResponse) GetPageAccount() *shared.PageAccount {
 	if g == nil {
 		return nil
 	}
-	return g.Any
+	return g.PageAccount
 }
 
 func (g *GetAccountsResponse) GetHTTPValidationError() *shared.HTTPValidationError {

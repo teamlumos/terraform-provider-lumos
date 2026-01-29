@@ -7,61 +7,20 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/teamlumos/terraform-provider-lumos/internal/provider/typeconvert"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *UsersDataSourceModel) RefreshFromSharedPageUserWithCustomAttributes(ctx context.Context, resp *shared.PageUserWithCustomAttributes) diag.Diagnostics {
+func (r *UsersDataSourceModel) RefreshFromSharedPageUser(ctx context.Context, resp *shared.PageUser) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.Items = []tfTypes.UserWithCustomAttributes{}
+		r.Items = []tfTypes.User{}
 
 		for _, itemsItem := range resp.Items {
-			var items tfTypes.UserWithCustomAttributes
+			var items tfTypes.User
 
-			if itemsItem.CustomAttributes != nil {
-				items.CustomAttributes = make(map[string]tfTypes.CustomAttribute, len(itemsItem.CustomAttributes))
-				for customAttributeKey, customAttributeValue := range itemsItem.CustomAttributes {
-					var customAttributeResult tfTypes.CustomAttribute
-					customAttributeResult.Type = types.StringValue(string(customAttributeValue.Type))
-					if customAttributeValue.Value != nil {
-						customAttributeResult.Value = &tfTypes.Value{}
-						if customAttributeValue.Value.Str != nil {
-							customAttributeResult.Value.Str = types.StringPointerValue(customAttributeValue.Value.Str)
-						}
-						if customAttributeValue.Value.ArrayOfUser != nil {
-							customAttributeResult.Value.ArrayOfUser = []tfTypes.User{}
-
-							for _, arrayOfUserItem := range customAttributeValue.Value.ArrayOfUser {
-								var arrayOfUser tfTypes.User
-
-								arrayOfUser.Email = types.StringPointerValue(arrayOfUserItem.Email)
-								arrayOfUser.FamilyName = types.StringPointerValue(arrayOfUserItem.FamilyName)
-								arrayOfUser.GivenName = types.StringPointerValue(arrayOfUserItem.GivenName)
-								arrayOfUser.ID = types.StringValue(arrayOfUserItem.ID)
-								if arrayOfUserItem.Status != nil {
-									arrayOfUser.Status = types.StringValue(string(*arrayOfUserItem.Status))
-								} else {
-									arrayOfUser.Status = types.StringNull()
-								}
-
-								customAttributeResult.Value.ArrayOfUser = append(customAttributeResult.Value.ArrayOfUser, arrayOfUser)
-							}
-						}
-						if customAttributeValue.Value.DateTime != nil {
-							customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
-						}
-						if customAttributeValue.Value.Integer != nil {
-							customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
-						}
-					}
-
-					items.CustomAttributes[customAttributeKey] = customAttributeResult
-				}
-			}
 			items.Email = types.StringPointerValue(itemsItem.Email)
 			items.FamilyName = types.StringPointerValue(itemsItem.FamilyName)
 			items.GivenName = types.StringPointerValue(itemsItem.GivenName)

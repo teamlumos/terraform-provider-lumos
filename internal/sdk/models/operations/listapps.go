@@ -14,8 +14,6 @@ type ListAppsRequest struct {
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
-	// Fields to expand. Supported fields: custom_attributes.
-	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	// Page size
@@ -47,13 +45,6 @@ func (l *ListAppsRequest) GetExactMatch() *bool {
 	return l.ExactMatch
 }
 
-func (l *ListAppsRequest) GetExpand() []string {
-	if l == nil {
-		return nil
-	}
-	return l.Expand
-}
-
 func (l *ListAppsRequest) GetPage() *int64 {
 	if l == nil {
 		return nil
@@ -76,7 +67,7 @@ type ListAppsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	PageAppWithCustomAttributes *shared.PageAppWithCustomAttributes
+	PageApp *shared.PageApp
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -102,11 +93,11 @@ func (l *ListAppsResponse) GetRawResponse() *http.Response {
 	return l.RawResponse
 }
 
-func (l *ListAppsResponse) GetPageAppWithCustomAttributes() *shared.PageAppWithCustomAttributes {
+func (l *ListAppsResponse) GetPageApp() *shared.PageApp {
 	if l == nil {
 		return nil
 	}
-	return l.PageAppWithCustomAttributes
+	return l.PageApp
 }
 
 func (l *ListAppsResponse) GetHTTPValidationError() *shared.HTTPValidationError {

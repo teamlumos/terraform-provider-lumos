@@ -32,14 +32,14 @@ type UsersDataSource struct {
 
 // UsersDataSourceModel describes the data model.
 type UsersDataSourceModel struct {
-	ExactMatch types.Bool                         `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
-	Expand     []types.String                     `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
-	Items      []tfTypes.UserWithCustomAttributes `tfsdk:"items"`
-	Page       types.Int64                        `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages      types.Int64                        `tfsdk:"pages"`
-	SearchTerm types.String                       `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
-	Size       types.Int64                        `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total      types.Int64                        `tfsdk:"total"`
+	ExactMatch types.Bool     `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	Expand     []types.String `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	Items      []tfTypes.User `tfsdk:"items"`
+	Page       types.Int64    `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
+	Pages      types.Int64    `tfsdk:"pages"`
+	SearchTerm types.String   `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Size       types.Int64    `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	Total      types.Int64    `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
@@ -66,59 +66,6 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"custom_attributes": schema.MapNestedAttribute{
-							Computed: true,
-							NestedObject: schema.NestedAttributeObject{
-								Attributes: map[string]schema.Attribute{
-									"type": schema.StringAttribute{
-										Computed: true,
-									},
-									"value": schema.SingleNestedAttribute{
-										Computed: true,
-										Attributes: map[string]schema.Attribute{
-											"array_of_user": schema.ListNestedAttribute{
-												Computed: true,
-												NestedObject: schema.NestedAttributeObject{
-													Attributes: map[string]schema.Attribute{
-														"email": schema.StringAttribute{
-															Computed:    true,
-															Description: `The email of this user.`,
-														},
-														"family_name": schema.StringAttribute{
-															Computed:    true,
-															Description: `The family name of this user.`,
-														},
-														"given_name": schema.StringAttribute{
-															Computed:    true,
-															Description: `The given name of this user.`,
-														},
-														"id": schema.StringAttribute{
-															Computed:    true,
-															Description: `The ID of this user.`,
-														},
-														"status": schema.StringAttribute{
-															Computed:    true,
-															Description: `The status of this user.`,
-														},
-													},
-												},
-											},
-											"date_time": schema.StringAttribute{
-												Computed: true,
-											},
-											"integer": schema.Int64Attribute{
-												Computed: true,
-											},
-											"str": schema.StringAttribute{
-												Computed: true,
-											},
-										},
-										Description: `The value of the attribute for an individual Order`,
-									},
-								},
-							},
-							Description: `Custom attributes configured on the user`,
-						},
 						"email": schema.StringAttribute{
 							Computed:    true,
 							Description: `The email of this user.`,
@@ -232,11 +179,11 @@ func (r *UsersDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.PageUserWithCustomAttributes != nil) {
+	if !(res.PageUser != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedPageUserWithCustomAttributes(ctx, res.PageUserWithCustomAttributes)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedPageUser(ctx, res.PageUser)...)
 
 	if resp.Diagnostics.HasError() {
 		return

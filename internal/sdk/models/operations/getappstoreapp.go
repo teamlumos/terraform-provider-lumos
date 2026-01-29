@@ -10,8 +10,6 @@ import (
 
 type GetAppStoreAppRequest struct {
 	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
-	// Fields to expand. Supported fields: custom_attributes.
-	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 
 func (g *GetAppStoreAppRequest) GetAppID() string {
@@ -19,13 +17,6 @@ func (g *GetAppStoreAppRequest) GetAppID() string {
 		return ""
 	}
 	return g.AppID
-}
-
-func (g *GetAppStoreAppRequest) GetExpand() []string {
-	if g == nil {
-		return nil
-	}
-	return g.Expand
 }
 
 type GetAppStoreAppResponse struct {

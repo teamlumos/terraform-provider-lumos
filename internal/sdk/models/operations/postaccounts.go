@@ -8,27 +8,6 @@ import (
 	"net/http"
 )
 
-type PostAccountsAccountsUploadInput struct {
-	// Accounts to upload.
-	Accounts []shared.AccountInput `json:"accounts,omitempty"`
-	// The ID of the app to upload accounts to.
-	AppID string `json:"app_id"`
-}
-
-func (p *PostAccountsAccountsUploadInput) GetAccounts() []shared.AccountInput {
-	if p == nil {
-		return nil
-	}
-	return p.Accounts
-}
-
-func (p *PostAccountsAccountsUploadInput) GetAppID() string {
-	if p == nil {
-		return ""
-	}
-	return p.AppID
-}
-
 type PostAccountsResponse struct {
 	// HTTP response content type for this operation
 	ContentType string

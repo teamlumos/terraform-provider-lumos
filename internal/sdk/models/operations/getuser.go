@@ -10,8 +10,6 @@ import (
 
 type GetUserRequest struct {
 	UserID string `pathParam:"style=simple,explode=false,name=user_id"`
-	// Fields to expand. Supported fields: custom_attributes.
-	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 
 func (g *GetUserRequest) GetUserID() string {
@@ -19,13 +17,6 @@ func (g *GetUserRequest) GetUserID() string {
 		return ""
 	}
 	return g.UserID
-}
-
-func (g *GetUserRequest) GetExpand() []string {
-	if g == nil {
-		return nil
-	}
-	return g.Expand
 }
 
 type GetUserResponse struct {
@@ -36,7 +27,7 @@ type GetUserResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	UserWithCustomAttributes *shared.UserWithCustomAttributes
+	User *shared.User
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -62,11 +53,11 @@ func (g *GetUserResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetUserResponse) GetUserWithCustomAttributes() *shared.UserWithCustomAttributes {
+func (g *GetUserResponse) GetUser() *shared.User {
 	if g == nil {
 		return nil
 	}
-	return g.UserWithCustomAttributes
+	return g.User
 }
 
 func (g *GetUserResponse) GetHTTPValidationError() *shared.HTTPValidationError {

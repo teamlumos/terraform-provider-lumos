@@ -10,8 +10,6 @@ import (
 
 type GetAppRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=app_id"`
-	// Fields to expand. Supported fields: custom_attributes.
-	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 
 func (g *GetAppRequest) GetID() string {
@@ -19,13 +17,6 @@ func (g *GetAppRequest) GetID() string {
 		return ""
 	}
 	return g.ID
-}
-
-func (g *GetAppRequest) GetExpand() []string {
-	if g == nil {
-		return nil
-	}
-	return g.Expand
 }
 
 type GetAppResponse struct {
@@ -36,7 +27,7 @@ type GetAppResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	AppWithCustomAttributes *shared.AppWithCustomAttributes
+	App *shared.App
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -62,11 +53,11 @@ func (g *GetAppResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppResponse) GetAppWithCustomAttributes() *shared.AppWithCustomAttributes {
+func (g *GetAppResponse) GetApp() *shared.App {
 	if g == nil {
 		return nil
 	}
-	return g.AppWithCustomAttributes
+	return g.App
 }
 
 func (g *GetAppResponse) GetHTTPValidationError() *shared.HTTPValidationError {

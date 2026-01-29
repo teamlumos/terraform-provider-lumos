@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 )
 
@@ -30,14 +29,12 @@ type UserDataSource struct {
 
 // UserDataSourceModel describes the data model.
 type UserDataSourceModel struct {
-	CustomAttributes map[string]tfTypes.CustomAttribute `tfsdk:"custom_attributes"`
-	Email            types.String                       `tfsdk:"email"`
-	Expand           []types.String                     `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
-	FamilyName       types.String                       `tfsdk:"family_name"`
-	GivenName        types.String                       `tfsdk:"given_name"`
-	ID               types.String                       `tfsdk:"id"`
-	Status           types.String                       `tfsdk:"status"`
-	UserID           types.String                       `tfsdk:"user_id"`
+	Email      types.String `tfsdk:"email"`
+	FamilyName types.String `tfsdk:"family_name"`
+	GivenName  types.String `tfsdk:"given_name"`
+	ID         types.String `tfsdk:"id"`
+	Status     types.String `tfsdk:"status"`
+	UserID     types.String `tfsdk:"user_id"`
 }
 
 // Metadata returns the data source type name.
@@ -51,67 +48,9 @@ func (r *UserDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 		MarkdownDescription: "User DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"custom_attributes": schema.MapNestedAttribute{
-				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Computed: true,
-						},
-						"value": schema.SingleNestedAttribute{
-							Computed: true,
-							Attributes: map[string]schema.Attribute{
-								"array_of_user": schema.ListNestedAttribute{
-									Computed: true,
-									NestedObject: schema.NestedAttributeObject{
-										Attributes: map[string]schema.Attribute{
-											"email": schema.StringAttribute{
-												Computed:    true,
-												Description: `The email of this user.`,
-											},
-											"family_name": schema.StringAttribute{
-												Computed:    true,
-												Description: `The family name of this user.`,
-											},
-											"given_name": schema.StringAttribute{
-												Computed:    true,
-												Description: `The given name of this user.`,
-											},
-											"id": schema.StringAttribute{
-												Computed:    true,
-												Description: `The ID of this user.`,
-											},
-											"status": schema.StringAttribute{
-												Computed:    true,
-												Description: `The status of this user.`,
-											},
-										},
-									},
-								},
-								"date_time": schema.StringAttribute{
-									Computed: true,
-								},
-								"integer": schema.Int64Attribute{
-									Computed: true,
-								},
-								"str": schema.StringAttribute{
-									Computed: true,
-								},
-							},
-							Description: `The value of the attribute for an individual Order`,
-						},
-					},
-				},
-				Description: `Custom attributes configured on the user`,
-			},
 			"email": schema.StringAttribute{
 				Computed:    true,
 				Description: `The email of this user.`,
-			},
-			"expand": schema.ListAttribute{
-				Optional:    true,
-				ElementType: types.StringType,
-				Description: `Fields to expand. Supported fields: custom_attributes.`,
 			},
 			"family_name": schema.StringAttribute{
 				Computed:    true,
@@ -196,11 +135,11 @@ func (r *UserDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.UserWithCustomAttributes != nil) {
+	if !(res.User != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedUserWithCustomAttributes(ctx, res.UserWithCustomAttributes)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedUser(ctx, res.User)...)
 
 	if resp.Diagnostics.HasError() {
 		return

@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
@@ -51,7 +50,6 @@ type AppStoreAppResourceModel struct {
 	AppClassID                       types.String                                  `tfsdk:"app_class_id"`
 	AppID                            types.String                                  `tfsdk:"app_id"`
 	Category                         types.String                                  `tfsdk:"category"`
-	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
 	ID                               types.String                                  `tfsdk:"id"`
@@ -93,59 +91,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"category": schema.StringAttribute{
 				Computed:    true,
 				Description: `The category of the app, as shown in the AppStore`,
-			},
-			"custom_attributes": schema.MapNestedAttribute{
-				Computed: true,
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"type": schema.StringAttribute{
-							Computed: true,
-						},
-						"value": schema.SingleNestedAttribute{
-							Computed: true,
-							Attributes: map[string]schema.Attribute{
-								"array_of_user": schema.ListNestedAttribute{
-									Computed: true,
-									NestedObject: schema.NestedAttributeObject{
-										Attributes: map[string]schema.Attribute{
-											"email": schema.StringAttribute{
-												Computed:    true,
-												Description: `The email of this user.`,
-											},
-											"family_name": schema.StringAttribute{
-												Computed:    true,
-												Description: `The family name of this user.`,
-											},
-											"given_name": schema.StringAttribute{
-												Computed:    true,
-												Description: `The given name of this user.`,
-											},
-											"id": schema.StringAttribute{
-												Computed:    true,
-												Description: `The ID of this user.`,
-											},
-											"status": schema.StringAttribute{
-												Computed:    true,
-												Description: `The status of this user.`,
-											},
-										},
-									},
-								},
-								"date_time": schema.StringAttribute{
-									Computed: true,
-								},
-								"integer": schema.Int64Attribute{
-									Computed: true,
-								},
-								"str": schema.StringAttribute{
-									Computed: true,
-								},
-							},
-							Description: `The value of the attribute for an individual Order`,
-						},
-					},
-				},
-				Description: `Custom attributes configured on the app`,
 			},
 			"custom_request_instructions": schema.StringAttribute{
 				Computed: true,
@@ -856,11 +801,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
 						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.`,
-					},
-					"response_describes_entire_approval_workflow": schema.BoolAttribute{
-						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false`,
 					},
 				},
 				Description: `Requires replacement if changed.`,

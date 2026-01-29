@@ -28,8 +28,6 @@ type AppStoreApp struct {
 	// The category of the app, as shown in the AppStore
 	Category *string  `json:"category,omitempty"`
 	Links    AppLinks `json:"links"`
-	// Custom attributes configured on the app
-	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
 }
 
 func (a *AppStoreApp) GetID() string {
@@ -121,11 +119,4 @@ func (a *AppStoreApp) GetLinks() AppLinks {
 		return AppLinks{}
 	}
 	return a.Links
-}
-
-func (a *AppStoreApp) GetCustomAttributes() map[string]CustomAttribute {
-	if a == nil {
-		return nil
-	}
-	return a.CustomAttributes
 }

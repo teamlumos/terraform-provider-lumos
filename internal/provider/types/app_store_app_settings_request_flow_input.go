@@ -8,14 +8,13 @@ import (
 )
 
 type AppStoreAppSettingsRequestFlowInput struct {
-	Admins                                  *AppAdminsInput           `tfsdk:"admins"`
-	AllowedGroups                           *AllowedGroupsConfigInput `tfsdk:"allowed_groups"`
-	Approvers                               *AppApproversInput        `tfsdk:"approvers"`
-	ApproversStage2                         *AppApproversInput        `tfsdk:"approvers_stage_2"`
-	CustomApprovalMessage                   types.String              `tfsdk:"custom_approval_message"`
-	Discoverability                         types.String              `tfsdk:"discoverability"`
-	RequestValidationInlineWebhook          *BaseInlineWebhook        `tfsdk:"request_validation_inline_webhook"`
-	RequireAdditionalApproval               types.Bool                `tfsdk:"require_additional_approval"`
-	RequireManagerApproval                  types.Bool                `tfsdk:"require_manager_approval"`
-	ResponseDescribesEntireApprovalWorkflow types.Bool                `tfsdk:"response_describes_entire_approval_workflow"`
+	Admins                         *AppAdminsInput           `tfsdk:"admins"`
+	AllowedGroups                  *AllowedGroupsConfigInput `tfsdk:"allowed_groups"`
+	Approvers                      *AppApproversInput        `tfsdk:"approvers"`
+	ApproversStage2                *AppApproversInput        `tfsdk:"approvers_stage_2"`
+	CustomApprovalMessage          types.String              `tfsdk:"custom_approval_message"`
+	Discoverability                types.String              `tfsdk:"discoverability"`
+	RequestValidationInlineWebhook *BaseInlineWebhook        `tfsdk:"request_validation_inline_webhook"`
+	RequireAdditionalApproval      types.Bool                `tfsdk:"require_additional_approval"`
+	RequireManagerApproval         types.Bool                `tfsdk:"require_manager_approval"`
 }
