@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: f589dd30bb23bb473a63b51b652e3038
+  docChecksum: b71fd60c763728a86a404f9fa8c30894
   docVersion: 0.1.0
   speakeasyVersion: 1.700.2
   generationVersion: 2.801.2
   releaseVersion: 0.9.0
   configChecksum: 0d3225bbcfa3445ecd0f94a2bee9ecab
 persistentEdits:
-  generation_id: 5a605a8e-04bb-47fa-9013-3cf662e76f07
-  pristine_commit_hash: 3904fc361052c1baadd1b4254760dccd82abb53f
-  pristine_tree_hash: ece7750ce74b999f03955ed92e3730bdccb49e41
+  generation_id: bbafda5e-9c67-406f-bf85-1389520b2f20
+  pristine_commit_hash: 1bdc097180473d6e7abd5a5645775c27cca16654
+  pristine_tree_hash: d78e00f72ef1ce76f48b65932c085cf4fd1893c1
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -387,28 +387,28 @@ trackedFiles:
     pristine_git_object: 2e7d63a4864472f1837e48f18da0524ea87f3c3b
   internal/provider/requestablepermission_data_source.go:
     id: 13510caef3a4
-    last_write_checksum: sha1:b4ac91b8887155692c03fbdefa860c369bdd4588
-    pristine_git_object: a4396147d5088df166a39716818c45362d8c0b02
+    last_write_checksum: sha1:5deb5e4bce41235b5cd099ed5f0e5f8acf1e7b3c
+    pristine_git_object: be5e76c54159fc56792c2957add31f6cd9544808
   internal/provider/requestablepermission_data_source_sdk.go:
     id: 42b4e85e3193
-    last_write_checksum: sha1:50548d344fd1fac94ec2ce096fe7773292a46374
-    pristine_git_object: 4dc5c962827d4f20c572d77fed65fa07c0869cac
+    last_write_checksum: sha1:8ca9d105cf944b045881ac766819a9b9c2a9e3f7
+    pristine_git_object: 7280a5fe0e291b302251dd765952f224f5832223
   internal/provider/requestablepermission_resource.go:
     id: 3d192a0504f1
-    last_write_checksum: sha1:a1d2a51734502ea9ce894b7a8ed1a6ff6dba8f70
-    pristine_git_object: a3b69ae348517d3ace1108b62f7d2ed0487d4d85
+    last_write_checksum: sha1:b8868348950598d7c6b4734dc85ff923c460f26b
+    pristine_git_object: bea9d6ff9c43e2d04206e4b470b3502b622cda48
   internal/provider/requestablepermission_resource_sdk.go:
     id: f91e9c9a73f7
-    last_write_checksum: sha1:7b30df47a2537dd2d356b46be62d39b4f093b84f
-    pristine_git_object: 1735fdfdaa9023c6f9722d1b5df500885a020bed
+    last_write_checksum: sha1:a07146411ad22c1175d1e598339c553d8ba2bd1c
+    pristine_git_object: 282f1f88fb6837cd0ce9c05b9c97cd0b4b152ec3
   internal/provider/requestablepermissions_data_source.go:
     id: bbc12c30e87f
     last_write_checksum: sha1:5e784da5c6827e7346625a0cd8ba2dfef6cdc343
     pristine_git_object: ae6e40e7fad1fd43b503cc9fbed2bbc9fa6f5293
   internal/provider/requestablepermissions_data_source_sdk.go:
     id: a90937fff24b
-    last_write_checksum: sha1:2f9766d46416ae9c2fe5ffb851e39f46a93ec96e
-    pristine_git_object: ce8a90d9a9708ac944147334d9db983a9e5fa2d3
+    last_write_checksum: sha1:cf93bd75b47ce58da90324b63c412a7cd99f8650
+    pristine_git_object: db17d78292d91479bf2bf5c2b7a7858e25c951cd
   internal/provider/typeconvert/date.go:
     id: dfe2bc95ad1b
     last_write_checksum: sha1:baad4e5c5c995eae25036f6d1a8d4eb2c1a2a8ae
@@ -507,8 +507,8 @@ trackedFiles:
     pristine_git_object: 3b87ae2053b145103ce68187cb1e63f7a75f02c0
   internal/provider/types/requestable_permission_output.go:
     id: d14dac5a3c55
-    last_write_checksum: sha1:62fe66b17fdaa3cbbf792f318f667e73d1b7f270
-    pristine_git_object: c7f722a7d45054dbd5c3f804f29160762ab356d0
+    last_write_checksum: sha1:8eb6aa8c398f83e77fa1d8703e65bedd88bc2602
+    pristine_git_object: ee861eca3a11224d5425441ab91126f619dbde9f
   internal/provider/types/user.go:
     id: 76bcb6fc77f1
     last_write_checksum: sha1:119dbbd09bcb2ec9e000dfda94a8b8e3c90e1dce
@@ -1275,16 +1275,16 @@ trackedFiles:
     pristine_git_object: 8f06517af23ab5efb11e37cd4a0967b508913bd7
   internal/sdk/models/shared/requestablepermissionoutput.go:
     id: cfef8b3e5a03
-    last_write_checksum: sha1:8c44b6584dd06bac0dd8a68ddbf1c81ceccae30e
-    pristine_git_object: 2f247ded3df1a61fbe97b0ab51e2444c85f2a3e5
+    last_write_checksum: sha1:6eab934bde0034bdff72e51c3fca5b028405505c
+    pristine_git_object: db6550647da35b8f2c6fba458dfc2c7d42c25d07
   internal/sdk/models/shared/requestapprovalconfiginput.go:
     id: e8bdd2aea4b3
     last_write_checksum: sha1:e0ee38f894612dd3dfb50f8d1f96780a07af67f8
     pristine_git_object: ca93eca5592144feac424c1d8904a73bc5e2b78d
   internal/sdk/models/shared/requestapprovalconfigoutput.go:
     id: 4c9e3ccd9fdd
-    last_write_checksum: sha1:b6152ad85b8df1b4a80383677e9e8cc37b2c3aae
-    pristine_git_object: f80d3f2a6c69c13a26772590a3e0f5723c497bdc
+    last_write_checksum: sha1:55a43213b26c400f85378ff7f7c5e80577933e21
+    pristine_git_object: dc073a29dff7f4d4a6f68dc73d90e049f7ce483d
   internal/sdk/models/shared/requestapprovalstageinput.go:
     id: 08df335c56bb
     last_write_checksum: sha1:b9e84473d318f53ac10ea629287ccef914bb5291
@@ -1729,7 +1729,7 @@ examples:
         application/json: {"app_id": "<id>", "label": "<value>"}
       responses:
         "201":
-          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>"}
         "422":
           application/json: {}
   get_appstore_permission_appstore_requestable_permissions__permission_id__get:
@@ -1741,7 +1741,7 @@ examples:
           include_inherited_configs: true
       responses:
         "200":
-          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>"}
         "422":
           application/json: {}
   update_appstore_permission_appstore_requestable_permissions__permission_id__patch:
@@ -1755,7 +1755,7 @@ examples:
         application/json: {}
       responses:
         "200":
-          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>", "request_config": {}}
+          application/json: {"label": "<value>", "app_id": "<id>", "app_class_id": "<id>", "app_instance_id": "<id>"}
         "422":
           application/json: {}
   delete_appstore_permission_appstore_requestable_permissions__permission_id__delete:
