@@ -33,7 +33,7 @@ type AppStoreAppSettingsDataSourceModel struct {
 	CustomRequestInstructions types.String                                  `tfsdk:"custom_request_instructions"`
 	ID                        types.String                                  `tfsdk:"id"`
 	Provisioning              *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
-	RequestFlow               *tfTypes.AppStoreAppSettingsRequestFlowOutput `tfsdk:"request_flow"`
+	RequestFlow               *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
 }
 
 // Metadata returns the data source type name.

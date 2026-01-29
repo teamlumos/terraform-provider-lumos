@@ -12,12 +12,10 @@ type AppStoreAppSettingsRequestFlowInput struct {
 	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// The allowed groups associated with this config.
-	AllowedGroups *AllowedGroupsConfigInput `json:"allowed_groups,omitempty"`
-	// AppStore App approvers assigned.
-	Approvers       *AppApproversInput `json:"approvers,omitempty"`
-	ApproversStage2 *AppApproversInput `json:"approvers_stage_2,omitempty"`
-	// AppStore App admins assigned.
-	Admins *AppAdminsInput `json:"admins,omitempty"`
+	AllowedGroups   *AllowedGroupsConfigInput `json:"allowed_groups,omitempty"`
+	Approvers       *AppApproversInput        `json:"approvers,omitempty"`
+	ApproversStage2 *AppApproversInput        `json:"approvers_stage_2,omitempty"`
+	Admins          *AppAdminsInput           `json:"admins,omitempty"`
 	// A request validation webhook can be optionally associated with this app.
 	RequestValidationInlineWebhook *BaseInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }

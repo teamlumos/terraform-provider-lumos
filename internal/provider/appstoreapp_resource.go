@@ -315,7 +315,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.`,
 					},
 				},
-				Description: `Provisioning flow configuration to request access to app. Requires replacement if changed.`,
+				Description: `Requires replacement if changed.`,
 			},
 			"request_flow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -445,7 +445,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as app admins. Requires replacement if changed.`,
 							},
 						},
-						Description: `AppStore App admins assigned. Requires replacement if changed.`,
+						Description: `Requires replacement if changed.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
@@ -656,7 +656,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
 							},
 						},
-						Description: `AppStore App approvers assigned. Requires replacement if changed.`,
+						Description: `Requires replacement if changed.`,
 					},
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,
@@ -863,7 +863,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false`,
 					},
 				},
-				Description: `Request flow configuration to request access to app. Requires replacement if changed.`,
+				Description: `Requires replacement if changed.`,
 			},
 			"request_instructions": schema.StringAttribute{
 				Computed:    true,
