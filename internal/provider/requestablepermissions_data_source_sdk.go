@@ -26,192 +26,197 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 			items.AppInstanceID = types.StringValue(itemsItem.AppInstanceID)
 			items.ID = types.StringPointerValue(itemsItem.ID)
 			items.Label = types.StringValue(itemsItem.Label)
-			if itemsItem.RequestConfig.AccessRemovalInlineWebhook == nil {
-				items.RequestConfig.AccessRemovalInlineWebhook = nil
+			if itemsItem.RequestConfig == nil {
+				items.RequestConfig = nil
 			} else {
-				items.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
-				items.RequestConfig.AccessRemovalInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.Description)
-				items.RequestConfig.AccessRemovalInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.AccessRemovalInlineWebhook.HookType))
-				items.RequestConfig.AccessRemovalInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.ID)
-				items.RequestConfig.AccessRemovalInlineWebhook.Name = types.StringValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.Name)
-			}
-			if itemsItem.RequestConfig.AllowedGroups == nil {
-				items.RequestConfig.AllowedGroups = nil
-			} else {
-				items.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
-				items.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
+				items.RequestConfig = &tfTypes.RequestConfigOutput{}
+				if itemsItem.RequestConfig.AccessRemovalInlineWebhook == nil {
+					items.RequestConfig.AccessRemovalInlineWebhook = nil
+				} else {
+					items.RequestConfig.AccessRemovalInlineWebhook = &tfTypes.BaseInlineWebhook{}
+					items.RequestConfig.AccessRemovalInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.Description)
+					items.RequestConfig.AccessRemovalInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.AccessRemovalInlineWebhook.HookType))
+					items.RequestConfig.AccessRemovalInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.ID)
+					items.RequestConfig.AccessRemovalInlineWebhook.Name = types.StringValue(itemsItem.RequestConfig.AccessRemovalInlineWebhook.Name)
+				}
+				if itemsItem.RequestConfig.AllowedGroups == nil {
+					items.RequestConfig.AllowedGroups = nil
+				} else {
+					items.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
+					items.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 
-				for _, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
-					var groups tfTypes.Group
+					for _, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
+						var groups tfTypes.Group
 
-					groups.AppID = types.StringPointerValue(groupsItem.AppID)
-					groups.Description = types.StringPointerValue(groupsItem.Description)
-					if groupsItem.GroupLifecycle != nil {
-						groups.GroupLifecycle = types.StringValue(string(*groupsItem.GroupLifecycle))
+						groups.AppID = types.StringPointerValue(groupsItem.AppID)
+						groups.Description = types.StringPointerValue(groupsItem.Description)
+						if groupsItem.GroupLifecycle != nil {
+							groups.GroupLifecycle = types.StringValue(string(*groupsItem.GroupLifecycle))
+						} else {
+							groups.GroupLifecycle = types.StringNull()
+						}
+						groups.ID = types.StringPointerValue(groupsItem.ID)
+						groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
+						groups.Name = types.StringPointerValue(groupsItem.Name)
+						groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
+
+						items.RequestConfig.AllowedGroups.Groups = append(items.RequestConfig.AllowedGroups.Groups, groups)
+					}
+					if itemsItem.RequestConfig.AllowedGroups.Type != nil {
+						items.RequestConfig.AllowedGroups.Type = types.StringValue(string(*itemsItem.RequestConfig.AllowedGroups.Type))
 					} else {
-						groups.GroupLifecycle = types.StringNull()
-					}
-					groups.ID = types.StringPointerValue(groupsItem.ID)
-					groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
-					groups.Name = types.StringPointerValue(groupsItem.Name)
-					groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
-
-					items.RequestConfig.AllowedGroups.Groups = append(items.RequestConfig.AllowedGroups.Groups, groups)
-				}
-				if itemsItem.RequestConfig.AllowedGroups.Type != nil {
-					items.RequestConfig.AllowedGroups.Type = types.StringValue(string(*itemsItem.RequestConfig.AllowedGroups.Type))
-				} else {
-					items.RequestConfig.AllowedGroups.Type = types.StringNull()
-				}
-			}
-			items.RequestConfig.AllowedGroupsOverride = types.BoolPointerValue(itemsItem.RequestConfig.AllowedGroupsOverride)
-			if itemsItem.RequestConfig.AppstoreVisibility != nil {
-				items.RequestConfig.AppstoreVisibility = types.StringValue(string(*itemsItem.RequestConfig.AppstoreVisibility))
-			} else {
-				items.RequestConfig.AppstoreVisibility = types.StringNull()
-			}
-			if itemsItem.RequestConfig.RequestApprovalConfig == nil {
-				items.RequestConfig.RequestApprovalConfig = nil
-			} else {
-				items.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigOutput{}
-				if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
-					items.RequestConfig.RequestApprovalConfig.Approvers = nil
-				} else {
-					items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
-					items.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
-
-					for _, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
-						var groups1 tfTypes.Group
-
-						groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
-						groups1.Description = types.StringPointerValue(groupsItem1.Description)
-						if groupsItem1.GroupLifecycle != nil {
-							groups1.GroupLifecycle = types.StringValue(string(*groupsItem1.GroupLifecycle))
-						} else {
-							groups1.GroupLifecycle = types.StringNull()
-						}
-						groups1.ID = types.StringPointerValue(groupsItem1.ID)
-						groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
-						groups1.Name = types.StringPointerValue(groupsItem1.Name)
-						groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
-
-						items.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(items.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
-					}
-					items.RequestConfig.RequestApprovalConfig.Approvers.Users = []tfTypes.User{}
-
-					for _, usersItem := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Users {
-						var users tfTypes.User
-
-						users.Email = types.StringPointerValue(usersItem.Email)
-						users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
-						users.GivenName = types.StringPointerValue(usersItem.GivenName)
-						users.ID = types.StringValue(usersItem.ID)
-						if usersItem.Status != nil {
-							users.Status = types.StringValue(string(*usersItem.Status))
-						} else {
-							users.Status = types.StringNull()
-						}
-
-						items.RequestConfig.RequestApprovalConfig.Approvers.Users = append(items.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
+						items.RequestConfig.AllowedGroups.Type = types.StringNull()
 					}
 				}
-				if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
-					items.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
+				items.RequestConfig.AllowedGroupsOverride = types.BoolPointerValue(itemsItem.RequestConfig.AllowedGroupsOverride)
+				if itemsItem.RequestConfig.AppstoreVisibility != nil {
+					items.RequestConfig.AppstoreVisibility = types.StringValue(string(*itemsItem.RequestConfig.AppstoreVisibility))
 				} else {
-					items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
-					items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
-
-					for _, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
-						var groups2 tfTypes.Group
-
-						groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
-						groups2.Description = types.StringPointerValue(groupsItem2.Description)
-						if groupsItem2.GroupLifecycle != nil {
-							groups2.GroupLifecycle = types.StringValue(string(*groupsItem2.GroupLifecycle))
-						} else {
-							groups2.GroupLifecycle = types.StringNull()
-						}
-						groups2.ID = types.StringPointerValue(groupsItem2.ID)
-						groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
-						groups2.Name = types.StringPointerValue(groupsItem2.Name)
-						groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
-
-						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
-					}
-					items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = []tfTypes.User{}
-
-					for _, usersItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-						var users1 tfTypes.User
-
-						users1.Email = types.StringPointerValue(usersItem1.Email)
-						users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
-						users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
-						users1.ID = types.StringValue(usersItem1.ID)
-						if usersItem1.Status != nil {
-							users1.Status = types.StringValue(string(*usersItem1.Status))
-						} else {
-							users1.Status = types.StringNull()
-						}
-
-						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
-					}
+					items.RequestConfig.AppstoreVisibility = types.StringNull()
 				}
-				items.RequestConfig.RequestApprovalConfig.CustomApprovalMessage = types.StringPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.CustomApprovalMessage)
-				items.RequestConfig.RequestApprovalConfig.CustomApprovalMessageOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.CustomApprovalMessageOverride)
-				if itemsItem.RequestConfig.RequestApprovalConfig.ManagerApproval != nil {
-					items.RequestConfig.RequestApprovalConfig.ManagerApproval = types.StringValue(string(*itemsItem.RequestConfig.RequestApprovalConfig.ManagerApproval))
+				if itemsItem.RequestConfig.RequestApprovalConfig == nil {
+					items.RequestConfig.RequestApprovalConfig = nil
 				} else {
-					items.RequestConfig.RequestApprovalConfig.ManagerApproval = types.StringNull()
-				}
-				items.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride)
-				items.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval)
-				items.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow)
-			}
-			if itemsItem.RequestConfig.RequestFulfillmentConfig == nil {
-				items.RequestConfig.RequestFulfillmentConfig = nil
-			} else {
-				items.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
-				items.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
-				items.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
-				if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup = nil
-				} else {
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup = &tfTypes.Group{}
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Description)
-					if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle != nil {
-						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle = types.StringValue(string(*itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle))
+					items.RequestConfig.RequestApprovalConfig = &tfTypes.RequestApprovalConfigOutput{}
+					if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
+						items.RequestConfig.RequestApprovalConfig.Approvers = nil
 					} else {
-						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle = types.StringNull()
+						items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
+						items.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
+
+						for _, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
+							var groups1 tfTypes.Group
+
+							groups1.AppID = types.StringPointerValue(groupsItem1.AppID)
+							groups1.Description = types.StringPointerValue(groupsItem1.Description)
+							if groupsItem1.GroupLifecycle != nil {
+								groups1.GroupLifecycle = types.StringValue(string(*groupsItem1.GroupLifecycle))
+							} else {
+								groups1.GroupLifecycle = types.StringNull()
+							}
+							groups1.ID = types.StringPointerValue(groupsItem1.ID)
+							groups1.IntegrationSpecificID = types.StringPointerValue(groupsItem1.IntegrationSpecificID)
+							groups1.Name = types.StringPointerValue(groupsItem1.Name)
+							groups1.SourceAppID = types.StringPointerValue(groupsItem1.SourceAppID)
+
+							items.RequestConfig.RequestApprovalConfig.Approvers.Groups = append(items.RequestConfig.RequestApprovalConfig.Approvers.Groups, groups1)
+						}
+						items.RequestConfig.RequestApprovalConfig.Approvers.Users = []tfTypes.User{}
+
+						for _, usersItem := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Users {
+							var users tfTypes.User
+
+							users.Email = types.StringPointerValue(usersItem.Email)
+							users.FamilyName = types.StringPointerValue(usersItem.FamilyName)
+							users.GivenName = types.StringPointerValue(usersItem.GivenName)
+							users.ID = types.StringValue(usersItem.ID)
+							if usersItem.Status != nil {
+								users.Status = types.StringValue(string(*usersItem.Status))
+							} else {
+								users.Status = types.StringNull()
+							}
+
+							items.RequestConfig.RequestApprovalConfig.Approvers.Users = append(items.RequestConfig.RequestApprovalConfig.Approvers.Users, users)
+						}
 					}
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Name = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Name)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.SourceAppID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.SourceAppID)
+					if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
+					} else {
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
+
+						for _, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
+							var groups2 tfTypes.Group
+
+							groups2.AppID = types.StringPointerValue(groupsItem2.AppID)
+							groups2.Description = types.StringPointerValue(groupsItem2.Description)
+							if groupsItem2.GroupLifecycle != nil {
+								groups2.GroupLifecycle = types.StringValue(string(*groupsItem2.GroupLifecycle))
+							} else {
+								groups2.GroupLifecycle = types.StringNull()
+							}
+							groups2.ID = types.StringPointerValue(groupsItem2.ID)
+							groups2.IntegrationSpecificID = types.StringPointerValue(groupsItem2.IntegrationSpecificID)
+							groups2.Name = types.StringPointerValue(groupsItem2.Name)
+							groups2.SourceAppID = types.StringPointerValue(groupsItem2.SourceAppID)
+
+							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups, groups2)
+						}
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = []tfTypes.User{}
+
+						for _, usersItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
+							var users1 tfTypes.User
+
+							users1.Email = types.StringPointerValue(usersItem1.Email)
+							users1.FamilyName = types.StringPointerValue(usersItem1.FamilyName)
+							users1.GivenName = types.StringPointerValue(usersItem1.GivenName)
+							users1.ID = types.StringValue(usersItem1.ID)
+							if usersItem1.Status != nil {
+								users1.Status = types.StringValue(string(*usersItem1.Status))
+							} else {
+								users1.Status = types.StringNull()
+							}
+
+							items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users = append(items.RequestConfig.RequestApprovalConfig.ApproversStage2.Users, users1)
+						}
+					}
+					items.RequestConfig.RequestApprovalConfig.CustomApprovalMessage = types.StringPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.CustomApprovalMessage)
+					items.RequestConfig.RequestApprovalConfig.CustomApprovalMessageOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.CustomApprovalMessageOverride)
+					if itemsItem.RequestConfig.RequestApprovalConfig.ManagerApproval != nil {
+						items.RequestConfig.RequestApprovalConfig.ManagerApproval = types.StringValue(string(*itemsItem.RequestConfig.RequestApprovalConfig.ManagerApproval))
+					} else {
+						items.RequestConfig.RequestApprovalConfig.ManagerApproval = types.StringNull()
+					}
+					items.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride)
+					items.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval)
+					items.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow = types.BoolPointerValue(itemsItem.RequestConfig.RequestApprovalConfig.ResponseDescribesEntireApprovalWorkflow)
 				}
-				if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook == nil {
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = nil
+				if itemsItem.RequestConfig.RequestFulfillmentConfig == nil {
+					items.RequestConfig.RequestFulfillmentConfig = nil
 				} else {
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType))
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
-					items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name = types.StringValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name)
+					items.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
+					items.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
+					items.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
+					if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup = nil
+					} else {
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup = &tfTypes.Group{}
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Description)
+						if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle != nil {
+							items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle = types.StringValue(string(*itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle))
+						} else {
+							items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.GroupLifecycle = types.StringNull()
+						}
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Name = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.Name)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.SourceAppID = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.SourceAppID)
+					}
+					if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook == nil {
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = nil
+					} else {
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook = &tfTypes.BaseInlineWebhook{}
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Description)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.HookType))
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
+						items.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name = types.StringValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name)
+					}
+					items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
+					for _, v := range itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
+						items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+					}
+					items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)
 				}
-				items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
-				for _, v := range itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-					items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+				if itemsItem.RequestConfig.RequestValidationInlineWebhook == nil {
+					items.RequestConfig.RequestValidationInlineWebhook = nil
+				} else {
+					items.RequestConfig.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
+					items.RequestConfig.RequestValidationInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.Description)
+					items.RequestConfig.RequestValidationInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestValidationInlineWebhook.HookType))
+					items.RequestConfig.RequestValidationInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.ID)
+					items.RequestConfig.RequestValidationInlineWebhook.Name = types.StringValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.Name)
 				}
-				items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)
-			}
-			if itemsItem.RequestConfig.RequestValidationInlineWebhook == nil {
-				items.RequestConfig.RequestValidationInlineWebhook = nil
-			} else {
-				items.RequestConfig.RequestValidationInlineWebhook = &tfTypes.BaseInlineWebhook{}
-				items.RequestConfig.RequestValidationInlineWebhook.Description = types.StringPointerValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.Description)
-				items.RequestConfig.RequestValidationInlineWebhook.HookType = types.StringValue(string(itemsItem.RequestConfig.RequestValidationInlineWebhook.HookType))
-				items.RequestConfig.RequestValidationInlineWebhook.ID = types.StringValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.ID)
-				items.RequestConfig.RequestValidationInlineWebhook.Name = types.StringValue(itemsItem.RequestConfig.RequestValidationInlineWebhook.Name)
 			}
 			if itemsItem.Type != nil {
 				items.Type = types.StringValue(string(*itemsItem.Type))
