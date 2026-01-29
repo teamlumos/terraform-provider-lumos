@@ -4148,17 +4148,17 @@
             "description": "AppStore App visibility."
           },
           "custom_approval_message": {
-            "type": "string",
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Custom Approval Message",
             "description": "After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported."
           },
           "require_manager_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Manager Approval",
             "description": "When a user makes an access request, require that their manager approves the request before moving on to additional approvals."
           },
           "require_additional_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Additional Approval",
             "description": "Only turn on when working with sensitive permissions to ensure a smooth employee experience."
           },
@@ -4170,7 +4170,10 @@
             "description": "The allowed groups associated with this config."
           },
           "approvers": {
-            "$ref": "#/components/schemas/AppApproversInput",
+            "anyOf": [
+              { "$ref": "#/components/schemas/AppApproversInput" },
+              { "type": "null" }
+            ],
             "description": "AppStore App approvers assigned."
           },
           "approvers_stage_2": {
@@ -4178,7 +4181,10 @@
             "description": "AppStore App stage 2 approvers assigned."
           },
           "admins": {
-            "$ref": "#/components/schemas/AppAdminsInput",
+            "anyOf": [
+              { "$ref": "#/components/schemas/AppAdminsInput" },
+              { "type": "null" }
+            ],
             "description": "AppStore App admins assigned."
           },
           "request_validation_inline_webhook": {
@@ -4199,17 +4205,17 @@
             "description": "AppStore App visibility."
           },
           "custom_approval_message": {
-            "type": "string",
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Custom Approval Message",
             "description": "After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported."
           },
           "require_manager_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Manager Approval",
             "description": "When a user makes an access request, require that their manager approves the request before moving on to additional approvals."
           },
           "require_additional_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Additional Approval",
             "description": "Only turn on when working with sensitive permissions to ensure a smooth employee experience."
           },
@@ -6246,7 +6252,7 @@
             "default": "NONE"
           },
           "require_additional_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Additional Approval",
             "description": "Only turn on when working with sensitive permissions to ensure a smooth employee experience."
           },
@@ -6261,11 +6267,17 @@
             "description": "Indicates if custom_approval_message is overridden."
           },
           "approvers": {
-            "$ref": "#/components/schemas/AppApproversInput",
+            "anyOf": [
+              { "$ref": "#/components/schemas/AppApproversInput" },
+              { "type": "null" }
+            ],
             "description": "AppStore App approvers assigned."
           },
           "approvers_stage_2": {
-            "$ref": "#/components/schemas/AppApproversInput",
+            "anyOf": [
+              { "$ref": "#/components/schemas/AppApproversInput" },
+              { "type": "null" }
+            ],
             "description": "AppStore App stage 2 approvers assigned."
           },
           "request_approval_stages": {
@@ -6301,7 +6313,7 @@
             "default": "NONE"
           },
           "require_additional_approval": {
-            "type": "boolean",
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
             "title": "Require Additional Approval",
             "description": "Only turn on when working with sensitive permissions to ensure a smooth employee experience."
           },

@@ -445,7 +445,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as app admins. Requires replacement if changed.`,
 							},
 						},
-						Description: `Requires replacement if changed.`,
+						Description: `AppStore App admins assigned. Requires replacement if changed.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
@@ -656,7 +656,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
 							},
 						},
-						Description: `Requires replacement if changed.`,
+						Description: `AppStore App approvers assigned. Requires replacement if changed.`,
 					},
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,

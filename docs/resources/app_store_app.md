@@ -172,9 +172,9 @@ Read-Only:
 
 Optional:
 
-- `admins` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins))
+- `admins` (Attributes) AppStore App admins assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins))
 - `allowed_groups` (Attributes) The allowed groups associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
-- `approvers` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
+- `approvers` (Attributes) AppStore App approvers assigned. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
 - `approvers_stage_2` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
 - `discoverability` (String) must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.

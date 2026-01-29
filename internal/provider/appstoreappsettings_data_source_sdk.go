@@ -55,7 +55,7 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 		if resp.RequestFlow == nil {
 			r.RequestFlow = nil
 		} else {
-			r.RequestFlow = &tfTypes.AppStoreAppSettingsRequestFlowInput{}
+			r.RequestFlow = &tfTypes.AppStoreAppSettingsRequestFlowOutput{}
 			if resp.RequestFlow.Admins == nil {
 				r.RequestFlow.Admins = nil
 			} else {
