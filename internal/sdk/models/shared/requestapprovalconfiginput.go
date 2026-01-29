@@ -13,9 +13,11 @@ type RequestApprovalConfigInput struct {
 	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
 	// Indicates if custom_approval_message is overridden.
-	CustomApprovalMessageOverride *bool              `json:"custom_approval_message_override,omitempty"`
-	Approvers                     *AppApproversInput `json:"approvers,omitempty"`
-	ApproversStage2               *AppApproversInput `json:"approvers_stage_2,omitempty"`
+	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
+	// AppStore App approvers assigned.
+	Approvers *AppApproversInput `json:"approvers,omitempty"`
+	// AppStore App stage 2 approvers assigned.
+	ApproversStage2 *AppApproversInput `json:"approvers_stage_2,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageInput `json:"request_approval_stages,omitempty"`
 }
