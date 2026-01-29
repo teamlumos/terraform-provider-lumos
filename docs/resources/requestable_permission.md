@@ -148,7 +148,7 @@ Optional:
 
 Read-Only:
 
-- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 
 <a id="nestedatt--request_config--request_approval_config--approvers"></a>
 ### Nested Schema for `request_config.request_approval_config.approvers`
