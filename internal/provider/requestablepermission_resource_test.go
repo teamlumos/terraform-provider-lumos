@@ -37,9 +37,6 @@ func TestAccPermissionResource(t *testing.T) {
 								groups = []
 							}
 							manager_approval = "NONE"
-							custom_approval_message = "test"
-							custom_approval_message_override = true
-							require_additional_approval = false
 						}
 					}
 				}`, os.Getenv("APP_ID"), os.Getenv("GROUP_ID"), os.Getenv("USER_ID")),
@@ -65,10 +62,6 @@ func TestAccPermissionResource(t *testing.T) {
 								users  = [{ id = "%s" }]
 								groups = []
 							}
-							manager_approval = "NONE"
-							custom_approval_message = "test"
-							custom_approval_message_override = true
-							require_additional_approval = false
 						}
 					}
 				}`, os.Getenv("APP_ID"), os.Getenv("USER_ID")),
@@ -91,17 +84,10 @@ func TestAccPermissionResource(t *testing.T) {
 						appstore_visibility = "HIDDEN"
 						request_approval_config = {
 							request_approval_config_override = true
-							approvers = {
-								users  = [{ id = "%s" }]
-								groups = []
-							}
 							manager_approval = "NONE"
-							custom_approval_message = "test"
-							custom_approval_message_override = true
-							require_additional_approval = false
 						}
 					}
-				}`, os.Getenv("APP_ID"), os.Getenv("USER_ID")),
+				}`, os.Getenv("APP_ID")),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides_3", "label", "Permission with Config Overrides 3"),
 					resource.TestCheckResourceAttr("lumos_requestable_permission.test_permission_with_overrides_3", "type", "NATIVE"),
@@ -113,7 +99,6 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Permission with No Config Overrides 1"
 					request_config = {
-						allowed_groups_override = false
 						appstore_visibility = "HIDDEN"
 					}
 				}`, os.Getenv("APP_ID")),
@@ -149,14 +134,11 @@ func TestAccPermissionResource(t *testing.T) {
 					request_config = {
 						appstore_visibility = "HIDDEN"
 						request_approval_config = {
-							approvers = {
-								users  = []
-								groups = []
-							}
-							manager_approval = "NONE"
-							custom_approval_message = "test"
-							custom_approval_message_override = true
-							require_additional_approval = false
+						  approvers = {
+							users  = []
+							groups = []
+						  },
+						  manager_approval = "NONE"
 						}
 					}
 				}`, os.Getenv("APP_ID")),
@@ -168,18 +150,13 @@ func TestAccPermissionResource(t *testing.T) {
 					label       = "Approvers"
 					request_config = {
 						appstore_visibility = "HIDDEN"
-						allowed_groups_override = false
 						request_approval_config = {
-							approvers = {
-								users  = [{ id = "%s" }]
-								groups = []
-							}
-							manager_approval = "NONE"
-							custom_approval_message = "test"
-							custom_approval_message_override = true
-							require_additional_approval = false
+						  approvers = {
+							users  = [{ id = "%s" }]
+							groups = []
+						  },
 						}
-					}
+					  }
 				}`, os.Getenv("APP_ID"), os.Getenv("USER_ID")),
 			},
 		},
@@ -207,11 +184,7 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Lowercase time based access"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						request_fulfillment_config = {
-							manual_instructions = ""
-							manual_steps_needed = false
 							time_based_access_override = true
 							time_based_access = ["unlimited"]
 						}
@@ -243,11 +216,7 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Upper case time based access"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						request_fulfillment_config = {
-							manual_instructions = ""
-							manual_steps_needed = false
 							time_based_access_override = true
 							time_based_access = ["2 Hours"]
 						}
@@ -279,11 +248,7 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Override but no time based access"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						request_fulfillment_config = {
-							manual_instructions = ""
-							manual_steps_needed = false
 							time_based_access_override = true
 							time_based_access = []
 						}
@@ -315,11 +280,7 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "No override but time based access"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						request_fulfillment_config = {
-							manual_instructions = ""
-							manual_steps_needed = false
 							time_based_access_override = false
 							time_based_access = ["Unlimited"]
 						}
@@ -345,11 +306,7 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Override with time based access"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						request_fulfillment_config = {
-							manual_instructions = ""
-							manual_steps_needed = false
 							time_based_access_override = true
 							time_based_access = ["Unlimited"]
 						}
@@ -381,8 +338,6 @@ func TestAccPermissionResource(t *testing.T) {
 					app_id      = "%s"
 					label       = "Invalid allowed groups permission"
 					request_config = {
-						allowed_groups_override = false
-						appstore_visibility = "HIDDEN"
 						allowed_groups = {
 							groups = [{ id = "%s" }]
 						}
