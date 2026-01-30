@@ -3,6 +3,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type RequestApprovalConfigOutput struct {
 	// Indicates if approval flow is overridden.
 	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
@@ -21,7 +25,18 @@ type RequestApprovalConfigOutput struct {
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages"`
 	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
-	ResponseDescribesEntireApprovalWorkflow *bool `json:"response_describes_entire_approval_workflow,omitempty"`
+	ResponseDescribesEntireApprovalWorkflow *bool `default:"false" json:"response_describes_entire_approval_workflow"`
+}
+
+func (r RequestApprovalConfigOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(r, "", false)
+}
+
+func (r *RequestApprovalConfigOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &r, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
