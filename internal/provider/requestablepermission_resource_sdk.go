@@ -21,9 +21,10 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 		r.AppInstanceID = types.StringValue(resp.AppInstanceID)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.Label = types.StringValue(resp.Label)
-		if r.RequestConfig == nil {
+		if resp.RequestConfig == nil {
+			r.RequestConfig = nil
+		} else {
 			r.RequestConfig = &tfTypes.RequestConfigInputCreate{}
-
 			if resp.RequestConfig.AccessRemovalInlineWebhook == nil {
 				r.RequestConfig.AccessRemovalInlineWebhook = nil
 			} else {
