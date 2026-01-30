@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
@@ -859,8 +858,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					},
 					"response_describes_entire_approval_workflow": schema.BoolAttribute{
 						Computed:    true,
-						Default:     booldefault.StaticBool(false),
-						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false`,
+						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.`,
 					},
 				},
 				Description: `Requires replacement if changed.`,
