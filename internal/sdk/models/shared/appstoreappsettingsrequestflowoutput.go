@@ -3,10 +3,6 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type AppStoreAppSettingsRequestFlowOutput struct {
 	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
 	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
@@ -20,21 +16,10 @@ type AppStoreAppSettingsRequestFlowOutput struct {
 	Approvers       *AppApproversOutput        `json:"approvers,omitempty"`
 	ApproversStage2 *AppApproversOutput        `json:"approvers_stage_2,omitempty"`
 	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
-	ResponseDescribesEntireApprovalWorkflow *bool            `default:"false" json:"response_describes_entire_approval_workflow"`
+	ResponseDescribesEntireApprovalWorkflow *bool            `json:"response_describes_entire_approval_workflow,omitempty"`
 	Admins                                  *AppAdminsOutput `json:"admins,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
-}
-
-func (a AppStoreAppSettingsRequestFlowOutput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (a *AppStoreAppSettingsRequestFlowOutput) GetDiscoverability() *AppStoreVisibility {
