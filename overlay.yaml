@@ -44,19 +44,19 @@ actions:
     update:
       "x-speakeasy-name-override": "id"
 
-  # App Settings
+  # App Settings — merge into AppStoreApp entity
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
     update:
-      "x-speakeasy-entity-operation": "AppStoreAppSettings#update"
+      "x-speakeasy-entity-operation": "AppStoreApp#update"
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]
     update:
-      "x-speakeasy-entity-operation": "AppStoreAppSettings#read"
+      "x-speakeasy-entity-operation": "AppStoreApp#read#2"
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]["parameters"][0]
     update:
-      "x-speakeasy-name-override": "id"
+      "x-speakeasy-match": "app_id"
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
     update:
-      "x-speakeasy-name-override": "id"
+      "x-speakeasy-match": "app_id"
 
   # Users
   - target: $["paths"]["/users"]["get"]
@@ -219,7 +219,7 @@ actions:
       "x-speakeasy-entity-operation": "AppStoreApp#create"
   - target: $["paths"]["/appstore/apps/{app_id}"]["get"]
     update:
-      "x-speakeasy-entity-operation": "AppStoreApp#read"
+      "x-speakeasy-entity-operation": "AppStoreApp#read#1"
   - target: $["paths"]["/appstore/apps/{app_id}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#delete"
@@ -239,6 +239,13 @@ actions:
   - target: $["components"]["schemas"]["AppStoreApp"]
     update:
       "x-speakeasy-entity": "AppStoreApp"
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["AppApproversOutput"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsOutput"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
 
   # Groups
   - target: $["components"]["schemas"]["Page_Group_"]
