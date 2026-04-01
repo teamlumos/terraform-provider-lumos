@@ -213,6 +213,10 @@ actions:
     update:
       "x-speakeasy-name-override": "id"
 
+  # AppStore Apps - remove default from read-only field to prevent perpetual Terraform diff
+  - target: $["components"]["schemas"]["AppStoreAppSettingsRequestFlowOutput"]["properties"]["response_describes_entire_approval_workflow"]["default"]
+    remove: true
+
   # AppStore Apps
   - target: $["paths"]["/appstore/apps"]["post"]
     update:
