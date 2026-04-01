@@ -4,7 +4,9 @@
 package provider
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -54,9 +56,8 @@ type AppStoreAppResourceModel struct {
 	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
-	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
-	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
+	Links                            *tfTypes.AppLinks                             `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
@@ -159,10 +160,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"description": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-facing description of the app`,
-			},
-			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: `The ID of this app.`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -1001,6 +998,43 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	request2, request2Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
+	resp.Diagnostics.Append(request2Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res2, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request2)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res2 != nil && res2.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res2.RawResponse))
+		}
+		return
+	}
+	if res2 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res2))
+		return
+	}
+	if res2.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res2.StatusCode), debugResponse(res2.RawResponse))
+		return
+	}
+	if !(res2.AppStoreAppSettingsOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res2.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res2.AppStoreAppSettingsOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1055,6 +1089,41 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreApp(ctx, res.AppStoreApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode == 404 {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AppStoreAppSettingsOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res1.AppStoreAppSettingsOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -1131,5 +1200,26 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *AppStoreAppResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), req.ID)...)
+	dec := json.NewDecoder(bytes.NewReader([]byte(req.ID)))
+	dec.DisallowUnknownFields()
+	var data struct {
+		AppID string `json:"app_id"`
+		AppID string `json:"app_id"`
+	}
+
+	if err := dec.Decode(&data); err != nil {
+		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"app_id": "..."}': `+err.Error())
+		return
+	}
+
+	if len(data.AppID) == 0 {
+		resp.Diagnostics.AddError("Missing required field", `The field app_id is required but was not found in the json encoded ID.`)
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), data.AppID)...)
+	if len(data.AppID) == 0 {
+		resp.Diagnostics.AddError("Missing required field", `The field app_id is required but was not found in the json encoded ID.`)
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), data.AppID)...)
 }
