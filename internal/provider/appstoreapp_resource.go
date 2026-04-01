@@ -4,9 +4,7 @@
 package provider
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -56,8 +54,9 @@ type AppStoreAppResourceModel struct {
 	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
+	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
-	Links                            *tfTypes.AppLinks                             `tfsdk:"links"`
+	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
@@ -160,6 +159,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 			"description": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-facing description of the app`,
+			},
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: `The ID of this app.`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -1200,26 +1203,5 @@ func (r *AppStoreAppResource) Delete(ctx context.Context, req resource.DeleteReq
 }
 
 func (r *AppStoreAppResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	dec := json.NewDecoder(bytes.NewReader([]byte(req.ID)))
-	dec.DisallowUnknownFields()
-	var data struct {
-		AppID string `json:"app_id"`
-		AppID string `json:"app_id"`
-	}
-
-	if err := dec.Decode(&data); err != nil {
-		resp.Diagnostics.AddError("Invalid ID", `The import ID is not valid. It is expected to be a JSON object string with the format: '{"app_id": "..."}': `+err.Error())
-		return
-	}
-
-	if len(data.AppID) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field app_id is required but was not found in the json encoded ID.`)
-		return
-	}
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), data.AppID)...)
-	if len(data.AppID) == 0 {
-		resp.Diagnostics.AddError("Missing required field", `The field app_id is required but was not found in the json encoded ID.`)
-		return
-	}
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), data.AppID)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("app_id"), req.ID)...)
 }

@@ -50,7 +50,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreApp(ctx context.Cont
 						}
 					}
 					if customAttributeValue.Value.DateTime != nil {
-						customAttributeResult.Value.DateTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(customAttributeValue.Value.DateTime))
+						customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
 					}
 					if customAttributeValue.Value.Integer != nil {
 						customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
@@ -63,7 +63,6 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreApp(ctx context.Cont
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
-		r.Links = &tfTypes.AppLinks{}
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
 		r.Links.Self = types.StringValue(resp.Links.Self)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
@@ -316,11 +315,11 @@ func (r *AppStoreAppResourceModel) ToOperationsGetAppStoreAppRequest(ctx context
 func (r *AppStoreAppResourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var id string
-	id = r.AppID.ValueString()
+	var appID string
+	appID = r.AppID.ValueString()
 
 	out := operations.GetAppStoreAppSettingsRequest{
-		ID: id,
+		AppID: appID,
 	}
 
 	return &out, diags

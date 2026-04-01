@@ -3,7 +3,7 @@
 
 package sdk
 
-// Generated from OpenAPI doc version 0.1.0 and generator version 2.879.1
+// Generated from OpenAPI doc version 0.1.0 and generator version 2.801.2
 
 import (
 	"context"
@@ -63,7 +63,7 @@ type Lumos struct {
 
 type SDKOption func(*Lumos)
 
-// WithServerURL allows providing an alternative server URL
+// WithServerURL allows the overriding of the default server URL
 func WithServerURL(serverURL string) SDKOption {
 	return func(sdk *Lumos) {
 		sdk.sdkConfiguration.ServerURL = serverURL
@@ -133,7 +133,7 @@ func New(opts ...SDKOption) *Lumos {
 	sdk := &Lumos{
 		SDKVersion: "0.9.1",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:  "speakeasy-sdk/terraform 0.9.1 2.879.1 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			UserAgent:  "speakeasy-sdk/terraform 0.9.1 2.801.2 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
 			ServerList: ServerList,
 		},
 		hooks: hooks.New(),

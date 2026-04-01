@@ -38,8 +38,9 @@ type AppStoreAppDataSourceModel struct {
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
 	Expand                           []types.String                                `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
-	Links                            *tfTypes.AppLinks                             `tfsdk:"links"`
+	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
@@ -141,6 +142,10 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `Fields to expand. Supported fields: custom_attributes.`,
+			},
+			"id": schema.StringAttribute{
+				Computed:    true,
+				Description: `The ID of this app.`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,

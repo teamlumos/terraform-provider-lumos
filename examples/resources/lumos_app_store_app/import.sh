@@ -1,1 +1,1 @@
-terraform import lumos_app_store_app.my_lumos_app_store_app '{"app_id": "..."}'
+terraform import lumos_app_store_app.my_lumos_app_store_app "..."

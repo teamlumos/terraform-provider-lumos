@@ -115,7 +115,7 @@ func retryIntervalFromResponse(res *http.Response) time.Duration {
 
 	parsedDate, err := time.Parse(time.RFC1123, retryVal)
 	if err == nil {
-		delta := time.Until(parsedDate)
+		delta := parsedDate.Sub(time.Now())
 		if delta < 0 {
 			return 0
 		} else {
