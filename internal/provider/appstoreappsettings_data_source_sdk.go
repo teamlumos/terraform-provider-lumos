@@ -232,13 +232,13 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 	return diags
 }
 
-func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
+func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppSettingsRequest(ctx context.Context) (*operations.GetAppSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.GetAppStoreAppSettingsRequest{
+	out := operations.GetAppSettingsRequest{
 		ID: id,
 	}
 

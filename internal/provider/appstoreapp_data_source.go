@@ -625,13 +625,13 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetAppSettingsRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.Core.GetAppSettings(ctx, *request1)
+	res1, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {

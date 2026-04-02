@@ -299,19 +299,6 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(
 	return diags
 }
 
-func (r *AppStoreAppDataSourceModel) ToOperationsGetAppSettingsRequest(ctx context.Context) (*operations.GetAppSettingsRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var appID string
-	appID = r.AppID.ValueString()
-
-	out := operations.GetAppSettingsRequest{
-		AppID: appID,
-	}
-
-	return &out, diags
-}
-
 func (r *AppStoreAppDataSourceModel) ToOperationsGetAppStoreAppRequest(ctx context.Context) (*operations.GetAppStoreAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -328,6 +315,19 @@ func (r *AppStoreAppDataSourceModel) ToOperationsGetAppStoreAppRequest(ctx conte
 	out := operations.GetAppStoreAppRequest{
 		AppID:  appID,
 		Expand: expand,
+	}
+
+	return &out, diags
+}
+
+func (r *AppStoreAppDataSourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var appID string
+	appID = r.AppID.ValueString()
+
+	out := operations.GetAppStoreAppSettingsRequest{
+		AppID: appID,
 	}
 
 	return &out, diags

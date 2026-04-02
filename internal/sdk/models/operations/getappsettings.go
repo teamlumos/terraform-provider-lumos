@@ -9,14 +9,14 @@ import (
 )
 
 type GetAppSettingsRequest struct {
-	AppID string `pathParam:"style=simple,explode=false,name=app_id"`
+	ID string `pathParam:"style=simple,explode=false,name=app_id"`
 }
 
-func (g *GetAppSettingsRequest) GetAppID() string {
+func (g *GetAppSettingsRequest) GetID() string {
 	if g == nil {
 		return ""
 	}
-	return g.AppID
+	return g.ID
 }
 
 type GetAppSettingsResponse struct {

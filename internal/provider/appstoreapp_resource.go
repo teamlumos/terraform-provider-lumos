@@ -1106,13 +1106,13 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request2, request2Diags := data.ToOperationsGetAppSettingsRequest(ctx)
+	request2, request2Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
 	resp.Diagnostics.Append(request2Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res2, err := r.client.Core.GetAppSettings(ctx, *request2)
+	res2, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request2)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res2 != nil && res2.RawResponse != nil {
@@ -1201,13 +1201,13 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsGetAppSettingsRequest(ctx)
+	request1, request1Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res1, err := r.client.Core.GetAppSettings(ctx, *request1)
+	res1, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request1)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res1 != nil && res1.RawResponse != nil {
@@ -1329,13 +1329,13 @@ func (r *AppStoreAppResource) Update(ctx context.Context, req resource.UpdateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request2, request2Diags := data.ToOperationsGetAppSettingsRequest(ctx)
+	request2, request2Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
 	resp.Diagnostics.Append(request2Diags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res2, err := r.client.Core.GetAppSettings(ctx, *request2)
+	res2, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request2)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res2 != nil && res2.RawResponse != nil {
