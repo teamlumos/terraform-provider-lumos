@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -122,15 +123,24 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The email of this user.`,
 											},
 											"family_name": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The family name of this user.`,
 											},
 											"given_name": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The given name of this user.`,
 											},
 											"id": schema.StringAttribute{
@@ -138,7 +148,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												Description: `The ID of this user.`,
 											},
 											"status": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The status of this user.`,
 											},
 										},
@@ -402,10 +415,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed: true,
+											Default:  stringdefault.StaticString(`SYNCED`),
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group.`,
+											Description: `The lifecycle of this group. Default: "SYNCED"`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -538,10 +552,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed: true,
+											Default:  stringdefault.StaticString(`SYNCED`),
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group.`,
+											Description: `The lifecycle of this group. Default: "SYNCED"`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -632,10 +647,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed: true,
+											Default:  stringdefault.StaticString(`SYNCED`),
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group.`,
+											Description: `The lifecycle of this group. Default: "SYNCED"`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -768,10 +784,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed: true,
+											Default:  stringdefault.StaticString(`SYNCED`),
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The lifecycle of this group.`,
+											Description: `The lifecycle of this group. Default: "SYNCED"`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
