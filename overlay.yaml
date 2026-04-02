@@ -44,7 +44,7 @@ actions:
     update:
       "x-speakeasy-name-override": "id"
 
-  # App Settings — merge into AppStoreApp entity
+  # App Settings — merge into AppStoreApp entity for drift detection
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#update"
@@ -57,6 +57,14 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["get"]["parameters"][0]
     update:
       "x-speakeasy-match": "app_id"
+
+  # Preserve AppStoreAppSettings data source
+  - target: $["paths"]["/apps/{app_id}/settings"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreAppSettings#read"
+  - target: $["paths"]["/apps/{app_id}/settings"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
 
   # Users
   - target: $["paths"]["/users"]["get"]
