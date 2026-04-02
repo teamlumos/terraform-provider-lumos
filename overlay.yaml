@@ -162,6 +162,12 @@ actions:
   - target: $["paths"]["/appstore/pre_approval_rules"]["post"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#create"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "PreApprovalRule#read"
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
   - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "PreApprovalRule#delete"
