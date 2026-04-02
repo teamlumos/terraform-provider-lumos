@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -51,7 +50,6 @@ type AppStoreAppResourceModel struct {
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
 	ID                               types.String                                  `tfsdk:"id"`
-	InAppStore                       types.Bool                                    `tfsdk:"in_app_store"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
@@ -183,14 +181,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `The ID of this app.`,
-			},
-			"in_app_store": schema.BoolAttribute{
-				Computed: true,
-				Default:  booldefault.StaticBool(false),
-				PlanModifiers: []planmodifier.Bool{
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
-				Description: `Whether the app is in the app store. Default: false`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed: true,
@@ -1138,11 +1128,11 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res2.StatusCode), debugResponse(res2.RawResponse))
 		return
 	}
-	if !(res2.AppSettingOutput != nil) {
+	if !(res2.AppStoreAppSettingsOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res2.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppSettingOutput(ctx, res2.AppSettingOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res2.AppStoreAppSettingsOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -1237,11 +1227,11 @@ func (r *AppStoreAppResource) Read(ctx context.Context, req resource.ReadRequest
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.AppSettingOutput != nil) {
+	if !(res1.AppStoreAppSettingsOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppSettingOutput(ctx, res1.AppSettingOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res1.AppStoreAppSettingsOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -1361,11 +1351,11 @@ func (r *AppStoreAppResource) Update(ctx context.Context, req resource.UpdateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res2.StatusCode), debugResponse(res2.RawResponse))
 		return
 	}
-	if !(res2.AppSettingOutput != nil) {
+	if !(res2.AppStoreAppSettingsOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res2.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppSettingOutput(ctx, res2.AppSettingOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res2.AppStoreAppSettingsOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return

@@ -39,7 +39,6 @@ type AppStoreAppDataSourceModel struct {
 	Description                      types.String                                  `tfsdk:"description"`
 	Expand                           []types.String                                `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	ID                               types.String                                  `tfsdk:"id"`
-	InAppStore                       types.Bool                                    `tfsdk:"in_app_store"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
@@ -147,10 +146,6 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: `The ID of this app.`,
-			},
-			"in_app_store": schema.BoolAttribute{
-				Computed:    true,
-				Description: `Whether the app is in the app store.`,
 			},
 			"instance_id": schema.StringAttribute{
 				Computed:    true,
@@ -652,11 +647,11 @@ func (r *AppStoreAppDataSource) Read(ctx context.Context, req datasource.ReadReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
 		return
 	}
-	if !(res1.AppSettingOutput != nil) {
+	if !(res1.AppStoreAppSettingsOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppSettingOutput(ctx, res1.AppSettingOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res1.AppStoreAppSettingsOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
