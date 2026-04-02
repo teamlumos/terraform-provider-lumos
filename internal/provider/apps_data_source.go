@@ -160,10 +160,6 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `The URL of the logo of this app.`,
 						},
-						"name": schema.StringAttribute{
-							Computed:    true,
-							Description: `The name of this app.`,
-						},
 						"request_instructions": schema.StringAttribute{
 							Computed:    true,
 							Description: `The request instructions.`,

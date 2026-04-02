@@ -40,7 +40,6 @@ type AppDataSourceModel struct {
 	InstanceID                       types.String                       `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                   `tfsdk:"links"`
 	LogoURL                          types.String                       `tfsdk:"logo_url"`
-	Name                             types.String                       `tfsdk:"name"`
 	RequestInstructions              types.String                       `tfsdk:"request_instructions"`
 	Sources                          []types.String                     `tfsdk:"sources"`
 	Status                           types.String                       `tfsdk:"status"`
@@ -157,10 +156,6 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			"logo_url": schema.StringAttribute{
 				Computed:    true,
 				Description: `The URL of the logo of this app.`,
-			},
-			"name": schema.StringAttribute{
-				Computed:    true,
-				Description: `The name of this app.`,
 			},
 			"request_instructions": schema.StringAttribute{
 				Computed:    true,

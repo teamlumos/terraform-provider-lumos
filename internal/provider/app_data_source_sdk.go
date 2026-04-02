@@ -66,7 +66,6 @@ func (r *AppDataSourceModel) RefreshFromSharedAppWithCustomAttributes(ctx contex
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
 		r.Links.Self = types.StringValue(resp.Links.Self)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
-		r.Name = types.StringValue(resp.Name)
 		r.RequestInstructions = types.StringPointerValue(resp.RequestInstructions)
 		r.Sources = make([]types.String, 0, len(resp.Sources))
 		for _, v := range resp.Sources {

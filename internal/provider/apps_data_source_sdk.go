@@ -71,7 +71,6 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageAppWithCustomAttributes(ctx c
 			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
 			items.Links.Self = types.StringValue(itemsItem.Links.Self)
 			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
-			items.Name = types.StringValue(itemsItem.Name)
 			items.RequestInstructions = types.StringPointerValue(itemsItem.RequestInstructions)
 			items.Sources = make([]types.String, 0, len(itemsItem.Sources))
 			for _, v := range itemsItem.Sources {
