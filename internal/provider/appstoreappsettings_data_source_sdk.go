@@ -12,11 +12,12 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ctx context.Context, resp *shared.AppStoreAppSettingsOutput) diag.Diagnostics {
+func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppSettingOutput(ctx context.Context, resp *shared.AppSettingOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
 		r.CustomRequestInstructions = types.StringPointerValue(resp.CustomRequestInstructions)
+		r.InAppStore = types.BoolPointerValue(resp.InAppStore)
 		if resp.Provisioning == nil {
 			r.Provisioning = nil
 		} else {

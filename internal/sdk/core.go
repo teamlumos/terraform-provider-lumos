@@ -1309,12 +1309,12 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 				return nil, err
 			}
 
-			var out shared.AppStoreAppSettingsOutput
+			var out shared.AppSettingOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.AppStoreAppSettingsOutput = &out
+			res.AppSettingOutput = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

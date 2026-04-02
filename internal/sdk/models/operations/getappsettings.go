@@ -27,7 +27,7 @@ type GetAppSettingsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	AppStoreAppSettingsOutput *shared.AppStoreAppSettingsOutput
+	AppSettingOutput *shared.AppSettingOutput
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -53,11 +53,11 @@ func (g *GetAppSettingsResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppSettingsResponse) GetAppStoreAppSettingsOutput() *shared.AppStoreAppSettingsOutput {
+func (g *GetAppSettingsResponse) GetAppSettingOutput() *shared.AppSettingOutput {
 	if g == nil {
 		return nil
 	}
-	return g.AppStoreAppSettingsOutput
+	return g.AppSettingOutput
 }
 
 func (g *GetAppSettingsResponse) GetHTTPValidationError() *shared.HTTPValidationError {
