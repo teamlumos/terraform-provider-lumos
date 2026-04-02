@@ -30,6 +30,8 @@ type AppWithCustomAttributes struct {
 	Links    AppLinks `json:"links"`
 	// Custom attributes configured on the app
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
+	// The name of this app.
+	Name string `json:"name"`
 }
 
 func (a *AppWithCustomAttributes) GetID() string {
@@ -128,4 +130,11 @@ func (a *AppWithCustomAttributes) GetCustomAttributes() map[string]CustomAttribu
 		return nil
 	}
 	return a.CustomAttributes
+}
+
+func (a *AppWithCustomAttributes) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
 }

@@ -17,6 +17,7 @@ type AppWithCustomAttributes struct {
 	InstanceID                       types.String               `tfsdk:"instance_id"`
 	Links                            AppLinks                   `tfsdk:"links"`
 	LogoURL                          types.String               `tfsdk:"logo_url"`
+	Name                             types.String               `tfsdk:"name"`
 	RequestInstructions              types.String               `tfsdk:"request_instructions"`
 	Sources                          []types.String             `tfsdk:"sources"`
 	Status                           types.String               `tfsdk:"status"`

@@ -28,6 +28,8 @@ type App struct {
 	// The category of the app, as shown in the AppStore
 	Category *string  `json:"category,omitempty"`
 	Links    AppLinks `json:"links"`
+	// The name of this app.
+	Name string `json:"name"`
 }
 
 func (a *App) GetID() string {
@@ -119,4 +121,11 @@ func (a *App) GetLinks() AppLinks {
 		return AppLinks{}
 	}
 	return a.Links
+}
+
+func (a *App) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
 }
