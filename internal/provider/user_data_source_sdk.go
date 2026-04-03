@@ -47,7 +47,7 @@ func (r *UserDataSourceModel) RefreshFromSharedUserWithCustomAttributes(ctx cont
 						}
 					}
 					if customAttributeValue.Value.DateTime != nil {
-						customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
+						customAttributeResult.Value.DateTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(customAttributeValue.Value.DateTime))
 					}
 					if customAttributeValue.Value.Integer != nil {
 						customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)

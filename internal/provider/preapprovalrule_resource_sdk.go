@@ -102,19 +102,6 @@ func (r *PreApprovalRuleResourceModel) ToOperationsDeletePreApprovalRuleAppstore
 	return &out, diags
 }
 
-func (r *PreApprovalRuleResourceModel) ToOperationsGetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest(ctx context.Context) (*operations.GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	out := operations.GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest{
-		ID: id,
-	}
-
-	return &out, diags
-}
-
 func (r *PreApprovalRuleResourceModel) ToOperationsUpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest(ctx context.Context) (*operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

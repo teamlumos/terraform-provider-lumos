@@ -9,14 +9,14 @@ import (
 )
 
 type GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest struct {
-	ID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
+	PreApprovalRuleID string `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
 }
 
-func (g *GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest) GetID() string {
+func (g *GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest) GetPreApprovalRuleID() string {
 	if g == nil {
 		return ""
 	}
-	return g.ID
+	return g.PreApprovalRuleID
 }
 
 type GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetResponse struct {
