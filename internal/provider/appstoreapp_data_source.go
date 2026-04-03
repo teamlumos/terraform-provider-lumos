@@ -39,7 +39,7 @@ type AppStoreAppDataSourceModel struct {
 	Expand                           []types.String                     `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	ID                               types.String                       `tfsdk:"id"`
 	InstanceID                       types.String                       `tfsdk:"instance_id"`
-	Links                            tfTypes.AppLinks                   `tfsdk:"links"`
+	Links                            *tfTypes.AppLinks                  `tfsdk:"links"`
 	LogoURL                          types.String                       `tfsdk:"logo_url"`
 	RequestInstructions              types.String                       `tfsdk:"request_instructions"`
 	Sources                          []types.String                     `tfsdk:"sources"`
