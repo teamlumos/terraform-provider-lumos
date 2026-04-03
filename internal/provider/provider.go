@@ -5,10 +5,8 @@ package provider
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
-	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/list"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -21,9 +19,7 @@ import (
 )
 
 var _ provider.Provider = (*LumosProvider)(nil)
-var _ provider.ProviderWithActions = (*LumosProvider)(nil)
 var _ provider.ProviderWithEphemeralResources = (*LumosProvider)(nil)
-var _ provider.ProviderWithFunctions = (*LumosProvider)(nil)
 
 type LumosProvider struct {
 	// version is set to the provider version on release, "dev" when the
@@ -107,19 +103,10 @@ func (p *LumosProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	}
 
 	client := sdk.New(opts...)
-	resp.ActionData = client
 	resp.DataSourceData = client
 	resp.EphemeralResourceData = client
 	resp.ListResourceData = client
 	resp.ResourceData = client
-}
-
-func (p *LumosProvider) Functions(_ context.Context) []func() function.Function {
-	return []func() function.Function{}
-}
-
-func (p *LumosProvider) Actions(_ context.Context) []func() action.Action {
-	return []func() action.Action{}
 }
 
 func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resource {
@@ -137,9 +124,9 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 		NewAccessPoliciesDataSource,
 		NewAccessPolicyDataSource,
 		NewAppDataSource,
+		NewAppsDataSource,
 		NewAppStoreAppDataSource,
 		NewAppStoreAppSettingsDataSource,
-		NewAppsDataSource,
 		NewGroupDataSource,
 		NewGroupsDataSource,
 		NewRequestablePermissionDataSource,

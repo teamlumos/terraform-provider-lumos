@@ -1,9 +1,9 @@
 data "lumos_users" "my_users" {
-  exact_match = false
+  exact_match = true
   expand = [
     "..."
   ]
-  page        = 1
+  page        = 4
   search_term = "...my_search_term..."
-  size        = 50
+  size        = 87
 }

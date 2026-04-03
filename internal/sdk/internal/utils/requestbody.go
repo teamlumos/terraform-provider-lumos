@@ -282,9 +282,7 @@ func encodeMultipartFormDataFile(w *multipart.Writer, fieldName string, fieldTyp
 
 	// Reset seek position to 0 if the reader supports seeking
 	if seeker, ok := reader.(io.Seeker); ok {
-		if _, err := seeker.Seek(0, io.SeekStart); err != nil {
-			return err
-		}
+		_, _ = seeker.Seek(0, io.SeekStart)
 	}
 
 	return nil
