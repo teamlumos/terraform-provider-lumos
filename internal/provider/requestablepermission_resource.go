@@ -274,44 +274,74 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							"approvers": schema.SingleNestedAttribute{
 								Computed: true,
 								Optional: true,
+								PlanModifiers: []planmodifier.Object{
+									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+								},
 								Attributes: map[string]schema.Attribute{
 									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
+										PlanModifiers: []planmodifier.Set{
+											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
+										},
 										NestedObject: schema.NestedAttributeObject{
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The description of this group.`,
 												},
 												"group_lifecycle": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this group.`,
 												},
 												"integration_specific_id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The name of this group.`,
 												},
 												"source_app_id": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of the app that sources this group.`,
 												},
 											},
@@ -321,33 +351,54 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									"users": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
+										PlanModifiers: []planmodifier.Set{
+											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
+										},
 										NestedObject: schema.NestedAttributeObject{
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The email of this user.`,
 												},
 												"family_name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The family name of this user.`,
 												},
 												"given_name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The given name of this user.`,
 												},
 												"id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this user. Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
 													},
 												},
 												"status": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The status of this user.`,
 												},
 											},
@@ -360,44 +411,74 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 							"approvers_stage_2": schema.SingleNestedAttribute{
 								Computed: true,
 								Optional: true,
+								PlanModifiers: []planmodifier.Object{
+									speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+								},
 								Attributes: map[string]schema.Attribute{
 									"groups": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
+										PlanModifiers: []planmodifier.Set{
+											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
+										},
 										NestedObject: schema.NestedAttributeObject{
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The description of this group.`,
 												},
 												"group_lifecycle": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The lifecycle of this group.`,
 												},
 												"id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this group.`,
 												},
 												"integration_specific_id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The name of this group.`,
 												},
 												"source_app_id": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of the app that sources this group.`,
 												},
 											},
@@ -407,33 +488,54 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 									"users": schema.SetNestedAttribute{
 										Computed: true,
 										Optional: true,
+										PlanModifiers: []planmodifier.Set{
+											speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
+										},
 										NestedObject: schema.NestedAttributeObject{
 											Validators: []validator.Object{
 												speakeasy_objectvalidators.NotNull(),
 											},
+											PlanModifiers: []planmodifier.Object{
+												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The email of this user.`,
 												},
 												"family_name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The family name of this user.`,
 												},
 												"given_name": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The given name of this user.`,
 												},
 												"id": schema.StringAttribute{
-													Computed:    true,
-													Optional:    true,
+													Computed: true,
+													Optional: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The ID of this user. Not Null`,
 													Validators: []validator.String{
 														speakeasy_stringvalidators.NotNull(),
 													},
 												},
 												"status": schema.StringAttribute{
-													Computed:    true,
+													Computed: true,
+													PlanModifiers: []planmodifier.String{
+														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+													},
 													Description: `The status of this user.`,
 												},
 											},
