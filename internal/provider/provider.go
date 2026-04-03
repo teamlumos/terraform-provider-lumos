@@ -142,6 +142,7 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 		NewAppsDataSource,
 		NewGroupDataSource,
 		NewGroupsDataSource,
+		NewPreApprovalRuleDataSource,
 		NewRequestablePermissionDataSource,
 		NewRequestablePermissionsDataSource,
 		NewUserDataSource,
