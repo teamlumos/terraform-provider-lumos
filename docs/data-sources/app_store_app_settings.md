@@ -25,6 +25,7 @@ data "lumos_app_store_app_settings" "my_appstoreappsettings" {
 
 - `custom_request_instructions` (String) AppStore App instructions that are shown to the requester.
 - `id` (String) The ID of this resource.
+- `in_app_store` (Boolean) Whether the app is in the app store.
 - `provisioning` (Attributes) (see [below for nested schema](#nestedatt--provisioning))
 - `request_flow` (Attributes) (see [below for nested schema](#nestedatt--request_flow))
 

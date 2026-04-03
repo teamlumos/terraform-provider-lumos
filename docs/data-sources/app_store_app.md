@@ -38,11 +38,14 @@ data "lumos_app_store_app" "my_appstoreapp" {
 - `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
 - `category` (String) The category of the app, as shown in the AppStore
 - `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--custom_attributes))
+- `custom_request_instructions` (String) AppStore App instructions that are shown to the requester.
 - `description` (String) The user-facing description of the app
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `links` (Attributes) (see [below for nested schema](#nestedatt--links))
 - `logo_url` (String) The URL of the logo of this app.
+- `provisioning` (Attributes) (see [below for nested schema](#nestedatt--provisioning))
+- `request_flow` (Attributes) (see [below for nested schema](#nestedatt--request_flow))
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
 - `status` (String)
@@ -88,3 +91,194 @@ Read-Only:
 
 - `admin_url` (String) A URL to access this application within the Lumos web UI
 - `self` (String) The canonical API URL for retrieving this specific application
+
+
+<a id="nestedatt--provisioning"></a>
+### Nested Schema for `provisioning`
+
+Read-Only:
+
+- `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request
+- `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
+- `groups_provisioning` (String)
+- `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
+- `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this config. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
+- `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+
+<a id="nestedatt--provisioning--access_removal_inline_webhook"></a>
+### Nested Schema for `provisioning.access_removal_inline_webhook`
+
+Read-Only:
+
+- `description` (String) The description of this inline webhook.
+- `hook_type` (String)
+- `id` (String) The ID of this inline webhook.
+- `name` (String) The name of this inline webhook.
+
+
+<a id="nestedatt--provisioning--provisioning_webhook"></a>
+### Nested Schema for `provisioning.provisioning_webhook`
+
+Read-Only:
+
+- `description` (String) The description of this inline webhook.
+- `hook_type` (String)
+- `id` (String) The ID of this inline webhook.
+- `name` (String) The name of this inline webhook.
+
+
+
+<a id="nestedatt--request_flow"></a>
+### Nested Schema for `request_flow`
+
+Read-Only:
+
+- `admins` (Attributes) (see [below for nested schema](#nestedatt--request_flow--admins))
+- `allowed_groups` (Attributes) The allowed groups config associated with this config. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
+- `approvers` (Attributes) (see [below for nested schema](#nestedatt--request_flow--approvers))
+- `approvers_stage_2` (Attributes) (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
+- `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
+- `discoverability` (String)
+- `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this config. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
+- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
+
+<a id="nestedatt--request_flow--admins"></a>
+### Nested Schema for `request_flow.admins`
+
+Read-Only:
+
+- `groups` (Attributes List) Groups assigned as app admins. (see [below for nested schema](#nestedatt--request_flow--admins--groups))
+- `users` (Attributes List) Users assigned as app admins. (see [below for nested schema](#nestedatt--request_flow--admins--users))
+
+<a id="nestedatt--request_flow--admins--groups"></a>
+### Nested Schema for `request_flow.admins.groups`
+
+Read-Only:
+
+- `app_id` (String) The ID of the app that sources this group.
+- `description` (String) The description of this group.
+- `group_lifecycle` (String) The lifecycle of this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
+- `name` (String) The name of this group.
+- `source_app_id` (String) The ID of the app that sources this group.
+
+
+<a id="nestedatt--request_flow--admins--users"></a>
+### Nested Schema for `request_flow.admins.users`
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
+
+
+<a id="nestedatt--request_flow--allowed_groups"></a>
+### Nested Schema for `request_flow.allowed_groups`
+
+Read-Only:
+
+- `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
+- `type` (String)
+
+<a id="nestedatt--request_flow--allowed_groups--groups"></a>
+### Nested Schema for `request_flow.allowed_groups.groups`
+
+Read-Only:
+
+- `app_id` (String) The ID of the app that sources this group.
+- `description` (String) The description of this group.
+- `group_lifecycle` (String) The lifecycle of this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
+- `name` (String) The name of this group.
+- `source_app_id` (String) The ID of the app that sources this group.
+
+
+
+<a id="nestedatt--request_flow--approvers"></a>
+### Nested Schema for `request_flow.approvers`
+
+Read-Only:
+
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers--users))
+
+<a id="nestedatt--request_flow--approvers--groups"></a>
+### Nested Schema for `request_flow.approvers.groups`
+
+Read-Only:
+
+- `app_id` (String) The ID of the app that sources this group.
+- `description` (String) The description of this group.
+- `group_lifecycle` (String) The lifecycle of this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
+- `name` (String) The name of this group.
+- `source_app_id` (String) The ID of the app that sources this group.
+
+
+<a id="nestedatt--request_flow--approvers--users"></a>
+### Nested Schema for `request_flow.approvers.users`
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
+
+
+<a id="nestedatt--request_flow--approvers_stage_2"></a>
+### Nested Schema for `request_flow.approvers_stage_2`
+
+Read-Only:
+
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--users))
+
+<a id="nestedatt--request_flow--approvers_stage_2--groups"></a>
+### Nested Schema for `request_flow.approvers_stage_2.groups`
+
+Read-Only:
+
+- `app_id` (String) The ID of the app that sources this group.
+- `description` (String) The description of this group.
+- `group_lifecycle` (String) The lifecycle of this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
+- `name` (String) The name of this group.
+- `source_app_id` (String) The ID of the app that sources this group.
+
+
+<a id="nestedatt--request_flow--approvers_stage_2--users"></a>
+### Nested Schema for `request_flow.approvers_stage_2.users`
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
+
+
+<a id="nestedatt--request_flow--request_validation_inline_webhook"></a>
+### Nested Schema for `request_flow.request_validation_inline_webhook`
+
+Read-Only:
+
+- `description` (String) The description of this inline webhook.
+- `hook_type` (String)
+- `id` (String) The ID of this inline webhook.
+- `name` (String) The name of this inline webhook.
