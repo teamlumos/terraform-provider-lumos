@@ -55,7 +55,7 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageAppWithCustomAttributes(ctx c
 							}
 						}
 						if customAttributeValue.Value.DateTime != nil {
-							customAttributeResult.Value.DateTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(customAttributeValue.Value.DateTime))
+							customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
 						}
 						if customAttributeValue.Value.Integer != nil {
 							customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
@@ -68,7 +68,6 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageAppWithCustomAttributes(ctx c
 			items.Description = types.StringPointerValue(itemsItem.Description)
 			items.ID = types.StringValue(itemsItem.ID)
 			items.InstanceID = types.StringValue(itemsItem.InstanceID)
-			items.Links = &tfTypes.AppLinks{}
 			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
 			items.Links.Self = types.StringValue(itemsItem.Links.Self)
 			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
