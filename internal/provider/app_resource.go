@@ -42,7 +42,7 @@ type AppResourceModel struct {
 	Description                      types.String                       `tfsdk:"description"`
 	ID                               types.String                       `tfsdk:"id"`
 	InstanceID                       types.String                       `tfsdk:"instance_id"`
-	Links                            tfTypes.AppLinks                   `tfsdk:"links"`
+	Links                            *tfTypes.AppLinks                  `tfsdk:"links"`
 	LogoURL                          types.String                       `tfsdk:"logo_url"`
 	Name                             types.String                       `tfsdk:"name"`
 	RequestInstructions              types.String                       `tfsdk:"request_instructions"`
