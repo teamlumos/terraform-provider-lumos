@@ -37,6 +37,8 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 
 					apps.Permissions = append(apps.Permissions, permissions)
 				}
+			} else {
+				apps.Permissions = nil
 			}
 
 			r.Apps = append(r.Apps, apps)
