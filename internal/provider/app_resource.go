@@ -87,15 +87,24 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The email of this user.`,
 											},
 											"family_name": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The family name of this user.`,
 											},
 											"given_name": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The given name of this user.`,
 											},
 											"id": schema.StringAttribute{
@@ -103,7 +112,10 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 												Description: `The ID of this user.`,
 											},
 											"status": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The status of this user.`,
 											},
 										},
