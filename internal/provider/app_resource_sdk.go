@@ -23,7 +23,6 @@ func (r *AppResourceModel) RefreshFromSharedApp(ctx context.Context, resp *share
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
-		r.Links = &tfTypes.AppLinks{}
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
 		r.Links.Self = types.StringValue(resp.Links.Self)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
@@ -77,7 +76,7 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 						}
 					}
 					if customAttributeValue.Value.DateTime != nil {
-						customAttributeResult.Value.DateTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(customAttributeValue.Value.DateTime))
+						customAttributeResult.Value.DateTime = types.StringValue(typeconvert.TimeToString(customAttributeValue.Value.DateTime))
 					}
 					if customAttributeValue.Value.Integer != nil {
 						customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
@@ -90,7 +89,6 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
-		r.Links = &tfTypes.AppLinks{}
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
 		r.Links.Self = types.StringValue(resp.Links.Self)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)

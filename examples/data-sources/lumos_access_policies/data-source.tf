@@ -1,5 +1,5 @@
 data "lumos_access_policies" "my_accesspolicies" {
   name = "...my_name..."
-  page = 1
-  size = 50
+  page = 7
+  size = 24
 }
