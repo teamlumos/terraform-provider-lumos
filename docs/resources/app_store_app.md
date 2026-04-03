@@ -100,13 +100,13 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 
 ### Required
 
-- `app_id` (String) The ID of the app to add to the app store. Requires replacement if changed.
+- `app_id` (String) The ID of the app to add to the app store.
 
 ### Optional
 
-- `custom_request_instructions` (String) AppStore App instructions that are shown to the requester. Requires replacement if changed.
-- `provisioning` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning))
-- `request_flow` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow))
+- `custom_request_instructions` (String) AppStore App instructions that are shown to the requester.
+- `provisioning` (Attributes) (see [below for nested schema](#nestedatt--provisioning))
+- `request_flow` (Attributes) (see [below for nested schema](#nestedatt--request_flow))
 
 ### Read-Only
 
@@ -130,20 +130,20 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 
 Optional:
 
-- `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
-- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.
-- `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `groups_provisioning` (String) must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.
-- `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.
-- `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
-- `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.
+- `access_removal_inline_webhook` (Attributes) A deprovisioning webhook can be optionally associated with this app. (see [below for nested schema](#nestedatt--provisioning--access_removal_inline_webhook))
+- `allow_multiple_permission_selection` (Boolean) Whether the app is configured to allow users to request multiple permissions in a single request
+- `custom_provisioning_instructions` (String) Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
+- `groups_provisioning` (String) must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]
+- `manual_steps_needed` (Boolean) If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
+- `provisioning_webhook` (Attributes) The provisioning webhook optionally associated with this app. (see [below for nested schema](#nestedatt--provisioning--provisioning_webhook))
+- `time_based_access` (List of String) If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 
 <a id="nestedatt--provisioning--access_removal_inline_webhook"></a>
 ### Nested Schema for `provisioning.access_removal_inline_webhook`
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this inline webhook. Not Null
 
 Read-Only:
 
@@ -157,7 +157,7 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this inline webhook. Not Null
 
 Read-Only:
 
@@ -172,36 +172,36 @@ Read-Only:
 
 Optional:
 
-- `admins` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins))
-- `allowed_groups` (Attributes) The allowed groups associated with this config. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
-- `approvers` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers))
-- `approvers_stage_2` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
-- `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.
-- `discoverability` (String) must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.
-- `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
-- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.
-- `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.
+- `admins` (Attributes) (see [below for nested schema](#nestedatt--request_flow--admins))
+- `allowed_groups` (Attributes) The allowed groups associated with this config. (see [below for nested schema](#nestedatt--request_flow--allowed_groups))
+- `approvers` (Attributes) (see [below for nested schema](#nestedatt--request_flow--approvers))
+- `approvers_stage_2` (Attributes) (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2))
+- `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
+- `discoverability` (String) must be one of ["FULL", "LIMITED", "NONE"]
+- `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
+- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
 
 Read-Only:
 
-- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API. Default: false
+- `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 
 <a id="nestedatt--request_flow--admins"></a>
 ### Nested Schema for `request_flow.admins`
 
 Optional:
 
-- `groups` (Attributes List) Groups assigned as app admins. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins--groups))
-- `users` (Attributes List) Users assigned as app admins. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--admins--users))
+- `groups` (Attributes List) Groups assigned as app admins. (see [below for nested schema](#nestedatt--request_flow--admins--groups))
+- `users` (Attributes List) Users assigned as app admins. (see [below for nested schema](#nestedatt--request_flow--admins--users))
 
 <a id="nestedatt--request_flow--admins--groups"></a>
 ### Nested Schema for `request_flow.admins.groups`
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
-- `id` (String) The ID of this group. Requires replacement if changed.
-- `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
 
 Read-Only:
 
@@ -216,7 +216,7 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this user. Not Null
 
 Read-Only:
 
@@ -232,17 +232,17 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes Set) The groups allowed to request this permission. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
-- `type` (String) must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.
+- `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_flow--allowed_groups--groups))
+- `type` (String) must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
 
 <a id="nestedatt--request_flow--allowed_groups--groups"></a>
 ### Nested Schema for `request_flow.allowed_groups.groups`
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
-- `id` (String) The ID of this group. Requires replacement if changed.
-- `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
 
 Read-Only:
 
@@ -258,17 +258,17 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes Set) Groups assigned as support request approvers. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers--groups))
-- `users` (Attributes Set) Users assigned as support request approvers. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers--users))
 
 <a id="nestedatt--request_flow--approvers--groups"></a>
 ### Nested Schema for `request_flow.approvers.groups`
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
-- `id` (String) The ID of this group. Requires replacement if changed.
-- `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
 
 Read-Only:
 
@@ -283,7 +283,7 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this user. Not Null
 
 Read-Only:
 
@@ -299,17 +299,17 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes Set) Groups assigned as support request approvers. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--groups))
-- `users` (Attributes Set) Users assigned as support request approvers. Requires replacement if changed. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--users))
+- `groups` (Attributes Set) Groups assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--groups))
+- `users` (Attributes Set) Users assigned as support request approvers. (see [below for nested schema](#nestedatt--request_flow--approvers_stage_2--users))
 
 <a id="nestedatt--request_flow--approvers_stage_2--groups"></a>
 ### Nested Schema for `request_flow.approvers_stage_2.groups`
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
-- `id` (String) The ID of this group. Requires replacement if changed.
-- `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
+- `app_id` (String) The ID of the app that sources this group.
+- `id` (String) The ID of this group.
+- `integration_specific_id` (String) The ID of this group, specific to the integration.
 
 Read-Only:
 
@@ -324,7 +324,7 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this user. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this user. Not Null
 
 Read-Only:
 
@@ -340,7 +340,7 @@ Read-Only:
 
 Optional:
 
-- `id` (String) The ID of this inline webhook. Not Null; Requires replacement if changed.
+- `id` (String) The ID of this inline webhook. Not Null
 
 Read-Only:
 

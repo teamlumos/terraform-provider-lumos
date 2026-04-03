@@ -12,11 +12,12 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ctx context.Context, resp *shared.AppStoreAppSettingsOutput) diag.Diagnostics {
+func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppSettingOutput(ctx context.Context, resp *shared.AppSettingOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
 		r.CustomRequestInstructions = types.StringPointerValue(resp.CustomRequestInstructions)
+		r.InAppStore = types.BoolPointerValue(resp.InAppStore)
 		if resp.Provisioning == nil {
 			r.Provisioning = nil
 		} else {
@@ -232,13 +233,13 @@ func (r *AppStoreAppSettingsDataSourceModel) RefreshFromSharedAppStoreAppSetting
 	return diags
 }
 
-func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppStoreAppSettingsRequest(ctx context.Context) (*operations.GetAppStoreAppSettingsRequest, diag.Diagnostics) {
+func (r *AppStoreAppSettingsDataSourceModel) ToOperationsGetAppSettingsRequest(ctx context.Context) (*operations.GetAppSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.GetAppStoreAppSettingsRequest{
+	out := operations.GetAppSettingsRequest{
 		ID: id,
 	}
 
