@@ -56,7 +56,7 @@ type AppStoreAppResourceModel struct {
 	Description                      types.String                                  `tfsdk:"description"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
-	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
+	Links                            *tfTypes.AppLinks                             `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
