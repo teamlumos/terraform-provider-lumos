@@ -9,15 +9,15 @@ import (
 )
 
 type UpdateAppStoreAppSettingsRequest struct {
-	ID                       string                          `pathParam:"style=simple,explode=false,name=app_id"`
+	AppID                    string                          `pathParam:"style=simple,explode=false,name=app_id"`
 	AppStoreAppSettingsInput shared.AppStoreAppSettingsInput `request:"mediaType=application/json"`
 }
 
-func (u *UpdateAppStoreAppSettingsRequest) GetID() string {
+func (u *UpdateAppStoreAppSettingsRequest) GetAppID() string {
 	if u == nil {
 		return ""
 	}
-	return u.ID
+	return u.AppID
 }
 
 func (u *UpdateAppStoreAppSettingsRequest) GetAppStoreAppSettingsInput() shared.AppStoreAppSettingsInput {

@@ -32,6 +32,7 @@ type AppStoreAppSettingsDataSource struct {
 type AppStoreAppSettingsDataSourceModel struct {
 	CustomRequestInstructions types.String                                  `tfsdk:"custom_request_instructions"`
 	ID                        types.String                                  `tfsdk:"id"`
+	InAppStore                types.Bool                                    `tfsdk:"in_app_store"`
 	Provisioning              *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow               *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
 }
@@ -53,6 +54,10 @@ func (r *AppStoreAppSettingsDataSource) Schema(ctx context.Context, req datasour
 			},
 			"id": schema.StringAttribute{
 				Required: true,
+			},
+			"in_app_store": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether the app is in the app store.`,
 			},
 			"provisioning": schema.SingleNestedAttribute{
 				Computed: true,
@@ -460,13 +465,13 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
+	request, requestDiags := data.ToOperationsGetAppSettingsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request)
+	res, err := r.client.Core.GetAppSettings(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -482,11 +487,11 @@ func (r *AppStoreAppSettingsDataSource) Read(ctx context.Context, req datasource
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AppStoreAppSettingsOutput != nil) {
+	if !(res.AppSettingOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res.AppStoreAppSettingsOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppSettingOutput(ctx, res.AppSettingOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
