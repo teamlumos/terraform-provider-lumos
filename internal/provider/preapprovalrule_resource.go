@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -94,10 +93,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 					},
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The description of this inline webhook.`,
 						},
 						"hook_type": schema.StringAttribute{
@@ -112,10 +108,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							},
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The name of this inline webhook.`,
 						},
 					},
@@ -136,19 +129,12 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The ID of the app that sources this group.`,
 						},
 						"description": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The description of this group.`,
 						},
 						"group_lifecycle": schema.StringAttribute{
-							Computed: true,
-							Default:  stringdefault.StaticString(`SYNCED`),
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
-							Description: `The lifecycle of this group. Default: "SYNCED"`,
+							Computed:    true,
+							Description: `The lifecycle of this group.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -161,17 +147,11 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The ID of this group, specific to the integration.`,
 						},
 						"name": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The name of this group.`,
 						},
 						"source_app_id": schema.StringAttribute{
-							Computed: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
 							Description: `The ID of the app that sources this group.`,
 						},
 					},

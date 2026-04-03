@@ -10,14 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
-	speakeasy_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
-	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
@@ -99,24 +94,15 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{
 											"email": schema.StringAttribute{
-												Computed: true,
-												PlanModifiers: []planmodifier.String{
-													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-												},
+												Computed:    true,
 												Description: `The email of this user.`,
 											},
 											"family_name": schema.StringAttribute{
-												Computed: true,
-												PlanModifiers: []planmodifier.String{
-													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-												},
+												Computed:    true,
 												Description: `The family name of this user.`,
 											},
 											"given_name": schema.StringAttribute{
-												Computed: true,
-												PlanModifiers: []planmodifier.String{
-													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-												},
+												Computed:    true,
 												Description: `The given name of this user.`,
 											},
 											"id": schema.StringAttribute{
@@ -124,10 +110,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												Description: `The ID of this user.`,
 											},
 											"status": schema.StringAttribute{
-												Computed: true,
-												PlanModifiers: []planmodifier.String{
-													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-												},
+												Computed:    true,
 												Description: `The status of this user.`,
 											},
 										},
@@ -192,10 +175,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
@@ -210,10 +190,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 							},
 							"name": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The name of this inline webhook.`,
 							},
 						},
@@ -251,10 +228,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
@@ -269,10 +243,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 							},
 							"name": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The name of this inline webhook.`,
 							},
 						},
@@ -308,19 +279,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The description of this group.`,
 										},
 										"group_lifecycle": schema.StringAttribute{
-											Computed: true,
-											Default:  stringdefault.StaticString(`SYNCED`),
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Computed:    true,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -333,17 +297,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The name of this group.`,
 										},
 										"source_app_id": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 									},
@@ -359,24 +317,15 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 									},
 									Attributes: map[string]schema.Attribute{
 										"email": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The email of this user.`,
 										},
 										"family_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The family name of this user.`,
 										},
 										"given_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The given name of this user.`,
 										},
 										"id": schema.StringAttribute{
@@ -388,10 +337,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											},
 										},
 										"status": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The status of this user.`,
 										},
 									},
@@ -418,19 +364,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The description of this group.`,
 										},
 										"group_lifecycle": schema.StringAttribute{
-											Computed: true,
-											Default:  stringdefault.StaticString(`SYNCED`),
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Computed:    true,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -443,17 +382,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The name of this group.`,
 										},
 										"source_app_id": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 									},
@@ -477,75 +410,44 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					"approvers": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
-						PlanModifiers: []planmodifier.Object{
-							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-						},
 						Attributes: map[string]schema.Attribute{
 							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.Set{
-									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
-								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
 										speakeasy_objectvalidators.NotNull(),
 									},
-									PlanModifiers: []planmodifier.Object{
-										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-									},
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The description of this group.`,
 										},
 										"group_lifecycle": schema.StringAttribute{
-											Computed: true,
-											Default:  stringdefault.StaticString(`SYNCED`),
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Computed:    true,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The name of this group.`,
 										},
 										"source_app_id": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 									},
@@ -555,54 +457,33 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							"users": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.Set{
-									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
-								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
 										speakeasy_objectvalidators.NotNull(),
 									},
-									PlanModifiers: []planmodifier.Object{
-										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-									},
 									Attributes: map[string]schema.Attribute{
 										"email": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The email of this user.`,
 										},
 										"family_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The family name of this user.`,
 										},
 										"given_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The given name of this user.`,
 										},
 										"id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this user. Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
 										},
 										"status": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The status of this user.`,
 										},
 									},
@@ -614,75 +495,44 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
-						PlanModifiers: []planmodifier.Object{
-							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-						},
 						Attributes: map[string]schema.Attribute{
 							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.Set{
-									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
-								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
 										speakeasy_objectvalidators.NotNull(),
 									},
-									PlanModifiers: []planmodifier.Object{
-										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-									},
 									Attributes: map[string]schema.Attribute{
 										"app_id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The description of this group.`,
 										},
 										"group_lifecycle": schema.StringAttribute{
-											Computed: true,
-											Default:  stringdefault.StaticString(`SYNCED`),
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Computed:    true,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The name of this group.`,
 										},
 										"source_app_id": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 									},
@@ -692,54 +542,33 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							"users": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.Set{
-									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
-								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
 										speakeasy_objectvalidators.NotNull(),
 									},
-									PlanModifiers: []planmodifier.Object{
-										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-									},
 									Attributes: map[string]schema.Attribute{
 										"email": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The email of this user.`,
 										},
 										"family_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The family name of this user.`,
 										},
 										"given_name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The given name of this user.`,
 										},
 										"id": schema.StringAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
+											Optional:    true,
 											Description: `The ID of this user. Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
 										},
 										"status": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The status of this user.`,
 										},
 									},
@@ -770,10 +599,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Optional: true,
 						Attributes: map[string]schema.Attribute{
 							"description": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The description of this inline webhook.`,
 							},
 							"hook_type": schema.StringAttribute{
@@ -788,10 +614,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 							},
 							"name": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `The name of this inline webhook.`,
 							},
 						},
