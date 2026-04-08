@@ -310,7 +310,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.9.0"
+      version = "0.10.1"
     }
   }
 }
@@ -358,6 +358,7 @@ Available configuration:
 * [lumos_app_store_app_settings](docs/data-sources/app_store_app_settings.md)
 * [lumos_group](docs/data-sources/group.md)
 * [lumos_groups](docs/data-sources/groups.md)
+* [lumos_pre_approval_rule](docs/data-sources/pre_approval_rule.md)
 * [lumos_requestable_permission](docs/data-sources/requestable_permission.md)
 * [lumos_requestable_permissions](docs/data-sources/requestable_permissions.md)
 * [lumos_user](docs/data-sources/user.md)
@@ -366,6 +367,8 @@ Available configuration:
 
 <!-- Start Testing the provider locally [usage] -->
 ## Testing the provider locally
+
+> **Note:** Running `make provider` requires Speakeasy CLI access. Ask Graham, Pat, Toshitha, or Yoshi for access.
 
 #### Local Provider
 
