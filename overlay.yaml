@@ -310,4 +310,48 @@ actions:
     remove: true
   - target: $["components"]["schemas"]["HTTPValidationError"]["properties"]["detail"]["items"]
     remove: true
-  
+
+  # Make time_based_access nullable to prevent perpetual Terraform diff
+  # when time_based_access_override is false and time_based_access is omitted from config.
+  # Without this, Speakeasy generates code that always creates an empty slice [],
+  # which differs from null (omitted) in Terraform's type system.
+
+  # RequestFulfillmentConfigOutput
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigOutput"]["properties"]["time_based_access"]
+    update:
+      anyOf:
+        - type: array
+          items:
+            $ref: "#/components/schemas/TimeBasedAccessOptions"
+        - type: "null"
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigOutput"]["properties"]["time_based_access"]["type"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigOutput"]["properties"]["time_based_access"]["items"]
+    remove: true
+
+  # RequestFulfillmentConfigInput
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInput"]["properties"]["time_based_access"]
+    update:
+      anyOf:
+        - type: array
+          items:
+            $ref: "#/components/schemas/TimeBasedAccessOptions"
+        - type: "null"
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInput"]["properties"]["time_based_access"]["type"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInput"]["properties"]["time_based_access"]["items"]
+    remove: true
+
+  # RequestFulfillmentConfigInputUpdate
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]["properties"]["time_based_access"]
+    update:
+      anyOf:
+        - type: array
+          items:
+            $ref: "#/components/schemas/TimeBasedAccessOptions"
+        - type: "null"
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]["properties"]["time_based_access"]["type"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]["properties"]["time_based_access"]["items"]
+    remove: true
+

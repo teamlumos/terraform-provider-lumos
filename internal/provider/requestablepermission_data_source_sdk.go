@@ -197,9 +197,11 @@ func (r *RequestablePermissionDataSourceModel) RefreshFromSharedRequestablePermi
 					r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
 					r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name)
 				}
-				r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
-				for _, v := range resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-					r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+				if resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+					r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
+					for _, v := range resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
+						r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+					}
 				}
 				r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride = types.BoolPointerValue(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)
 			}

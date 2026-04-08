@@ -197,9 +197,11 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 					r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID)
 					r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name = types.StringValue(resp.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.Name)
 				}
-				r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
-				for _, v := range resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-					r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+				if resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+					r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
+					for _, v := range resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
+						r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+					}
 				}
 				r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride = types.BoolPointerValue(resp.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)
 			}
@@ -540,9 +542,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				manualInstructions = nil
 			}
-			timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
-			for _, timeBasedAccessItem := range r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-				timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+			var timeBasedAccess []shared.TimeBasedAccessOptions
+			if r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+				timeBasedAccess = make([]shared.TimeBasedAccessOptions, 0, len(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
+				for _, timeBasedAccessItem := range r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
+					timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+				}
 			}
 			timeBasedAccessOverride := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.IsNull() {
@@ -853,9 +858,12 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				manualInstructions = nil
 			}
-			timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
-			for _, timeBasedAccessItem := range r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-				timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+			var timeBasedAccess []shared.TimeBasedAccessOptions
+			if r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
+				timeBasedAccess = make([]shared.TimeBasedAccessOptions, 0, len(r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
+				for _, timeBasedAccessItem := range r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
+					timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+				}
 			}
 			timeBasedAccessOverride := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride.IsNull() {
