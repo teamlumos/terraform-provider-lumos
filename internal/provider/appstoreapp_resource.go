@@ -10,12 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -90,11 +85,8 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"app_id": schema.StringAttribute{
-				Required: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
-				Description: `The ID of the app to add to the app store. Requires replacement if changed.`,
+				Required:    true,
+				Description: `The ID of the app to add to the app store.`,
 			},
 			"category": schema.StringAttribute{
 				Computed: true,
@@ -172,10 +164,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `AppStore App instructions that are shown to the requester. Requires replacement if changed.`,
+				Description: `AppStore App instructions that are shown to the requester.`,
 			},
 			"description": schema.StringAttribute{
 				Computed: true,
@@ -231,7 +222,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 				},
 				Attributes: map[string]schema.Attribute{
@@ -239,7 +229,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -260,10 +249,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The ID of this inline webhook. Not Null; Requires replacement if changed.`,
+								Description: `The ID of this inline webhook. Not Null`,
 								Validators: []validator.String{
 									speakeasy_stringvalidators.NotNull(),
 								},
@@ -276,34 +264,31 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `A deprovisioning webhook can be optionally associated with this app. Requires replacement if changed.`,
+						Description: `A deprovisioning webhook can be optionally associated with this app.`,
 					},
 					"allow_multiple_permission_selection": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Bool{
-							boolplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `Whether the app is configured to allow users to request multiple permissions in a single request. Requires replacement if changed.`,
+						Description: `Whether the app is configured to allow users to request multiple permissions in a single request`,
 					},
 					"custom_provisioning_instructions": schema.StringAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported. Requires replacement if changed.`,
+						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.`,
 					},
 					"groups_provisioning": schema.StringAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]; Requires replacement if changed.`,
+						Description: `must be one of ["DIRECT_TO_USER", "GROUPS_AND_HIDDEN", "GROUPS_AND_VISIBLE"]`,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"DIRECT_TO_USER",
@@ -316,16 +301,14 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Bool{
-							boolplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request. Requires replacement if changed.`,
+						Description: `If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.`,
 					},
 					"provisioning_webhook": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -346,10 +329,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The ID of this inline webhook. Not Null; Requires replacement if changed.`,
+								Description: `The ID of this inline webhook. Not Null`,
 								Validators: []validator.String{
 									speakeasy_stringvalidators.NotNull(),
 								},
@@ -362,26 +344,23 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `The provisioning webhook optionally associated with this app. Requires replacement if changed.`,
+						Description: `The provisioning webhook optionally associated with this app.`,
 					},
 					"time_based_access": schema.ListAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
-							listplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 						},
 						ElementType: types.StringType,
-						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access. Requires replacement if changed.`,
+						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.`,
 					},
 				},
-				Description: `Requires replacement if changed.`,
 			},
 			"request_flow": schema.SingleNestedAttribute{
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 				},
 				Attributes: map[string]schema.Attribute{
@@ -389,7 +368,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -397,7 +375,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -405,7 +382,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -413,10 +389,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group. Requires replacement if changed.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -436,19 +411,17 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group. Requires replacement if changed.`,
+											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
+											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
 											Computed: true,
@@ -466,13 +439,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Groups assigned as app admins. Requires replacement if changed.`,
+								Description: `Groups assigned as app admins.`,
 							},
 							"users": schema.ListNestedAttribute{
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.List{
-									listplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -480,7 +452,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -509,10 +480,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this user. Not Null; Requires replacement if changed.`,
+											Description: `The ID of this user. Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -526,16 +496,14 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Users assigned as app admins. Requires replacement if changed.`,
+								Description: `Users assigned as app admins.`,
 							},
 						},
-						Description: `Requires replacement if changed.`,
 					},
 					"allowed_groups": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -543,7 +511,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.Set{
-									setplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -551,7 +518,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -559,10 +525,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group. Requires replacement if changed.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -582,19 +547,17 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group. Requires replacement if changed.`,
+											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
+											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
 											Computed: true,
@@ -612,16 +575,15 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `The groups allowed to request this permission. Requires replacement if changed.`,
+								Description: `The groups allowed to request this permission.`,
 							},
 							"type": schema.StringAttribute{
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]; Requires replacement if changed.`,
+								Description: `must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]`,
 								Validators: []validator.String{
 									stringvalidator.OneOf(
 										"ALL_GROUPS",
@@ -630,13 +592,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 							},
 						},
-						Description: `The allowed groups associated with this config. Requires replacement if changed.`,
+						Description: `The allowed groups associated with this config.`,
 					},
 					"approvers": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -644,7 +605,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.Set{
-									setplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -652,7 +612,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -660,10 +619,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group. Requires replacement if changed.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -683,19 +641,17 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group. Requires replacement if changed.`,
+											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
+											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
 											Computed: true,
@@ -713,13 +669,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Groups assigned as support request approvers. Requires replacement if changed.`,
+								Description: `Groups assigned as support request approvers.`,
 							},
 							"users": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.Set{
-									setplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -727,7 +682,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -756,10 +710,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this user. Not Null; Requires replacement if changed.`,
+											Description: `The ID of this user. Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -773,16 +726,14 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
+								Description: `Users assigned as support request approvers.`,
 							},
 						},
-						Description: `Requires replacement if changed.`,
 					},
 					"approvers_stage_2": schema.SingleNestedAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -790,7 +741,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.Set{
-									setplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -798,7 +748,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -806,10 +755,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group. Requires replacement if changed.`,
+											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -829,19 +777,17 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group. Requires replacement if changed.`,
+											Description: `The ID of this group.`,
 										},
 										"integration_specific_id": schema.StringAttribute{
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
+											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
 											Computed: true,
@@ -859,13 +805,12 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Groups assigned as support request approvers. Requires replacement if changed.`,
+								Description: `Groups assigned as support request approvers.`,
 							},
 							"users": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.Set{
-									setplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
@@ -873,7 +818,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										speakeasy_objectvalidators.NotNull(),
 									},
 									PlanModifiers: []planmodifier.Object{
-										objectplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
@@ -902,10 +846,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.String{
-												stringplanmodifier.RequiresReplaceIfConfigured(),
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of this user. Not Null; Requires replacement if changed.`,
+											Description: `The ID of this user. Not Null`,
 											Validators: []validator.String{
 												speakeasy_stringvalidators.NotNull(),
 											},
@@ -919,28 +862,25 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 									},
 								},
-								Description: `Users assigned as support request approvers. Requires replacement if changed.`,
+								Description: `Users assigned as support request approvers.`,
 							},
 						},
-						Description: `Requires replacement if changed.`,
 					},
 					"custom_approval_message": schema.StringAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported. Requires replacement if changed.`,
+						Description: `After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.`,
 					},
 					"discoverability": schema.StringAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.String{
-							stringplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 						},
-						Description: `must be one of ["FULL", "LIMITED", "NONE"]; Requires replacement if changed.`,
+						Description: `must be one of ["FULL", "LIMITED", "NONE"]`,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"FULL",
@@ -953,7 +893,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Object{
-							objectplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
@@ -974,10 +913,9 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Computed: true,
 								Optional: true,
 								PlanModifiers: []planmodifier.String{
-									stringplanmodifier.RequiresReplaceIfConfigured(),
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
-								Description: `The ID of this inline webhook. Not Null; Requires replacement if changed.`,
+								Description: `The ID of this inline webhook. Not Null`,
 								Validators: []validator.String{
 									speakeasy_stringvalidators.NotNull(),
 								},
@@ -990,25 +928,23 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								Description: `The name of this inline webhook.`,
 							},
 						},
-						Description: `A request validation webhook can be optionally associated with this app. Requires replacement if changed.`,
+						Description: `A request validation webhook can be optionally associated with this app.`,
 					},
 					"require_additional_approval": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Bool{
-							boolplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience. Requires replacement if changed.`,
+						Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
 					},
 					"require_manager_approval": schema.BoolAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.Bool{
-							boolplanmodifier.RequiresReplaceIfConfigured(),
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals. Requires replacement if changed.`,
+						Description: `When a user makes an access request, require that their manager approves the request before moving on to additional approvals.`,
 					},
 					"response_describes_entire_approval_workflow": schema.BoolAttribute{
 						Computed: true,
@@ -1018,7 +954,6 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.`,
 					},
 				},
-				Description: `Requires replacement if changed.`,
 			},
 			"request_instructions": schema.StringAttribute{
 				Computed: true,
@@ -1320,7 +1255,117 @@ func (r *AppStoreAppResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	// Not Implemented; all attributes marked as RequiresReplace
+	request, requestDiags := data.ToOperationsUpdateAppStoreAppSettingsRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.AppStore.UpdateAppStoreAppSettings(ctx, *request)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res != nil && res.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
+		}
+		return
+	}
+	if res == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	if res.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
+		return
+	}
+	if !(res.AppStoreAppSettingsOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res.AppStoreAppSettingsOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsGetAppStoreAppRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.AppStore.GetAppStoreApp(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AppStoreApp != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreApp(ctx, res1.AppStoreApp)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request2, request2Diags := data.ToOperationsGetAppStoreAppSettingsRequest(ctx)
+	resp.Diagnostics.Append(request2Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res2, err := r.client.AppStore.GetAppStoreAppSettings(ctx, *request2)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res2 != nil && res2.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res2.RawResponse))
+		}
+		return
+	}
+	if res2 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res2))
+		return
+	}
+	if res2.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res2.StatusCode), debugResponse(res2.RawResponse))
+		return
+	}
+	if !(res2.AppStoreAppSettingsOutput != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res2.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res2.AppStoreAppSettingsOutput)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
