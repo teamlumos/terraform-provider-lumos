@@ -114,11 +114,9 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ct
 				r.Provisioning.ProvisioningWebhook.ID = types.StringValue(resp.Provisioning.ProvisioningWebhook.ID)
 				r.Provisioning.ProvisioningWebhook.Name = types.StringValue(resp.Provisioning.ProvisioningWebhook.Name)
 			}
-			if resp.Provisioning.TimeBasedAccess != nil {
-				r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
-				for _, v := range resp.Provisioning.TimeBasedAccess {
-					r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
-				}
+			r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
+			for _, v := range resp.Provisioning.TimeBasedAccess {
+				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
 			}
 		}
 		if resp.RequestFlow == nil {
@@ -590,12 +588,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput(ctx context.Con
 		} else {
 			groupsProvisioning = nil
 		}
-		var timeBasedAccess []shared.TimeBasedAccessOptions
-		if r.Provisioning.TimeBasedAccess != nil {
-			timeBasedAccess = make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
-			for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
-				timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
-			}
+		timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
+		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
+			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
 		}
 		allowMultiplePermissionSelection := new(bool)
 		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {
@@ -885,12 +880,9 @@ func (r *AppStoreAppResourceModel) ToSharedAppStoreAppSettingsInput(ctx context.
 		} else {
 			groupsProvisioning = nil
 		}
-		var timeBasedAccess []shared.TimeBasedAccessOptions
-		if r.Provisioning.TimeBasedAccess != nil {
-			timeBasedAccess = make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
-			for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
-				timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
-			}
+		timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
+		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
+			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
 		}
 		allowMultiplePermissionSelection := new(bool)
 		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {

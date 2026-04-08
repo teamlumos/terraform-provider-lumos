@@ -114,11 +114,9 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(
 				r.Provisioning.ProvisioningWebhook.ID = types.StringValue(resp.Provisioning.ProvisioningWebhook.ID)
 				r.Provisioning.ProvisioningWebhook.Name = types.StringValue(resp.Provisioning.ProvisioningWebhook.Name)
 			}
-			if resp.Provisioning.TimeBasedAccess != nil {
-				r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
-				for _, v := range resp.Provisioning.TimeBasedAccess {
-					r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
-				}
+			r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
+			for _, v := range resp.Provisioning.TimeBasedAccess {
+				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
 			}
 		}
 		if resp.RequestFlow == nil {
