@@ -12,3 +12,4 @@
 *.tfstate
 main.tf
 sandbox/
+terraform-provider-lumos
