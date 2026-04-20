@@ -27,8 +27,10 @@ resource "lumos_access_policy" "my_accesspolicy" {
     }
   ]
   business_justification = "...my_business_justification..."
+  is_enabled             = false
   is_everyone_condition  = false
   name                   = "...my_name..."
+  status                 = "DRAFT"
 }
 ```
 
@@ -44,7 +46,9 @@ resource "lumos_access_policy" "my_accesspolicy" {
 ### Optional
 
 - `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.
+- `is_enabled` (Boolean) Whether the access policy is enabled. Defaults to false when supported.
 - `is_everyone_condition` (Boolean) Whether the access policy applies to everyone. If true, `access_condition` is ignored. Otherwise, `access_condition` must be provided. Default: false
+- `status` (String) The status of the access policy. Defaults to DRAFT when supported. must be one of ["DRAFT", "PUBLISHED"]
 
 ### Read-Only
 

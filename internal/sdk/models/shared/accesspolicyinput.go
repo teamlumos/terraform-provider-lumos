@@ -4,14 +4,46 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type Status string
+
+const (
+	StatusDraft     Status = "DRAFT"
+	StatusPublished Status = "PUBLISHED"
+)
+
+func (e Status) ToPointer() *Status {
+	return &e
+}
+func (e *Status) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "DRAFT":
+		fallthrough
+	case "PUBLISHED":
+		*e = Status(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Status: %v", v)
+	}
+}
 
 type AccessPolicyInput struct {
 	// The name of the access policy.
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
+	// The status of the access policy. Defaults to DRAFT when supported.
+	Status *Status `json:"status,omitempty"`
+	// Whether the access policy is enabled. Defaults to false when supported.
+	IsEnabled *bool `json:"is_enabled,omitempty"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
 	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
@@ -43,6 +75,20 @@ func (a *AccessPolicyInput) GetBusinessJustification() string {
 		return ""
 	}
 	return a.BusinessJustification
+}
+
+func (a *AccessPolicyInput) GetStatus() *Status {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *AccessPolicyInput) GetIsEnabled() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.IsEnabled
 }
 
 func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {

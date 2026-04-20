@@ -18,6 +18,8 @@ type GetAppStoreAppsRequest struct {
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	// Get all apps in the AppStore regardless of visibility. Only available to admins.
 	AllVisibilities *bool `default:"false" queryParam:"style=form,explode=true,name=all_visibilities"`
+	// Fields to expand. Supported fields: custom_attributes.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`
 	// Page size
@@ -61,6 +63,13 @@ func (g *GetAppStoreAppsRequest) GetAllVisibilities() *bool {
 		return nil
 	}
 	return g.AllVisibilities
+}
+
+func (g *GetAppStoreAppsRequest) GetExpand() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Expand
 }
 
 func (g *GetAppStoreAppsRequest) GetPage() *int64 {

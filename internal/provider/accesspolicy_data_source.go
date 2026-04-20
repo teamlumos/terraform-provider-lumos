@@ -35,8 +35,10 @@ type AccessPolicyDataSourceModel struct {
 	Apps                  []tfTypes.AccessPolicyAppOutput `tfsdk:"apps"`
 	BusinessJustification types.String                    `tfsdk:"business_justification"`
 	ID                    types.String                    `tfsdk:"id"`
+	IsEnabled             types.Bool                      `tfsdk:"is_enabled"`
 	IsEveryoneCondition   types.Bool                      `tfsdk:"is_everyone_condition"`
 	Name                  types.String                    `tfsdk:"name"`
+	Status                types.String                    `tfsdk:"status"`
 }
 
 // Metadata returns the data source type name.
@@ -91,12 +93,20 @@ func (r *AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Sche
 				Required:    true,
 				Description: `The unique ID of the access policy.`,
 			},
+			"is_enabled": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether the access policy is enabled.`,
+			},
 			"is_everyone_condition": schema.BoolAttribute{
 				Computed: true,
 			},
 			"name": schema.StringAttribute{
 				Computed:    true,
 				Description: `The name of the access policy.`,
+			},
+			"status": schema.StringAttribute{
+				Computed:    true,
+				Description: `The status of the access policy.`,
 			},
 		},
 	}

@@ -10,6 +10,8 @@ import (
 
 type GetAccessRequestRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
+	// Fields to expand. Supported values: tasks.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 
 func (g *GetAccessRequestRequest) GetID() string {
@@ -17,6 +19,13 @@ func (g *GetAccessRequestRequest) GetID() string {
 		return ""
 	}
 	return g.ID
+}
+
+func (g *GetAccessRequestRequest) GetExpand() []string {
+	if g == nil {
+		return nil
+	}
+	return g.Expand
 }
 
 type GetAccessRequestResponse struct {

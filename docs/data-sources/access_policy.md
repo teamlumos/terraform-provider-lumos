@@ -30,8 +30,10 @@ data "lumos_access_policy" "my_accesspolicy" {
 - `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.
 - `apps` (Attributes List) The list of apps and permissions granted by this access policy. (see [below for nested schema](#nestedatt--apps))
 - `business_justification` (String) Explanation for why this policy exists.
+- `is_enabled` (Boolean) Whether the access policy is enabled.
 - `is_everyone_condition` (Boolean)
 - `name` (String) The name of the access policy.
+- `status` (String) The status of the access policy.
 
 <a id="nestedatt--apps"></a>
 ### Nested Schema for `apps`

@@ -1136,7 +1136,7 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 }
 
 // GetAppSettings - Get Appstore App Settings
-// Get AppStore app settings.
+// Get App settings.
 func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSettingsRequest, opts ...operations.Option) (*operations.GetAppSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
