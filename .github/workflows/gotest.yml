@@ -72,7 +72,12 @@ jobs:
         with:
           go-version: ^1.22
 
-      # When you execute your unit tests, make sure to use the "-coverprofile" flag to write a 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      # When you execute your unit tests, make sure to use the "-coverprofile" flag to write a
       # coverage profile to a file. You will need the name of the file (e.g. "coverage.txt")
       # in the next step as well as the next job.
       - name: Test
