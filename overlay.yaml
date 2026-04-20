@@ -355,3 +355,26 @@ actions:
   - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]["properties"]["time_based_access"]["items"]
     remove: true
 
+
+  # Tasks endpoints - not exposed via Terraform. Exclude from SDK generation.
+  - target: $["paths"]["/tasks"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/actions"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/comments"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/complete"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/dismiss"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/perform-action"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/reassign"]
+    remove: true
+
+  # AccessRequest.tasks references Task schemas. Remove the field so Task
+  # shared schemas don't get pulled into the SDK via AccessRequest.
+  - target: $["components"]["schemas"]["AccessRequest"]["properties"]["tasks"]
+    remove: true

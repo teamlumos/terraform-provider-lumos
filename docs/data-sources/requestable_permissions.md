@@ -115,7 +115,7 @@ Read-Only:
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
 - `manager_approval` (String) Manager approval can be configured as necessary to continue
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
-- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `require_additional_approval` (Boolean) When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
 - `response_describes_entire_approval_workflow` (Boolean) Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 
 <a id="nestedatt--items--request_config--request_approval_config--approvers"></a>

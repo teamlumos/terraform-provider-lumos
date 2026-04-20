@@ -333,7 +333,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 										},
 										"require_additional_approval": schema.BoolAttribute{
 											Computed:    true,
-											Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
+											Description: `When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.`,
 										},
 										"response_describes_entire_approval_workflow": schema.BoolAttribute{
 											Computed:    true,

@@ -8,7 +8,7 @@ type RequestApprovalConfigOutput struct {
 	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// Manager approval can be configured as necessary to continue
 	ManagerApproval *ManagerApprovalOption `json:"manager_approval,omitempty"`
-	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`

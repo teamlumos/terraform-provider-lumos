@@ -1,3 +1,4 @@
+examples/resources/lumos_access_policy/resource.tf
 examples/resources/lumos_requestable_permission/resource.tf
 internal/sdk/internal/hooks/registration.go
 internal/validators/objectvalidators/request_config_input_validator.go

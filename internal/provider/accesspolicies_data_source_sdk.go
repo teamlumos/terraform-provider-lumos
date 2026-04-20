@@ -46,8 +46,10 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 			}
 			items.BusinessJustification = types.StringValue(itemsItem.BusinessJustification)
 			items.ID = types.StringValue(itemsItem.ID)
+			items.IsEnabled = types.BoolValue(itemsItem.IsEnabled)
 			items.IsEveryoneCondition = types.BoolValue(itemsItem.IsEveryoneCondition)
 			items.Name = types.StringValue(itemsItem.Name)
+			items.Status = types.StringValue(string(itemsItem.Status))
 
 			r.Items = append(r.Items, items)
 		}

@@ -44,8 +44,10 @@ Read-Only:
 - `apps` (Attributes List) The list of apps and permissions granted by this access policy. (see [below for nested schema](#nestedatt--items--apps))
 - `business_justification` (String) Explanation for why this policy exists.
 - `id` (String) The unique ID of the access policy.
+- `is_enabled` (Boolean) Whether the access policy is enabled.
 - `is_everyone_condition` (Boolean)
 - `name` (String) The name of the access policy.
+- `status` (String) The status of the access policy.
 
 <a id="nestedatt--items--apps"></a>
 ### Nested Schema for `items.apps`

@@ -179,7 +179,7 @@ Optional:
 - `custom_approval_message` (String) After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
 - `discoverability` (String) must be one of ["FULL", "LIMITED", "NONE"]
 - `request_validation_inline_webhook` (Attributes) A request validation webhook can be optionally associated with this app. (see [below for nested schema](#nestedatt--request_flow--request_validation_inline_webhook))
-- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `require_additional_approval` (Boolean) When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
 - `require_manager_approval` (Boolean) When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
 
 Read-Only:

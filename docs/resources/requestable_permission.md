@@ -144,7 +144,7 @@ Optional:
 - `custom_approval_message_override` (Boolean) Indicates if custom_approval_message is overridden.
 - `manager_approval` (String) Manager approval can be configured as necessary to continue. must be one of ["NONE", "INITIAL_APPROVAL"]
 - `request_approval_config_override` (Boolean) Indicates if approval flow is overridden.
-- `require_additional_approval` (Boolean) Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+- `require_additional_approval` (Boolean) When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
 
 Read-Only:
 
