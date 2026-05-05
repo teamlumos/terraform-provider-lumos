@@ -82,7 +82,7 @@ func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(ct
 		}
 		r.TimeBasedAccess = make([]types.String, 0, len(resp.TimeBasedAccess))
 		for _, v := range resp.TimeBasedAccess {
-			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(string(v)))
+			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(v))
 		}
 	}
 
@@ -142,9 +142,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleInput(ctx context.
 	var justification string
 	justification = r.Justification.ValueString()
 
-	timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.TimeBasedAccess))
-	for _, timeBasedAccessItem := range r.TimeBasedAccess {
-		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+	timeBasedAccess := make([]string, 0, len(r.TimeBasedAccess))
+	for timeBasedAccessIndex := range r.TimeBasedAccess {
+		timeBasedAccess = append(timeBasedAccess, r.TimeBasedAccess[timeBasedAccessIndex].ValueString())
 	}
 	var appID string
 	appID = r.AppID.ValueString()
@@ -228,9 +228,9 @@ func (r *PreApprovalRuleResourceModel) ToSharedPreApprovalRuleUpdateInput(ctx co
 	var justification string
 	justification = r.Justification.ValueString()
 
-	timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.TimeBasedAccess))
-	for _, timeBasedAccessItem := range r.TimeBasedAccess {
-		timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+	timeBasedAccess := make([]string, 0, len(r.TimeBasedAccess))
+	for timeBasedAccessIndex := range r.TimeBasedAccess {
+		timeBasedAccess = append(timeBasedAccess, r.TimeBasedAccess[timeBasedAccessIndex].ValueString())
 	}
 	preapprovedGroups := make([]shared.BaseGroup, 0, len(r.PreapprovedGroups))
 	for preapprovedGroupsIndex := range r.PreapprovedGroups {

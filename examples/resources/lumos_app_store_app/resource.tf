@@ -13,7 +13,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
       id = "...my_id..."
     }
     time_based_access = [
-      "90 days"
+      "..."
     ]
   }
   request_flow = {

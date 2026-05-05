@@ -9,7 +9,7 @@ type RequestFulfillmentConfigInputUpdate struct {
 	// The manual instructions that go along.
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 	// Indicates if time based access is overriden.
 	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
 	// The provisioning webhook optionally associated with this config.
@@ -30,7 +30,7 @@ func (r *RequestFulfillmentConfigInputUpdate) GetManualInstructions() *string {
 	return r.ManualInstructions
 }
 
-func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccess() []string {
 	if r == nil {
 		return nil
 	}

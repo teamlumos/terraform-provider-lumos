@@ -6,7 +6,7 @@ package shared
 type AppStoreAppSettingsProvisioningOutput struct {
 	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 	// Whether the app is configured to allow users to request multiple permissions in a single request
 	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
 	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
@@ -26,7 +26,7 @@ func (a *AppStoreAppSettingsProvisioningOutput) GetGroupsProvisioning() *GroupPr
 	return a.GroupsProvisioning
 }
 
-func (a *AppStoreAppSettingsProvisioningOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (a *AppStoreAppSettingsProvisioningOutput) GetTimeBasedAccess() []string {
 	if a == nil {
 		return nil
 	}
