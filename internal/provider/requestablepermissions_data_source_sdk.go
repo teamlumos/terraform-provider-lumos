@@ -205,7 +205,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					if itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
 						items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = make([]types.String, 0, len(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess))
 						for _, v := range itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess {
-							items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(string(v)))
+							items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess = append(items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess, types.StringValue(v))
 						}
 					}
 					items.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.TimeBasedAccessOverride)

@@ -9,7 +9,7 @@ type AppStoreAppSettingsRequestFlowInput struct {
 	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
 	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
 	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
-	// Only turn on when working with sensitive permissions to ensure a smooth employee experience.
+	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
 	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// The allowed groups associated with this config.
 	AllowedGroups   *AllowedGroupsConfigInput `json:"allowed_groups,omitempty"`

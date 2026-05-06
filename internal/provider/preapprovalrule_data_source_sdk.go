@@ -82,7 +82,7 @@ func (r *PreApprovalRuleDataSourceModel) RefreshFromSharedPreApprovalRuleOutput(
 		}
 		r.TimeBasedAccess = make([]types.String, 0, len(resp.TimeBasedAccess))
 		for _, v := range resp.TimeBasedAccess {
-			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(string(v)))
+			r.TimeBasedAccess = append(r.TimeBasedAccess, types.StringValue(v))
 		}
 	}
 

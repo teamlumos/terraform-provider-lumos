@@ -13,6 +13,8 @@ type AccessPolicyOutput struct {
 	Apps                  []AccessPolicyAppOutput `tfsdk:"apps"`
 	BusinessJustification types.String            `tfsdk:"business_justification"`
 	ID                    types.String            `tfsdk:"id"`
+	IsEnabled             types.Bool              `tfsdk:"is_enabled"`
 	IsEveryoneCondition   types.Bool              `tfsdk:"is_everyone_condition"`
 	Name                  types.String            `tfsdk:"name"`
+	Status                types.String            `tfsdk:"status"`
 }

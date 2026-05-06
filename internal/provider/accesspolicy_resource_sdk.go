@@ -43,8 +43,10 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 		}
 		r.BusinessJustification = types.StringValue(resp.BusinessJustification)
 		r.ID = types.StringValue(resp.ID)
+		r.IsEnabled = types.BoolValue(resp.IsEnabled)
 		r.IsEveryoneCondition = types.BoolValue(resp.IsEveryoneCondition)
 		r.Name = types.StringValue(resp.Name)
+		r.Status = types.StringValue(string(resp.Status))
 	}
 
 	return diags
@@ -106,6 +108,18 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 	var businessJustification string
 	businessJustification = r.BusinessJustification.ValueString()
 
+	status := new(shared.Status)
+	if !r.Status.IsUnknown() && !r.Status.IsNull() {
+		*status = shared.Status(r.Status.ValueString())
+	} else {
+		status = nil
+	}
+	isEnabled := new(bool)
+	if !r.IsEnabled.IsUnknown() && !r.IsEnabled.IsNull() {
+		*isEnabled = r.IsEnabled.ValueBool()
+	} else {
+		isEnabled = nil
+	}
 	apps := make([]shared.AccessPolicyAppInput, 0, len(r.Apps))
 	for appsIndex := range r.Apps {
 		var id string
@@ -151,6 +165,8 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 	out := shared.AccessPolicyInput{
 		Name:                  name,
 		BusinessJustification: businessJustification,
+		Status:                status,
+		IsEnabled:             isEnabled,
 		Apps:                  apps,
 		AccessCondition:       accessCondition,
 		IsEveryoneCondition:   isEveryoneCondition,

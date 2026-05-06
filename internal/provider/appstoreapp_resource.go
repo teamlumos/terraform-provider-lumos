@@ -936,7 +936,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 						PlanModifiers: []planmodifier.Bool{
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `Only turn on when working with sensitive permissions to ensure a smooth employee experience.`,
+						Description: `When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.`,
 					},
 					"require_manager_approval": schema.BoolAttribute{
 						Computed: true,

@@ -116,7 +116,7 @@ func (r *AppStoreAppResourceModel) RefreshFromSharedAppStoreAppSettingsOutput(ct
 			}
 			r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
 			for _, v := range resp.Provisioning.TimeBasedAccess {
-				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
+				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(v))
 			}
 		}
 		if resp.RequestFlow == nil {
@@ -588,9 +588,9 @@ func (r *AppStoreAppResourceModel) ToSharedAddAppToAppStoreInput(ctx context.Con
 		} else {
 			groupsProvisioning = nil
 		}
-		timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
-		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
-			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+		timeBasedAccess := make([]string, 0, len(r.Provisioning.TimeBasedAccess))
+		for timeBasedAccessIndex := range r.Provisioning.TimeBasedAccess {
+			timeBasedAccess = append(timeBasedAccess, r.Provisioning.TimeBasedAccess[timeBasedAccessIndex].ValueString())
 		}
 		allowMultiplePermissionSelection := new(bool)
 		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {
@@ -880,9 +880,9 @@ func (r *AppStoreAppResourceModel) ToSharedAppStoreAppSettingsInput(ctx context.
 		} else {
 			groupsProvisioning = nil
 		}
-		timeBasedAccess := make([]shared.TimeBasedAccessOptions, 0, len(r.Provisioning.TimeBasedAccess))
-		for _, timeBasedAccessItem := range r.Provisioning.TimeBasedAccess {
-			timeBasedAccess = append(timeBasedAccess, shared.TimeBasedAccessOptions(timeBasedAccessItem.ValueString()))
+		timeBasedAccess := make([]string, 0, len(r.Provisioning.TimeBasedAccess))
+		for timeBasedAccessIndex := range r.Provisioning.TimeBasedAccess {
+			timeBasedAccess = append(timeBasedAccess, r.Provisioning.TimeBasedAccess[timeBasedAccessIndex].ValueString())
 		}
 		allowMultiplePermissionSelection := new(bool)
 		if !r.Provisioning.AllowMultiplePermissionSelection.IsUnknown() && !r.Provisioning.AllowMultiplePermissionSelection.IsNull() {

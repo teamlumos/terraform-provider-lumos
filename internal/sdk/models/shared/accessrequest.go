@@ -21,10 +21,13 @@ type AccessRequest struct {
 	SupporterUser *User                `json:"supporter_user,omitempty"`
 	Status        SupportRequestStatus `json:"status"`
 	// The reason the user wrote for putting the access request into the given state.
-	Notes                  map[string]*string            `json:"notes,omitempty"`
-	ExpiresAt              *time.Time                    `json:"expires_at,omitempty"`
+	Notes     map[string]*string `json:"notes,omitempty"`
+	ExpiresAt *time.Time         `json:"expires_at,omitempty"`
+	// For time-based access requests, the number of seconds after provisioning at which access should be removed. None for permanent requests.
+	ExpirationInSeconds    *int64                        `json:"expiration_in_seconds,omitempty"`
 	RequestablePermissions []RequestablePermissionOutput `json:"requestable_permissions,omitempty"`
 	RequestedAt            *time.Time                    `json:"requested_at,omitempty"`
+	Tasks                  []Task                        `json:"tasks,omitempty"`
 }
 
 func (a AccessRequest) MarshalJSON() ([]byte, error) {
@@ -101,6 +104,13 @@ func (a *AccessRequest) GetExpiresAt() *time.Time {
 	return a.ExpiresAt
 }
 
+func (a *AccessRequest) GetExpirationInSeconds() *int64 {
+	if a == nil {
+		return nil
+	}
+	return a.ExpirationInSeconds
+}
+
 func (a *AccessRequest) GetRequestablePermissions() []RequestablePermissionOutput {
 	if a == nil {
 		return nil
@@ -113,4 +123,11 @@ func (a *AccessRequest) GetRequestedAt() *time.Time {
 		return nil
 	}
 	return a.RequestedAt
+}
+
+func (a *AccessRequest) GetTasks() []Task {
+	if a == nil {
+		return nil
+	}
+	return a.Tasks
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -43,8 +44,10 @@ type AccessPolicyResourceModel struct {
 	Apps                  []tfTypes.AccessPolicyAppInput `tfsdk:"apps"`
 	BusinessJustification types.String                   `tfsdk:"business_justification"`
 	ID                    types.String                   `tfsdk:"id"`
+	IsEnabled             types.Bool                     `tfsdk:"is_enabled"`
 	IsEveryoneCondition   types.Bool                     `tfsdk:"is_everyone_condition"`
 	Name                  types.String                   `tfsdk:"name"`
+	Status                types.String                   `tfsdk:"status"`
 }
 
 func (r *AccessPolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -116,6 +119,11 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				},
 				Description: `The unique ID of the access policy.`,
 			},
+			"is_enabled": schema.BoolAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `Whether the access policy is enabled. Defaults to false when supported.`,
+			},
 			"is_everyone_condition": schema.BoolAttribute{
 				Computed:    true,
 				Optional:    true,
@@ -125,6 +133,17 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 			"name": schema.StringAttribute{
 				Required:    true,
 				Description: `The name of the access policy.`,
+			},
+			"status": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `The status of the access policy. Defaults to DRAFT when supported. must be one of ["DRAFT", "PUBLISHED"]`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"DRAFT",
+						"PUBLISHED",
+					),
+				},
 			},
 		},
 	}

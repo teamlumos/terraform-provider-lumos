@@ -3,6 +3,38 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// AccessPolicyOutputStatus - The status of the access policy.
+type AccessPolicyOutputStatus string
+
+const (
+	AccessPolicyOutputStatusDraft     AccessPolicyOutputStatus = "DRAFT"
+	AccessPolicyOutputStatusPublished AccessPolicyOutputStatus = "PUBLISHED"
+)
+
+func (e AccessPolicyOutputStatus) ToPointer() *AccessPolicyOutputStatus {
+	return &e
+}
+func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "DRAFT":
+		fallthrough
+	case "PUBLISHED":
+		*e = AccessPolicyOutputStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccessPolicyOutputStatus: %v", v)
+	}
+}
+
 // AccessPolicyOutput - The full representation of an access policy returned by the API.
 type AccessPolicyOutput struct {
 	// The name of the access policy.
@@ -11,6 +43,10 @@ type AccessPolicyOutput struct {
 	BusinessJustification string `json:"business_justification"`
 	// The unique ID of the access policy.
 	ID string `json:"id"`
+	// The status of the access policy.
+	Status AccessPolicyOutputStatus `json:"status"`
+	// Whether the access policy is enabled.
+	IsEnabled bool `json:"is_enabled"`
 	// The list of apps and permissions granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
@@ -37,6 +73,20 @@ func (a *AccessPolicyOutput) GetID() string {
 		return ""
 	}
 	return a.ID
+}
+
+func (a *AccessPolicyOutput) GetStatus() AccessPolicyOutputStatus {
+	if a == nil {
+		return AccessPolicyOutputStatus("")
+	}
+	return a.Status
+}
+
+func (a *AccessPolicyOutput) GetIsEnabled() bool {
+	if a == nil {
+		return false
+	}
+	return a.IsEnabled
 }
 
 func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {

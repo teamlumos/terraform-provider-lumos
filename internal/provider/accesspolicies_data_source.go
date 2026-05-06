@@ -97,12 +97,20 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 							Computed:    true,
 							Description: `The unique ID of the access policy.`,
 						},
+						"is_enabled": schema.BoolAttribute{
+							Computed:    true,
+							Description: `Whether the access policy is enabled.`,
+						},
 						"is_everyone_condition": schema.BoolAttribute{
 							Computed: true,
 						},
 						"name": schema.StringAttribute{
 							Computed:    true,
 							Description: `The name of the access policy.`,
+						},
+						"status": schema.StringAttribute{
+							Computed:    true,
+							Description: `The status of the access policy.`,
 						},
 					},
 				},

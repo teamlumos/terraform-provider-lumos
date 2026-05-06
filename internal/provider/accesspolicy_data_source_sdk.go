@@ -41,8 +41,10 @@ func (r *AccessPolicyDataSourceModel) RefreshFromSharedAccessPolicyOutput(ctx co
 		}
 		r.BusinessJustification = types.StringValue(resp.BusinessJustification)
 		r.ID = types.StringValue(resp.ID)
+		r.IsEnabled = types.BoolValue(resp.IsEnabled)
 		r.IsEveryoneCondition = types.BoolValue(resp.IsEveryoneCondition)
 		r.Name = types.StringValue(resp.Name)
+		r.Status = types.StringValue(string(resp.Status))
 	}
 
 	return diags
