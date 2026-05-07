@@ -24,7 +24,6 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
-	custom_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -794,9 +793,6 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 					},
 				},
 				Description: `The request config associated with this requestable permission.`,
-				Validators: []validator.Object{
-					custom_objectvalidators.RequestConfigInputValidator(),
-				},
 			},
 			"type": schema.StringAttribute{
 				Computed: true,
