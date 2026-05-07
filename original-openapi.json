@@ -6078,7 +6078,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -6140,7 +6140,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -9418,7 +9418,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -9482,7 +9482,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -9563,7 +9563,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -10211,7 +10211,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -10283,7 +10283,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -10344,7 +10344,7 @@
           },
           "time_based_access": {
             "items": {
-              "$ref": "#/components/schemas/TimeBasedAccessOptions"
+              "type": "string"
             },
             "type": "array",
             "title": "Time Based Access",
@@ -11022,20 +11022,6 @@
           "EXPIRED"
         ],
         "title": "TaskStatus"
-      },
-      "TimeBasedAccessOptions": {
-        "type": "string",
-        "enum": [
-          "2 hours",
-          "4 hours",
-          "12 hours",
-          "7 days",
-          "14 days",
-          "30 days",
-          "90 days",
-          "Unlimited"
-        ],
-        "title": "TimeBasedAccessOptions"
       },
       "User": {
         "properties": {

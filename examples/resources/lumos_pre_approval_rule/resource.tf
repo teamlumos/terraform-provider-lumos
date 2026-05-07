@@ -25,6 +25,6 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
     }
   ]
   time_based_access = [
-    "4 hours"
+    "..."
   ]
 }
