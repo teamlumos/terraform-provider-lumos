@@ -116,7 +116,7 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreAppSettingsOutput(
 			}
 			r.Provisioning.TimeBasedAccess = make([]types.String, 0, len(resp.Provisioning.TimeBasedAccess))
 			for _, v := range resp.Provisioning.TimeBasedAccess {
-				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(string(v)))
+				r.Provisioning.TimeBasedAccess = append(r.Provisioning.TimeBasedAccess, types.StringValue(v))
 			}
 		}
 		if resp.RequestFlow == nil {

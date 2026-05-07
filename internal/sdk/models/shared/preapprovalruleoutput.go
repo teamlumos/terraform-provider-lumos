@@ -7,7 +7,7 @@ type PreApprovalRuleOutput struct {
 	// The justification of this preapproval rule.
 	Justification string `json:"justification"`
 	// Preapproval rule time access length,
-	TimeBasedAccess []TimeBasedAccessOptions `json:"time_based_access,omitempty"`
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 	// The ID of this preapproval rule.
 	ID *string `json:"id,omitempty"`
 	// The ID of the app associated with this pre-approval rule.
@@ -33,7 +33,7 @@ func (p *PreApprovalRuleOutput) GetJustification() string {
 	return p.Justification
 }
 
-func (p *PreApprovalRuleOutput) GetTimeBasedAccess() []TimeBasedAccessOptions {
+func (p *PreApprovalRuleOutput) GetTimeBasedAccess() []string {
 	if p == nil {
 		return nil
 	}

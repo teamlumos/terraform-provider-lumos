@@ -322,7 +322,7 @@ actions:
       anyOf:
         - type: array
           items:
-            $ref: "#/components/schemas/TimeBasedAccessOptions"
+            type: string
         - type: "null"
   - target: $["components"]["schemas"]["RequestFulfillmentConfigOutput"]["properties"]["time_based_access"]["type"]
     remove: true
@@ -335,7 +335,7 @@ actions:
       anyOf:
         - type: array
           items:
-            $ref: "#/components/schemas/TimeBasedAccessOptions"
+            type: string
         - type: "null"
   - target: $["components"]["schemas"]["RequestFulfillmentConfigInput"]["properties"]["time_based_access"]["type"]
     remove: true
@@ -348,7 +348,7 @@ actions:
       anyOf:
         - type: array
           items:
-            $ref: "#/components/schemas/TimeBasedAccessOptions"
+            type: string
         - type: "null"
   - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]["properties"]["time_based_access"]["type"]
     remove: true
