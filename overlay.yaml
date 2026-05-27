@@ -192,6 +192,40 @@ actions:
     update:
       "x-speakeasy-param-suppress-computed-diff": true
 
+  # Pre Approval Rules - ensure that ordering does not matter for relationship-backed
+  # collections. The API returns these in a non-deterministic / internal-id-sorted order
+  # that won't match the order declared in HCL, producing perpetual Terraform diffs when
+  # modeled as lists (FLWPLT-1144 / FLWPLT-1154). Treating them as sets makes the diff
+  # order-independent. Input, UpdateInput, and Output must all be converted to keep the
+  # merged resource schema consistent (create, update, and read paths respectively).
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproved_permissions"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["preapproved_permissions"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproved_groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["preapproved_groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["properties"]["preapproval_webhooks"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]["properties"]["preapproval_webhooks"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproved_permissions"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproved_groups"]
+    update:
+      "format": "set"
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["preapproval_webhooks"]
+    update:
+      "format": "set"
+
   # Access Policies - Add x-speakeasy-type-override to access_condition
   # so that it can be constructed as a JSON object.
   - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["access_condition"]

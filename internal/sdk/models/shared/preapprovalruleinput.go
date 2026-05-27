@@ -3,6 +3,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type PreApprovalRuleInput struct {
 	// The justification of this preapproval rule.
 	Justification string `json:"justification"`
@@ -11,13 +15,24 @@ type PreApprovalRuleInput struct {
 	// The ID of the app associated with this pre-approval rule.
 	AppID string `json:"app_id"`
 	// The preapproved groups of this preapproval rule.
-	PreapprovedGroups []BaseGroup `json:"preapproved_groups,omitempty"`
+	PreapprovedGroups []BaseGroup `json:"preapproved_groups"`
 	// The preapproved permissions of this preapproval rule.
-	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions,omitempty"`
+	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions"`
 	// The set of users this pre-approval rule applies to, defined by attributes that must be true about the user
 	PreapprovedUsersByAttribute []AttributeEqualityRule `json:"preapproved_users_by_attribute,omitempty"`
 	// The preapproval webhooks of this preapproval rule.
-	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks,omitempty"`
+	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks"`
+}
+
+func (p PreApprovalRuleInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PreApprovalRuleInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PreApprovalRuleInput) GetJustification() string {

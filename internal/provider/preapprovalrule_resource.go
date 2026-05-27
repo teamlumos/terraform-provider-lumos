@@ -84,7 +84,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Required:    true,
 				Description: `The justification of this preapproval rule.`,
 			},
-			"preapproval_webhooks": schema.ListNestedAttribute{
+			"preapproval_webhooks": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -115,7 +115,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `The preapproval webhooks of this preapproval rule.`,
 			},
-			"preapproved_groups": schema.ListNestedAttribute{
+			"preapproved_groups": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -158,7 +158,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `The preapproved groups of this preapproval rule.`,
 			},
-			"preapproved_permissions": schema.ListNestedAttribute{
+			"preapproved_permissions": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
