@@ -73,7 +73,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				Computed:    true,
 				Description: `The justification of this preapproval rule.`,
 			},
-			"preapproval_webhooks": schema.ListNestedAttribute{
+			"preapproval_webhooks": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -96,7 +96,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				},
 				Description: `The preapproval webhooks of this preapproval rule.`,
 			},
-			"preapproved_groups": schema.ListNestedAttribute{
+			"preapproved_groups": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -132,7 +132,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				},
 				Description: `The preapproved groups of this preapproval rule.`,
 			},
-			"preapproved_permissions": schema.ListNestedAttribute{
+			"preapproved_permissions": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
