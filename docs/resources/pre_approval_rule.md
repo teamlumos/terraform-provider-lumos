@@ -40,7 +40,7 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
     }
   ]
   time_based_access = [
-    "4 hours"
+    "..."
   ]
 }
 ```
@@ -55,9 +55,9 @@ resource "lumos_pre_approval_rule" "my_preapprovalrule" {
 
 ### Optional
 
-- `preapproval_webhooks` (Attributes List) The preapproval webhooks of this preapproval rule. (see [below for nested schema](#nestedatt--preapproval_webhooks))
-- `preapproved_groups` (Attributes List) The preapproved groups of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_groups))
-- `preapproved_permissions` (Attributes List) The preapproved permissions of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_permissions))
+- `preapproval_webhooks` (Attributes Set) The preapproval webhooks of this preapproval rule. (see [below for nested schema](#nestedatt--preapproval_webhooks))
+- `preapproved_groups` (Attributes Set) The preapproved groups of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_groups))
+- `preapproved_permissions` (Attributes Set) The preapproved permissions of this preapproval rule. (see [below for nested schema](#nestedatt--preapproved_permissions))
 - `preapproved_users_by_attribute` (Attributes List) The set of users this pre-approval rule applies to, defined by attributes that must be true about the user (see [below for nested schema](#nestedatt--preapproved_users_by_attribute))
 - `time_based_access` (List of String) Preapproval rule time access length,
 
