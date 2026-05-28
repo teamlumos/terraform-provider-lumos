@@ -4,6 +4,9 @@
   <a href="https://speakeasyapi.dev/">
     <img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" />
   </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" />
+  </a>
 </div>
 
 The **Lumos Terraform Provider** allows administrators and IAM engineers to manage Lumos configuration—such as apps, permissions, access policies, and pre-approval rules—using Infrastructure as Code.
@@ -21,6 +24,7 @@ This provider is **generated from Lumos’s OpenAPI specification** using [Speak
 - [Release](#release)
 - [Local Development & Testing](#local-development--testing)
 - [Contributions](#contributions)
+- [License](#license)
 - [SDK Created by Speakeasy](#sdk-created-by-speakeasy)
 
 ---
@@ -273,6 +277,12 @@ terraform apply
 While we welcome contributions, this provider is largely generated.
 
 Feel free to open a PR or GitHub issue as a proof of concept, and we’ll work to incorporate changes into future releases.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
