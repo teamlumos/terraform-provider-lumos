@@ -9,9 +9,11 @@ import (
 
 type AppSettingInput struct {
 	// AppStore App instructions that are shown to the requester.
-	CustomRequestInstructions *string                               `json:"custom_request_instructions,omitempty"`
-	RequestFlow               *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
-	Provisioning              *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
+	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
+	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
+	RedirectURL  *string                               `json:"redirect_url,omitempty"`
+	RequestFlow  *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
+	Provisioning *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
 	// Whether the app is in the app store.
 	InAppStore *bool `default:"false" json:"in_app_store"`
 }
@@ -32,6 +34,13 @@ func (a *AppSettingInput) GetCustomRequestInstructions() *string {
 		return nil
 	}
 	return a.CustomRequestInstructions
+}
+
+func (a *AppSettingInput) GetRedirectURL() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RedirectURL
 }
 
 func (a *AppSettingInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {

@@ -909,7 +909,7 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 }
 
 // UpdateApp - Update App
-// Update an app.
+// Update domain-specific app metadata overrides. This updates the app instance in your domain, not the shared Lumos app catalog.
 func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppRequest, opts ...operations.Option) (*operations.UpdateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -943,7 +943,7 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputCreate", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputUpdate", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}

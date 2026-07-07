@@ -7,8 +7,12 @@ resource "lumos_app_store_app" "my_appstoreapp" {
     }
     allow_multiple_permission_selection = true
     custom_provisioning_instructions    = "...my_custom_provisioning_instructions..."
-    groups_provisioning                 = "GROUPS_AND_VISIBLE"
-    manual_steps_needed                 = false
+    default_permission = {
+      id = "...my_id..."
+    }
+    default_time_based_access_option = "...my_default_time_based_access_option..."
+    groups_provisioning              = "GROUPS_AND_VISIBLE"
+    manual_steps_needed              = false
     provisioning_webhook = {
       id = "...my_id..."
     }
@@ -16,6 +20,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
       "..."
     ]
   }
+  redirect_url = "...my_redirect_url..."
   request_flow = {
     admins = {
       groups = [

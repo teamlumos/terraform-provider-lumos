@@ -124,8 +124,8 @@ func (r *AppResourceModel) ToOperationsUpdateAppRequest(ctx context.Context) (*o
 	var id string
 	id = r.ID.ValueString()
 
-	appInputCreate, appInputCreateDiags := r.ToSharedAppInputCreate(ctx)
-	diags.Append(appInputCreateDiags...)
+	appInputUpdate, appInputUpdateDiags := r.ToSharedAppInputUpdate(ctx)
+	diags.Append(appInputUpdateDiags...)
 
 	if diags.HasError() {
 		return nil, diags
@@ -133,7 +133,7 @@ func (r *AppResourceModel) ToOperationsUpdateAppRequest(ctx context.Context) (*o
 
 	out := operations.UpdateAppRequest{
 		ID:             id,
-		AppInputCreate: *appInputCreate,
+		AppInputUpdate: *appInputUpdate,
 	}
 
 	return &out, diags
@@ -170,6 +170,57 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 		requestInstructions = nil
 	}
 	out := shared.AppInputCreate{
+		Name:                name,
+		Category:            category,
+		Description:         description,
+		LogoURL:             logoURL,
+		WebsiteURL:          websiteURL,
+		RequestInstructions: requestInstructions,
+	}
+
+	return &out, diags
+}
+
+func (r *AppResourceModel) ToSharedAppInputUpdate(ctx context.Context) (*shared.AppInputUpdate, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
+	} else {
+		name = nil
+	}
+	category := new(string)
+	if !r.Category.IsUnknown() && !r.Category.IsNull() {
+		*category = r.Category.ValueString()
+	} else {
+		category = nil
+	}
+	description := new(string)
+	if !r.Description.IsUnknown() && !r.Description.IsNull() {
+		*description = r.Description.ValueString()
+	} else {
+		description = nil
+	}
+	logoURL := new(string)
+	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
+		*logoURL = r.LogoURL.ValueString()
+	} else {
+		logoURL = nil
+	}
+	websiteURL := new(string)
+	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
+		*websiteURL = r.WebsiteURL.ValueString()
+	} else {
+		websiteURL = nil
+	}
+	requestInstructions := new(string)
+	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
+		*requestInstructions = r.RequestInstructions.ValueString()
+	} else {
+		requestInstructions = nil
+	}
+	out := shared.AppInputUpdate{
 		Name:                name,
 		Category:            category,
 		Description:         description,

@@ -10,7 +10,7 @@ import (
 
 type UpdateAppRequest struct {
 	ID             string                `pathParam:"style=simple,explode=false,name=app_id"`
-	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
+	AppInputUpdate shared.AppInputUpdate `request:"mediaType=application/json"`
 }
 
 func (u *UpdateAppRequest) GetID() string {
@@ -20,11 +20,11 @@ func (u *UpdateAppRequest) GetID() string {
 	return u.ID
 }
 
-func (u *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
+func (u *UpdateAppRequest) GetAppInputUpdate() shared.AppInputUpdate {
 	if u == nil {
-		return shared.AppInputCreate{}
+		return shared.AppInputUpdate{}
 	}
-	return u.AppInputCreate
+	return u.AppInputUpdate
 }
 
 type UpdateAppResponse struct {

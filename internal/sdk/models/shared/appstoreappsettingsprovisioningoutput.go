@@ -13,6 +13,10 @@ type AppStoreAppSettingsProvisioningOutput struct {
 	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
 	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
+	// The label of the default time-based access duration pre-selected when a user requests access. Must be one of the values in time_based_access. Null when there is no default.
+	DefaultTimeBasedAccessOption *string `json:"default_time_based_access_option,omitempty"`
+	// The default permission pre-selected when a user requests access to this app. Null if no default is configured.
+	DefaultPermission *RequestablePermissionOutput `json:"default_permission,omitempty"`
 	// The provisioning webhook optionally associated with this config.
 	ProvisioningWebhook *InlineWebhook `json:"provisioning_webhook,omitempty"`
 	// A deprovisioning webhook can be optionally associated with this config.
@@ -52,6 +56,20 @@ func (a *AppStoreAppSettingsProvisioningOutput) GetCustomProvisioningInstruction
 		return nil
 	}
 	return a.CustomProvisioningInstructions
+}
+
+func (a *AppStoreAppSettingsProvisioningOutput) GetDefaultTimeBasedAccessOption() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DefaultTimeBasedAccessOption
+}
+
+func (a *AppStoreAppSettingsProvisioningOutput) GetDefaultPermission() *RequestablePermissionOutput {
+	if a == nil {
+		return nil
+	}
+	return a.DefaultPermission
 }
 
 func (a *AppStoreAppSettingsProvisioningOutput) GetProvisioningWebhook() *InlineWebhook {
