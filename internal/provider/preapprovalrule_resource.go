@@ -37,16 +37,16 @@ type PreApprovalRuleResource struct {
 
 // PreApprovalRuleResourceModel describes the resource data model.
 type PreApprovalRuleResourceModel struct {
-	AppClassID                  types.String                        `tfsdk:"app_class_id"`
-	AppID                       types.String                        `tfsdk:"app_id"`
-	AppInstanceID               types.String                        `tfsdk:"app_instance_id"`
-	ID                          types.String                        `tfsdk:"id"`
-	Justification               types.String                        `tfsdk:"justification"`
-	PreapprovalWebhooks         []tfTypes.BaseInlineWebhook         `tfsdk:"preapproval_webhooks"`
-	PreapprovedGroups           []tfTypes.Group                     `tfsdk:"preapproved_groups"`
-	PreapprovedPermissions      []tfTypes.RequestablePermissionBase `tfsdk:"preapproved_permissions"`
-	PreapprovedUsersByAttribute []tfTypes.AttributeEqualityRule     `tfsdk:"preapproved_users_by_attribute"`
-	TimeBasedAccess             []types.String                      `tfsdk:"time_based_access"`
+	AppClassID                  types.String                         `tfsdk:"app_class_id"`
+	AppID                       types.String                         `tfsdk:"app_id"`
+	AppInstanceID               types.String                         `tfsdk:"app_instance_id"`
+	ID                          types.String                         `tfsdk:"id"`
+	Justification               types.String                         `tfsdk:"justification"`
+	PreapprovalWebhooks         []tfTypes.BaseInlineWebhook          `tfsdk:"preapproval_webhooks"`
+	PreapprovedGroups           []tfTypes.Group                      `tfsdk:"preapproved_groups"`
+	PreapprovedPermissions      []tfTypes.RequestablePermissionBase1 `tfsdk:"preapproved_permissions"`
+	PreapprovedUsersByAttribute []tfTypes.AttributeEqualityRule      `tfsdk:"preapproved_users_by_attribute"`
+	TimeBasedAccess             []types.String                       `tfsdk:"time_based_access"`
 }
 
 func (r *PreApprovalRuleResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -84,7 +84,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				Required:    true,
 				Description: `The justification of this preapproval rule.`,
 			},
-			"preapproval_webhooks": schema.ListNestedAttribute{
+			"preapproval_webhooks": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -115,7 +115,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `The preapproval webhooks of this preapproval rule.`,
 			},
-			"preapproved_groups": schema.ListNestedAttribute{
+			"preapproved_groups": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{
@@ -158,7 +158,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 				},
 				Description: `The preapproved groups of this preapproval rule.`,
 			},
-			"preapproved_permissions": schema.ListNestedAttribute{
+			"preapproved_permissions": schema.SetNestedAttribute{
 				Computed: true,
 				Optional: true,
 				NestedObject: schema.NestedAttributeObject{

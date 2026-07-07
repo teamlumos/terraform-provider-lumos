@@ -30,16 +30,16 @@ type PreApprovalRuleDataSource struct {
 
 // PreApprovalRuleDataSourceModel describes the data model.
 type PreApprovalRuleDataSourceModel struct {
-	AppClassID                  types.String                        `tfsdk:"app_class_id"`
-	AppID                       types.String                        `tfsdk:"app_id"`
-	AppInstanceID               types.String                        `tfsdk:"app_instance_id"`
-	ID                          types.String                        `tfsdk:"id"`
-	Justification               types.String                        `tfsdk:"justification"`
-	PreapprovalWebhooks         []tfTypes.BaseInlineWebhook         `tfsdk:"preapproval_webhooks"`
-	PreapprovedGroups           []tfTypes.Group                     `tfsdk:"preapproved_groups"`
-	PreapprovedPermissions      []tfTypes.RequestablePermissionBase `tfsdk:"preapproved_permissions"`
-	PreapprovedUsersByAttribute []tfTypes.AttributeEqualityRule     `tfsdk:"preapproved_users_by_attribute"`
-	TimeBasedAccess             []types.String                      `tfsdk:"time_based_access"`
+	AppClassID                  types.String                         `tfsdk:"app_class_id"`
+	AppID                       types.String                         `tfsdk:"app_id"`
+	AppInstanceID               types.String                         `tfsdk:"app_instance_id"`
+	ID                          types.String                         `tfsdk:"id"`
+	Justification               types.String                         `tfsdk:"justification"`
+	PreapprovalWebhooks         []tfTypes.BaseInlineWebhook          `tfsdk:"preapproval_webhooks"`
+	PreapprovedGroups           []tfTypes.Group                      `tfsdk:"preapproved_groups"`
+	PreapprovedPermissions      []tfTypes.RequestablePermissionBase1 `tfsdk:"preapproved_permissions"`
+	PreapprovedUsersByAttribute []tfTypes.AttributeEqualityRule      `tfsdk:"preapproved_users_by_attribute"`
+	TimeBasedAccess             []types.String                       `tfsdk:"time_based_access"`
 }
 
 // Metadata returns the data source type name.
@@ -73,7 +73,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				Computed:    true,
 				Description: `The justification of this preapproval rule.`,
 			},
-			"preapproval_webhooks": schema.ListNestedAttribute{
+			"preapproval_webhooks": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -96,7 +96,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				},
 				Description: `The preapproval webhooks of this preapproval rule.`,
 			},
-			"preapproved_groups": schema.ListNestedAttribute{
+			"preapproved_groups": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
@@ -132,7 +132,7 @@ func (r *PreApprovalRuleDataSource) Schema(ctx context.Context, req datasource.S
 				},
 				Description: `The preapproved groups of this preapproval rule.`,
 			},
-			"preapproved_permissions": schema.ListNestedAttribute{
+			"preapproved_permissions": schema.SetNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
