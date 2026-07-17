@@ -24,17 +24,41 @@ actions:
           "retryConnectionErrors": true,
         }
 
-  # Apps
+  # Apps — one lumos_app resource covers custom apps and connected integrations.
+  # Update maps to the merged PUT (metadata overrides + reconnect when
+  # credentials are present); PATCH stays API-only for back-compat. Delete maps
+  # to disconnect (custom apps are deleted, integrations soft-disconnected).
   - target: $["paths"]["/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
   - target: $["paths"]["/apps"]["get"]
     update:
       "x-speakeasy-entity-operation": "Apps#read"
-  - target: $["paths"]["/apps/{app_id}"]["patch"]
+  - target: $["paths"]["/apps/{app_id}"]["put"]
     update:
       "x-speakeasy-entity-operation": "App#update"
-  - target: $["paths"]["/apps/{app_id}"]["patch"]["parameters"][0]
+      # Reconnect throttles with 429 + Retry-After while a sync is in flight;
+      # retry with backoff instead of failing the Terraform apply.
+      "x-speakeasy-retries":
+        {
+          "strategy": "backoff",
+          "backoff":
+            {
+              "initialInterval": 500,
+              "maxInterval": 30000,
+              "maxElapsedTime": 60000,
+              "exponent": 1.5,
+            },
+          "statusCodes": ["429", "5XX"],
+          "retryConnectionErrors": true,
+        }
+  - target: $["paths"]["/apps/{app_id}"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/apps/{app_id}"]["delete"]
+    update:
+      "x-speakeasy-entity-operation": "App#delete"
+  - target: $["paths"]["/apps/{app_id}"]["delete"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
   - target: $["paths"]["/apps/{app_id}"]["get"]
@@ -43,6 +67,52 @@ actions:
   - target: $["paths"]["/apps/{app_id}"]["get"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
+
+  # Apps — integration credentials/settings are free-form JSON objects: render
+  # them as JSON strings (jsontypes.Normalized) instead of empty structs, and
+  # keep credentials out of plan output. Changing app_class_id means a
+  # different integration, so it forces a replace (disconnect + connect);
+  # auth/settings/version rotate in place through the merged PUT.
+  - target: $["components"]["schemas"]["AppInputCreate"]["properties"]["auth"]
+    update:
+      "x-speakeasy-type-override": "any"
+      "x-speakeasy-param-sensitive": true
+  - target: $["components"]["schemas"]["AppInputCreate"]["properties"]["settings"]
+    update:
+      "x-speakeasy-type-override": "any"
+  - target: $["components"]["schemas"]["AppInputCreate"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["components"]["schemas"]["AppInputPut"]["properties"]["auth"]
+    update:
+      "x-speakeasy-type-override": "any"
+      "x-speakeasy-param-sensitive": true
+  - target: $["components"]["schemas"]["AppInputPut"]["properties"]["settings"]
+    update:
+      "x-speakeasy-type-override": "any"
+  - target: $["components"]["schemas"]["AppInputPut"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-force-new": true
+
+  # Apps — the lumos_apps data source reconciles what the API manages by
+  # default: connection_source=API & disconnected=false unless overridden.
+  # The anyOf-nullable wrappers are flattened to plain typed schemas because
+  # Speakeasy only emits `default` struct tags for simple schemas (the same
+  # shape exact_match has); optionality is preserved by the params being
+  # non-required.
+  - target: $["paths"]["/apps"]["get"]["parameters"][2]["schema"]["anyOf"]
+    remove: true
+  - target: $["paths"]["/apps"]["get"]["parameters"][2]["schema"]
+    update:
+      "type": "string"
+      "enum": ["API", "UI"]
+      "default": "API"
+  - target: $["paths"]["/apps"]["get"]["parameters"][3]["schema"]["anyOf"]
+    remove: true
+  - target: $["paths"]["/apps"]["get"]["parameters"][3]["schema"]
+    update:
+      "type": "boolean"
+      "default": false
 
   # App Settings — merge into AppStoreApp entity for drift detection
   - target: $["paths"]["/appstore/apps/{app_id}/settings"]["patch"]
