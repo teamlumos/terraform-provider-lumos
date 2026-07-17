@@ -10,7 +10,7 @@ import (
 
 type GetAccessRequestRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
-	// Fields to expand. Supported values: tasks, custom_fields.
+	// Fields to expand. Supported values: tasks.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 

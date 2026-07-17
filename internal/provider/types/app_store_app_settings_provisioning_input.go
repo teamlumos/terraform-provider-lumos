@@ -8,13 +8,11 @@ import (
 )
 
 type AppStoreAppSettingsProvisioningInput struct {
-	AccessRemovalInlineWebhook       *BaseInlineWebhook         `tfsdk:"access_removal_inline_webhook"`
-	AllowMultiplePermissionSelection types.Bool                 `tfsdk:"allow_multiple_permission_selection"`
-	CustomProvisioningInstructions   types.String               `tfsdk:"custom_provisioning_instructions"`
-	DefaultPermission                *RequestablePermissionBase `tfsdk:"default_permission"`
-	DefaultTimeBasedAccessOption     types.String               `tfsdk:"default_time_based_access_option"`
-	GroupsProvisioning               types.String               `tfsdk:"groups_provisioning"`
-	ManualStepsNeeded                types.Bool                 `tfsdk:"manual_steps_needed"`
-	ProvisioningWebhook              *BaseInlineWebhook         `tfsdk:"provisioning_webhook"`
-	TimeBasedAccess                  []types.String             `tfsdk:"time_based_access"`
+	AccessRemovalInlineWebhook       *BaseInlineWebhook `tfsdk:"access_removal_inline_webhook"`
+	AllowMultiplePermissionSelection types.Bool         `tfsdk:"allow_multiple_permission_selection"`
+	CustomProvisioningInstructions   types.String       `tfsdk:"custom_provisioning_instructions"`
+	GroupsProvisioning               types.String       `tfsdk:"groups_provisioning"`
+	ManualStepsNeeded                types.Bool         `tfsdk:"manual_steps_needed"`
+	ProvisioningWebhook              *BaseInlineWebhook `tfsdk:"provisioning_webhook"`
+	TimeBasedAccess                  []types.String     `tfsdk:"time_based_access"`
 }

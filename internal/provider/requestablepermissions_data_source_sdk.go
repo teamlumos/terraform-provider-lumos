@@ -16,10 +16,10 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.Items = []tfTypes.RequestablePermissionBase{}
+		r.Items = []tfTypes.RequestablePermissionOutput{}
 
 		for _, itemsItem := range resp.Items {
-			var items tfTypes.RequestablePermissionBase
+			var items tfTypes.RequestablePermissionOutput
 
 			items.AppClassID = types.StringValue(itemsItem.AppClassID)
 			items.AppID = types.StringValue(itemsItem.AppID)
@@ -42,7 +42,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				if itemsItem.RequestConfig.AllowedGroups == nil {
 					items.RequestConfig.AllowedGroups = nil
 				} else {
-					items.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigOutput{}
+					items.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 					items.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 
 					for _, groupsItem := range itemsItem.RequestConfig.AllowedGroups.Groups {
@@ -81,7 +81,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
 						items.RequestConfig.RequestApprovalConfig.Approvers = nil
 					} else {
-						items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversOutput{}
+						items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 						items.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 
 						for _, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -122,7 +122,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 					} else {
-						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversOutput{}
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 
 						for _, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
@@ -174,7 +174,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 				if itemsItem.RequestConfig.RequestFulfillmentConfig == nil {
 					items.RequestConfig.RequestFulfillmentConfig = nil
 				} else {
-					items.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigOutput{}
+					items.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
 					items.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 					items.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(itemsItem.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
 					if itemsItem.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {

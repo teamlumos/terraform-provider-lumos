@@ -20,7 +20,7 @@ type GetAccessRequestsRequest struct {
 	Statuses []shared.SupportRequestStatus `queryParam:"style=form,explode=true,name=statuses"`
 	// Sort access requests ascending (ASC) or descending (DESC) by created date.
 	Sort *string `default:"ASC" queryParam:"style=form,explode=true,name=sort"`
-	// Fields to expand. Supported values: tasks, custom_fields.
+	// Fields to expand. Supported values: tasks.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
 	Page *int64 `default:"1" queryParam:"style=form,explode=true,name=page"`

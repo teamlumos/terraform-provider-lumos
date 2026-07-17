@@ -50,38 +50,9 @@ func Pointer[T any](v T) *T { return &v }
 
 // Lumos - Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules
 type Lumos struct {
-	SDKVersion string
-	Core       *Core
-	AppStore   *AppStore
-	// Create and manage access review campaigns — scheduled reviews of who has access to what
-	// across your connected apps.
-	//
-	// **Typical workflow for creating a review:**
-	//
-	// 1. `GET /apps` — find the domain app UUIDs you want to review.
-	// 2. `GET /access_reviews/scope_options?domain_app_id={id}` — discover available scope
-	//    filters (employment status, team, last login, etc.). Each returned `items` entry is a
-	//    ready-to-POST `scope_filters` payload; datetime and custom-attribute groups instead
-	//    expose a `filter_input_template`.
-	// 3. `POST /access_reviews` with `apps` (optionally with `scope_filters` per app) —
-	//    creates the campaign.
-	// 4. `GET /access_reviews/{id}` — poll until `status` transitions from `IN_PREPARATION`
-	//    to `IN_PROGRESS`.
-	//
-	// **After creation:**
-	//
-	// - `POST /access_reviews/{id}/apps` — add more apps while `status != COMPLETED`.
-	// - `PATCH /access_reviews/{id}` — update name / deadline / owner, or per-ARDA
-	//   `scope_filters` and removal action.
-	// - `DELETE /access_reviews/{id}` — soft-delete the whole campaign.
-	// - `DELETE /access_reviews/{id}/apps/{arda_id}` — soft-delete a single app from the
-	//   campaign.
-	//
-	// All endpoints require an API token with the `access_reviews.create` or
-	// `access_reviews.view` permission (Access Review Administrator or App Admin role).
-	//
-	AccessReviews       *AccessReviews
-	Knowledge           *Knowledge
+	SDKVersion          string
+	Core                *Core
+	AppStore            *AppStore
 	VendorManagement    *VendorManagement
 	Meta                *Meta
 	IntegrationWebhooks *IntegrationWebhooks
@@ -185,8 +156,6 @@ func New(opts ...SDKOption) *Lumos {
 
 	sdk.Core = newCore(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.AppStore = newAppStore(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.AccessReviews = newAccessReviews(sdk, sdk.sdkConfiguration, sdk.hooks)
-	sdk.Knowledge = newKnowledge(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.VendorManagement = newVendorManagement(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Meta = newMeta(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.IntegrationWebhooks = newIntegrationWebhooks(sdk, sdk.sdkConfiguration, sdk.hooks)
