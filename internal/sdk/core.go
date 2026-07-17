@@ -121,7 +121,6 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -352,7 +351,6 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -581,7 +579,6 @@ func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) 
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -785,7 +782,6 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1014,7 +1010,6 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1475,7 +1470,6 @@ func (s *Core) DisconnectApp(ctx context.Context, request operations.DisconnectA
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1704,7 +1698,6 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1933,7 +1926,6 @@ func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateA
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2154,7 +2146,6 @@ func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*ope
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2358,7 +2349,6 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2584,7 +2574,6 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2810,7 +2799,6 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3031,7 +3019,6 @@ func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...o
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3235,7 +3222,6 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3460,7 +3446,6 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3681,7 +3666,6 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3907,7 +3891,6 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4129,7 +4112,6 @@ func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUplo
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4354,7 +4336,6 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4579,7 +4560,6 @@ func (s *Core) GetIdentityEvents(ctx context.Context, request operations.GetIden
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4807,7 +4787,6 @@ func (s *Core) PostAccounts(ctx context.Context, request operations.PostAccounts
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5035,7 +5014,6 @@ func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecor
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5256,7 +5234,6 @@ func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operation
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5478,7 +5455,6 @@ func (s *Core) GetUserRolesUsersUserIDRolesGet(ctx context.Context, request oper
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5699,7 +5675,6 @@ func (s *Core) AddRoleToUserUsersUserIDRolesRoleNamePost(ctx context.Context, re
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5920,7 +5895,6 @@ func (s *Core) RemoveRoleFromUserUsersUserIDRolesRoleNameDelete(ctx context.Cont
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6125,7 +6099,6 @@ func (s *Core) GetAccessPolicies(ctx context.Context, request operations.GetAcce
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6354,7 +6327,6 @@ func (s *Core) CreateAccessPolicy(ctx context.Context, request shared.AccessPoli
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6575,7 +6547,6 @@ func (s *Core) GetAccessPolicy(ctx context.Context, request operations.GetAccess
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6797,7 +6768,6 @@ func (s *Core) DeleteAccessPolicy(ctx context.Context, request operations.Delete
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -7006,7 +6976,6 @@ func (s *Core) UpdateAccessPolicy(ctx context.Context, request operations.Update
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {

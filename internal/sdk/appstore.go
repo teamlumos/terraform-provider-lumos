@@ -121,7 +121,6 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermi
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -346,7 +345,6 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -597,7 +595,6 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -822,7 +819,6 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1061,7 +1057,6 @@ func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermiss
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1284,7 +1279,6 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1490,7 +1484,6 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1718,7 +1711,6 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1939,7 +1931,6 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2171,7 +2162,6 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2392,7 +2382,6 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2594,7 +2583,6 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2823,7 +2811,6 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3051,7 +3038,6 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3276,7 +3262,6 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3497,7 +3482,6 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3723,7 +3707,6 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3949,7 +3932,6 @@ func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.C
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4154,7 +4136,6 @@ func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetA
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4382,7 +4363,6 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4607,7 +4587,6 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
-				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
