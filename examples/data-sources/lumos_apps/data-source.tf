@@ -1,5 +1,7 @@
 data "lumos_apps" "my_apps" {
-  exact_match = false
+  connection_source = "API"
+  disconnected      = false
+  exact_match       = false
   expand = [
     "..."
   ]

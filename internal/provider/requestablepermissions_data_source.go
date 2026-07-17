@@ -32,16 +32,16 @@ type RequestablePermissionsDataSource struct {
 
 // RequestablePermissionsDataSourceModel describes the data model.
 type RequestablePermissionsDataSourceModel struct {
-	AppID                   types.String                          `queryParam:"style=form,explode=true,name=app_id" tfsdk:"app_id"`
-	ExactMatch              types.Bool                            `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
-	InAppStore              types.Bool                            `queryParam:"style=form,explode=true,name=in_app_store" tfsdk:"in_app_store"`
-	IncludeInheritedConfigs types.Bool                            `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
-	Items                   []tfTypes.RequestablePermissionOutput `tfsdk:"items"`
-	Page                    types.Int64                           `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages                   types.Int64                           `tfsdk:"pages"`
-	SearchTerm              types.String                          `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
-	Size                    types.Int64                           `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total                   types.Int64                           `tfsdk:"total"`
+	AppID                   types.String                        `queryParam:"style=form,explode=true,name=app_id" tfsdk:"app_id"`
+	ExactMatch              types.Bool                          `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	InAppStore              types.Bool                          `queryParam:"style=form,explode=true,name=in_app_store" tfsdk:"in_app_store"`
+	IncludeInheritedConfigs types.Bool                          `queryParam:"style=form,explode=true,name=include_inherited_configs" tfsdk:"include_inherited_configs"`
+	Items                   []tfTypes.RequestablePermissionBase `tfsdk:"items"`
+	Page                    types.Int64                         `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
+	Pages                   types.Int64                         `tfsdk:"pages"`
+	SearchTerm              types.String                        `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Size                    types.Int64                         `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	Total                   types.Int64                         `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.

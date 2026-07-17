@@ -37,12 +37,14 @@ type AppStoreAppDataSourceModel struct {
 	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
+	Disconnected                     types.Bool                                    `tfsdk:"disconnected"`
 	Expand                           []types.String                                `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
+	RedirectURL                      types.String                                  `tfsdk:"redirect_url"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
 	RequestInstructions              types.String                                  `tfsdk:"request_instructions"`
 	Sources                          []types.String                                `tfsdk:"sources"`
@@ -138,6 +140,10 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 				Computed:    true,
 				Description: `The user-facing description of the app`,
 			},
+			"disconnected": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
+			},
 			"expand": schema.ListAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
@@ -200,6 +206,388 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 						Computed:    true,
 						Description: `Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.`,
 					},
+					"default_permission": schema.SingleNestedAttribute{
+						Computed: true,
+						Attributes: map[string]schema.Attribute{
+							"app_class_id": schema.StringAttribute{
+								Computed:    true,
+								Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website,  or other identifier.`,
+							},
+							"app_id": schema.StringAttribute{
+								Computed:    true,
+								Description: `The ID of the app associated with this requestable permission.`,
+							},
+							"app_instance_id": schema.StringAttribute{
+								Computed:    true,
+								Description: `The ID of the instance associated with this requestable permission. This may be an empty string.`,
+							},
+							"id": schema.StringAttribute{
+								Computed:    true,
+								Description: `The ID of this requestable permission.`,
+							},
+							"label": schema.StringAttribute{
+								Computed:    true,
+								Description: `The label of this requestable permission.`,
+							},
+							"request_config": schema.SingleNestedAttribute{
+								Computed: true,
+								Attributes: map[string]schema.Attribute{
+									"access_removal_inline_webhook": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"description": schema.StringAttribute{
+												Computed:    true,
+												Description: `The description of this inline webhook.`,
+											},
+											"hook_type": schema.StringAttribute{
+												Computed: true,
+											},
+											"id": schema.StringAttribute{
+												Computed:    true,
+												Description: `The ID of this inline webhook.`,
+											},
+											"name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The name of this inline webhook.`,
+											},
+										},
+										Description: `A deprovisioning webhook can be optionally associated with this config.`,
+									},
+									"allowed_groups": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"groups": schema.SetNestedAttribute{
+												Computed: true,
+												NestedObject: schema.NestedAttributeObject{
+													Attributes: map[string]schema.Attribute{
+														"app_id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of the app that sources this group.`,
+														},
+														"description": schema.StringAttribute{
+															Computed:    true,
+															Description: `The description of this group.`,
+														},
+														"group_lifecycle": schema.StringAttribute{
+															Computed:    true,
+															Description: `The lifecycle of this group.`,
+														},
+														"id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of this group.`,
+														},
+														"integration_specific_id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of this group, specific to the integration.`,
+														},
+														"name": schema.StringAttribute{
+															Computed:    true,
+															Description: `The name of this group.`,
+														},
+														"source_app_id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of the app that sources this group.`,
+														},
+													},
+												},
+												Description: `The groups allowed to request this permission.`,
+											},
+											"type": schema.StringAttribute{
+												Computed: true,
+											},
+										},
+										Description: `The allowed groups config associated with this config.`,
+									},
+									"allowed_groups_override": schema.BoolAttribute{
+										Computed:    true,
+										Description: `Indicates if allowed groups is overriden from the app-level settings.`,
+									},
+									"appstore_visibility": schema.StringAttribute{
+										Computed:    true,
+										Description: `The appstore visibility of this request config.`,
+									},
+									"request_approval_config": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"approvers": schema.SingleNestedAttribute{
+												Computed: true,
+												Attributes: map[string]schema.Attribute{
+													"groups": schema.SetNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"app_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of the app that sources this group.`,
+																},
+																"description": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The description of this group.`,
+																},
+																"group_lifecycle": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The lifecycle of this group.`,
+																},
+																"id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this group.`,
+																},
+																"integration_specific_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this group, specific to the integration.`,
+																},
+																"name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The name of this group.`,
+																},
+																"source_app_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of the app that sources this group.`,
+																},
+															},
+														},
+														Description: `Groups assigned as support request approvers.`,
+													},
+													"users": schema.SetNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"email": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The email of this user.`,
+																},
+																"family_name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The family name of this user.`,
+																},
+																"given_name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The given name of this user.`,
+																},
+																"id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this user.`,
+																},
+																"status": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The status of this user.`,
+																},
+															},
+														},
+														Description: `Users assigned as support request approvers.`,
+													},
+												},
+												Description: `AppStore App approvers assigned.`,
+											},
+											"approvers_stage_2": schema.SingleNestedAttribute{
+												Computed: true,
+												Attributes: map[string]schema.Attribute{
+													"groups": schema.SetNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"app_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of the app that sources this group.`,
+																},
+																"description": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The description of this group.`,
+																},
+																"group_lifecycle": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The lifecycle of this group.`,
+																},
+																"id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this group.`,
+																},
+																"integration_specific_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this group, specific to the integration.`,
+																},
+																"name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The name of this group.`,
+																},
+																"source_app_id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of the app that sources this group.`,
+																},
+															},
+														},
+														Description: `Groups assigned as support request approvers.`,
+													},
+													"users": schema.SetNestedAttribute{
+														Computed: true,
+														NestedObject: schema.NestedAttributeObject{
+															Attributes: map[string]schema.Attribute{
+																"email": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The email of this user.`,
+																},
+																"family_name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The family name of this user.`,
+																},
+																"given_name": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The given name of this user.`,
+																},
+																"id": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The ID of this user.`,
+																},
+																"status": schema.StringAttribute{
+																	Computed:    true,
+																	Description: `The status of this user.`,
+																},
+															},
+														},
+														Description: `Users assigned as support request approvers.`,
+													},
+												},
+												Description: `AppStore App stage 2 approvers assigned.`,
+											},
+											"custom_approval_message": schema.StringAttribute{
+												Computed:    true,
+												Description: `After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.`,
+											},
+											"custom_approval_message_override": schema.BoolAttribute{
+												Computed:    true,
+												Description: `Indicates if custom_approval_message is overridden.`,
+											},
+											"manager_approval": schema.StringAttribute{
+												Computed:    true,
+												Description: `Manager approval can be configured as necessary to continue`,
+											},
+											"request_approval_config_override": schema.BoolAttribute{
+												Computed:    true,
+												Description: `Indicates if approval flow is overridden.`,
+											},
+											"require_additional_approval": schema.BoolAttribute{
+												Computed:    true,
+												Description: `When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.`,
+											},
+											"response_describes_entire_approval_workflow": schema.BoolAttribute{
+												Computed:    true,
+												Description: `Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.`,
+											},
+										},
+										Description: `A request approval config can be optionally associated with this config`,
+									},
+									"request_fulfillment_config": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"manual_instructions": schema.StringAttribute{
+												Computed:    true,
+												Description: `The manual instructions that go along.`,
+											},
+											"manual_steps_needed": schema.BoolAttribute{
+												Computed:    true,
+												Description: `Whether manual steps are needed.`,
+											},
+											"provisioning_group": schema.SingleNestedAttribute{
+												Computed: true,
+												Attributes: map[string]schema.Attribute{
+													"app_id": schema.StringAttribute{
+														Computed:    true,
+														Description: `The ID of the app that sources this group.`,
+													},
+													"description": schema.StringAttribute{
+														Computed:    true,
+														Description: `The description of this group.`,
+													},
+													"group_lifecycle": schema.StringAttribute{
+														Computed:    true,
+														Description: `The lifecycle of this group.`,
+													},
+													"id": schema.StringAttribute{
+														Computed:    true,
+														Description: `The ID of this group.`,
+													},
+													"integration_specific_id": schema.StringAttribute{
+														Computed:    true,
+														Description: `The ID of this group, specific to the integration.`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `The name of this group.`,
+													},
+													"source_app_id": schema.StringAttribute{
+														Computed:    true,
+														Description: `The ID of the app that sources this group.`,
+													},
+												},
+												Description: `The provisioning group optionally assocated with this config.`,
+											},
+											"provisioning_webhook": schema.SingleNestedAttribute{
+												Computed: true,
+												Attributes: map[string]schema.Attribute{
+													"description": schema.StringAttribute{
+														Computed:    true,
+														Description: `The description of this inline webhook.`,
+													},
+													"hook_type": schema.StringAttribute{
+														Computed: true,
+													},
+													"id": schema.StringAttribute{
+														Computed:    true,
+														Description: `The ID of this inline webhook.`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `The name of this inline webhook.`,
+													},
+												},
+												Description: `The provisioning webhook optionally associated with this config.`,
+											},
+											"time_based_access": schema.ListAttribute{
+												Computed:    true,
+												ElementType: types.StringType,
+												Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.`,
+											},
+											"time_based_access_override": schema.BoolAttribute{
+												Computed:    true,
+												Description: `Indicates if time based access is overriden.`,
+											},
+										},
+										Description: `A request fulfillment config can be optionally associated with this config`,
+									},
+									"request_validation_inline_webhook": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"description": schema.StringAttribute{
+												Computed:    true,
+												Description: `The description of this inline webhook.`,
+											},
+											"hook_type": schema.StringAttribute{
+												Computed: true,
+											},
+											"id": schema.StringAttribute{
+												Computed:    true,
+												Description: `The ID of this inline webhook.`,
+											},
+											"name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The name of this inline webhook.`,
+											},
+										},
+										Description: `A request validation webhook can be optionally associated with this config.`,
+									},
+								},
+							},
+							"type": schema.StringAttribute{
+								Computed:    true,
+								Description: `The type of this requestable permission.`,
+							},
+						},
+						Description: `The default permission pre-selected when a user requests access to this app. Null if no default is configured.`,
+					},
+					"default_time_based_access_option": schema.StringAttribute{
+						Computed:    true,
+						Description: `The label of the default time-based access duration pre-selected when a user requests access. Must be one of the values in time_based_access. Null when there is no default.`,
+					},
 					"groups_provisioning": schema.StringAttribute{
 						Computed: true,
 					},
@@ -234,6 +622,10 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 						Description: `If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.`,
 					},
 				},
+			},
+			"redirect_url": schema.StringAttribute{
+				Computed:    true,
+				Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.`,
 			},
 			"request_flow": schema.SingleNestedAttribute{
 				Computed: true,

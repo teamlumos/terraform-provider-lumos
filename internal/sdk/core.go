@@ -121,6 +121,7 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -258,7 +259,9 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 }
 
 // CreateApp - Create App
-// Create a new app.
+// Create a new custom app, or connect an integration app.
+//
+// With a `name`/`category`/`description` body this creates a custom app. With an `app_class_id` body it connects the integration identified by `app_class_id` using the credentials in `auth` — integrations that validate in-band connect immediately and trigger an initial sync, while integrations that require browser consent are finished in the Lumos UI. Custom apps and integrations created here are both marked `connection_source=API`; list your API-managed apps with `GET /apps?connection_source=API&disconnected=false`.
 func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opts ...operations.Option) (*operations.CreateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -349,6 +352,7 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -451,6 +455,11 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 400:
+		fallthrough
+	case httpRes.StatusCode == 403:
+		fallthrough
+	case httpRes.StatusCode == 409:
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -472,6 +481,9 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 501:
+		fallthrough
+	case httpRes.StatusCode == 502:
 	default:
 		rawBody, err := utils.ConsumeRawBody(httpRes)
 		if err != nil {
@@ -569,6 +581,7 @@ func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) 
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -772,6 +785,7 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -909,7 +923,7 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 }
 
 // UpdateApp - Update App
-// Update an app.
+// Update domain-specific app metadata overrides. This updates the app instance in your domain, not the shared Lumos app catalog.
 func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppRequest, opts ...operations.Option) (*operations.UpdateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -943,7 +957,7 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputCreate", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputUpdate", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -1000,6 +1014,7 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1135,6 +1150,475 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 
 }
 
+// ReconnectApp - Reconnect App
+// Update an app in place: apply domain-specific metadata overrides (the same fields as `PATCH /apps/{app_id}`) and/or rotate an integration's credentials. Providing `auth`/`settings`/`version` (with the matching `app_class_id`) reconnects the app: credentials are always overwritten and re-validated, and a sync is triggered — like connect, the app either connects in-band or awaits browser consent in the Lumos UI, and while a sync is in flight the request is throttled with `429` and a `Retry-After` header. Metadata-only bodies (custom apps, or integrations without credential changes) never touch credentials.
+func (s *Core) ReconnectApp(ctx context.Context, request operations.ReconnectAppRequest, opts ...operations.Option) (*operations.ReconnectAppResponse, error) {
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	var baseURL string
+	if o.ServerURL == nil {
+		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	} else {
+		baseURL = *o.ServerURL
+	}
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/apps/{app_id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	hookCtx := hooks.HookContext{
+		SDK:              s.rootSDK,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "reconnectApp",
+		OAuth2Scopes:     nil,
+		SecuritySource:   s.sdkConfiguration.Security,
+	}
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppInputPut", "json", `request:"mediaType=application/json"`)
+	if err != nil {
+		return nil, err
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "PUT", opURL, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+	if reqContentType != "" {
+		req.Header.Set("Content-Type", reqContentType)
+	}
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	for k, v := range o.SetHeaders {
+		req.Header.Set(k, v)
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"429",
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
+				copyBody, err := req.GetBody()
+
+				if err != nil {
+					return nil, err
+				}
+
+				req.Body = copyBody
+			}
+
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.ReconnectAppResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.App
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.App = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		fallthrough
+	case httpRes.StatusCode == 403:
+		fallthrough
+	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 429:
+	case httpRes.StatusCode == 501:
+		fallthrough
+	case httpRes.StatusCode == 502:
+	default:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// DisconnectApp - Disconnect App
+// Disconnect an API-managed app. For integrations this removes the stored credentials and returns the app to a connectable state; for custom apps it removes the app. In both cases, when no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect an integration later with `PUT /apps/{app_id}`. Returns 404 if `app_id` is unknown in the caller's organization.
+func (s *Core) DisconnectApp(ctx context.Context, request operations.DisconnectAppRequest, opts ...operations.Option) (*operations.DisconnectAppResponse, error) {
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	var baseURL string
+	if o.ServerURL == nil {
+		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	} else {
+		baseURL = *o.ServerURL
+	}
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/apps/{app_id}", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	hookCtx := hooks.HookContext{
+		SDK:              s.rootSDK,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "disconnectApp",
+		OAuth2Scopes:     nil,
+		SecuritySource:   s.sdkConfiguration.Security,
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "DELETE", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	for k, v := range o.SetHeaders {
+		req.Header.Set(k, v)
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"429",
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
+				copyBody, err := req.GetBody()
+
+				if err != nil {
+					return nil, err
+				}
+
+				req.Body = copyBody
+			}
+
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.DisconnectAppResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.DisconnectIntegrationOutput
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.DisconnectIntegrationOutput = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		fallthrough
+	case httpRes.StatusCode == 403:
+		fallthrough
+	case httpRes.StatusCode == 404:
+		fallthrough
+	case httpRes.StatusCode == 409:
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 501:
+	default:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
 // GetAppSettings - Get Appstore App Settings
 // Get App settings.
 func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSettingsRequest, opts ...operations.Option) (*operations.GetAppSettingsResponse, error) {
@@ -1220,6 +1704,7 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1448,6 +1933,7 @@ func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateA
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1668,6 +2154,7 @@ func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*ope
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1871,6 +2358,7 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2096,6 +2584,7 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2321,6 +2810,7 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2541,6 +3031,7 @@ func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...o
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2744,6 +3235,7 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -2968,6 +3460,7 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3188,6 +3681,7 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3413,6 +3907,7 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3634,6 +4129,7 @@ func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUplo
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -3858,6 +4354,7 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4082,6 +4579,7 @@ func (s *Core) GetIdentityEvents(ctx context.Context, request operations.GetIden
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4309,6 +4807,7 @@ func (s *Core) PostAccounts(ctx context.Context, request operations.PostAccounts
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4536,6 +5035,7 @@ func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecor
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4756,6 +5256,7 @@ func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operation
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -4977,6 +5478,7 @@ func (s *Core) GetUserRolesUsersUserIDRolesGet(ctx context.Context, request oper
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5197,6 +5699,7 @@ func (s *Core) AddRoleToUserUsersUserIDRolesRoleNamePost(ctx context.Context, re
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5417,6 +5920,7 @@ func (s *Core) RemoveRoleFromUserUsersUserIDRolesRoleNameDelete(ctx context.Cont
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5621,6 +6125,7 @@ func (s *Core) GetAccessPolicies(ctx context.Context, request operations.GetAcce
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -5849,6 +6354,7 @@ func (s *Core) CreateAccessPolicy(ctx context.Context, request shared.AccessPoli
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6069,6 +6575,7 @@ func (s *Core) GetAccessPolicy(ctx context.Context, request operations.GetAccess
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6290,6 +6797,7 @@ func (s *Core) DeleteAccessPolicy(ctx context.Context, request operations.Delete
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -6498,6 +7006,7 @@ func (s *Core) UpdateAccessPolicy(ctx context.Context, request operations.Update
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {

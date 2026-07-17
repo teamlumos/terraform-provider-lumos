@@ -116,6 +116,7 @@ func (s *Meta) LumosArt(ctx context.Context, opts ...operations.Option) (*operat
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -311,6 +312,7 @@ func (s *Meta) LumosLivenessCheck(ctx context.Context, opts ...operations.Option
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {

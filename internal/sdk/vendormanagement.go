@@ -121,6 +121,7 @@ func (s *VendorManagement) ListVendorAgreements(ctx context.Context, request ope
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -348,6 +349,7 @@ func (s *VendorManagement) UpdateVendorAgreementCustomAttribute(ctx context.Cont
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -575,6 +577,7 @@ func (s *VendorManagement) CreateFoundDocumentJSON(ctx context.Context, request 
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -802,6 +805,7 @@ func (s *VendorManagement) CreateFoundDocumentMultipart(ctx context.Context, req
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {
@@ -1029,6 +1033,7 @@ func (s *VendorManagement) CreateOrder(ctx context.Context, request shared.Order
 		httpRes, err = utils.Retry(ctx, utils.Retries{
 			Config: retryConfig,
 			StatusCodes: []string{
+				"429",
 				"5XX",
 			},
 		}, func() (*http.Response, error) {

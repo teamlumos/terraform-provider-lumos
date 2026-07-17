@@ -9,13 +9,17 @@ import (
 )
 
 type Account struct {
+	// The ID of this account.
+	ID string `json:"id"`
 	// The ID of the app that owns this account.
-	AppID string `json:"app_id"`
+	AppID       string      `json:"app_id"`
+	AccountType AccountType `json:"account_type"`
+	// The status of the account.
+	Status *AccountLifecycleStatus `json:"status,omitempty"`
 	// The app this account is for
 	App *App `json:"app,omitempty"`
 	// The stable identifier of this account from the associated service.
-	UniqueIdentifier string      `json:"unique_identifier"`
-	AccountType      AccountType `json:"account_type"`
+	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`
 	// The ID of the user associated with this account.
@@ -28,8 +32,6 @@ type Account struct {
 	LastActivity *time.Time `json:"last_activity,omitempty"`
 	// The discovery methods through which Lumos identified this account
 	Sources []DiscoverySource `json:"sources,omitempty"`
-	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
 }
 
 func (a Account) MarshalJSON() ([]byte, error) {
@@ -43,11 +45,32 @@ func (a *Account) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (a *Account) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
+}
+
 func (a *Account) GetAppID() string {
 	if a == nil {
 		return ""
 	}
 	return a.AppID
+}
+
+func (a *Account) GetAccountType() AccountType {
+	if a == nil {
+		return AccountType("")
+	}
+	return a.AccountType
+}
+
+func (a *Account) GetStatus() *AccountLifecycleStatus {
+	if a == nil {
+		return nil
+	}
+	return a.Status
 }
 
 func (a *Account) GetApp() *App {
@@ -62,13 +85,6 @@ func (a *Account) GetUniqueIdentifier() string {
 		return ""
 	}
 	return a.UniqueIdentifier
-}
-
-func (a *Account) GetAccountType() AccountType {
-	if a == nil {
-		return AccountType("")
-	}
-	return a.AccountType
 }
 
 func (a *Account) GetEmail() *string {
@@ -111,11 +127,4 @@ func (a *Account) GetSources() []DiscoverySource {
 		return nil
 	}
 	return a.Sources
-}
-
-func (a *Account) GetStatus() *AccountLifecycleStatus {
-	if a == nil {
-		return nil
-	}
-	return a.Status
 }

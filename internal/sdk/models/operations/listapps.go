@@ -14,6 +14,10 @@ type ListAppsRequest struct {
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Filter to integration apps connected via this source (`API` or `UI`).
+	ConnectionSource *shared.ConnectionSource `queryParam:"style=form,explode=true,name=connection_source"`
+	// Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps — combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).
+	Disconnected *bool `queryParam:"style=form,explode=true,name=disconnected"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
@@ -45,6 +49,20 @@ func (l *ListAppsRequest) GetExactMatch() *bool {
 		return nil
 	}
 	return l.ExactMatch
+}
+
+func (l *ListAppsRequest) GetConnectionSource() *shared.ConnectionSource {
+	if l == nil {
+		return nil
+	}
+	return l.ConnectionSource
+}
+
+func (l *ListAppsRequest) GetDisconnected() *bool {
+	if l == nil {
+		return nil
+	}
+	return l.Disconnected
 }
 
 func (l *ListAppsRequest) GetExpand() []string {
