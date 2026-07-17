@@ -61,6 +61,7 @@ func (r *AppDataSourceModel) RefreshFromSharedAppWithCustomAttributes(ctx contex
 			}
 		}
 		r.Description = types.StringPointerValue(resp.Description)
+		r.Disconnected = types.BoolValue(resp.Disconnected)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)

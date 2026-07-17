@@ -320,7 +320,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.10.2"
+      version = "0.10.4"
     }
   }
 }
@@ -377,8 +377,6 @@ Available configuration:
 
 <!-- Start Testing the provider locally [usage] -->
 ## Testing the provider locally
-
-> **Note:** Running `make provider` requires Speakeasy CLI access. Ask Graham, Pat, Toshitha, or Yoshi for access.
 
 #### Local Provider
 
