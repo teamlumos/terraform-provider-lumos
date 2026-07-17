@@ -6,11 +6,13 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -37,18 +39,22 @@ type AppResource struct {
 type AppResourceModel struct {
 	AllowMultiplePermissionSelection types.Bool                         `tfsdk:"allow_multiple_permission_selection"`
 	AppClassID                       types.String                       `tfsdk:"app_class_id"`
+	Auth                             jsontypes.Normalized               `tfsdk:"auth"`
 	Category                         types.String                       `tfsdk:"category"`
 	CustomAttributes                 map[string]tfTypes.CustomAttribute `tfsdk:"custom_attributes"`
 	Description                      types.String                       `tfsdk:"description"`
+	Disconnected                     types.Bool                         `tfsdk:"disconnected"`
 	ID                               types.String                       `tfsdk:"id"`
 	InstanceID                       types.String                       `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                   `tfsdk:"links"`
 	LogoURL                          types.String                       `tfsdk:"logo_url"`
 	Name                             types.String                       `tfsdk:"name"`
 	RequestInstructions              types.String                       `tfsdk:"request_instructions"`
+	Settings                         jsontypes.Normalized               `tfsdk:"settings"`
 	Sources                          []types.String                     `tfsdk:"sources"`
 	Status                           types.String                       `tfsdk:"status"`
 	UserFriendlyLabel                types.String                       `tfsdk:"user_friendly_label"`
+	Version                          types.String                       `tfsdk:"version"`
 	WebsiteURL                       types.String                       `tfsdk:"website_url"`
 }
 
@@ -65,12 +71,24 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.`,
 			},
 			"app_class_id": schema.StringAttribute{
-				Computed:    true,
-				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Canonical identifier of an integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Providing it switches this request from creating a custom app to connecting that integration using ` + "`" + `auth` + "`" + `/` + "`" + `settings` + "`" + `. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Requires replacement if changed.`,
+			},
+			"auth": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
+				Optional:    true,
+				Sensitive:   true,
+				Description: `Credentials for the integration being connected, as a JSON object — **all secrets go here**. The accepted keys depend on the integration and are validated server-side. Some integrations connect in-band from these credentials (e.g. an ` + "`" + `api_key` + "`" + `, or an OAuth ` + "`" + `client_id` + "`" + `/` + "`" + `client_secret` + "`" + `); others require browser consent and are finished in the Lumos UI — for those, send ` + "`" + `{}` + "`" + `. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Only used with ` + "`" + `app_class_id` + "`" + `. Parsed as JSON.`,
 			},
 			"category": schema.StringAttribute{
-				Required:    true,
-				Description: `The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
+				Computed:    true,
+				Optional:    true,
+				Description: `The category of the app you're creating; required when creating a custom app. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
 			},
 			"custom_attributes": schema.MapNestedAttribute{
 				Computed: true,
@@ -126,11 +144,16 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `Custom attributes configured on the app`,
 			},
 			"description": schema.StringAttribute{
-				Required:    true,
-				Description: `The description of the app you're creating.`,
+				Computed:    true,
+				Optional:    true,
+				Description: `The description of the app you're creating. Required when creating a custom app.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(8192),
 				},
+			},
+			"disconnected": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -162,13 +185,18 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `The URL of the logo of the app you're creating.`,
 			},
 			"name": schema.StringAttribute{
-				Required:    true,
-				Description: `The name of the app you're creating.`,
+				Optional:    true,
+				Description: `The name of the app you're creating. Required when creating a custom app.`,
 			},
 			"request_instructions": schema.StringAttribute{
 				Computed:    true,
 				Optional:    true,
 				Description: `The request instructions.`,
+			},
+			"settings": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
+				Optional:    true,
+				Description: `Non-secret configuration for the integration being connected, as a JSON object — e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only used with ` + "`" + `app_class_id` + "`" + `. Parsed as JSON.`,
 			},
 			"sources": schema.ListAttribute{
 				Computed:    true,
@@ -181,6 +209,10 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-friendly label of this app.`,
+			},
+			"version": schema.StringAttribute{
+				Optional:    true,
+				Description: `Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (` + "`" + `null` + "`" + `) unless directed otherwise. Only used with ` + "`" + `app_class_id` + "`" + `.`,
 			},
 			"website_url": schema.StringAttribute{
 				Computed:    true,
@@ -245,6 +277,13 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 	if res == nil {
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	if res.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
 		return
 	}
 	if res.StatusCode != 200 {
@@ -380,13 +419,13 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	request, requestDiags := data.ToOperationsUpdateAppRequest(ctx)
+	request, requestDiags := data.ToOperationsReconnectAppRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Core.UpdateApp(ctx, *request)
+	res, err := r.client.Core.ReconnectApp(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -477,7 +516,32 @@ func (r *AppResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 		return
 	}
 
-	// Not Implemented; entity does not have a configured DELETE operation
+	request, requestDiags := data.ToOperationsDisconnectAppRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.Core.DisconnectApp(ctx, *request)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res != nil && res.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
+		}
+		return
+	}
+	if res == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
+		return
+	}
+
 }
 
 func (r *AppResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

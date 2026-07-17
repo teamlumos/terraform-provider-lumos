@@ -3,38 +3,52 @@
 
 package shared
 
+// AppInputCreate - Body of `POST /apps`: create a custom app, or connect an integration.
+//
+// One flat model serves both operations (a request-body union would generate
+// poorly into SDK/Terraform clients). Providing `app_class_id` switches the
+// request from "create a custom app" to "connect an integration"; the model
+// validator enforces the fields each mode requires.
 type AppInputCreate struct {
-	// The name of the app you're creating.
-	Name string `json:"name"`
-	// The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
-	Category string `json:"category"`
-	// The description of the app you're creating.
-	Description string `json:"description"`
+	// The name of the app you're creating. Required when creating a custom app.
+	Name *string `json:"name,omitempty"`
+	// The category of the app you're creating; required when creating a custom app. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+	Category *string `json:"category,omitempty"`
+	// The description of the app you're creating. Required when creating a custom app.
+	Description *string `json:"description,omitempty"`
 	// The URL of the logo of the app you're creating.
 	LogoURL *string `json:"logo_url,omitempty"`
 	// The URL of the website of the app you're creating.
 	WebsiteURL *string `json:"website_url,omitempty"`
 	// The request instructions.
 	RequestInstructions *string `json:"request_instructions,omitempty"`
+	// Canonical identifier of an integration to connect, e.g. `okta.com`. Providing it switches this request from creating a custom app to connecting that integration using `auth`/`settings`. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400.
+	AppClassID *string `json:"app_class_id,omitempty"`
+	// Credentials for the integration being connected, as a JSON object — **all secrets go here**. The accepted keys depend on the integration and are validated server-side. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`); others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Only used with `app_class_id`.
+	Auth any `json:"auth,omitempty"`
+	// Non-secret configuration for the integration being connected, as a JSON object — e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only used with `app_class_id`.
+	Settings any `json:"settings,omitempty"`
+	// Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only used with `app_class_id`.
+	Version *string `json:"version,omitempty"`
 }
 
-func (a *AppInputCreate) GetName() string {
+func (a *AppInputCreate) GetName() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.Name
 }
 
-func (a *AppInputCreate) GetCategory() string {
+func (a *AppInputCreate) GetCategory() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.Category
 }
 
-func (a *AppInputCreate) GetDescription() string {
+func (a *AppInputCreate) GetDescription() *string {
 	if a == nil {
-		return ""
+		return nil
 	}
 	return a.Description
 }
@@ -58,4 +72,32 @@ func (a *AppInputCreate) GetRequestInstructions() *string {
 		return nil
 	}
 	return a.RequestInstructions
+}
+
+func (a *AppInputCreate) GetAppClassID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AppClassID
+}
+
+func (a *AppInputCreate) GetAuth() any {
+	if a == nil {
+		return nil
+	}
+	return a.Auth
+}
+
+func (a *AppInputCreate) GetSettings() any {
+	if a == nil {
+		return nil
+	}
+	return a.Settings
+}
+
+func (a *AppInputCreate) GetVersion() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Version
 }

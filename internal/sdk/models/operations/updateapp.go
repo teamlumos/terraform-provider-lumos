@@ -9,22 +9,22 @@ import (
 )
 
 type UpdateAppRequest struct {
-	ID             string                `pathParam:"style=simple,explode=false,name=app_id"`
-	AppInputCreate shared.AppInputCreate `request:"mediaType=application/json"`
+	AppID          string                `pathParam:"style=simple,explode=false,name=app_id"`
+	AppInputUpdate shared.AppInputUpdate `request:"mediaType=application/json"`
 }
 
-func (u *UpdateAppRequest) GetID() string {
+func (u *UpdateAppRequest) GetAppID() string {
 	if u == nil {
 		return ""
 	}
-	return u.ID
+	return u.AppID
 }
 
-func (u *UpdateAppRequest) GetAppInputCreate() shared.AppInputCreate {
+func (u *UpdateAppRequest) GetAppInputUpdate() shared.AppInputUpdate {
 	if u == nil {
-		return shared.AppInputCreate{}
+		return shared.AppInputUpdate{}
 	}
-	return u.AppInputCreate
+	return u.AppInputUpdate
 }
 
 type UpdateAppResponse struct {

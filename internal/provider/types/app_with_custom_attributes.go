@@ -13,6 +13,7 @@ type AppWithCustomAttributes struct {
 	Category                         types.String               `tfsdk:"category"`
 	CustomAttributes                 map[string]CustomAttribute `tfsdk:"custom_attributes"`
 	Description                      types.String               `tfsdk:"description"`
+	Disconnected                     types.Bool                 `tfsdk:"disconnected"`
 	ID                               types.String               `tfsdk:"id"`
 	InstanceID                       types.String               `tfsdk:"instance_id"`
 	Links                            AppLinks                   `tfsdk:"links"`

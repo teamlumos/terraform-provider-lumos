@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -32,14 +33,16 @@ type AppsDataSource struct {
 
 // AppsDataSourceModel describes the data model.
 type AppsDataSourceModel struct {
-	ExactMatch types.Bool                        `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
-	Expand     []types.String                    `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
-	Items      []tfTypes.AppWithCustomAttributes `tfsdk:"items"`
-	NameSearch types.String                      `queryParam:"style=form,explode=true,name=name_search" tfsdk:"name_search"`
-	Page       types.Int64                       `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages      types.Int64                       `tfsdk:"pages"`
-	Size       types.Int64                       `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total      types.Int64                       `tfsdk:"total"`
+	ConnectionSource types.String                      `queryParam:"style=form,explode=true,name=connection_source" tfsdk:"connection_source"`
+	Disconnected     types.Bool                        `queryParam:"style=form,explode=true,name=disconnected" tfsdk:"disconnected"`
+	ExactMatch       types.Bool                        `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
+	Expand           []types.String                    `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	Items            []tfTypes.AppWithCustomAttributes `tfsdk:"items"`
+	NameSearch       types.String                      `queryParam:"style=form,explode=true,name=name_search" tfsdk:"name_search"`
+	Page             types.Int64                       `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
+	Pages            types.Int64                       `tfsdk:"pages"`
+	Size             types.Int64                       `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
+	Total            types.Int64                       `tfsdk:"total"`
 }
 
 // Metadata returns the data source type name.
@@ -53,6 +56,20 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 		MarkdownDescription: "Apps DataSource",
 
 		Attributes: map[string]schema.Attribute{
+			"connection_source": schema.StringAttribute{
+				Optional:    true,
+				Description: `Filter to integration apps connected via this source (` + "`" + `API` + "`" + ` or ` + "`" + `UI` + "`" + `). must be one of ["API", "UI"]`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"API",
+						"UI",
+					),
+				},
+			},
+			"disconnected": schema.BoolAttribute{
+				Optional:    true,
+				Description: `Filter on whether the app has been disconnected (soft-deleted): ` + "`" + `false` + "`" + ` excludes disconnected apps — combine with ` + "`" + `connection_source=API` + "`" + ` to reconcile the integrations you manage via the API (e.g. from Terraform); ` + "`" + `true` + "`" + ` returns only disconnected apps whose record remains. Omit to list all apps (default).`,
+			},
 			"exact_match": schema.BoolAttribute{
 				Optional:    true,
 				Description: `Search filter should be an exact match.`,
@@ -134,6 +151,10 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"description": schema.StringAttribute{
 							Computed:    true,
 							Description: `The user-facing description of the app`,
+						},
+						"disconnected": schema.BoolAttribute{
+							Computed:    true,
+							Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,

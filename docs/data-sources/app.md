@@ -39,6 +39,7 @@ data "lumos_app" "my_app" {
 - `category` (String) The category of the app, as shown in the AppStore
 - `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--custom_attributes))
 - `description` (String) The user-facing description of the app
+- `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `links` (Attributes) (see [below for nested schema](#nestedatt--links))
 - `logo_url` (String) The URL of the logo of this app.
