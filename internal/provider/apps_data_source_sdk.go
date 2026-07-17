@@ -107,9 +107,9 @@ func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (
 	} else {
 		exactMatch = nil
 	}
-	connectionSource := new(shared.ConnectionSource)
+	connectionSource := new(operations.ConnectionSource)
 	if !r.ConnectionSource.IsUnknown() && !r.ConnectionSource.IsNull() {
-		*connectionSource = shared.ConnectionSource(r.ConnectionSource.ValueString())
+		*connectionSource = operations.ConnectionSource(r.ConnectionSource.ValueString())
 	} else {
 		connectionSource = nil
 	}
