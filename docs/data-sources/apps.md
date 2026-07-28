@@ -14,7 +14,9 @@ Apps DataSource
 
 ```terraform
 data "lumos_apps" "my_apps" {
-  exact_match = false
+  connection_source = "API"
+  disconnected      = false
+  exact_match       = false
   expand = [
     "..."
   ]
@@ -29,6 +31,8 @@ data "lumos_apps" "my_apps" {
 
 ### Optional
 
+- `connection_source` (String) Filter to integration apps connected via this source (`API` or `UI`). must be one of ["API", "UI"]
+- `disconnected` (Boolean) Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps — combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).
 - `exact_match` (Boolean) Search filter should be an exact match.
 - `expand` (List of String) Fields to expand. Supported fields: custom_attributes.
 - `name_search` (String) Search against name, app instance identifier, and app class ID.
@@ -51,6 +55,7 @@ Read-Only:
 - `category` (String) The category of the app, as shown in the AppStore
 - `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--items--custom_attributes))
 - `description` (String) The user-facing description of the app
+- `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `links` (Attributes) (see [below for nested schema](#nestedatt--items--links))

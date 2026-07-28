@@ -4,16 +4,49 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
+
+// ConnectionSource - Filter to integration apps connected via this source (`API` or `UI`).
+type ConnectionSource string
+
+const (
+	ConnectionSourceAPI ConnectionSource = "API"
+	ConnectionSourceUI  ConnectionSource = "UI"
+)
+
+func (e ConnectionSource) ToPointer() *ConnectionSource {
+	return &e
+}
+func (e *ConnectionSource) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "API":
+		fallthrough
+	case "UI":
+		*e = ConnectionSource(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ConnectionSource: %v", v)
+	}
+}
 
 type ListAppsRequest struct {
 	// Search against name, app instance identifier, and app class ID.
 	NameSearch *string `queryParam:"style=form,explode=true,name=name_search"`
 	// Search filter should be an exact match.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
+	// Filter to integration apps connected via this source (`API` or `UI`).
+	ConnectionSource *ConnectionSource `default:"API" queryParam:"style=form,explode=true,name=connection_source"`
+	// Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps — combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).
+	Disconnected *bool `default:"false" queryParam:"style=form,explode=true,name=disconnected"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Page number
@@ -45,6 +78,20 @@ func (l *ListAppsRequest) GetExactMatch() *bool {
 		return nil
 	}
 	return l.ExactMatch
+}
+
+func (l *ListAppsRequest) GetConnectionSource() *ConnectionSource {
+	if l == nil {
+		return nil
+	}
+	return l.ConnectionSource
+}
+
+func (l *ListAppsRequest) GetDisconnected() *bool {
+	if l == nil {
+		return nil
+	}
+	return l.Disconnected
 }
 
 func (l *ListAppsRequest) GetExpand() []string {

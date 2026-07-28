@@ -5,6 +5,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/provider/typeconvert"
@@ -21,6 +22,7 @@ func (r *AppResourceModel) RefreshFromSharedApp(ctx context.Context, resp *share
 		r.AppClassID = types.StringValue(resp.AppClassID)
 		r.Category = types.StringPointerValue(resp.Category)
 		r.Description = types.StringPointerValue(resp.Description)
+		r.Disconnected = types.BoolValue(resp.Disconnected)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
@@ -87,6 +89,7 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 			}
 		}
 		r.Description = types.StringPointerValue(resp.Description)
+		r.Disconnected = types.BoolValue(resp.Disconnected)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
@@ -105,6 +108,19 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 	return diags
 }
 
+func (r *AppResourceModel) ToOperationsDisconnectAppRequest(ctx context.Context) (*operations.DisconnectAppRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.DisconnectAppRequest{
+		ID: id,
+	}
+
+	return &out, diags
+}
+
 func (r *AppResourceModel) ToOperationsGetAppRequest(ctx context.Context) (*operations.GetAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -118,22 +134,22 @@ func (r *AppResourceModel) ToOperationsGetAppRequest(ctx context.Context) (*oper
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToOperationsUpdateAppRequest(ctx context.Context) (*operations.UpdateAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsReconnectAppRequest(ctx context.Context) (*operations.ReconnectAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	appInputCreate, appInputCreateDiags := r.ToSharedAppInputCreate(ctx)
-	diags.Append(appInputCreateDiags...)
+	appInputPut, appInputPutDiags := r.ToSharedAppInputPut(ctx)
+	diags.Append(appInputPutDiags...)
 
 	if diags.HasError() {
 		return nil, diags
 	}
 
-	out := operations.UpdateAppRequest{
-		ID:             id,
-		AppInputCreate: *appInputCreate,
+	out := operations.ReconnectAppRequest{
+		ID:          id,
+		AppInputPut: *appInputPut,
 	}
 
 	return &out, diags
@@ -142,15 +158,24 @@ func (r *AppResourceModel) ToOperationsUpdateAppRequest(ctx context.Context) (*o
 func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.AppInputCreate, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var name string
-	name = r.Name.ValueString()
-
-	var category string
-	category = r.Category.ValueString()
-
-	var description string
-	description = r.Description.ValueString()
-
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
+	} else {
+		name = nil
+	}
+	category := new(string)
+	if !r.Category.IsUnknown() && !r.Category.IsNull() {
+		*category = r.Category.ValueString()
+	} else {
+		category = nil
+	}
+	description := new(string)
+	if !r.Description.IsUnknown() && !r.Description.IsNull() {
+		*description = r.Description.ValueString()
+	} else {
+		description = nil
+	}
 	logoURL := new(string)
 	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
 		*logoURL = r.LogoURL.ValueString()
@@ -169,6 +194,26 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 	} else {
 		requestInstructions = nil
 	}
+	appClassID := new(string)
+	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
+		*appClassID = r.AppClassID.ValueString()
+	} else {
+		appClassID = nil
+	}
+	var auth interface{}
+	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
+		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
+	}
+	var settings interface{}
+	if !r.Settings.IsUnknown() && !r.Settings.IsNull() {
+		_ = json.Unmarshal([]byte(r.Settings.ValueString()), &settings)
+	}
+	version := new(string)
+	if !r.Version.IsUnknown() && !r.Version.IsNull() {
+		*version = r.Version.ValueString()
+	} else {
+		version = nil
+	}
 	out := shared.AppInputCreate{
 		Name:                name,
 		Category:            category,
@@ -176,6 +221,85 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 		LogoURL:             logoURL,
 		WebsiteURL:          websiteURL,
 		RequestInstructions: requestInstructions,
+		AppClassID:          appClassID,
+		Auth:                auth,
+		Settings:            settings,
+		Version:             version,
+	}
+
+	return &out, diags
+}
+
+func (r *AppResourceModel) ToSharedAppInputPut(ctx context.Context) (*shared.AppInputPut, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
+	} else {
+		name = nil
+	}
+	category := new(string)
+	if !r.Category.IsUnknown() && !r.Category.IsNull() {
+		*category = r.Category.ValueString()
+	} else {
+		category = nil
+	}
+	description := new(string)
+	if !r.Description.IsUnknown() && !r.Description.IsNull() {
+		*description = r.Description.ValueString()
+	} else {
+		description = nil
+	}
+	logoURL := new(string)
+	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
+		*logoURL = r.LogoURL.ValueString()
+	} else {
+		logoURL = nil
+	}
+	websiteURL := new(string)
+	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
+		*websiteURL = r.WebsiteURL.ValueString()
+	} else {
+		websiteURL = nil
+	}
+	requestInstructions := new(string)
+	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
+		*requestInstructions = r.RequestInstructions.ValueString()
+	} else {
+		requestInstructions = nil
+	}
+	appClassID := new(string)
+	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
+		*appClassID = r.AppClassID.ValueString()
+	} else {
+		appClassID = nil
+	}
+	var auth interface{}
+	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
+		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
+	}
+	var settings interface{}
+	if !r.Settings.IsUnknown() && !r.Settings.IsNull() {
+		_ = json.Unmarshal([]byte(r.Settings.ValueString()), &settings)
+	}
+	version := new(string)
+	if !r.Version.IsUnknown() && !r.Version.IsNull() {
+		*version = r.Version.ValueString()
+	} else {
+		version = nil
+	}
+	out := shared.AppInputPut{
+		Name:                name,
+		Category:            category,
+		Description:         description,
+		LogoURL:             logoURL,
+		WebsiteURL:          websiteURL,
+		RequestInstructions: requestInstructions,
+		AppClassID:          appClassID,
+		Auth:                auth,
+		Settings:            settings,
+		Version:             version,
 	}
 
 	return &out, diags

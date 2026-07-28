@@ -35,6 +35,7 @@ type AppDataSourceModel struct {
 	Category                         types.String                       `tfsdk:"category"`
 	CustomAttributes                 map[string]tfTypes.CustomAttribute `tfsdk:"custom_attributes"`
 	Description                      types.String                       `tfsdk:"description"`
+	Disconnected                     types.Bool                         `tfsdk:"disconnected"`
 	Expand                           []types.String                     `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	ID                               types.String                       `tfsdk:"id"`
 	InstanceID                       types.String                       `tfsdk:"instance_id"`
@@ -126,6 +127,10 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			"description": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-facing description of the app`,
+			},
+			"disconnected": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
 			},
 			"expand": schema.ListAttribute{
 				Optional:    true,

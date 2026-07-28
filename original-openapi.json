@@ -56,6 +56,42 @@
             "description": "Search filter should be an exact match."
           },
           {
+            "name": "connection_source",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ConnectionSource"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to integration apps connected via this source (`API` or `UI`).",
+              "title": "Connection Source"
+            },
+            "description": "Filter to integration apps connected via this source (`API` or `UI`)."
+          },
+          {
+            "name": "disconnected",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps \u2014 combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).",
+              "title": "Disconnected"
+            },
+            "description": "Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps \u2014 combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default)."
+          },
+          {
             "name": "expand",
             "in": "query",
             "required": false,
@@ -132,7 +168,7 @@
           "Core"
         ],
         "summary": "Create App",
-        "description": "Create a new app.",
+        "description": "Create a new custom app, or connect an integration app.\n\nWith a `name`/`category`/`description` body this creates a custom app. With an `app_class_id` body it connects the integration identified by `app_class_id` using the credentials in `auth` \u2014 integrations that validate in-band connect immediately and trigger an initial sync, while integrations that require browser consent are finished in the Lumos UI. Custom apps and integrations created here are both marked `connection_source=API`; list your API-managed apps with `GET /apps?connection_source=API&disconnected=false`.",
         "operationId": "createApp",
         "security": [
           {
@@ -159,6 +195,21 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+          },
+          "501": {
+            "description": "Not implemented \u2014 this app does not support the requested operation."
+          },
+          "409": {
+            "description": "Conflict \u2014 an instance for this app already exists in the domain."
+          },
+          "502": {
+            "description": "Bad gateway \u2014 the third-party service rejected the credentials, or the post-connect sync failed."
           },
           "422": {
             "description": "Validation Error",
@@ -277,7 +328,7 @@
           "Core"
         ],
         "summary": "Update App",
-        "description": "Update an app.",
+        "description": "Update domain-specific app metadata overrides. This updates the app instance in your domain, not the shared Lumos app catalog.",
         "operationId": "updateApp",
         "security": [
           {
@@ -300,7 +351,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AppInputCreate"
+                "$ref": "#/components/schemas/AppInputUpdate"
               }
             }
           }
@@ -315,6 +366,144 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Reconnect App",
+        "description": "Update an app in place: apply domain-specific metadata overrides (the same fields as `PATCH /apps/{app_id}`) and/or rotate an integration's credentials. Providing `auth`/`settings`/`version` (with the matching `app_class_id`) reconnects the app: credentials are always overwritten and re-validated, and a sync is triggered \u2014 like connect, the app either connects in-band or awaits browser consent in the Lumos UI, and while a sync is in flight the request is throttled with `429` and a `Retry-After` header. Metadata-only bodies (custom apps, or integrations without credential changes) never touch credentials.",
+        "operationId": "reconnectApp",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppInputPut"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+          },
+          "501": {
+            "description": "Not implemented \u2014 this app does not support the requested operation."
+          },
+          "404": {
+            "description": "Not found \u2014 no app with this id in your domain."
+          },
+          "409": {
+            "description": "Conflict \u2014 credentials were provided for an app that is not managed via the API (`connection_source` is not `API`), so it cannot be reconnected here."
+          },
+          "429": {
+            "description": "Too many requests \u2014 a sync is already in flight for this app. Includes a `Retry-After` header (seconds)."
+          },
+          "502": {
+            "description": "Bad gateway \u2014 the third-party service rejected the credentials, or the post-reconnect sync failed."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Disconnect App",
+        "description": "Disconnect an API-managed app. For integrations this removes the stored credentials and returns the app to a connectable state; for custom apps it removes the app. In both cases, when no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect an integration later with `PUT /apps/{app_id}`. Returns 404 if `app_id` is unknown in the caller's organization.",
+        "operationId": "disconnectApp",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectIntegrationOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+          },
+          "501": {
+            "description": "Not implemented \u2014 this app does not support the requested operation."
+          },
+          "404": {
+            "description": "Not found \u2014 no app with this id in your domain."
+          },
+          "409": {
+            "description": "Conflict \u2014 the app is not managed via the API (`connection_source` is not `API`), so it cannot be disconnected here."
           },
           "422": {
             "description": "Validation Error",
@@ -5655,6 +5844,11 @@
             "title": "Category",
             "description": "The category of the app, as shown in the AppStore"
           },
+          "disconnected": {
+            "type": "boolean",
+            "title": "Disconnected",
+            "description": "Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`."
+          },
           "links": {
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
@@ -5669,6 +5863,7 @@
           "status",
           "sources",
           "allow_multiple_permission_selection",
+          "disconnected",
           "links"
         ],
         "title": "App"
@@ -5770,20 +5965,41 @@
       "AppInputCreate": {
         "properties": {
           "name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Name",
-            "description": "The name of the app you're creating."
+            "description": "The name of the app you're creating. Required when creating a custom app."
           },
           "category": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Category",
-            "description": "The category of the app you're creating. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+            "description": "The category of the app you're creating; required when creating a custom app. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
           },
           "description": {
-            "type": "string",
-            "maxLength": 8192,
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8192
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Description",
-            "description": "The description of the app you're creating."
+            "description": "The description of the app you're creating. Required when creating a custom app."
           },
           "logo_url": {
             "anyOf": [
@@ -5820,15 +6036,75 @@
             ],
             "title": "Request Instructions",
             "description": "The request instructions."
+          },
+          "app_class_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Class Id",
+            "description": "Canonical identifier of an integration to connect, e.g. `okta.com`. Providing it switches this request from creating a custom app to connecting that integration using `auth`/`settings`. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400."
+          },
+          "auth": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth",
+            "description": "Credentials for the integration being connected, as a JSON object \u2014 **all secrets go here**. The accepted keys depend on the integration and are validated server-side. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`); others require browser consent and are finished in the Lumos UI \u2014 for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Only used with `app_class_id`."
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings",
+            "description": "Non-secret configuration for the integration being connected, as a JSON object \u2014 e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only used with `app_class_id`."
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version",
+            "description": "Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only used with `app_class_id`."
           }
         },
         "type": "object",
-        "required": [
-          "name",
-          "category",
-          "description"
-        ],
-        "title": "AppInputCreate"
+        "title": "AppInputCreate",
+        "description": "Body of `POST /apps`: create a custom app, or connect an integration.\n\nOne flat model serves both operations (a request-body union would generate\npoorly into SDK/Terraform clients). Providing `app_class_id` switches the\nrequest from \"create a custom app\" to \"connect an integration\"; the model\nvalidator enforces the fields each mode requires.",
+        "examples": [
+          {
+            "category": "Engineering",
+            "description": "Hand-rolled deploy dashboard.",
+            "name": "My internal tool"
+          },
+          {
+            "app_class_id": "okta.com",
+            "auth": {
+              "api_key": "0123456789abcdef0123456789abcdef"
+            },
+            "settings": {
+              "app_instance_identifier": "myorg.okta.com"
+            }
+          }
+        ]
       },
       "AppLinks": {
         "properties": {
@@ -6447,6 +6723,11 @@
             "title": "Category",
             "description": "The category of the app, as shown in the AppStore"
           },
+          "disconnected": {
+            "type": "boolean",
+            "title": "Disconnected",
+            "description": "Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`."
+          },
           "links": {
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
@@ -6476,6 +6757,7 @@
           "status",
           "sources",
           "allow_multiple_permission_selection",
+          "disconnected",
           "links"
         ],
         "title": "AppWithCustomAttributes"
@@ -11640,6 +11922,267 @@
         },
         "type": "object",
         "title": "PermissionInput"
+      },
+      "AppInputPut": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 1000,
+            "title": "Description",
+            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url",
+            "description": "The updated URL of the website of the app. Set to null to clear it."
+          },
+          "request_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 511,
+            "title": "Request Instructions",
+            "description": "The updated request instructions."
+          },
+          "app_class_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Class Id",
+            "description": "Canonical identifier of the integration this app belongs to, e.g. `okta.com`. Must match the existing app (a mismatch is rejected with 400); required when rotating credentials via `auth`/`settings`/`version`."
+          },
+          "auth": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth",
+            "description": "New credentials for the integration, as a JSON object \u2014 **all secrets go here**. Providing credentials reconnects the app: they are always overwritten and re-validated, and a sync is triggered. The accepted keys depend on the integration and are validated server-side. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Requires `app_class_id`."
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings",
+            "description": "Non-secret configuration for the integration being reconnected, as a JSON object \u2014 e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Requires `app_class_id`."
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version",
+            "description": "Optional integration version override for the reconnect. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Requires `app_class_id`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AppInputPut",
+        "description": "Body of `PUT /apps/{app_id}`: update metadata overrides and/or reconnect.\n\nOne flat model serves both operations (mirroring `AppInputCreate`): the\nmetadata fields apply the same domain-specific overrides as\n`PATCH /apps/{app_id}`, and providing credentials (`auth`/`settings`/\n`version`, which require the matching `app_class_id`) additionally\nreconnects the integration with those credentials.",
+        "examples": [
+          {
+            "description": "Hand-rolled deploy dashboard.",
+            "name": "My internal tool"
+          },
+          {
+            "app_class_id": "okta.com",
+            "auth": {
+              "api_key": "0123456789abcdef0123456789abcdef"
+            },
+            "settings": {
+              "app_instance_identifier": "myorg.okta.com"
+            }
+          }
+        ]
+      },
+      "AppInputUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 1000,
+            "title": "Description",
+            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url",
+            "description": "The updated URL of the website of the app. Set to null to clear it."
+          },
+          "request_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 511,
+            "title": "Request Instructions",
+            "description": "The updated request instructions."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AppInputUpdate"
+      },
+      "ConnectionSource": {
+        "type": "string",
+        "enum": [
+          "API",
+          "UI"
+        ],
+        "title": "ConnectionSource",
+        "description": "Tracks how a domain app integration was initiated."
+      },
+      "DisconnectIntegrationOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The domain app UUID of the disconnected integration."
+          },
+          "app_class_id": {
+            "type": "string",
+            "title": "App Class Id",
+            "description": "The canonical integration identifier."
+          },
+          "disconnected": {
+            "type": "boolean",
+            "title": "Disconnected",
+            "description": "Confirms the app was disconnected. Always `true` on a successful response \u2014 the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "app_class_id",
+          "disconnected"
+        ],
+        "title": "DisconnectIntegrationOutput"
       }
     },
     "securitySchemes": {

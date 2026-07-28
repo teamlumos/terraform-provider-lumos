@@ -66,6 +66,7 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageAppWithCustomAttributes(ctx c
 				}
 			}
 			items.Description = types.StringPointerValue(itemsItem.Description)
+			items.Disconnected = types.BoolValue(itemsItem.Disconnected)
 			items.ID = types.StringValue(itemsItem.ID)
 			items.InstanceID = types.StringValue(itemsItem.InstanceID)
 			items.Links.AdminURL = types.StringValue(itemsItem.Links.AdminURL)
@@ -106,6 +107,18 @@ func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (
 	} else {
 		exactMatch = nil
 	}
+	connectionSource := new(operations.ConnectionSource)
+	if !r.ConnectionSource.IsUnknown() && !r.ConnectionSource.IsNull() {
+		*connectionSource = operations.ConnectionSource(r.ConnectionSource.ValueString())
+	} else {
+		connectionSource = nil
+	}
+	disconnected := new(bool)
+	if !r.Disconnected.IsUnknown() && !r.Disconnected.IsNull() {
+		*disconnected = r.Disconnected.ValueBool()
+	} else {
+		disconnected = nil
+	}
 	var expand []string
 	if r.Expand != nil {
 		expand = make([]string, 0, len(r.Expand))
@@ -126,11 +139,13 @@ func (r *AppsDataSourceModel) ToOperationsListAppsRequest(ctx context.Context) (
 		size = nil
 	}
 	out := operations.ListAppsRequest{
-		NameSearch: nameSearch,
-		ExactMatch: exactMatch,
-		Expand:     expand,
-		Page:       page,
-		Size:       size,
+		NameSearch:       nameSearch,
+		ExactMatch:       exactMatch,
+		ConnectionSource: connectionSource,
+		Disconnected:     disconnected,
+		Expand:           expand,
+		Page:             page,
+		Size:             size,
 	}
 
 	return &out, diags
