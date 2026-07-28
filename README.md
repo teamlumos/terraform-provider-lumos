@@ -378,6 +378,8 @@ Available configuration:
 <!-- Start Testing the provider locally [usage] -->
 ## Testing the provider locally
 
+> **Note:** Running `make provider` requires Speakeasy CLI access. Ask Graham, Pat, Toshitha, or Yoshi for access.
+
 #### Local Provider
 
 Should you want to validate a change locally, the `--debug` flag allows you to execute the provider against a terraform instance locally.
