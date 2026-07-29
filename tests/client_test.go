@@ -9,6 +9,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
 func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
@@ -45,9 +46,9 @@ func TestGetApp(t *testing.T) {
 func TestCreateApp(t *testing.T) {
 	client, ctx := GetNewClient(t)
 	response, err := client.Core.CreateApp(ctx, shared.AppInputCreate{
-		Name:        "Terraform Testing - Create app",
-		Description: "Terraform Testing Description",
-		Category:    "Developers",
+		Name:        types.String("Terraform Testing - Create app"),
+		Description: types.String("Terraform Testing Description"),
+		Category:    types.String("Developers"),
 	})
 	if err != nil || response == nil {
 		t.Fatalf(`client.Core.CreateApp() was unsuccessful, %v, %v`, response, err)
