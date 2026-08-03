@@ -205,6 +205,9 @@
           "501": {
             "description": "Not implemented \u2014 this app does not support the requested operation."
           },
+          "404": {
+            "description": "Not found \u2014 no integration with this `app_class_id` is available to your domain."
+          },
           "409": {
             "description": "Conflict \u2014 an instance for this app already exists in the domain."
           },
@@ -1661,6 +1664,270 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/{app_id}/sync": {
+      "post": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Trigger App Sync",
+        "description": "Trigger a sync for a connected app on demand (e.g. from automation, after Terraform has connected it). The sync runs asynchronously \u2014 the call returns `202 Accepted` once the sync is launched; poll `GET /apps/{app_id}` to follow status.\n\nRequires `sync_type` (only `full_sync` is supported today). The app must be connected or in an error state from a prior sync (so callers can retry after failure). Manual/CSV apps are not supported. Only one sync may run at a time: while a sync is in flight the request is rejected with `409` \u2014 wait for the running sync to finish, then retry.",
+        "operationId": "triggerAppSync",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerSyncInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TriggerSyncOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+          },
+          "501": {
+            "description": "Not implemented \u2014 this app does not support the requested operation."
+          },
+          "404": {
+            "description": "Not found \u2014 no app with this id in your domain."
+          },
+          "409": {
+            "description": "Conflict \u2014 a sync is already running for this app, the app is not in a syncable state, or its first sync is deferred pending admin review (match rules, or a flatfile column mapping) in the Lumos UI."
+          },
+          "422": {
+            "description": "Unprocessable \u2014 `sync_type` is missing or not a supported value, or the app is a manual/CSV app, which cannot be synced via this endpoint."
+          },
+          "502": {
+            "description": "Bad gateway \u2014 the downstream sync launch failed."
+          }
+        }
+      }
+    },
+    "/integrations": {
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "List Integrations",
+        "description": "List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned \u2014 catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only \u2014 name, category, and logo. Integrations you have connected are read via the Apps API (`GET /apps`).",
+        "operationId": "listIntegrations",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive substring filter over the integration's `app_class_id` and name \u2014 e.g. `google` matches `workspace.google.com` and `cloud.google.com`.",
+              "title": "Query"
+            },
+            "description": "Case-insensitive substring filter over the integration's `app_class_id` and name \u2014 e.g. `google` matches `workspace.google.com` and `cloud.google.com`."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size",
+              "default": 50,
+              "title": "Size"
+            },
+            "description": "Page size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_IntegrationCatalogOutput_"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{app_class_id}": {
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Get Integration",
+        "description": "Get a connectable integration (app) by its `app_class_id` (e.g. `okta.com`). Returns catalog metadata only; integrations you have connected are read via the Apps API (`GET /apps`).",
+        "operationId": "getIntegration",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_class_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Class Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationCatalogOutput"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+          },
+          "404": {
+            "description": "Not found \u2014 no integration with this `app_class_id` in your domain."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{app_class_id}/connection-schema": {
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "summary": "Get Integration Connection Schema",
+        "description": "Get the connection schema for an integration \u2014 the JSON schema of the `auth` and `settings` fields needed to connect it via `POST /apps`. Use it to discover how to connect an integration *before* connecting it (e.g. to populate a Terraform resource). `app_class_id` is the canonical identifier (e.g. `okta.com`, `slack_ics`) \u2014 the same value the connect body uses. Integrations whose connection schema Lumos cannot describe yet return 404.",
+        "operationId": "getIntegrationConnectionSchema",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_class_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Class Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationConnectionSchemaOutput"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+          },
+          "404": {
+            "description": "Not found \u2014 no integration with this `app_class_id` is accessible to your domain, or no connection schema is available for it yet."
           },
           "422": {
             "description": "Validation Error",
@@ -3259,10 +3526,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Fields to expand. Supported values: tasks.",
+              "description": "Fields to expand. Supported values: tasks, custom_fields.",
               "title": "Expand"
             },
-            "description": "Fields to expand. Supported values: tasks."
+            "description": "Fields to expand. Supported values: tasks, custom_fields."
           }
         ],
         "responses": {
@@ -3457,10 +3724,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Fields to expand. Supported values: tasks.",
+              "description": "Fields to expand. Supported values: tasks, custom_fields.",
               "title": "Expand"
             },
-            "description": "Fields to expand. Supported values: tasks."
+            "description": "Fields to expand. Supported values: tasks, custom_fields."
           },
           {
             "name": "page",
@@ -3772,6 +4039,1088 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/access_reviews": {
+      "post": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Create Access Review",
+        "description": "Create a new access review campaign.\n\nThe review's initial status depends on whether apps are provided:\n\n- **With apps**: the review starts in `IN_PREPARATION` while account and entitlement snapshots are taken. Status automatically transitions to `IN_PROGRESS` once snapshotting completes.\n- **Without apps**: the review is created directly in `IN_PROGRESS`.\n\nPoll `GET /access_reviews/{id}` to observe the status transition. To add apps after creation, use `POST /access_reviews/{id}/apps` (allowed on any status except `COMPLETED`).",
+        "operationId": "createAccessReview",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccessReviewInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAccessReviewOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error \u2014 the request violated a business rule (e.g. duplicate review name, deadline in the past, review not in the required status for this operation)."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to create or manage access reviews. Requires the Access Review Administrator or App Admin role on the domain."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced review / app does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "List Access Reviews",
+        "description": "List access reviews for your organization. Paginated via standard `page` + `size` query params \u2014 `size` is capped at 100; requests over the cap return 422.",
+        "operationId": "listAccessReviews",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size",
+              "default": 50,
+              "title": "Size"
+            },
+            "description": "Page size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AccessReviewOutput_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/access_reviews/{access_review_id}/apps": {
+      "post": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Add Apps To Access Review",
+        "description": "Add apps to an existing access review. Allowed on any review that is not yet `COMPLETED`. Soft-errors on invalid or duplicate domain app UUIDs \u2014 per-app failures are returned in the `errors` array rather than raising.",
+        "operationId": "addAppsToAccessReview",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "access_review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Access Review Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddAppsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddAppsOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error \u2014 the request violated a business rule (e.g. duplicate review name, deadline in the past, review not in the required status for this operation)."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to create or manage access reviews. Requires the Access Review Administrator or App Admin role on the domain."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced review / app does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/access_reviews/{access_review_id}": {
+      "delete": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Delete Access Review",
+        "description": "Soft-delete an access review campaign. Fails with 400 if a review duplication is currently in progress.",
+        "operationId": "deleteAccessReview",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "access_review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Access Review Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation error \u2014 the request violated a business rule (e.g. duplicate review name, deadline in the past, review not in the required status for this operation)."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to create or manage access reviews. Requires the Access Review Administrator or App Admin role on the domain."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced review / app does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Get Access Review",
+        "description": "Get an access review by ID.",
+        "operationId": "getAccessReview",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "access_review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Access Review Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOutput"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Update Access Review",
+        "description": "Update an existing access review campaign. Top-level fields are editable on any review that is not yet `COMPLETED`. Per-app (`apps[].scope_filters`) edits are only accepted while the ARDA is still in `IN_PREPARATION` or `ASSIGNING_REVIEWERS` status.",
+        "operationId": "updateAccessReview",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "access_review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Access Review Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccessReviewInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessReviewOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error \u2014 the request violated a business rule (e.g. duplicate review name, deadline in the past, review not in the required status for this operation)."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to create or manage access reviews. Requires the Access Review Administrator or App Admin role on the domain."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced review / app does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/access_reviews/{access_review_id}/apps/{arda_id}": {
+      "delete": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Delete Access Review App",
+        "description": "Soft-delete an app from an access review campaign. Fails with 400 if the review is already `COMPLETED`.",
+        "operationId": "deleteAccessReviewApp",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "access_review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Access Review Id"
+            }
+          },
+          {
+            "name": "arda_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Arda Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Validation error \u2014 the request violated a business rule (e.g. duplicate review name, deadline in the past, review not in the required status for this operation)."
+          },
+          "403": {
+            "description": "Forbidden \u2014 the caller lacks permission to create or manage access reviews. Requires the Access Review Administrator or App Admin role on the domain."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced review / app does not exist."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/access_reviews/scope_options": {
+      "get": {
+        "tags": [
+          "Access Reviews"
+        ],
+        "summary": "Get Scope Options Endpoint",
+        "description": "Get available scope filter options for a domain app or ARDA.\n\nTo use these in `scope_filters` on a create/edit request, copy an item's `value` (and `name`) verbatim \u2014 `value` is the machine-matchable identifier, while `label` is display-only. Posting a `label` as a `value` (or any value not present here) is rejected.\n\nACCOUNT_ENTITLEMENT groups are split per `entitlement_type_label` (e.g. 'Roles', 'Groups'), with each group's `items` capped at 1000 entitlement labels. Groups whose underlying bucket exceeds the cap set `truncated: true` so callers know some valid labels are not present in the response.",
+        "operationId": "getScopeOptions",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "domain_app_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Domain App Id"
+            }
+          },
+          {
+            "name": "arda_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Arda Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScopeOptionsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/knowledge/context": {
+      "get": {
+        "tags": [
+          "Knowledge"
+        ],
+        "summary": "List Knowledge Context",
+        "description": "List knowledge entries for the caller's domain with optional filters and cursor pagination.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "operationId": "listKnowledgeContext",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "title_search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive substring match against knowledge entry titles.",
+              "title": "Title Search"
+            },
+            "description": "Case-insensitive substring match against knowledge entry titles."
+          },
+          {
+            "name": "product_scopes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KnowledgeProductScope"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filter to entries tagged with any of these product scopes.",
+              "title": "Product Scopes"
+            },
+            "description": "Filter to entries tagged with any of these product scopes."
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.",
+              "title": "Page Token"
+            },
+            "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum number of items to return per page. Values above 25 are clamped to 25 rather than rejected.",
+              "default": 10,
+              "title": "Page Size"
+            },
+            "description": "Maximum number of items to return per page. Values above 25 are clamped to 25 rather than rejected."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListKnowledgeContextOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Knowledge"
+        ],
+        "summary": "Create Knowledge Context",
+        "description": "Create a new knowledge entry in the caller's domain.\n\nSend as `multipart/form-data`. The `file` field is optional \u2014 omit it to create an entry without an attachment.",
+        "operationId": "createKnowledgeContext",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_createKnowledgeContext"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeContextOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden \u2014 caller lacks the Knowledge Hub manage permission."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced knowledge entry does not exist."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/knowledge/context/{knowledge_context_id}": {
+      "get": {
+        "tags": [
+          "Knowledge"
+        ],
+        "summary": "Get Knowledge Context",
+        "description": "Get a single knowledge entry by ID.",
+        "operationId": "getKnowledgeContext",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "knowledge_context_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Knowledge Context Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeContextOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Knowledge"
+        ],
+        "summary": "Update Knowledge Context",
+        "description": "Patch an existing knowledge entry. Only supplied (non-empty) fields are updated.\n\nTag and scope lists replace existing values entirely \u2014 they do not append.\n\nSend as `multipart/form-data`. To replace the attached file, include a `file` field. To remove the existing file without uploading a new one, set `clear_attachment=true`.",
+        "operationId": "updateKnowledgeContext",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "knowledge_context_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Knowledge Context Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_updateKnowledgeContext"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeContextOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden \u2014 caller lacks the Knowledge Hub manage permission."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced knowledge entry does not exist."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Knowledge"
+        ],
+        "summary": "Delete Knowledge Context",
+        "description": "Archive (soft-delete) a knowledge entry. The entry is marked ARCHIVED and will no longer appear in list results. This action is reversible at the database level.",
+        "operationId": "deleteKnowledgeContext",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "knowledge_context_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Knowledge Context Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden \u2014 caller lacks the Knowledge Hub manage permission."
+          },
+          "404": {
+            "description": "Not found \u2014 the referenced knowledge entry does not exist."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Internal Server Error"
           },
           "422": {
             "description": "Validation Error",
@@ -4121,7 +5470,7 @@
           "Tasks"
         ],
         "summary": "List Tasks",
-        "description": "List tasks visible to the current user.",
+        "description": "List tasks visible to the current user.\n\nCombine `task_category`, `product_area`, and `status` to find the tasks you care about:\n\n- **Pending access-request approvals**:\n  `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING`\n\nPass `expand=actions` or `expand=assignees` to hydrate those fields on each result.\nAdmins may pass `show_all_tasks=true` to list tasks across the whole domain rather than\njust the caller's assigned set.",
         "operationId": "list_tasks_tasks_get",
         "security": [
           {
@@ -4531,7 +5880,7 @@
           "Tasks"
         ],
         "summary": "Perform Task Action",
-        "description": "Perform an action on a task.",
+        "description": "**Perform a custom action on a task** \u2014 the generic escape hatch for tasks that expose\nworkflow-specific actions beyond approve/deny.\n\nFor approval tasks, prefer `POST /tasks/{task_id}/complete` or\n`POST /tasks/{task_id}/dismiss` \u2014 those endpoints are simpler and do not require\ndiscovering the action type.\n\nUse this endpoint only when the task exposes custom actions. Discover the available\nactions for a task with `GET /tasks/{task_id}/actions`; each returned action includes an\n`action_type` (the value to pass in this request body) and the status transitions it can\nproduce.\n\n`transition_to` is optional \u2014 if the action has exactly one possible target status, it\nis inferred. Pass it explicitly when an action can transition to more than one status.\n\nResponses:\n\n- `204 No Content` \u2014 action performed.\n- `400 Bad Request` \u2014 unknown action type or invalid transition.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status.",
         "operationId": "perform_task_action_tasks__task_id__perform_action_post",
         "security": [
           {
@@ -4695,7 +6044,7 @@
           "Tasks"
         ],
         "summary": "Complete Task",
-        "description": "Complete a task. Resolves the unique action that transitions to COMPLETED.",
+        "description": "**Complete a task** \u2014 transition any task to `COMPLETED` by applying its unique\ncompletion action. For approval tasks this is the \"approve\" primitive.\n\nCommon uses:\n\n- **Approve an access request** (task with `task_category=APPROVAL` and `product_area=APPSTORE`).\n- **Mark a non-approval task done** when it exposes exactly one action that transitions\n  to `COMPLETED` (e.g. acknowledging a manual provisioning step). Tasks with multiple\n  possible completion actions should use `POST /tasks/{task_id}/perform-action` instead.\n\nThis endpoint resolves the unique action on the task that transitions it to `COMPLETED`\nand applies it on behalf of the caller. The caller must be an assignee of the task (or a\ndomain admin). There is no request body.\n\nResponses:\n\n- `204 No Content` \u2014 task completed.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status (safe to treat as idempotent).\n- `404 Not Found` \u2014 task does not exist in this domain, or the Tasks API is not enabled.\n\nTo deny instead of approve, use [`POST /tasks/{task_id}/dismiss`](#dismiss-task). For\ntasks that expose custom workflow actions (not approvals), use\n[`POST /tasks/{task_id}/perform-action`](#perform-task-action).",
         "operationId": "complete_task_tasks__task_id__complete_post",
         "security": [
           {
@@ -4738,7 +6087,7 @@
           "Tasks"
         ],
         "summary": "Dismiss Task",
-        "description": "Dismiss a task. Resolves the unique action that transitions to DISMISSED.",
+        "description": "**Dismiss a task** \u2014 transition any task to `DISMISSED` by applying its unique\ndismissal action. For approval tasks this is the \"deny / reject\" primitive; for\nnon-approval tasks it cancels the task without performing its work.\n\nCommon uses:\n\n- **Deny an access request**.\n- **Cancel a non-approval task** (e.g. dismiss an error task once the underlying issue is\n  handled out-of-band). Tasks with multiple possible dismissal actions should use\n  `POST /tasks/{task_id}/perform-action` instead.\n\nResolves the unique action on the task that transitions it to `DISMISSED` and applies it\non behalf of the caller. The caller must be an assignee of the task (or a domain admin).\nThere is no request body.\n\nResponses:\n\n- `204 No Content` \u2014 task dismissed.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status.\n- `404 Not Found` \u2014 task does not exist in this domain, or the Tasks API is not enabled.\n\nTo approve instead of deny, use [`POST /tasks/{task_id}/complete`](#complete-task).",
         "operationId": "dismiss_task_tasks__task_id__dismiss_post",
         "security": [
           {
@@ -5234,6 +6583,18 @@
             ],
             "title": "Expires At"
           },
+          "expiration_in_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration In Seconds",
+            "description": "For time-based access requests, the number of seconds after provisioning at which access should be removed. None for permanent requests."
+          },
           "requestable_permissions": {
             "anyOf": [
               {
@@ -5273,6 +6634,20 @@
               }
             ],
             "title": "Tasks"
+          },
+          "custom_fields": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CustomIntakeFieldResponseOutput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Fields"
           }
         },
         "type": "object",
@@ -5287,12 +6662,464 @@
         "title": "AccessRequest",
         "description": "API version of DomainAppSupportRequest."
       },
-      "Account": {
+      "AccessReviewDomainAppConfigurableEvidenceUpload": {
+        "type": "string",
+        "enum": [
+          "ALWAYS",
+          "DEFAULT"
+        ],
+        "title": "AccessReviewDomainAppConfigurableEvidenceUpload",
+        "description": "Every operation requires evidence upload for failures and manual actions."
+      },
+      "AccessReviewDomainAppErrorOutput": {
         "properties": {
           "app_id": {
             "type": "string",
             "title": "App Id",
+            "description": "UUID of the domain app that could not be added."
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Description of why the app could not be added."
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_id",
+          "error"
+        ],
+        "title": "AccessReviewDomainAppErrorOutput"
+      },
+      "AccessReviewDomainAppInput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of the domain app to include in this review."
+          },
+          "review_type": {
+            "$ref": "#/components/schemas/ReviewType",
+            "description": "What to review for this app.",
+            "default": "ENTITLEMENTS"
+          },
+          "scope_filters": {
+            "anyOf": [
+              {
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ScalarScopeFilterInput"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CustomAttributeScopeFilterInput"
+                    },
+                    {
+                      "$ref": "#/components/schemas/DatetimeScopeFilterInput"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "group",
+                    "mapping": {
+                      "ACCESS_APPROVED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_GRANTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_LENGTH": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_PROVISIONED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_REQUESTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_DELTA": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_ENTITLEMENT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_SOURCE": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                      "CATEGORIES": "#/components/schemas/ScalarScopeFilterInput",
+                      "CUSTOM_ATTRIBUTE": "#/components/schemas/CustomAttributeScopeFilterInput",
+                      "EMAIL_DOMAIN": "#/components/schemas/ScalarScopeFilterInput",
+                      "EMPLOYMENT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                      "ENTITLEMENT_TAG": "#/components/schemas/ScalarScopeFilterInput",
+                      "LAST_ACTIVITY": "#/components/schemas/DatetimeScopeFilterInput",
+                      "LAST_LOGIN": "#/components/schemas/DatetimeScopeFilterInput",
+                      "SOD_POLICY": "#/components/schemas/ScalarScopeFilterInput",
+                      "TEAM": "#/components/schemas/ScalarScopeFilterInput",
+                      "UNMATCHED_ACCOUNTS": "#/components/schemas/ScalarScopeFilterInput",
+                      "USER_OR_GROUP": "#/components/schemas/ScalarScopeFilterInput"
+                    }
+                  }
+                },
+                "type": "array",
+                "maxItems": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope Filters",
+            "description": "Scope filters to limit which accounts/entitlements are included in this review. Filters within the same group are OR'd; filters across groups are AND'd. Capped at 50 filters per app."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "AccessReviewDomainAppInput"
+      },
+      "AccessReviewDomainAppOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of this access review domain app record."
+          },
+          "domain_app_id": {
+            "type": "string",
+            "title": "Domain App Id",
+            "description": "UUID of the domain app being reviewed."
+          },
+          "domain_app_name": {
+            "type": "string",
+            "title": "Domain App Name",
+            "description": "Display name of the domain app."
+          },
+          "domain_app_sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Domain App Sources",
+            "description": "List of sources for the domain app."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_PREPARATION",
+              "ASSIGNING_REVIEWERS",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "WAITING_FOR_MANUAL_ACTION",
+              "DELETED"
+            ],
+            "title": "Status",
+            "description": "Status of this app within the review."
+          },
+          "review_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What is being reviewed: ENTITLEMENTS or ACCOUNTS."
+          },
+          "app_last_synced_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Last Synced At",
+            "description": "When the app data was last synced."
+          },
+          "last_synced_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Synced At",
+            "description": "When this review's data was last synced."
+          },
+          "account_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Count",
+            "description": "Number of accounts in scope for this app."
+          },
+          "launched_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Launched At",
+            "description": "When this app's review was launched."
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At",
+            "description": "When this app's review was completed."
+          },
+          "scope_filters": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope Filters",
+            "description": "Scope filters applied to this app's review."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "domain_app_id",
+          "domain_app_name",
+          "domain_app_sources",
+          "status"
+        ],
+        "title": "AccessReviewDomainAppOutput"
+      },
+      "AccessReviewOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of the access review."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the access review campaign."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_PREPARATION",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "DUPLICATING",
+              "DUPLICATING_WAITING_FOR_CONFIRMATION",
+              "SCHEDULED",
+              "SCHEDULED_IN_PREPARATION",
+              "DELETED"
+            ],
+            "title": "Status",
+            "description": "Current status of the access review."
+          },
+          "creation_path": {
+            "type": "string",
+            "enum": [
+              "UI",
+              "RECURRENCE",
+              "API",
+              "CLI",
+              "MCP"
+            ],
+            "title": "Creation Path",
+            "description": "How this review was created."
+          },
+          "owner_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Id",
+            "description": "UUID of the review owner."
+          },
+          "created_by_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By Id",
+            "description": "UUID of the user who created this review."
+          },
+          "deadline_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline At",
+            "description": "Deadline for completing reviews."
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At",
+            "description": "When the review was started."
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At",
+            "description": "When the review was completed."
+          },
+          "target_launch_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Launch Date",
+            "description": "Scheduled launch date, if this is a scheduled review."
+          },
+          "recurrence_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecurrenceConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recurrence configuration, if this is a recurring review."
+          },
+          "recurrence_days_frequency": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurrence Days Frequency",
+            "description": "Recurrence frequency in days, if this is a recurring review."
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At",
+            "description": "When this record was created."
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At",
+            "description": "When this record was last updated."
+          },
+          "apps": {
+            "items": {
+              "$ref": "#/components/schemas/AccessReviewDomainAppOutput"
+            },
+            "type": "array",
+            "title": "Apps",
+            "description": "Apps included in this review."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "status",
+          "creation_path"
+        ],
+        "title": "AccessReviewOutput"
+      },
+      "AccessReviewRemovalAction": {
+        "type": "string",
+        "enum": [
+          "DEPROVISION",
+          "SUSPEND",
+          "DEACTIVATE",
+          "MANUAL",
+          "WEBHOOK"
+        ],
+        "title": "AccessReviewRemovalAction"
+      },
+      "Account": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The ID of this account."
+          },
+          "app_id": {
+            "type": "string",
+            "title": "App Id",
             "description": "The ID of the app that owns this account."
+          },
+          "account_type": {
+            "$ref": "#/components/schemas/AccountType",
+            "description": "The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP)."
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountLifecycleStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The status of the account."
           },
           "app": {
             "anyOf": [
@@ -5309,10 +7136,6 @@
             "type": "string",
             "title": "Unique Identifier",
             "description": "The stable identifier of this account from the associated service."
-          },
-          "account_type": {
-            "$ref": "#/components/schemas/AccountType",
-            "description": "The type of this account, one of 'USER', 'ROLE' (e.g. AWS), 'SERVICE' (e.g. GCP)."
           },
           "email": {
             "anyOf": [
@@ -5384,24 +7207,14 @@
             "type": "array",
             "title": "Sources",
             "description": "The discovery methods through which Lumos identified this account"
-          },
-          "status": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AccountLifecycleStatus"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "The status of the account."
           }
         },
         "type": "object",
         "required": [
+          "id",
           "app_id",
-          "unique_identifier",
-          "account_type"
+          "account_type",
+          "unique_identifier"
         ],
         "title": "Account"
       },
@@ -5628,6 +7441,19 @@
             "title": "Custom Request Instructions",
             "description": "AppStore App instructions that are shown to the requester."
           },
+          "redirect_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Redirect Url",
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
+          },
           "request_flow": {
             "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
             "description": "Request flow configuration to request access to app."
@@ -5647,6 +7473,67 @@
           "app_id"
         ],
         "title": "AddAppToAppStoreInput"
+      },
+      "AddAppsInput": {
+        "properties": {
+          "apps": {
+            "items": {
+              "$ref": "#/components/schemas/AccessReviewDomainAppInput"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Apps",
+            "description": "List of domain apps to add to the access review. Capped at 200 entries per the Access Review scale limits (technically-supported tier)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "apps"
+        ],
+        "title": "AddAppsInput",
+        "examples": [
+          {
+            "apps": [
+              {
+                "id": "00000000-0000-0000-0000-000000000002",
+                "review_type": "ENTITLEMENTS"
+              }
+            ]
+          }
+        ]
+      },
+      "AddAppsOutput": {
+        "properties": {
+          "added_apps": {
+            "items": {
+              "$ref": "#/components/schemas/AccessReviewDomainAppOutput"
+            },
+            "type": "array",
+            "title": "Added Apps",
+            "description": "Apps that were successfully added to the access review."
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AccessReviewDomainAppErrorOutput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors",
+            "description": "Per-app errors for any domain apps that could not be added (invalid, not connected, or already present)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "added_apps"
+        ],
+        "title": "AddAppsOutput"
       },
       "AddCommentInput": {
         "properties": {
@@ -5744,6 +7631,67 @@
           "SPECIFIED_GROUPS"
         ],
         "title": "AllowedGroupsConfigType"
+      },
+      "ApiError": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "Human-readable summary of the error."
+          },
+          "type": {
+            "$ref": "#/components/schemas/ErrorType",
+            "description": "Category: validation|authentication|permission|not_found|conflict|rate_limited|runtime."
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Stable machine-readable error code; branch on this, not 'detail'."
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorField"
+            },
+            "type": "array",
+            "title": "Errors",
+            "description": "Field-level errors; empty for non-validation errors."
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail",
+          "type",
+          "code"
+        ],
+        "title": "ApiError",
+        "description": "The V1 error envelope."
+      },
+      "ApiErrorField": {
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "Field",
+            "description": "Input field this error refers to, e.g. 'steps[2].inputs.group_id'."
+          },
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Stable machine-readable code for this field error."
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable description of the field error."
+          }
+        },
+        "type": "object",
+        "required": [
+          "field",
+          "code",
+          "message"
+        ],
+        "title": "ApiErrorField",
+        "description": "A single field-level error (used for validation failures)."
       },
       "App": {
         "properties": {
@@ -5852,6 +7800,17 @@
           "links": {
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
+          },
+          "sync_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SyncStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded \u2014 the app has never synced, or was disconnected."
           }
         },
         "type": "object",
@@ -6106,6 +8065,232 @@
           }
         ]
       },
+      "AppInputPut": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 1000,
+            "title": "Description",
+            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url",
+            "description": "The updated URL of the website of the app. Set to null to clear it."
+          },
+          "request_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 511,
+            "title": "Request Instructions",
+            "description": "The updated request instructions."
+          },
+          "app_class_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Class Id",
+            "description": "Canonical identifier of the integration this app belongs to, e.g. `okta.com`. Must match the existing app (a mismatch is rejected with 400); required when rotating credentials via `auth`/`settings`/`version`."
+          },
+          "auth": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auth",
+            "description": "New credentials for the integration, as a JSON object \u2014 **all secrets go here**. Providing credentials reconnects the app: they are always overwritten and re-validated, and a sync is triggered. The accepted keys depend on the integration and are validated server-side. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Requires `app_class_id`."
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings",
+            "description": "Non-secret configuration for the integration being reconnected, as a JSON object \u2014 e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Requires `app_class_id`."
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version",
+            "description": "Optional integration version override for the reconnect. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Requires `app_class_id`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AppInputPut",
+        "description": "Body of `PUT /apps/{app_id}`: update metadata overrides and/or reconnect.\n\nOne flat model serves both operations (mirroring `AppInputCreate`): the\nmetadata fields apply the same domain-specific overrides as\n`PATCH /apps/{app_id}`, and providing credentials (`auth`/`settings`/\n`version`, which require the matching `app_class_id`) additionally\nreconnects the integration with those credentials.",
+        "examples": [
+          {
+            "description": "Hand-rolled deploy dashboard.",
+            "name": "My internal tool"
+          },
+          {
+            "app_class_id": "okta.com",
+            "auth": {
+              "api_key": "0123456789abcdef0123456789abcdef"
+            },
+            "settings": {
+              "app_instance_identifier": "myorg.okta.com"
+            }
+          }
+        ]
+      },
+      "AppInputUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 1000,
+            "title": "Description",
+            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
+          },
+          "website_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url",
+            "description": "The updated URL of the website of the app. Set to null to clear it."
+          },
+          "request_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "maxLength": 511,
+            "title": "Request Instructions",
+            "description": "The updated request instructions."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AppInputUpdate"
+      },
       "AppLinks": {
         "properties": {
           "self": {
@@ -6133,6 +8318,19 @@
             "title": "Custom Request Instructions",
             "description": "AppStore App instructions that are shown to the requester."
           },
+          "redirect_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Redirect Url",
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
+          },
           "request_flow": {
             "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
             "description": "Request flow configuration to request access to app."
@@ -6157,6 +8355,19 @@
             "type": "string",
             "title": "Custom Request Instructions",
             "description": "AppStore App instructions that are shown to the requester."
+          },
+          "redirect_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Redirect Url",
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
           },
           "request_flow": {
             "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput",
@@ -6275,9 +8486,25 @@
             "title": "Category",
             "description": "The category of the app, as shown in the AppStore"
           },
+          "disconnected": {
+            "type": "boolean",
+            "title": "Disconnected",
+            "description": "Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`."
+          },
           "links": {
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
+          },
+          "sync_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SyncStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded \u2014 the app has never synced, or was disconnected."
           },
           "custom_attributes": {
             "anyOf": [
@@ -6304,6 +8531,7 @@
           "status",
           "sources",
           "allow_multiple_permission_selection",
+          "disconnected",
           "links"
         ],
         "title": "AppStoreApp"
@@ -6314,6 +8542,19 @@
             "type": "string",
             "title": "Custom Request Instructions",
             "description": "AppStore App instructions that are shown to the requester."
+          },
+          "redirect_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Redirect Url",
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
           },
           "request_flow": {
             "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowInput",
@@ -6333,6 +8574,19 @@
             "type": "string",
             "title": "Custom Request Instructions",
             "description": "AppStore App instructions that are shown to the requester."
+          },
+          "redirect_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Redirect Url",
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
           },
           "request_flow": {
             "$ref": "#/components/schemas/AppStoreAppSettingsRequestFlowOutput",
@@ -6381,6 +8635,29 @@
             ],
             "title": "Custom Provisioning Instructions",
             "description": "Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported."
+          },
+          "default_time_based_access_option": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Time Based Access Option",
+            "description": "The label of the default time-based access duration pre-selected when a user requests access. Must be one of the values in time_based_access. Null when there is no default."
+          },
+          "default_permission": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequestablePermissionBase"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The default permission pre-selected when a user requests access to this app. Provide the permission's id (UUID). Null when there is no default. The permission must belong to this app."
           },
           "provisioning_webhook": {
             "anyOf": [
@@ -6443,6 +8720,29 @@
             ],
             "title": "Custom Provisioning Instructions",
             "description": "Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported."
+          },
+          "default_time_based_access_option": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Time Based Access Option",
+            "description": "The label of the default time-based access duration pre-selected when a user requests access. Must be one of the values in time_based_access. Null when there is no default."
+          },
+          "default_permission": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequestablePermissionOutput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The default permission pre-selected when a user requests access to this app. Null if no default is configured."
           },
           "provisioning_webhook": {
             "anyOf": [
@@ -6732,6 +9032,17 @@
             "$ref": "#/components/schemas/AppLinks",
             "description": "A collection of URLs related to this application"
           },
+          "sync_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SyncStatus"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded \u2014 the app has never synced, or was disconnected."
+          },
           "custom_attributes": {
             "anyOf": [
               {
@@ -6761,6 +9072,26 @@
           "links"
         ],
         "title": "AppWithCustomAttributes"
+      },
+      "ApplicationTagOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of the application tag."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Display name of the application tag."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ApplicationTagOutput"
       },
       "ApproverInput": {
         "properties": {
@@ -6958,6 +9289,142 @@
           "id"
         ],
         "title": "BaseUser"
+      },
+      "Body_createKnowledgeContext": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Title of the knowledge entry. Must be unique within the domain."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "Body text (markdown supported). Omit when providing a file attachment instead."
+          },
+          "generic_tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Generic Tags",
+            "description": "Freeform tag strings to attach.",
+            "default": []
+          },
+          "product_scopes": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeProductScope"
+            },
+            "type": "array",
+            "title": "Product Scopes",
+            "description": "Products that can consume this entry.",
+            "default": []
+          },
+          "file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "binary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File",
+            "description": "Optional file attachment."
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "Body_createKnowledgeContext"
+      },
+      "Body_updateKnowledgeContext": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "New title. Omit to leave unchanged."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "New content body. Omit to leave unchanged."
+          },
+          "generic_tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generic Tags",
+            "description": "Replacement tag list \u2014 replaces all existing tags. Omit to leave unchanged."
+          },
+          "product_scopes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeProductScope"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Scopes",
+            "description": "Replacement product scope list \u2014 replaces all existing scopes. Omit to leave unchanged."
+          },
+          "clear_attachment": {
+            "type": "boolean",
+            "title": "Clear Attachment",
+            "description": "When true, removes the existing file attachment without uploading a new one.",
+            "default": false
+          },
+          "file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "binary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File",
+            "description": "Replacement file attachment. Omit to leave existing file unchanged."
+          }
+        },
+        "type": "object",
+        "title": "Body_updateKnowledgeContext"
       },
       "Condition-Input": {
         "properties": {
@@ -7829,6 +10296,15 @@
         "title": "Condition",
         "description": "Pydantic model describing a Lumos Condition shape.\n\nThis model may be used to validate any input Condition JSON across services that expose\n interacting with LumosConditions in some manner."
       },
+      "ConnectionSource": {
+        "type": "string",
+        "enum": [
+          "API",
+          "UI"
+        ],
+        "title": "ConnectionSource",
+        "description": "Tracks how a domain app integration was initiated."
+      },
       "Cost": {
         "properties": {
           "currency": {
@@ -7941,6 +10417,146 @@
         ],
         "title": "CreateAccessRequestInput"
       },
+      "CreateAccessReviewInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Name of the access review campaign."
+          },
+          "deadline_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Deadline At",
+            "description": "Deadline by which reviewers must complete their reviews. ISO 8601 datetime (e.g. '2026-05-01T00:00:00Z')."
+          },
+          "owner_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Id",
+            "description": "UUID of the user to set as the review owner. Defaults to the authenticated user if not provided."
+          },
+          "target_launch_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Launch Date",
+            "description": "Scheduled launch date for the review. ISO 8601 datetime."
+          },
+          "recurrence_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecurrenceConfigInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recurrence configuration. Mutually exclusive with recurrence_days_frequency."
+          },
+          "recurrence_days_frequency": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurrence Days Frequency",
+            "description": "Recurrence frequency in days. Mutually exclusive with recurrence_config."
+          },
+          "apps": {
+            "items": {
+              "$ref": "#/components/schemas/AccessReviewDomainAppInput"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Apps",
+            "description": "List of domain apps to include in this review. Capped at 200 entries per the Access Review scale limits (technically-supported tier)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "deadline_at"
+        ],
+        "title": "CreateAccessReviewInput",
+        "examples": [
+          {
+            "apps": [
+              {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "review_type": "ENTITLEMENTS"
+              }
+            ],
+            "deadline_at": "2026-06-30T23:59:59Z",
+            "name": "Q2 2026 Quarterly Access Review"
+          },
+          {
+            "apps": [
+              {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "review_type": "ACCOUNTS",
+                "scope_filters": [
+                  {
+                    "group": "EMPLOYMENT_STATUS",
+                    "label": "Terminated",
+                    "name": "employment_status",
+                    "value": "TERMINATED"
+                  }
+                ]
+              }
+            ],
+            "deadline_at": "2026-06-30T23:59:59Z",
+            "name": "Finance apps \u2014 terminated users only",
+            "owner_id": "00000000-0000-0000-0000-0000000000aa"
+          }
+        ]
+      },
+      "CreateAccessReviewOutput": {
+        "properties": {
+          "access_review": {
+            "$ref": "#/components/schemas/AccessReviewOutput",
+            "description": "The newly created access review."
+          },
+          "errors": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AccessReviewDomainAppErrorOutput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errors",
+            "description": "Per-app errors for any domain apps that could not be added. The review is still created with the valid apps."
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_review"
+        ],
+        "title": "CreateAccessReviewOutput"
+      },
       "CustomAttribute": {
         "properties": {
           "type": {
@@ -7979,6 +10595,66 @@
         ],
         "title": "CustomAttribute"
       },
+      "CustomAttributeScopeFilterInput": {
+        "properties": {
+          "group": {
+            "type": "string",
+            "enum": [
+              "CUSTOM_ATTRIBUTE"
+            ],
+            "const": "CUSTOM_ATTRIBUTE",
+            "title": "Group",
+            "description": "Always CUSTOM_ATTRIBUTE."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Name",
+            "description": "Custom attribute label (e.g. 'Department'). Matches the label from scope_options."
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Label",
+            "description": "Human-readable display label."
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value",
+            "description": "Value to filter by for this custom attribute."
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type",
+            "description": "Attribute type (STRING, INTEGER, DATETIME, USER, GROUP, SINGLESELECT, MULTISELECT)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "group",
+          "name",
+          "label"
+        ],
+        "title": "CustomAttributeScopeFilterInput",
+        "description": "Scope filter for ``CUSTOM_ATTRIBUTE`` groups.\n\nCustom attributes are keyed by ``name`` (the attribute label, e.g.\n\"Department\"). ``type`` declares the attribute's type (STRING, INTEGER,\nDATETIME, USER, GROUP, SINGLESELECT, MULTISELECT)."
+      },
       "CustomAttributeType": {
         "type": "string",
         "enum": [
@@ -7987,6 +10663,105 @@
           "SINGLE_SELECT"
         ],
         "title": "CustomAttributeType"
+      },
+      "CustomIntakeFieldResponseOutput": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "description": "The custom intake field prompt shown to the requester."
+          },
+          "response": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response",
+            "description": "The requester's response to the custom intake field."
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "CustomIntakeFieldResponseOutput",
+        "description": "API version of a CustomIntakeFieldResponse on an access request."
+      },
+      "DatetimeScopeFilterInput": {
+        "properties": {
+          "group": {
+            "type": "string",
+            "enum": [
+              "LAST_LOGIN",
+              "LAST_ACTIVITY"
+            ],
+            "title": "Group",
+            "description": "Datetime scope filter group. Must be LAST_LOGIN or LAST_ACTIVITY."
+          },
+          "after": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After",
+            "description": "Inclusive lower bound. Records where the datetime field is >= this value match."
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before",
+            "description": "Inclusive upper bound. Records where the datetime field is <= this value match."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "group"
+        ],
+        "title": "DatetimeScopeFilterInput",
+        "description": "Scope filter for datetime-valued groups (``LAST_LOGIN``, ``LAST_ACTIVITY``).\n\nProvide ``after``, ``before``, or both. Bounds are inclusive. At least one\nmust be set.\n\n- ``after`` alone: matches records where the field is on or after that timestamp.\n- ``before`` alone: matches records where the field is on or before that timestamp.\n- Both: matches records in the closed interval ``[after, before]``. If the\n  two bounds are equal, this matches records at exactly that timestamp."
+      },
+      "DisconnectIntegrationOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The domain app UUID of the disconnected integration."
+          },
+          "app_class_id": {
+            "type": "string",
+            "title": "App Class Id",
+            "description": "The canonical integration identifier."
+          },
+          "disconnected": {
+            "type": "boolean",
+            "title": "Disconnected",
+            "description": "Confirms the app was disconnected. Always `true` on a successful response \u2014 the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "app_class_id",
+          "disconnected"
+        ],
+        "title": "DisconnectIntegrationOutput"
       },
       "DiscoverySource": {
         "type": "string",
@@ -8019,6 +10794,19 @@
           "DEPRECATED"
         ],
         "title": "DomainAppStatus"
+      },
+      "ErrorType": {
+        "type": "string",
+        "enum": [
+          "validation",
+          "authentication",
+          "permission",
+          "not_found",
+          "conflict",
+          "rate_limited",
+          "runtime"
+        ],
+        "title": "ErrorType"
       },
       "FileUpload": {
         "properties": {
@@ -8408,6 +11196,90 @@
         ],
         "title": "InlineWebhookType"
       },
+      "IntegrationCatalogOutput": {
+        "properties": {
+          "app_class_id": {
+            "type": "string",
+            "title": "App Class Id",
+            "description": "Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting via `POST /apps`."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Display name of the integration."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "Short description of the integration."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category",
+            "description": "Category of the integration (e.g. `IT & Security`)."
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url",
+            "description": "URL of the integration's logo."
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_class_id",
+          "name"
+        ],
+        "title": "IntegrationCatalogOutput",
+        "description": "A connectable integration from the app catalog (not a connected instance).\n\nRead via `GET /integrations` and `GET /integrations/{app_class_id}`. Carries\ncatalog metadata only \u2014 no connection status. To read the state of an\nintegration you have connected, use the Apps API (`GET /apps`)."
+      },
+      "IntegrationConnectionSchemaOutput": {
+        "properties": {
+          "app_class_id": {
+            "type": "string",
+            "title": "App Class Id",
+            "description": "Canonical identifier of the integration the schema is for (echoes the request)."
+          },
+          "auth_schema": {
+            "type": "object",
+            "title": "Auth Schema",
+            "description": "JSON Schema (draft-07 style) describing the `auth` object to pass to `POST /apps`. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods \u2014 mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
+          },
+          "settings_schema": {
+            "type": "object",
+            "title": "Settings Schema",
+            "description": "JSON Schema of the non-secret `settings` object for `POST /apps`. Carries tenant URLs, routing configuration, and other non-secret values the integration needs beyond credentials. Some integrations require a manually-set instance id as `app_instance_identifier` (e.g. an Okta domain); others derive it from the credentials during connect. Integrations that run through an on-prem agent take `on_prem_agent_cluster_id` here. Integrations that need no non-secret configuration return an empty object."
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_class_id",
+          "auth_schema",
+          "settings_schema"
+        ],
+        "title": "IntegrationConnectionSchemaOutput",
+        "description": "An integration's *connection schema* \u2014 the `auth` and `settings` a caller\nmust supply to connect it \u2014 so the Terraform provider and SDK consumers can\ndiscover how to connect an integration before connecting it. Field\ndescriptions flow verbatim into the generated OpenAPI spec, so they double\nas the public reference."
+      },
       "JobStateOutput": {
         "properties": {
           "job_id": {
@@ -8425,6 +11297,115 @@
           "job_id"
         ],
         "title": "JobStateOutput"
+      },
+      "KnowledgeContextOutput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of the knowledge entry."
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Title of the knowledge entry."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "Body text of the knowledge entry (markdown supported)."
+          },
+          "file_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Url",
+            "description": "URL of the attached file, if any."
+          },
+          "generic_tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Generic Tags",
+            "description": "Freeform tag strings attached to the entry."
+          },
+          "application_tags": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationTagOutput"
+            },
+            "type": "array",
+            "title": "Application Tags",
+            "description": "Application tags attached to the entry."
+          },
+          "product_scopes": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeProductScope"
+            },
+            "type": "array",
+            "title": "Product Scopes",
+            "description": "Products that can consume this knowledge entry."
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At",
+            "description": "ISO 8601 creation timestamp."
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At",
+            "description": "ISO 8601 last-updated timestamp."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "generic_tags",
+          "application_tags",
+          "product_scopes"
+        ],
+        "title": "KnowledgeContextOutput"
+      },
+      "KnowledgeProductScope": {
+        "type": "string",
+        "enum": [
+          "APPSTORE",
+          "ACCESS_REVIEWS",
+          "ALBUS",
+          "GLOBAL",
+          "ALBUS_DEEP_RESEARCH",
+          "IDENTITY_INTELLIGENCE"
+        ],
+        "title": "KnowledgeProductScope"
       },
       "Lifecycle": {
         "type": "string",
@@ -8752,6 +11733,35 @@
         ],
         "title": "Links"
       },
+      "ListKnowledgeContextOutput": {
+        "properties": {
+          "next_page_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page Token",
+            "description": "Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal \u2014 a page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it."
+          },
+          "knowledge_context": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeContextOutput"
+            },
+            "type": "array",
+            "title": "Knowledge Context",
+            "description": "Knowledge entries on this page."
+          }
+        },
+        "type": "object",
+        "required": [
+          "knowledge_context"
+        ],
+        "title": "ListKnowledgeContextOutput"
+      },
       "ManagerApprovalOption": {
         "type": "string",
         "enum": [
@@ -8986,6 +11996,73 @@
           "size"
         ],
         "title": "Page[AccessRequest]"
+      },
+      "Page_AccessReviewOutput_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AccessReviewOutput"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size"
+        ],
+        "title": "Page[AccessReviewOutput]"
       },
       "Page_Account_": {
         "properties": {
@@ -9254,6 +12331,73 @@
           "size"
         ],
         "title": "Page[Group]"
+      },
+      "Page_IntegrationCatalogOutput_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/IntegrationCatalogOutput"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size"
+        ],
+        "title": "Page[IntegrationCatalogOutput]"
       },
       "Page_PreApprovalRuleOutput_": {
         "properties": {
@@ -9691,6 +12835,35 @@
         ],
         "title": "PermissionType"
       },
+      "PositionalWeekday": {
+        "properties": {
+          "weekday": {
+            "type": "integer",
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Weekday",
+            "description": "0=Monday, 1=Tuesday, ..., 6=Sunday."
+          },
+          "n": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N",
+            "description": "Which occurrence of the weekday within the period (e.g. 1 = first, -1 = last). None means every matching weekday."
+          }
+        },
+        "type": "object",
+        "required": [
+          "weekday"
+        ],
+        "title": "PositionalWeekday",
+        "description": "A positional weekday for monthly/yearly recurrences \u2014 e.g. \"the first Monday of the\nmonth\" is ``{\"weekday\": 0, \"n\": 1}``. Mirrors ``dateutil.rrule.weekday``.\n\nA plain integer weekday (0\u20136) covers the common case; this richer form is only needed\nwhen an Nth-occurrence qualifier is present, which a bare int cannot express."
+      },
       "PreApprovalRuleInput": {
         "properties": {
           "justification": {
@@ -9904,7 +13077,8 @@
           "OFFBOARDING",
           "ONBOARDING",
           "PLATFORM",
-          "SAVINGS"
+          "SAVINGS",
+          "ACCESS_POLICIES"
         ],
         "title": "ProductArea"
       },
@@ -9949,6 +13123,416 @@
         },
         "type": "object",
         "title": "ReassignTaskInput"
+      },
+      "RecurrenceConfig": {
+        "properties": {
+          "freq": {
+            "type": "integer",
+            "title": "Freq",
+            "description": "Recurrence frequency. Use dateutil.rrule constants: YEARLY=0, MONTHLY=1, WEEKLY=2, DAILY=3, HOURLY=4, MINUTELY=5, SECONDLY=6."
+          },
+          "interval": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval",
+            "description": "Interval between each recurrence. Defaults to 1 (every freq period)."
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count",
+            "description": "Total number of occurrences. Mutually exclusive with until."
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until",
+            "description": "End date/time for the recurrence. ISO 8601 datetime string. Mutually exclusive with count."
+          },
+          "byweekday": {
+            "anyOf": [
+              {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PositionalWeekday"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byweekday",
+            "description": "Days of the week to recur on. 0=Monday, 1=Tuesday, ..., 6=Sunday. For positional weekdays (e.g. the first Monday of the month) use the {\"weekday\": N, \"n\": K} form, e.g. {\"weekday\": 0, \"n\": 1}."
+          },
+          "bymonth": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bymonth",
+            "description": "Months to recur on (1\u201312)."
+          },
+          "bymonthday": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bymonthday",
+            "description": "Days of the month to recur on (1\u201331, negative values count from end)."
+          },
+          "byyearday": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byyearday",
+            "description": "Days of the year to recur on."
+          },
+          "byweekno": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byweekno",
+            "description": "Week numbers of the year to recur on."
+          },
+          "bysetpos": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bysetpos",
+            "description": "Positions within the recurrence set to include (e.g. -1 for last occurrence, 1 for first)."
+          },
+          "byhour": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byhour",
+            "description": "Hours of the day to recur on (0\u201323)."
+          },
+          "byminute": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byminute",
+            "description": "Minutes of the hour to recur on (0\u201359)."
+          },
+          "bysecond": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bysecond",
+            "description": "Seconds of the minute to recur on (0\u201359)."
+          },
+          "wkst": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wkst",
+            "description": "Week start day. 0=Monday, 6=Sunday. Defaults to Monday."
+          }
+        },
+        "type": "object",
+        "required": [
+          "freq"
+        ],
+        "title": "RecurrenceConfig",
+        "description": "Shape of a recurrence configuration. Fields map directly to dateutil.rrule kwargs.\nSee https://dateutil.readthedocs.io/en/stable/rrule.html for full documentation.\nThe minimum required field is freq."
+      },
+      "RecurrenceConfigInput": {
+        "properties": {
+          "freq": {
+            "type": "integer",
+            "title": "Freq",
+            "description": "Recurrence frequency. Use dateutil.rrule constants: YEARLY=0, MONTHLY=1, WEEKLY=2, DAILY=3, HOURLY=4, MINUTELY=5, SECONDLY=6."
+          },
+          "interval": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interval",
+            "description": "Interval between each recurrence. Defaults to 1 (every freq period)."
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Count",
+            "description": "Total number of occurrences. Mutually exclusive with until."
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until",
+            "description": "End date/time for the recurrence. ISO 8601 datetime string. Mutually exclusive with count."
+          },
+          "byweekday": {
+            "anyOf": [
+              {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PositionalWeekday"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byweekday",
+            "description": "Days of the week to recur on. 0=Monday, 1=Tuesday, ..., 6=Sunday. For positional weekdays (e.g. the first Monday of the month) use the {\"weekday\": N, \"n\": K} form, e.g. {\"weekday\": 0, \"n\": 1}."
+          },
+          "bymonth": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bymonth",
+            "description": "Months to recur on (1\u201312)."
+          },
+          "bymonthday": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bymonthday",
+            "description": "Days of the month to recur on (1\u201331, negative values count from end)."
+          },
+          "byyearday": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byyearday",
+            "description": "Days of the year to recur on."
+          },
+          "byweekno": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byweekno",
+            "description": "Week numbers of the year to recur on."
+          },
+          "bysetpos": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bysetpos",
+            "description": "Positions within the recurrence set to include (e.g. -1 for last occurrence, 1 for first)."
+          },
+          "byhour": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byhour",
+            "description": "Hours of the day to recur on (0\u201323)."
+          },
+          "byminute": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Byminute",
+            "description": "Minutes of the hour to recur on (0\u201359)."
+          },
+          "bysecond": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bysecond",
+            "description": "Seconds of the minute to recur on (0\u201359)."
+          },
+          "wkst": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wkst",
+            "description": "Week start day. 0=Monday, 6=Sunday. Defaults to Monday."
+          }
+        },
+        "type": "object",
+        "required": [
+          "freq"
+        ],
+        "title": "RecurrenceConfigInput",
+        "description": "Extends RecurrenceConfig with rrule semantic validation for use on write paths."
       },
       "RequestApprovalConfigInput": {
         "properties": {
@@ -10901,6 +14485,14 @@
         ],
         "title": "RequestablePermissionOutput"
       },
+      "ReviewType": {
+        "type": "string",
+        "enum": [
+          "ACCOUNTS",
+          "ENTITLEMENTS"
+        ],
+        "title": "ReviewType"
+      },
       "RunInfoStatus": {
         "type": "string",
         "enum": [
@@ -10908,6 +14500,232 @@
           "DONE"
         ],
         "title": "RunInfoStatus"
+      },
+      "ScalarScopeFilterInput": {
+        "properties": {
+          "group": {
+            "type": "string",
+            "enum": [
+              "ACCOUNT_ENTITLEMENT",
+              "TEAM",
+              "EMPLOYMENT_STATUS",
+              "EMAIL_DOMAIN",
+              "CATEGORIES",
+              "ACCOUNT_DELTA",
+              "ACCOUNT_STATUS",
+              "ACCOUNT_SOURCE",
+              "SOD_POLICY",
+              "ACCESS_GRANTED_AT",
+              "ACCESS_REQUESTED_AT",
+              "ACCESS_APPROVED_AT",
+              "ACCESS_PROVISIONED_AT",
+              "ACCESS_LENGTH",
+              "USER_OR_GROUP",
+              "UNMATCHED_ACCOUNTS",
+              "ENTITLEMENT_TAG"
+            ],
+            "title": "Group",
+            "description": "Scope filter group. Use DatetimeScopeFilterInput for LAST_LOGIN / LAST_ACTIVITY and CustomAttributeScopeFilterInput for CUSTOM_ATTRIBUTE."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Name",
+            "description": "Internal identifier for this filter item. For ACCOUNT_ENTITLEMENT this is the entitlement **type label** (e.g. 'Team', 'Role', 'Repo Access') \u2014 copy it from the matching item's `name` in GET /access_reviews/scope_options."
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Label",
+            "description": "Human-readable display label."
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value",
+            "description": "The value to filter by. This must be the exact `value` of an item returned by GET /access_reviews/scope_options for this app \u2014 the machine-matchable identifier, **not** the human-readable `label`. For ACCOUNT_ENTITLEMENT the value is the entitlement's integration_specific_entitlement_id, which may be an opaque id (e.g. a numeric team id) rather than its display name. Posting a `label`, or any value not present in scope_options, is rejected."
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type",
+            "description": "Attribute type. Required for USER_OR_GROUP (must be 'USER' or 'GROUP'). Ignored for all other groups."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "group",
+          "name",
+          "label"
+        ],
+        "title": "ScalarScopeFilterInput",
+        "description": "Scope filter for groups whose value is a simple string/UUID/enum.\n\nDatetime-valued groups (``LAST_LOGIN``, ``LAST_ACTIVITY``) use\n:class:`DatetimeScopeFilterInput`; ``CUSTOM_ATTRIBUTE`` uses\n:class:`CustomAttributeScopeFilterInput`."
+      },
+      "ScopablePropertyGroup": {
+        "type": "string",
+        "enum": [
+          "ACCOUNT_ENTITLEMENT",
+          "TEAM",
+          "EMPLOYMENT_STATUS",
+          "EMAIL_DOMAIN",
+          "CATEGORIES",
+          "ACCOUNT_DELTA",
+          "ACCOUNT_STATUS",
+          "ACCOUNT_SOURCE",
+          "LAST_LOGIN",
+          "LAST_ACTIVITY",
+          "CUSTOM_ATTRIBUTE",
+          "SOD_POLICY",
+          "ACCESS_GRANTED_AT",
+          "ACCESS_REQUESTED_AT",
+          "ACCESS_APPROVED_AT",
+          "ACCESS_PROVISIONED_AT",
+          "ACCESS_LENGTH",
+          "USER_OR_GROUP",
+          "UNMATCHED_ACCOUNTS",
+          "ENTITLEMENT_TAG"
+        ],
+        "title": "ScopablePropertyGroup"
+      },
+      "ScopeFilterGroupOutput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Display name of this filter group."
+          },
+          "group": {
+            "$ref": "#/components/schemas/ScopablePropertyGroup",
+            "description": "ScopablePropertyGroup enum value."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STRING",
+              "INTEGER",
+              "DATETIME",
+              "SINGLESELECT",
+              "MULTISELECT",
+              "USER",
+              "GROUP"
+            ],
+            "title": "Type",
+            "description": "Attribute type for values in this group."
+          },
+          "items": {
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ScalarScopeFilterInput"
+                },
+                {
+                  "$ref": "#/components/schemas/CustomAttributeScopeFilterInput"
+                },
+                {
+                  "$ref": "#/components/schemas/DatetimeScopeFilterInput"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "group",
+                "mapping": {
+                  "ACCESS_APPROVED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCESS_GRANTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCESS_LENGTH": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCESS_PROVISIONED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCESS_REQUESTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCOUNT_DELTA": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCOUNT_ENTITLEMENT": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCOUNT_SOURCE": "#/components/schemas/ScalarScopeFilterInput",
+                  "ACCOUNT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                  "CATEGORIES": "#/components/schemas/ScalarScopeFilterInput",
+                  "CUSTOM_ATTRIBUTE": "#/components/schemas/CustomAttributeScopeFilterInput",
+                  "EMAIL_DOMAIN": "#/components/schemas/ScalarScopeFilterInput",
+                  "EMPLOYMENT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                  "ENTITLEMENT_TAG": "#/components/schemas/ScalarScopeFilterInput",
+                  "LAST_ACTIVITY": "#/components/schemas/DatetimeScopeFilterInput",
+                  "LAST_LOGIN": "#/components/schemas/DatetimeScopeFilterInput",
+                  "SOD_POLICY": "#/components/schemas/ScalarScopeFilterInput",
+                  "TEAM": "#/components/schemas/ScalarScopeFilterInput",
+                  "UNMATCHED_ACCOUNTS": "#/components/schemas/ScalarScopeFilterInput",
+                  "USER_OR_GROUP": "#/components/schemas/ScalarScopeFilterInput"
+                }
+              }
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Available items for this group, each already shaped as a valid scope filter input. Callers can POST an item directly in `scope_filters`."
+          },
+          "filter_input_template": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filter Input Template",
+            "description": "Template shape for filter input on this group. Present for datetime groups and CUSTOM_ATTRIBUTE \u2014 where values vary per request so no pre-computed items list exists."
+          },
+          "default_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Label",
+            "description": "Default display label (e.g. 'No' for delta filter)."
+          },
+          "truncated": {
+            "type": "boolean",
+            "title": "Truncated",
+            "description": "True when `items` was capped below the underlying source's actual cardinality. Today this only applies to ACCOUNT_ENTITLEMENT groups, which are capped at 1000 entitlement labels per type bucket. When set, callers should expect that some valid entitlement labels for this bucket are not present in `items`.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "group",
+          "type"
+        ],
+        "title": "ScopeFilterGroupOutput",
+        "description": "Self-describing discovery group.\n\nEach entry in ``items`` is a valid :type:`ScopeFilterInput` payload \u2014 the\ncaller can POST it back unmodified in a create/edit request. For groups\nwhose values vary per-user (CUSTOM_ATTRIBUTE) or are datetime ranges\n(LAST_LOGIN, LAST_ACTIVITY), ``items`` is empty and\n``filter_input_template`` shows the expected shape instead."
+      },
+      "ScopeOptionsResponse": {
+        "properties": {
+          "scope_options": {
+            "items": {
+              "$ref": "#/components/schemas/ScopeFilterGroupOutput"
+            },
+            "type": "array",
+            "title": "Scope Options",
+            "description": "Available scope filter groups."
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope_options"
+        ],
+        "title": "ScopeOptionsResponse"
       },
       "SupportRequestStatus": {
         "type": "string",
@@ -10936,6 +14754,15 @@
         ],
         "title": "SupportRequestStatus"
       },
+      "SyncStatus": {
+        "type": "string",
+        "enum": [
+          "SYNCING",
+          "SUCCESS",
+          "FAILED"
+        ],
+        "title": "SyncStatus"
+      },
       "SyncTaskOutput": {
         "properties": {
           "job_id": {
@@ -10960,6 +14787,15 @@
           "job_id"
         ],
         "title": "SyncTaskOutput"
+      },
+      "SyncType": {
+        "type": "string",
+        "enum": [
+          "full_sync"
+        ],
+        "const": "full_sync",
+        "title": "SyncType",
+        "description": "The kind of sync to trigger. MVP supports full integration sync only.\n\nThe enum is the forward-compatible seam: new sync kinds (incremental,\ngroups-only, \u2026) are added as additional members without changing the\nrequest/response contract."
       },
       "Task": {
         "properties": {
@@ -11304,6 +15140,240 @@
           "EXPIRED"
         ],
         "title": "TaskStatus"
+      },
+      "TriggerSyncInput": {
+        "properties": {
+          "sync_type": {
+            "$ref": "#/components/schemas/SyncType",
+            "description": "Which sync to run. Required. Today only `full_sync` (a full integration sync that re-pulls accounts, groups, and entitlements) is supported; any other value is rejected with 422. The field is required even with one value so the contract stays stable as more sync kinds are added."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "sync_type"
+        ],
+        "title": "TriggerSyncInput"
+      },
+      "TriggerSyncOutput": {
+        "properties": {
+          "app_id": {
+            "type": "string",
+            "title": "App Id",
+            "description": "UUID of the app (domain app) the sync was triggered for."
+          },
+          "sync_type": {
+            "$ref": "#/components/schemas/SyncType",
+            "description": "The sync kind that was triggered (echoes the request)."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Sync state immediately after the trigger was accepted \u2014 typically `SYNCING`. The sync itself runs asynchronously; poll `GET /apps/{app_id}` to follow the app."
+          }
+        },
+        "type": "object",
+        "required": [
+          "app_id",
+          "sync_type",
+          "status"
+        ],
+        "title": "TriggerSyncOutput"
+      },
+      "UpdateAccessReviewArdaInput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of the ARDA to update."
+          },
+          "scope_filters": {
+            "anyOf": [
+              {
+                "items": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ScalarScopeFilterInput"
+                    },
+                    {
+                      "$ref": "#/components/schemas/CustomAttributeScopeFilterInput"
+                    },
+                    {
+                      "$ref": "#/components/schemas/DatetimeScopeFilterInput"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "group",
+                    "mapping": {
+                      "ACCESS_APPROVED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_GRANTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_LENGTH": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_PROVISIONED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCESS_REQUESTED_AT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_DELTA": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_ENTITLEMENT": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_SOURCE": "#/components/schemas/ScalarScopeFilterInput",
+                      "ACCOUNT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                      "CATEGORIES": "#/components/schemas/ScalarScopeFilterInput",
+                      "CUSTOM_ATTRIBUTE": "#/components/schemas/CustomAttributeScopeFilterInput",
+                      "EMAIL_DOMAIN": "#/components/schemas/ScalarScopeFilterInput",
+                      "EMPLOYMENT_STATUS": "#/components/schemas/ScalarScopeFilterInput",
+                      "ENTITLEMENT_TAG": "#/components/schemas/ScalarScopeFilterInput",
+                      "LAST_ACTIVITY": "#/components/schemas/DatetimeScopeFilterInput",
+                      "LAST_LOGIN": "#/components/schemas/DatetimeScopeFilterInput",
+                      "SOD_POLICY": "#/components/schemas/ScalarScopeFilterInput",
+                      "TEAM": "#/components/schemas/ScalarScopeFilterInput",
+                      "UNMATCHED_ACCOUNTS": "#/components/schemas/ScalarScopeFilterInput",
+                      "USER_OR_GROUP": "#/components/schemas/ScalarScopeFilterInput"
+                    }
+                  }
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scope Filters",
+            "description": "Scoping filters for this app's review. Replaces existing filters."
+          },
+          "removal_action": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccessReviewRemovalAction"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Action taken when removing access for accounts in this review."
+          },
+          "configurable_evidence_upload": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccessReviewDomainAppConfigurableEvidenceUpload"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When reviewers must upload evidence during account removal. ALWAYS = required for every operation; DEFAULT = required only for non-restrictive sign-on modes."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "UpdateAccessReviewArdaInput"
+      },
+      "UpdateAccessReviewInput": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Name of the access review campaign."
+          },
+          "deadline_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline At",
+            "description": "Deadline by which reviewers must complete their reviews. ISO 8601 datetime (e.g. '2026-05-01T00:00:00Z')."
+          },
+          "owner_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Id",
+            "description": "UUID of the user to set as the review owner."
+          },
+          "target_launch_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Launch Date",
+            "description": "Scheduled launch date override. ISO 8601 datetime."
+          },
+          "recurrence_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecurrenceConfigInput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recurrence configuration. Mutually exclusive with recurrence_days_frequency."
+          },
+          "recurrence_days_frequency": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurrence Days Frequency",
+            "description": "Recurrence frequency in days. Mutually exclusive with recurrence_config."
+          },
+          "apps": {
+            "items": {
+              "$ref": "#/components/schemas/UpdateAccessReviewArdaInput"
+            },
+            "type": "array",
+            "title": "Apps",
+            "description": "Per-app (ARDA) fields to update."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "UpdateAccessReviewInput",
+        "examples": [
+          {
+            "deadline_at": "2026-07-15T23:59:59Z",
+            "name": "Q2 2026 Quarterly Access Review \u2014 extended"
+          },
+          {
+            "apps": [
+              {
+                "id": "00000000-0000-0000-0000-0000000000ab",
+                "removal_action": "DEPROVISION",
+                "scope_filters": [
+                  {
+                    "after": "2026-01-01T00:00:00Z",
+                    "group": "LAST_LOGIN"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "User": {
         "properties": {
@@ -11922,267 +15992,6 @@
         },
         "type": "object",
         "title": "PermissionInput"
-      },
-      "AppInputPut": {
-        "properties": {
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name",
-            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
-          },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category",
-            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "maxLength": 1000,
-            "title": "Description",
-            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
-          },
-          "logo_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Logo Url",
-            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
-          },
-          "website_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Website Url",
-            "description": "The updated URL of the website of the app. Set to null to clear it."
-          },
-          "request_instructions": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "maxLength": 511,
-            "title": "Request Instructions",
-            "description": "The updated request instructions."
-          },
-          "app_class_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "App Class Id",
-            "description": "Canonical identifier of the integration this app belongs to, e.g. `okta.com`. Must match the existing app (a mismatch is rejected with 400); required when rotating credentials via `auth`/`settings`/`version`."
-          },
-          "auth": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Auth",
-            "description": "New credentials for the integration, as a JSON object \u2014 **all secrets go here**. Providing credentials reconnects the app: they are always overwritten and re-validated, and a sync is triggered. The accepted keys depend on the integration and are validated server-side. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Requires `app_class_id`."
-          },
-          "settings": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Settings",
-            "description": "Non-secret configuration for the integration being reconnected, as a JSON object \u2014 e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Requires `app_class_id`."
-          },
-          "version": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Version",
-            "description": "Optional integration version override for the reconnect. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Requires `app_class_id`."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "AppInputPut",
-        "description": "Body of `PUT /apps/{app_id}`: update metadata overrides and/or reconnect.\n\nOne flat model serves both operations (mirroring `AppInputCreate`): the\nmetadata fields apply the same domain-specific overrides as\n`PATCH /apps/{app_id}`, and providing credentials (`auth`/`settings`/\n`version`, which require the matching `app_class_id`) additionally\nreconnects the integration with those credentials.",
-        "examples": [
-          {
-            "description": "Hand-rolled deploy dashboard.",
-            "name": "My internal tool"
-          },
-          {
-            "app_class_id": "okta.com",
-            "auth": {
-              "api_key": "0123456789abcdef0123456789abcdef"
-            },
-            "settings": {
-              "app_instance_identifier": "myorg.okta.com"
-            }
-          }
-        ]
-      },
-      "AppInputUpdate": {
-        "properties": {
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name",
-            "description": "The updated domain-specific display name of the app. Set to null to reset to the app's default name."
-          },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category",
-            "description": "The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "maxLength": 1000,
-            "title": "Description",
-            "description": "The updated domain-specific description of the app. Set to null to reset to the app's default description."
-          },
-          "logo_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Logo Url",
-            "description": "The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo."
-          },
-          "website_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Website Url",
-            "description": "The updated URL of the website of the app. Set to null to clear it."
-          },
-          "request_instructions": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "maxLength": 511,
-            "title": "Request Instructions",
-            "description": "The updated request instructions."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "AppInputUpdate"
-      },
-      "ConnectionSource": {
-        "type": "string",
-        "enum": [
-          "API",
-          "UI"
-        ],
-        "title": "ConnectionSource",
-        "description": "Tracks how a domain app integration was initiated."
-      },
-      "DisconnectIntegrationOutput": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id",
-            "description": "The domain app UUID of the disconnected integration."
-          },
-          "app_class_id": {
-            "type": "string",
-            "title": "App Class Id",
-            "description": "The canonical integration identifier."
-          },
-          "disconnected": {
-            "type": "boolean",
-            "title": "Disconnected",
-            "description": "Confirms the app was disconnected. Always `true` on a successful response \u2014 the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained)."
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "app_class_id",
-          "disconnected"
-        ],
-        "title": "DisconnectIntegrationOutput"
       }
     },
     "securitySchemes": {
@@ -12191,5 +16000,15 @@
         "scheme": "bearer"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Access Reviews",
+      "description": "\nCreate and manage access review campaigns \u2014 scheduled reviews of who has access to what\nacross your connected apps.\n\n**Typical workflow for creating a review:**\n\n1. `GET /apps` \u2014 find the domain app UUIDs you want to review.\n2. `GET /access_reviews/scope_options?domain_app_id={id}` \u2014 discover available scope\n   filters (employment status, team, last login, etc.). Each returned `items` entry is a\n   ready-to-POST `scope_filters` payload; datetime and custom-attribute groups instead\n   expose a `filter_input_template`.\n3. `POST /access_reviews` with `apps` (optionally with `scope_filters` per app) \u2014\n   creates the campaign.\n4. `GET /access_reviews/{id}` \u2014 poll until `status` transitions from `IN_PREPARATION`\n   to `IN_PROGRESS`.\n\n**After creation:**\n\n- `POST /access_reviews/{id}/apps` \u2014 add more apps while `status != COMPLETED`.\n- `PATCH /access_reviews/{id}` \u2014 update name / deadline / owner, or per-ARDA\n  `scope_filters` and removal action.\n- `DELETE /access_reviews/{id}` \u2014 soft-delete the whole campaign.\n- `DELETE /access_reviews/{id}/apps/{arda_id}` \u2014 soft-delete a single app from the\n  campaign.\n\nAll endpoints require an API token with the `access_reviews.create` or\n`access_reviews.view` permission (Access Review Administrator or App Admin role).\n"
+    },
+    {
+      "name": "Tasks",
+      "description": "\n**Tasks** are work items emitted by Lumos workflows \u2014 things that need a human (or an\nautomated caller) to make a decision or perform a step before the workflow can proceed.\nTypical examples:\n\n- An access request is waiting on an approver's decision.\n- A provisioning or deprovisioning step needs manual fulfillment.\n- An error needs acknowledgement.\n\nEach task carries two classification fields you can filter on:\n\n- **`task_category`** \u2014 what kind of decision or step the task represents. Values:\n  `APPROVAL`, `PROVISIONING`, `DEPROVISIONING`, `ERROR`.\n- **`product_area`** \u2014 which Lumos product surface emitted the task. Values:\n  `APPSTORE`, `ACCESS_REVIEWS`, `MOVER`, `ATTRIBUTE_SYNC`, `OFFBOARDING`, `ONBOARDING`,\n  `PLATFORM`, `SAVINGS`.\n\n### Which endpoint should I call?\n\n- **To approve or deny an access request**, use `POST /tasks/{task_id}/complete`\n  (approve) or `POST /tasks/{task_id}/dismiss` (deny).\n- **To find pending approval tasks**, call\n  `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING` (access\n  requests).\n- **Only use `POST /tasks/{task_id}/perform-action`** for tasks that expose custom workflow\n  actions. Discover those actions via `GET /tasks/{task_id}/actions`. Approval tasks do not\n  require this endpoint \u2014 `complete` and `dismiss` are the right primitives.\n\nFor a full walkthrough with `curl` and Python examples, see the\n[Tasks API How-To](https://developers.lumos.com/docs/tasks-api-how-to) guide.\n"
+    }
+  ]
 }
