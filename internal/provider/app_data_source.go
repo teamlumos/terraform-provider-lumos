@@ -44,6 +44,7 @@ type AppDataSourceModel struct {
 	RequestInstructions              types.String                       `tfsdk:"request_instructions"`
 	Sources                          []types.String                     `tfsdk:"sources"`
 	Status                           types.String                       `tfsdk:"status"`
+	SyncStatus                       types.String                       `tfsdk:"sync_status"`
 	UserFriendlyLabel                types.String                       `tfsdk:"user_friendly_label"`
 	WebsiteURL                       types.String                       `tfsdk:"website_url"`
 }
@@ -173,6 +174,10 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
+			},
+			"sync_status": schema.StringAttribute{
+				Computed:    true,
+				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. ` + "`" + `null` + "`" + ` when no sync result is recorded — the app has never synced, or was disconnected.`,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,

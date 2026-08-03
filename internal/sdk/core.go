@@ -457,6 +457,8 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 		fallthrough
 	case httpRes.StatusCode == 403:
 		fallthrough
+	case httpRes.StatusCode == 404:
+		fallthrough
 	case httpRes.StatusCode == 409:
 	case httpRes.StatusCode == 422:
 		switch {

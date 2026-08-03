@@ -73,6 +73,11 @@ func (r *AppDataSourceModel) RefreshFromSharedAppWithCustomAttributes(ctx contex
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
 		r.Status = types.StringValue(string(resp.Status))
+		if resp.SyncStatus != nil {
+			r.SyncStatus = types.StringValue(string(*resp.SyncStatus))
+		} else {
+			r.SyncStatus = types.StringNull()
+		}
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}

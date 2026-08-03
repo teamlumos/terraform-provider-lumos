@@ -21,6 +21,7 @@ type AppWithCustomAttributes struct {
 	RequestInstructions              types.String               `tfsdk:"request_instructions"`
 	Sources                          []types.String             `tfsdk:"sources"`
 	Status                           types.String               `tfsdk:"status"`
+	SyncStatus                       types.String               `tfsdk:"sync_status"`
 	UserFriendlyLabel                types.String               `tfsdk:"user_friendly_label"`
 	WebsiteURL                       types.String               `tfsdk:"website_url"`
 }

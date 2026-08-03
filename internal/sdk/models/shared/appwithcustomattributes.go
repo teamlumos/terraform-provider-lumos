@@ -30,6 +30,8 @@ type AppWithCustomAttributes struct {
 	// Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
 	Disconnected bool     `json:"disconnected"`
 	Links        AppLinks `json:"links"`
+	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
+	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
 	// Custom attributes configured on the app
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
 }
@@ -130,6 +132,13 @@ func (a *AppWithCustomAttributes) GetLinks() AppLinks {
 		return AppLinks{}
 	}
 	return a.Links
+}
+
+func (a *AppWithCustomAttributes) GetSyncStatus() *SyncStatus {
+	if a == nil {
+		return nil
+	}
+	return a.SyncStatus
 }
 
 func (a *AppWithCustomAttributes) GetCustomAttributes() map[string]CustomAttribute {

@@ -34,6 +34,11 @@ func (r *AppResourceModel) RefreshFromSharedApp(ctx context.Context, resp *share
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
 		r.Status = types.StringValue(string(resp.Status))
+		if resp.SyncStatus != nil {
+			r.SyncStatus = types.StringValue(string(*resp.SyncStatus))
+		} else {
+			r.SyncStatus = types.StringNull()
+		}
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}
@@ -101,6 +106,11 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
 		r.Status = types.StringValue(string(resp.Status))
+		if resp.SyncStatus != nil {
+			r.SyncStatus = types.StringValue(string(*resp.SyncStatus))
+		} else {
+			r.SyncStatus = types.StringNull()
+		}
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}
