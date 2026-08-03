@@ -61,6 +61,7 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreApp(ctx context.Co
 			}
 		}
 		r.Description = types.StringPointerValue(resp.Description)
+		r.Disconnected = types.BoolValue(resp.Disconnected)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringValue(resp.InstanceID)
 		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
@@ -72,6 +73,11 @@ func (r *AppStoreAppDataSourceModel) RefreshFromSharedAppStoreApp(ctx context.Co
 			r.Sources = append(r.Sources, types.StringValue(string(v)))
 		}
 		r.Status = types.StringValue(string(resp.Status))
+		if resp.SyncStatus != nil {
+			r.SyncStatus = types.StringValue(string(*resp.SyncStatus))
+		} else {
+			r.SyncStatus = types.StringNull()
+		}
 		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}

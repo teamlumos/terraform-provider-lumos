@@ -46,6 +46,7 @@ data "lumos_app" "my_app" {
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
 - `status` (String)
+- `sync_status` (String) The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
 

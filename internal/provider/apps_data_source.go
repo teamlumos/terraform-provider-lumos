@@ -193,6 +193,10 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"status": schema.StringAttribute{
 							Computed: true,
 						},
+						"sync_status": schema.StringAttribute{
+							Computed:    true,
+							Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. ` + "`" + `null` + "`" + ` when no sync result is recorded — the app has never synced, or was disconnected.`,
+						},
 						"user_friendly_label": schema.StringAttribute{
 							Computed:    true,
 							Description: `The user-friendly label of this app.`,

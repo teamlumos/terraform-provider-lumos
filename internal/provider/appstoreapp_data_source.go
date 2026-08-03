@@ -37,6 +37,7 @@ type AppStoreAppDataSourceModel struct {
 	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
+	Disconnected                     types.Bool                                    `tfsdk:"disconnected"`
 	Expand                           []types.String                                `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
@@ -47,6 +48,7 @@ type AppStoreAppDataSourceModel struct {
 	RequestInstructions              types.String                                  `tfsdk:"request_instructions"`
 	Sources                          []types.String                                `tfsdk:"sources"`
 	Status                           types.String                                  `tfsdk:"status"`
+	SyncStatus                       types.String                                  `tfsdk:"sync_status"`
 	UserFriendlyLabel                types.String                                  `tfsdk:"user_friendly_label"`
 	WebsiteURL                       types.String                                  `tfsdk:"website_url"`
 }
@@ -137,6 +139,10 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			"description": schema.StringAttribute{
 				Computed:    true,
 				Description: `The user-facing description of the app`,
+			},
+			"disconnected": schema.BoolAttribute{
+				Computed:    true,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
 			},
 			"expand": schema.ListAttribute{
 				Optional:    true,
@@ -543,6 +549,10 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"status": schema.StringAttribute{
 				Computed: true,
+			},
+			"sync_status": schema.StringAttribute{
+				Computed:    true,
+				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. ` + "`" + `null` + "`" + ` when no sync result is recorded — the app has never synced, or was disconnected.`,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed:    true,
