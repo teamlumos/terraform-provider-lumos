@@ -37,7 +37,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.AllowedGroups == nil {
 				r.RequestConfig.AllowedGroups = nil
 			} else {
-				r.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigOutput{}
+				r.RequestConfig.AllowedGroups = &tfTypes.AllowedGroupsConfigInput{}
 				r.RequestConfig.AllowedGroups.Groups = []tfTypes.Group{}
 
 				for _, groupsItem := range resp.RequestConfig.AllowedGroups.Groups {
@@ -76,7 +76,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 				if resp.RequestConfig.RequestApprovalConfig.Approvers == nil {
 					r.RequestConfig.RequestApprovalConfig.Approvers = nil
 				} else {
-					r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversOutput{}
+					r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 
 					for _, groupsItem1 := range resp.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -117,7 +117,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 				if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 				} else {
-					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversOutput{}
+					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 
 					for _, groupsItem2 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
@@ -169,7 +169,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 			if resp.RequestConfig.RequestFulfillmentConfig == nil {
 				r.RequestConfig.RequestFulfillmentConfig = nil
 			} else {
-				r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigOutput{}
+				r.RequestConfig.RequestFulfillmentConfig = &tfTypes.RequestFulfillmentConfigInput{}
 				r.RequestConfig.RequestFulfillmentConfig.ManualInstructions = types.StringPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualInstructions)
 				r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded = types.BoolPointerValue(resp.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded)
 				if resp.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup == nil {

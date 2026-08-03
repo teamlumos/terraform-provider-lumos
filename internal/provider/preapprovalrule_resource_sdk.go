@@ -52,10 +52,10 @@ func (r *PreApprovalRuleResourceModel) RefreshFromSharedPreApprovalRuleOutput(ct
 
 			r.PreapprovedGroups = append(r.PreapprovedGroups, preapprovedGroups)
 		}
-		r.PreapprovedPermissions = []tfTypes.RequestablePermissionBase1{}
+		r.PreapprovedPermissions = []tfTypes.RequestablePermissionBase{}
 
 		for _, preapprovedPermissionsItem := range resp.PreapprovedPermissions {
-			var preapprovedPermissions tfTypes.RequestablePermissionBase1
+			var preapprovedPermissions tfTypes.RequestablePermissionBase
 
 			preapprovedPermissions.AppClassID = types.StringValue(preapprovedPermissionsItem.AppClassID)
 			preapprovedPermissions.AppID = types.StringValue(preapprovedPermissionsItem.AppID)

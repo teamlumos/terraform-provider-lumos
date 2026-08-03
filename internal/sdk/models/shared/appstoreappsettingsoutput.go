@@ -5,11 +5,9 @@ package shared
 
 type AppStoreAppSettingsOutput struct {
 	// AppStore App instructions that are shown to the requester.
-	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
-	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
-	RedirectURL  *string                                `json:"redirect_url,omitempty"`
-	RequestFlow  *AppStoreAppSettingsRequestFlowOutput  `json:"request_flow,omitempty"`
-	Provisioning *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
+	CustomRequestInstructions *string                                `json:"custom_request_instructions,omitempty"`
+	RequestFlow               *AppStoreAppSettingsRequestFlowOutput  `json:"request_flow,omitempty"`
+	Provisioning              *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
 }
 
 func (a *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
@@ -17,13 +15,6 @@ func (a *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
 		return nil
 	}
 	return a.CustomRequestInstructions
-}
-
-func (a *AppStoreAppSettingsOutput) GetRedirectURL() *string {
-	if a == nil {
-		return nil
-	}
-	return a.RedirectURL
 }
 
 func (a *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsRequestFlowOutput {
