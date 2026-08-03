@@ -482,3 +482,58 @@ actions:
   # shared schemas don't get pulled into the SDK via AccessRequest.
   - target: $["components"]["schemas"]["AccessRequest"]["properties"]["tasks"]
     remove: true
+
+  # Access review endpoints - not exposed via Terraform. Exclude from SDK generation.
+  - target: $["paths"]["/access_reviews"]
+    remove: true
+  - target: $["paths"]["/access_reviews/scope_options"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps/{arda_id}"]
+    remove: true
+
+  # Knowledge context endpoints - not exposed via Terraform. Exclude from SDK generation.
+  - target: $["paths"]["/v1/knowledge/context"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/context/{knowledge_context_id}"]
+    remove: true
+
+  # Integration catalog / connection-schema discovery and the sync trigger back the
+  # lumos_app connect flow, but nothing maps them to Terraform entities yet, so they
+  # would generate unreachable SDK code. Drop these removals when the data sources
+  # that expose them land.
+  - target: $["paths"]["/integrations"]
+    remove: true
+  - target: $["paths"]["/integrations/{app_class_id}"]
+    remove: true
+  - target: $["paths"]["/integrations/{app_class_id}/connection-schema"]
+    remove: true
+  - target: $["paths"]["/apps/{app_id}/sync"]
+    remove: true
+
+  # App Store redirect / default-permission settings are not mapped to Terraform
+  # attributes yet. Generating them pulls RequestablePermissionBase into the
+  # provisioning subtree, which renames the deduplicated tfTypes the
+  # RequestConfigInputValidator depends on. Drop these removals in the change
+  # that maps the fields and updates that validator together.
+  - target: $["components"]["schemas"]["AddAppToAppStoreInput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AppSettingInput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AppSettingOutput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsInput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsOutput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningInput"]["properties"]["default_permission"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningInput"]["properties"]["default_time_based_access_option"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningOutput"]["properties"]["default_permission"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningOutput"]["properties"]["default_time_based_access_option"]
+    remove: true
