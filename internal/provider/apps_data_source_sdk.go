@@ -78,6 +78,11 @@ func (r *AppsDataSourceModel) RefreshFromSharedPageAppWithCustomAttributes(ctx c
 				items.Sources = append(items.Sources, types.StringValue(string(v)))
 			}
 			items.Status = types.StringValue(string(itemsItem.Status))
+			if itemsItem.SyncStatus != nil {
+				items.SyncStatus = types.StringValue(string(*itemsItem.SyncStatus))
+			} else {
+				items.SyncStatus = types.StringNull()
+			}
 			items.UserFriendlyLabel = types.StringValue(itemsItem.UserFriendlyLabel)
 			items.WebsiteURL = types.StringPointerValue(itemsItem.WebsiteURL)
 

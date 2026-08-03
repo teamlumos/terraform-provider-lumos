@@ -49,6 +49,7 @@ type AppStoreAppResourceModel struct {
 	CustomAttributes                 map[string]tfTypes.CustomAttribute            `tfsdk:"custom_attributes"`
 	CustomRequestInstructions        types.String                                  `tfsdk:"custom_request_instructions"`
 	Description                      types.String                                  `tfsdk:"description"`
+	Disconnected                     types.Bool                                    `tfsdk:"disconnected"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
 	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
@@ -58,6 +59,7 @@ type AppStoreAppResourceModel struct {
 	RequestInstructions              types.String                                  `tfsdk:"request_instructions"`
 	Sources                          []types.String                                `tfsdk:"sources"`
 	Status                           types.String                                  `tfsdk:"status"`
+	SyncStatus                       types.String                                  `tfsdk:"sync_status"`
 	UserFriendlyLabel                types.String                                  `tfsdk:"user_friendly_label"`
 	WebsiteURL                       types.String                                  `tfsdk:"website_url"`
 }
@@ -174,6 +176,13 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `The user-facing description of the app`,
+			},
+			"disconnected": schema.BoolAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Bool{
+					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
+				},
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /apps/{app_id}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /apps/{app_id}` + "`" + `.`,
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -975,6 +984,13 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
+			},
+			"sync_status": schema.StringAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. ` + "`" + `null` + "`" + ` when no sync result is recorded — the app has never synced, or was disconnected.`,
 			},
 			"user_friendly_label": schema.StringAttribute{
 				Computed: true,

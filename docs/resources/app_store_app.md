@@ -115,6 +115,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 - `category` (String) The category of the app, as shown in the AppStore
 - `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--custom_attributes))
 - `description` (String) The user-facing description of the app
+- `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
 - `id` (String) The ID of this app.
 - `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
 - `links` (Attributes) (see [below for nested schema](#nestedatt--links))
@@ -122,6 +123,7 @@ resource "lumos_app_store_app" "my_appstoreapp" {
 - `request_instructions` (String) The request instructions.
 - `sources` (List of String) The sources of this app.
 - `status` (String)
+- `sync_status` (String) The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
 - `user_friendly_label` (String) The user-friendly label of this app.
 - `website_url` (String) The URL of the website of this app.
 
