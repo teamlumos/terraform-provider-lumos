@@ -1,7 +1,10 @@
 .PHONY: provider
-provider: overlay.yaml
-	@echo "Syncing gen.yaml version from latest git tag..."
-	@VERSION=$$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//'); \
+provider: overlay-v1.yaml
+	@echo "Syncing gen.yaml version..."
+	@VERSION="$(VERSION)"; \
+	if [ -z "$$VERSION" ]; then \
+	  VERSION=$$(git describe --tags --abbrev=0 --match 'v1.*' 2>/dev/null | sed 's/^v//'); \
+	fi; \
 	if [ -n "$$VERSION" ]; then \
 	  sed "s/^  version: .*/  version: $$VERSION/" .speakeasy/gen.yaml > .speakeasy/gen.yaml.tmp && mv .speakeasy/gen.yaml.tmp .speakeasy/gen.yaml; \
 	  echo "  Set terraform.version to $$VERSION"; \
@@ -22,10 +25,10 @@ provider: overlay.yaml
 
 
 .PHONY: overlay
-overlay: openapi.json original-openapi.json
-	@echo "Generating overlay.yaml from openapi.json and original-openapi.json..."
-	speakeasy overlay compare --schemas original-openapi.json --schemas openapi.json > overlay.yaml
-	@echo "✓ overlay.yaml generated"
+overlay: openapi-v1.json original-openapi.json
+	@echo "Generating overlay-v1.yaml from openapi-v1.json and original-openapi.json..."
+	speakeasy overlay compare --before original-openapi.json --after openapi-v1.json > overlay-v1.yaml
+	@echo "✓ overlay-v1.yaml generated"
 
 
 .PHONY: testacc

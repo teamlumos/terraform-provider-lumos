@@ -1,0 +1,170 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: Overlay original-openapi.json => openapi-v1.json
+  version: 0.0.0
+actions:
+  - target: $["info"]["description"]
+    update: "ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.10.x (version = \"~> 0.10\")."
+  - target: $["paths"]["/v1/apps"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Apps#read"
+  - target: $["paths"]["/v1/apps"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "App#create"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "App#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]
+    update:
+      "x-speakeasy-entity-operation": "App#delete"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["put"]
+    update:
+      "x-speakeasy-entity-operation": "App#update"
+  - target: $["paths"]["/v1/integrations"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Integrations#read"
+  - target: $["paths"]["/v1/integrations/{app_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Integration#read"
+  - target: $["paths"]["/apps"]
+    remove: true
+  - target: $["paths"]["/apps/categories"]
+    remove: true
+  - target: $["paths"]["/apps/{app_id}"]
+    remove: true
+  - target: $["paths"]["/apps/{app_id}/settings"]
+    remove: true
+  - target: $["paths"]["/users/current"]
+    remove: true
+  - target: $["paths"]["/users"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/accounts"]
+    remove: true
+  - target: $["paths"]["/inline_webhooks"]
+    remove: true
+  - target: $["paths"]["/accounts"]
+    remove: true
+  - target: $["paths"]["/groups/{group_id}/users"]
+    remove: true
+  - target: $["paths"]["/groups/{group_id}"]
+    remove: true
+  - target: $["paths"]["/groups"]
+    remove: true
+  - target: $["paths"]["/accounts/upload/{job_id}"]
+    remove: true
+  - target: $["paths"]["/activity_logs"]
+    remove: true
+  - target: $["paths"]["/identity_events"]
+    remove: true
+  - target: $["paths"]["/accounts/upload"]
+    remove: true
+  - target: $["paths"]["/activity_records"]
+    remove: true
+  - target: $["paths"]["/activity_records/job/{job_id}"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/roles"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/roles/{role_name}"]
+    remove: true
+  - target: $["paths"]["/appstore/apps/{app_id}/requestable_permissions"]
+    remove: true
+  - target: $["paths"]["/appstore/requestable_permissions"]
+    remove: true
+  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]
+    remove: true
+  - target: $["paths"]["/appstore/pre_approval_rules"]
+    remove: true
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]
+    remove: true
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]
+    remove: true
+  - target: $["paths"]["/appstore/apps"]
+    remove: true
+  - target: $["paths"]["/appstore/apps/{app_id}"]
+    remove: true
+  - target: $["paths"]["/appstore/access_requests/{id}"]
+    remove: true
+  - target: $["paths"]["/appstore/access_request"]
+    remove: true
+  - target: $["paths"]["/appstore/access_requests"]
+    remove: true
+  - target: $["paths"]["/access_policies"]
+    remove: true
+  - target: $["paths"]["/access_policies/{access_policy_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps/{arda_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews/scope_options"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/context"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/context/{knowledge_context_id}"]
+    remove: true
+  - target: $["paths"]["/vendor_agreements"]
+    remove: true
+  - target: $["paths"]["/vendor_agreements/{vendor_agreement_id}/custom_attributes/{label}"]
+    remove: true
+  - target: $["paths"]["/found_documents"]
+    remove: true
+  - target: $["paths"]["/orders"]
+    remove: true
+  - target: $["paths"]["/tasks"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/actions"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/perform-action"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/reassign"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/comments"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/complete"]
+    remove: true
+  - target: $["paths"]["/tasks/{task_id}/dismiss"]
+    remove: true
+  - target: $["paths"]["/art"]
+    remove: true
+  - target: $["paths"]["/info"]
+    remove: true
+  - target: $["paths"]["/webhooks/airbase/purchase_request_approved/{domain_app_uuid}"]
+    remove: true
+  - target: $["paths"]["/webhooks/vendr/request_completed/{domain_app_uuid}"]
+    remove: true
+  - target: $["components"]["schemas"]["AppWithCustomAttributes"]
+    update:
+      "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["ConnectIntegrationInput"]
+    update:
+      "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["IntegrationCatalogOutput"]
+    update:
+      "x-speakeasy-entity": "Integration"
+  - target: $["components"]["schemas"]["Page_AppWithCustomAttributes_"]
+    update:
+      "x-speakeasy-entity": "Apps"
+  - target: $["components"]["schemas"]["Page_IntegrationCatalogOutput_"]
+    update:
+      "x-speakeasy-entity": "Integrations"
+  - target: $
+    update:
+      "x-speakeasy-retries": {"strategy": "backoff", "backoff": {"initialInterval": 500, "maxInterval": 30000, "maxElapsedTime": 60000, "exponent": 1.5}, "statusCodes": ["5XX"], "retryConnectionErrors": true}
