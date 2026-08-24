@@ -766,12 +766,31 @@ Generation succeeding proves nothing about whether the resource actually functio
 - [ ] **Step 1: Build and install the provider into a local filesystem mirror**
 
 ```bash
-mkdir -p ~/.terraform.d/plugins/registry.terraform.io/teamlumos/lumos/1.0.0-alpha.1/darwin_arm64
-go build -o ~/.terraform.d/plugins/registry.terraform.io/teamlumos/lumos/1.0.0-alpha.1/darwin_arm64/terraform-provider-lumos_v1.0.0-alpha.1 .
-ls -la ~/.terraform.d/plugins/registry.terraform.io/teamlumos/lumos/1.0.0-alpha.1/darwin_arm64/
+mkdir -p /tmp/lumos-mirror/registry.terraform.io/teamlumos/lumos/1.0.0-alpha.1/darwin_arm64
+go build -o /tmp/lumos-mirror/registry.terraform.io/teamlumos/lumos/1.0.0-alpha.1/darwin_arm64/terraform-provider-lumos_v1.0.0-alpha.1 .
 ```
 
 This is the *unpacked* filesystem-mirror layout (`HOSTNAME/NAMESPACE/TYPE/VERSION/TARGET/`), which is the right shape for a locally built binary. Adjust `darwin_arm64` if you are not on Apple silicon.
+
+**Do NOT use `~/.terraform.d/plugins`.** Verified experimentally: Terraform treats
+that implicit plugin directory as the *exclusive* source for any provider it
+contains, so installing the alpha there makes `version = "~> 0.10"` fail with
+"no available releases match the given constraints". Use an explicit
+`provider_installation` block instead, and do NOT add an `exclude` to `direct` —
+that reintroduces the same shadowing:
+
+```hcl
+provider_installation {
+  filesystem_mirror {
+    path    = "/tmp/lumos-mirror"
+    include = ["registry.terraform.io/teamlumos/lumos"]
+  }
+  direct {}
+}
+```
+
+Verified: with this one config, `version = "1.0.0-alpha.1"` resolves from the
+mirror and `version = "~> 0.10"` resolves 0.10.4 from the public registry.
 
 - [ ] **Step 2: Write a test configuration**
 
