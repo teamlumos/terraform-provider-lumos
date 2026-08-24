@@ -13,3 +13,4 @@
 main.tf
 sandbox/
 terraform-provider-lumos
+.superpowers/
