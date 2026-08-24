@@ -79,10 +79,13 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `Canonical identifier of the integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422. Requires replacement if changed.`,
 			},
 			"app_instance_identifier": schema.StringAttribute{
-				Computed:    true,
-				Optional:    true,
-				Default:     stringdefault.StaticString(``),
-				Description: `Identifier of the specific tenant/instance being connected — e.g. an Okta org URL (` + "`" + `https://myorg.okta.com` + "`" + `) or an ICS tenant ` + "`" + `sub` + "`" + ` / slug. Disambiguates multiple instances of the same app within one domain and is echoed back (canonicalized) on the response. A caller-supplied value wins on connect; on reconnect the detected id wins so Lumos tracks vendor tenant renames. Optional — when omitted it is auto-detected from the credentials where possible; some multi-instance integrations return 400 when it can't be derived. Default: ""`,
+				Computed: true,
+				Optional: true,
+				Default:  stringdefault.StaticString(``),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Description: `Identifier of the specific tenant/instance being connected — e.g. an Okta org URL (` + "`" + `https://myorg.okta.com` + "`" + `) or an ICS tenant ` + "`" + `sub` + "`" + ` / slug. Disambiguates multiple instances of the same app within one domain and is echoed back (canonicalized) on the response. A caller-supplied value wins on connect; on reconnect the detected id wins so Lumos tracks vendor tenant renames. Optional — when omitted it is auto-detected from the credentials where possible; some multi-instance integrations return 400 when it can't be derived. Default: ""; Requires replacement if changed.`,
 			},
 			"auth": schema.SingleNestedAttribute{
 				Optional:    true,
