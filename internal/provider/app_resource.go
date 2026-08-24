@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
@@ -70,8 +72,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"app_id": schema.StringAttribute{
-				Required:    true,
-				Description: `Canonical identifier of the integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422.`,
+				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Description: `Canonical identifier of the integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422. Requires replacement if changed.`,
 			},
 			"app_instance_identifier": schema.StringAttribute{
 				Computed:    true,
