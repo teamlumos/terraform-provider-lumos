@@ -14,6 +14,7 @@ generation:
     securityFeb2025: false
     sharedErrorComponentsApr2025: false
     sharedNestedComponentsJan2026: false
+    nameOverrideFeb2026: false
   auth:
     oAuth2ClientCredentialsEnabled: true
     oAuth2PasswordEnabled: false
@@ -21,17 +22,20 @@ generation:
   schemas:
     allOfMergeStrategy: shallowMerge
   requestBodyFieldName: ""
+  versioningStrategy: automatic
   persistentEdits:
-    enabled: "false"
+    enabled: "true"
   tests:
     generateTests: true
     generateNewTests: false
     skipResponseBodyAssertions: false
 terraform:
-  version: 0.10.4
+  version: 1.0.0-alpha.1
+  additionalActions: []
   additionalDataSources: []
   additionalDependencies: {}
   additionalEphemeralResources: []
+  additionalFunctions: []
   additionalListResources: []
   additionalProviderAttributes:
     httpHeaders: ""
@@ -50,8 +54,12 @@ terraform:
     - env: LUMOS_ACCESS_TOKEN
       providerAttribute: http_bearer
   excludeEmptyObjectSchemas: false
+  forwardCompatibleEnumsByDefault: false
   includeEmptyObjects: false
   inferUnionDiscriminators: false
   packageName: lumos
+  preApplyUnionDiscriminators: false
+  providerTypeNameOverride: ""
   respectRequiredFields: false
+  respectTitlesForPrimitiveUnionMembers: false
   unionStrategy: populated-fields

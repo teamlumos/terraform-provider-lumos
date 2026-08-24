@@ -1,5 +1,19 @@
 # Lumos Terraform Provider
 
+> ## ⚠️ ALPHA — 1.x targets the Lumos V1 API
+>
+> The 1.x line may introduce breaking changes without prior notice. Pin an
+> exact version: `version = "1.0.0-alpha.1"`.
+>
+> **For production, stay on 0.10.x:** `version = "~> 0.10"`
+>
+> The 1.x line exposes **only** V1 API resources: `lumos_app` plus the `lumos_apps`,
+> `lumos_integration`, and `lumos_integrations` data sources. The app store, access
+> policy, pre-approval rule, requestable permission, user, and group resources from
+> 0.10.x are not present; they arrive in later 1.x alphas as they land in the V1 API.
+> A single configuration cannot use 0.10.x and 1.x together — Terraform loads one
+> version per provider address. Use separate root modules if you need both.
+
 <div align="left">
   <a href="https://speakeasyapi.dev/">
     <img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" />
@@ -86,7 +100,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.11.2"
+      version = "1.0.0-alpha.1"
     }
   }
 }
@@ -224,7 +238,8 @@ Your `sandbox/` directory must include a `provider.tf` file and any resources or
 terraform {
   required_providers {
     lumos = {
-      source = "teamlumos/lumos"
+      source  = "teamlumos/lumos"
+      version = "1.0.0-alpha.1"
     }
   }
 }
@@ -292,7 +307,7 @@ This SDK is generated and maintained using [Speakeasy](https://docs.speakeasyapi
 <!-- Start Summary [summary] -->
 ## Summary
 
-Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules
+Lumos: ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.10.x (version = "~> 0.10").
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -351,28 +366,16 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Resources
+### Managed Resources
 
-* [lumos_access_policy](docs/resources/access_policy.md)
 * [lumos_app](docs/resources/app.md)
-* [lumos_app_store_app](docs/resources/app_store_app.md)
-* [lumos_pre_approval_rule](docs/resources/pre_approval_rule.md)
-* [lumos_requestable_permission](docs/resources/requestable_permission.md)
+
 ### Data Sources
 
-* [lumos_access_policies](docs/data-sources/access_policies.md)
-* [lumos_access_policy](docs/data-sources/access_policy.md)
 * [lumos_app](docs/data-sources/app.md)
 * [lumos_apps](docs/data-sources/apps.md)
-* [lumos_app_store_app](docs/data-sources/app_store_app.md)
-* [lumos_app_store_app_settings](docs/data-sources/app_store_app_settings.md)
-* [lumos_group](docs/data-sources/group.md)
-* [lumos_groups](docs/data-sources/groups.md)
-* [lumos_pre_approval_rule](docs/data-sources/pre_approval_rule.md)
-* [lumos_requestable_permission](docs/data-sources/requestable_permission.md)
-* [lumos_requestable_permissions](docs/data-sources/requestable_permissions.md)
-* [lumos_user](docs/data-sources/user.md)
-* [lumos_users](docs/data-sources/users.md)
+* [lumos_integration](docs/data-sources/integration.md)
+* [lumos_integrations](docs/data-sources/integrations.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->

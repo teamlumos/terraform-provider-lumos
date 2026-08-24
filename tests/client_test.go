@@ -9,7 +9,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/types"
 )
 
 func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
@@ -29,28 +28,36 @@ func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
 	return client, context.Background()
 }
 
-func TestGetApp(t *testing.T) {
+func TestListIntegrations(t *testing.T) {
 	client, ctx := GetNewClient(t)
-	appId := os.Getenv("APP_ID")
-	response, err := client.AppStore.GetAppStoreApp(ctx, operations.GetAppStoreAppRequest{
-		AppID: appId,
-	})
+	response, err := client.Integrations.ListIntegrations(ctx, operations.ListIntegrationsRequest{})
 	if err != nil || response == nil {
-		t.Fatalf(`client.AppStore.GetAppStoreApp(%s) was unsuccessful, %v, %v`, appId, response, err)
+		t.Fatalf(`client.Integrations.ListIntegrations() was unsuccessful, %v, %v`, response, err)
 	}
-	if response.AppStoreApp.ID != appId {
-		t.Fatalf(`client.AppStore.GetAppStoreApp(%s) = %v, %v`, appId, response, err)
+	if response.PageIntegrationCatalogOutput == nil {
+		t.Fatalf(`client.Integrations.ListIntegrations() returned no page payload, %v`, response)
+	}
+	if len(response.PageIntegrationCatalogOutput.Items) == 0 {
+		t.Fatalf(`client.Integrations.ListIntegrations() returned zero integrations`)
 	}
 }
 
-func TestCreateApp(t *testing.T) {
+func TestGetAppV1(t *testing.T) {
 	client, ctx := GetNewClient(t)
-	response, err := client.Core.CreateApp(ctx, shared.AppInputCreate{
-		Name:        types.String("Terraform Testing - Create app"),
-		Description: types.String("Terraform Testing Description"),
-		Category:    types.String("Developers"),
+	appID := os.Getenv("APP_ID")
+	if appID == "" {
+		t.Skip(`APP_ID is not set`)
+	}
+	response, err := client.Apps.GetAppV1(ctx, operations.GetAppV1Request{
+		ID: appID,
 	})
 	if err != nil || response == nil {
-		t.Fatalf(`client.Core.CreateApp() was unsuccessful, %v, %v`, response, err)
+		t.Fatalf(`client.Apps.GetAppV1(%s) was unsuccessful, %v, %v`, appID, response, err)
+	}
+	if response.AppWithCustomAttributes == nil {
+		t.Fatalf(`client.Apps.GetAppV1(%s) returned no app, %v`, appID, response)
+	}
+	if response.AppWithCustomAttributes.ID != appID {
+		t.Fatalf(`client.Apps.GetAppV1(%s) returned id %q`, appID, response.AppWithCustomAttributes.ID)
 	}
 }
