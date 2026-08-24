@@ -1,4 +1,8 @@
-# Intentionally empty on the v1 branch.
-# The V0 entries (lumos_access_policy / lumos_requestable_permission examples and
-# hooks/registration.go) were removed with their files. Add entries here only for
-# files carrying hand-written content that Speakeasy would otherwise overwrite.
+# Files Speakeasy must not overwrite on regeneration.
+#
+# datetime.go carries the patch from 61df6b2 widening TimeToString to accept
+# interface{} so it handles both time.Time and *time.Time from nullable union
+# types. Generation reverts it to the single time.Time signature; nothing in the
+# current V1 surface calls it that way, but a future nullable date-time union
+# would emit a call that does not compile.
+internal/provider/typeconvert/datetime.go

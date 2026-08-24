@@ -130,28 +130,19 @@ Configuration precedence:
 
 ## Available Resources and Data Sources
 
+The 1.x line exposes only V1 API resources. See the generated list further down
+(under "Available Resources and Data Sources") for the authoritative set.
+
 ### Resources
 
-* [lumos_access_policy](docs/resources/access_policy.md)
 * [lumos_app](docs/resources/app.md)
-* [lumos_app_store_app](docs/resources/app_store_app.md)
-* [lumos_pre_approval_rule](docs/resources/pre_approval_rule.md)
-* [lumos_requestable_permission](docs/resources/requestable_permission.md)
 
 ### Data Sources
 
-* [lumos_access_policies](docs/data-sources/access_policies.md)
-* [lumos_access_policy](docs/data-sources/access_policy.md)
 * [lumos_app](docs/data-sources/app.md)
 * [lumos_apps](docs/data-sources/apps.md)
-* [lumos_app_store_app](docs/data-sources/app_store_app.md)
-* [lumos_app_store_app_settings](docs/data-sources/app_store_app_settings.md)
-* [lumos_group](docs/data-sources/group.md)
-* [lumos_groups](docs/data-sources/groups.md)
-* [lumos_requestable_permission](docs/data-sources/requestable_permission.md)
-* [lumos_requestable_permissions](docs/data-sources/requestable_permissions.md)
-* [lumos_user](docs/data-sources/user.md)
-* [lumos_users](docs/data-sources/users.md)
+* [lumos_integration](docs/data-sources/integration.md)
+* [lumos_integrations](docs/data-sources/integrations.md)
 
 ---
 
@@ -263,10 +254,11 @@ provider "lumos" {
 #### Example resource file (`resource.tf`)
 
 ```hcl
-resource "lumos_access_policy" "example" {
-  name                   = "example-policy"
-  business_justification = "Test"
-  # other fields omitted for brevity
+resource "lumos_app" "example" {
+  app_id = "okta.com"
+  auth = {
+    # credentials vary by integration - see docs/resources/app.md
+  }
 }
 ```
 

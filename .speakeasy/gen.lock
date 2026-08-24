@@ -8,9 +8,9 @@ management:
   releaseVersion: 1.0.0-alpha.1
   configChecksum: 25ab08a89e05117aeb7ede9142a277b9
 persistentEdits:
-  generation_id: 7a489ca9-af51-44f3-9779-2dfe79a3fa27
-  pristine_commit_hash: 27054d483b2d2d6f0f97630dd602173e684ee883
-  pristine_tree_hash: cd2cf9a805bc44db4dcfb5b45edea6a44a627be4
+  generation_id: e348f726-3399-4a61-99eb-ff53dbec8fac
+  pristine_commit_hash: d3e7f16914f7b0d8d771e8d4b7b1b2c9b172befd
+  pristine_tree_hash: 0f3940458d19112c378d3ef334c4182b9ed74864
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -311,10 +311,6 @@ trackedFiles:
     id: dfe2bc95ad1b
     last_write_checksum: sha1:baad4e5c5c995eae25036f6d1a8d4eb2c1a2a8ae
     pristine_git_object: 6f56e742d12535648e4fc1956227b201ccee717c
-  internal/provider/typeconvert/datetime.go:
-    id: d2fb73d4f01c
-    last_write_checksum: sha1:a302260eef94da655581c315592562fb8faebe1f
-    pristine_git_object: b8888d5b40a901f8f7f5c9aa103b697a849b70f3
   internal/provider/typeconvert/int.go:
     id: c44fcd78fccc
     last_write_checksum: sha1:24698cc95c172a2525d1002d44d99cd9c6e0a17d
