@@ -4599,7 +4599,8 @@
             "type": "string",
             "title": "App Instance Identifier",
             "description": "Identifier of the specific tenant/instance being connected \u2014 e.g. an Okta org URL (`https://myorg.okta.com`) or an ICS tenant `sub` / slug. Disambiguates multiple instances of the same app within one domain and is echoed back (canonicalized) on the response. A caller-supplied value wins on connect; on reconnect the detected id wins so Lumos tracks vendor tenant renames. Optional \u2014 when omitted it is auto-detected from the credentials where possible; some multi-instance integrations return 400 when it can't be derived.",
-            "default": ""
+            "default": "",
+            "x-speakeasy-param-force-new": true
           },
           "version": {
             "anyOf": [
