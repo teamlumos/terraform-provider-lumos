@@ -4582,7 +4582,8 @@
           "app_id": {
             "type": "string",
             "title": "App Id",
-            "description": "Canonical identifier of the integration to connect, e.g. `okta.com`. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required \u2014 omitting it fails request validation with 422."
+            "description": "Canonical identifier of the integration to connect, e.g. `okta.com`. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required \u2014 omitting it fails request validation with 422.",
+            "x-speakeasy-param-force-new": true
           },
           "settings": {
             "type": "object",

@@ -31,7 +31,7 @@ resource "lumos_app" "my_app" {
 
 ### Required
 
-- `app_id` (String) Canonical identifier of the integration to connect, e.g. `okta.com`. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422.
+- `app_id` (String) Canonical identifier of the integration to connect, e.g. `okta.com`. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422. Requires replacement if changed.
 
 ### Optional
 
@@ -105,6 +105,27 @@ Read-Only:
 - `admin_url` (String) A URL to access this application within the Lumos web UI
 - `self` (String) The canonical API URL for retrieving this specific application
 
+## Destroy behavior
+
+~> **This resource cannot be fully destroyed by Terraform.**
+
+`terraform destroy` calls the API's *disconnect* operation
+(`DELETE /v1/apps/{app_uuid}`). That operation removes the app's stored
+credentials and resets its status to `INTEGRATE`. The underlying record is
+deleted only when no users remain on the app; otherwise it persists, and the
+API reports `INTEGRATE` rather than a deleted state — there is no `DELETED`
+status.
+
+Practical consequences:
+
+* Terraform removes the resource from state, but the app may still exist in
+  Lumos in a disconnected state.
+* Re-applying the same configuration afterwards calls *connect*
+  (`POST /v1/apps`), which fails with `409 Conflict` if the record survived.
+  It does not silently recreate the app.
+* To bring a surviving app back under management, import it rather than
+  re-creating it — see [Import](#import) below.
+
 ## Import
 
 Import is supported using the following syntax:
@@ -123,3 +144,20 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 terraform import lumos_app.my_lumos_app "..."
 ```
+
+~> **Import is partial in this alpha.** The API's app representation does not
+return `app_id`, and `ImportState` sets only `id`, so `app_id` is left null in
+state after an import. Because `app_id` forces replacement when configured, the
+next `terraform plan` sees `null` -> your configured value and proposes a
+destroy-and-recreate rather than adopting the app in place.
+
+Until the API returns `app_id` on read, importing an existing app cleanly
+requires setting the value in state yourself after the import, for example:
+
+```shell
+terraform import lumos_app.my_lumos_app "<app-uuid>"
+terraform state show lumos_app.my_lumos_app   # confirm what was imported
+```
+
+then reconciling `app_id` before the next apply. Verify the plan is empty before
+applying — if it proposes replacement, `app_id` has not been reconciled.

@@ -153,6 +153,9 @@ actions:
   - target: $["components"]["schemas"]["AppWithCustomAttributes"]
     update:
       "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["ConnectIntegrationInput"]["properties"]["app_id"]
+    update:
+      "x-speakeasy-param-force-new": true
   - target: $["components"]["schemas"]["ConnectIntegrationInput"]
     update:
       "x-speakeasy-entity": "App"
