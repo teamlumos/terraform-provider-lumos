@@ -13,7 +13,6 @@ type AppWithCustomAttributes struct {
 	Category                         types.String               `tfsdk:"category"`
 	CustomAttributes                 map[string]CustomAttribute `tfsdk:"custom_attributes"`
 	Description                      types.String               `tfsdk:"description"`
-	Disconnected                     types.Bool                 `tfsdk:"disconnected"`
 	ID                               types.String               `tfsdk:"id"`
 	InstanceID                       types.String               `tfsdk:"instance_id"`
 	Links                            *AppLinks                  `tfsdk:"links"`
@@ -21,7 +20,6 @@ type AppWithCustomAttributes struct {
 	RequestInstructions              types.String               `tfsdk:"request_instructions"`
 	Sources                          []types.String             `tfsdk:"sources"`
 	Status                           types.String               `tfsdk:"status"`
-	SyncStatus                       types.String               `tfsdk:"sync_status"`
 	UserFriendlyLabel                types.String               `tfsdk:"user_friendly_label"`
 	WebsiteURL                       types.String               `tfsdk:"website_url"`
 }

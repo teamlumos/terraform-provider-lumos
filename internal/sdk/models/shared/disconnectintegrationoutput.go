@@ -7,9 +7,9 @@ type DisconnectIntegrationOutput struct {
 	// The domain app UUID of the disconnected integration.
 	ID string `json:"id"`
 	// The canonical integration identifier.
-	AppClassID string `json:"app_class_id"`
-	// Confirms the app was disconnected. Always `true` on a successful response — the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained).
-	Disconnected bool `json:"disconnected"`
+	AppID string `json:"app_id"`
+	// Connection status after disconnect — always `INTEGRATE`: the integration is reset to a connectable state and its credentials are removed. When no users remain on the integration the underlying domain-app record is additionally deleted, but the response still reports `INTEGRATE` (there is no `DELETED` status). Reconnect later with `PUT /v1/apps/{app_uuid}`.
+	Status string `json:"status"`
 }
 
 func (d *DisconnectIntegrationOutput) GetID() string {
@@ -19,16 +19,16 @@ func (d *DisconnectIntegrationOutput) GetID() string {
 	return d.ID
 }
 
-func (d *DisconnectIntegrationOutput) GetAppClassID() string {
+func (d *DisconnectIntegrationOutput) GetAppID() string {
 	if d == nil {
 		return ""
 	}
-	return d.AppClassID
+	return d.AppID
 }
 
-func (d *DisconnectIntegrationOutput) GetDisconnected() bool {
+func (d *DisconnectIntegrationOutput) GetStatus() string {
 	if d == nil {
-		return false
+		return ""
 	}
-	return d.Disconnected
+	return d.Status
 }
