@@ -38,7 +38,7 @@ resource, because a binding belongs to exactly one entitlement.
 Import addresses the binding by its owning entitlement, not by the workflow:
 
 ```shell
-terraform import lumos_entitlement_approval_workflow_override.example "<entitlement_uuid>"
+terraform import lumos_entitlement_approval_workflow.example "<entitlement_uuid>"
 ```
 
 -> **Expect one no-op update on the first plan after an import.** `workflow_id`

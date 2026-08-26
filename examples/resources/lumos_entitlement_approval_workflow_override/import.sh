@@ -1,1 +1,0 @@
-terraform import lumos_entitlement_approval_workflow_override.my_lumos_entitlement_approval_workflow_override "..."

@@ -90,7 +90,11 @@ WORKFLOW_ASSOCIATIONS = {
         "/v1/apps/{app_uuid}/default-deprovisioning-workflow",
         "app_uuid",
     ),
-    "EntitlementApprovalWorkflowOverride": (
+    # Named without the API's "-override" suffix: the path is
+    # approval-workflow-override because it overrides the app-level approval
+    # workflow, but lumos_entitlement_approval_workflow reads better alongside
+    # its provisioning and deprovisioning siblings.
+    "EntitlementApprovalWorkflow": (
         "/v1/entitlements/{entitlement_uuid}/approval-workflow-override",
         "entitlement_uuid",
     ),

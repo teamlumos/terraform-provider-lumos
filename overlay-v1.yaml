@@ -57,10 +57,10 @@ actions:
       "x-speakeasy-entity": "EntitlementAppStoreSettings"
   - target: $["components"]["schemas"]
     update:
-      "EntitlementApprovalWorkflowOverride": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"}
+      "EntitlementApprovalWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflow"}
   - target: $["components"]["schemas"]
     update:
-      "EntitlementApprovalWorkflowOverrideInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"}
+      "EntitlementApprovalWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflow"}
   - target: $["components"]["schemas"]["EntitlementCreateInput"]
     update:
       "x-speakeasy-entity": "Entitlement"
@@ -579,20 +579,20 @@ actions:
     update:
       "x-speakeasy-param-force-new": true
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
-    update: "#/components/schemas/EntitlementApprovalWorkflowOverride"
+    update: "#/components/schemas/EntitlementApprovalWorkflow"
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]
     update:
-      "x-speakeasy-entity-operation": "EntitlementApprovalWorkflowOverride#read"
+      "x-speakeasy-entity-operation": "EntitlementApprovalWorkflow#read"
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["parameters"][0]
     update:
       "x-speakeasy-param-force-new": true
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
-    update: "#/components/schemas/EntitlementApprovalWorkflowOverrideInput"
+    update: "#/components/schemas/EntitlementApprovalWorkflowInput"
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
-    update: "#/components/schemas/EntitlementApprovalWorkflowOverride"
+    update: "#/components/schemas/EntitlementApprovalWorkflow"
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]
     update:
-      "x-speakeasy-entity-operation": ["EntitlementApprovalWorkflowOverride#create", "EntitlementApprovalWorkflowOverride#update"]
+      "x-speakeasy-entity-operation": ["EntitlementApprovalWorkflow#create", "EntitlementApprovalWorkflow#update"]
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore_settings"]["get"]
     update:
       "x-speakeasy-entity-operation": "EntitlementAppStoreSettings#read"

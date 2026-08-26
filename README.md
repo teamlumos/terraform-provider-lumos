@@ -147,7 +147,7 @@ The other six bind a workflow to a slot on an app or an entitlement:
 | `lumos_app_approval_workflow` | app approval |
 | `lumos_app_provisioning_workflow` | app default provisioning |
 | `lumos_app_deprovisioning_workflow` | app default deprovisioning |
-| `lumos_entitlement_approval_workflow_override` | entitlement approval override |
+| `lumos_entitlement_approval_workflow` | entitlement approval override |
 | `lumos_entitlement_provisioning_workflow` | entitlement provisioning |
 | `lumos_entitlement_deprovisioning_workflow` | entitlement deprovisioning |
 
@@ -386,7 +386,7 @@ Available configuration:
 * [lumos_app_deprovisioning_workflow](docs/resources/app_deprovisioning_workflow.md)
 * [lumos_app_provisioning_workflow](docs/resources/app_provisioning_workflow.md)
 * [lumos_entitlement](docs/resources/entitlement.md)
-* [lumos_entitlement_approval_workflow_override](docs/resources/entitlement_approval_workflow_override.md)
+* [lumos_entitlement_approval_workflow](docs/resources/entitlement_approval_workflow.md)
 * [lumos_entitlement_deprovisioning_workflow](docs/resources/entitlement_deprovisioning_workflow.md)
 * [lumos_entitlement_provisioning_workflow](docs/resources/entitlement_provisioning_workflow.md)
 * [lumos_workflow](docs/resources/workflow.md)
@@ -408,7 +408,7 @@ Available configuration:
 * [lumos_entitlement](docs/data-sources/entitlement.md)
 * [lumos_entitlement_accounts](docs/data-sources/entitlement_accounts.md)
 * [lumos_entitlement_app_store_settings](docs/data-sources/entitlement_app_store_settings.md)
-* [lumos_entitlement_approval_workflow_override](docs/data-sources/entitlement_approval_workflow_override.md)
+* [lumos_entitlement_approval_workflow](docs/data-sources/entitlement_approval_workflow.md)
 * [lumos_entitlement_deprovisioning_workflow](docs/data-sources/entitlement_deprovisioning_workflow.md)
 * [lumos_entitlement_provisioning_workflow](docs/data-sources/entitlement_provisioning_workflow.md)
 * [lumos_integration](docs/data-sources/integration.md)

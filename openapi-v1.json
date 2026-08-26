@@ -2317,7 +2317,7 @@
         "title": "EntitlementAppStoreSettingsPatchInput",
         "type": "object"
       },
-      "EntitlementApprovalWorkflowOverride": {
+      "EntitlementApprovalWorkflow": {
         "description": "Response shape for a Workflow.",
         "properties": {
           "app_id": {
@@ -2390,9 +2390,9 @@
         ],
         "title": "Workflow",
         "type": "object",
-        "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"
+        "x-speakeasy-entity": "EntitlementApprovalWorkflow"
       },
-      "EntitlementApprovalWorkflowOverrideInput": {
+      "EntitlementApprovalWorkflowInput": {
         "additionalProperties": false,
         "description": "Request body to bind a workflow to a resource slot.",
         "properties": {
@@ -2407,7 +2407,7 @@
         ],
         "title": "WorkflowAssociationInput",
         "type": "object",
-        "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"
+        "x-speakeasy-entity": "EntitlementApprovalWorkflow"
       },
       "EntitlementCreateInput": {
         "additionalProperties": false,
@@ -7537,7 +7537,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverride"
+                  "$ref": "#/components/schemas/EntitlementApprovalWorkflow"
                 }
               }
             },
@@ -7633,7 +7633,7 @@
         "tags": [
           "Entitlements"
         ],
-        "x-speakeasy-entity-operation": "EntitlementApprovalWorkflowOverride#read"
+        "x-speakeasy-entity-operation": "EntitlementApprovalWorkflow#read"
       },
       "put": {
         "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. Entitlements with no request configuration behind them cannot take an override and return 404.",
@@ -7654,7 +7654,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverrideInput"
+                "$ref": "#/components/schemas/EntitlementApprovalWorkflowInput"
               }
             }
           },
@@ -7665,7 +7665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverride"
+                  "$ref": "#/components/schemas/EntitlementApprovalWorkflow"
                 }
               }
             },
@@ -7762,8 +7762,8 @@
           "Entitlements"
         ],
         "x-speakeasy-entity-operation": [
-          "EntitlementApprovalWorkflowOverride#create",
-          "EntitlementApprovalWorkflowOverride#update"
+          "EntitlementApprovalWorkflow#create",
+          "EntitlementApprovalWorkflow#update"
         ]
       }
     },

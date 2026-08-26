@@ -27,7 +27,7 @@ type GetEntitlementApprovalWorkflowOverrideResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	EntitlementApprovalWorkflowOverride *shared.EntitlementApprovalWorkflowOverride
+	EntitlementApprovalWorkflow *shared.EntitlementApprovalWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -55,11 +55,11 @@ func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetRawResponse() *http.
 	return g.RawResponse
 }
 
-func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetEntitlementApprovalWorkflowOverride() *shared.EntitlementApprovalWorkflowOverride {
+func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetEntitlementApprovalWorkflow() *shared.EntitlementApprovalWorkflow {
 	if g == nil {
 		return nil
 	}
-	return g.EntitlementApprovalWorkflowOverride
+	return g.EntitlementApprovalWorkflow
 }
 
 func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetAPIError() *shared.APIError {
