@@ -218,12 +218,12 @@ func (s *Accounts) ListAccountEntitlements(ctx context.Context, request operatio
 				return nil, err
 			}
 
-			var out shared.AccountEntitlementsOutput
+			var out shared.EntitlementListOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.AccountEntitlementsOutput = &out
+			res.EntitlementListOutput = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
