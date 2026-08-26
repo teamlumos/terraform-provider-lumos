@@ -10,8 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 )
@@ -79,8 +82,12 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: `Users and groups that administer this app. Only present when expand=admins is requested.`,
 			},
 			"app_class_id": schema.StringAttribute{
-				Required:    true,
-				Description: `Canonical identifier of the integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422.`,
+				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
+				Description: `Canonical identifier of the integration to connect, e.g. ` + "`" + `okta.com` + "`" + `. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422. Requires replacement if changed.`,
 			},
 			"approval_workflow": schema.SingleNestedAttribute{
 				Computed: true,
