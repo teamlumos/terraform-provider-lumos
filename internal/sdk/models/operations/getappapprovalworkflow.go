@@ -27,7 +27,7 @@ type GetAppApprovalWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppApprovalWorkflow *shared.AppApprovalWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -55,11 +55,11 @@ func (g *GetAppApprovalWorkflowResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppApprovalWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetAppApprovalWorkflowResponse) GetAppApprovalWorkflow() *shared.AppApprovalWorkflow {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.AppApprovalWorkflow
 }
 
 func (g *GetAppApprovalWorkflowResponse) GetAPIError() *shared.APIError {

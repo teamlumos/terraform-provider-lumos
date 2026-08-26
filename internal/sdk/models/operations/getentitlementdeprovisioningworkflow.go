@@ -27,7 +27,7 @@ type GetEntitlementDeprovisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	EntitlementDeprovisioningWorkflow *shared.EntitlementDeprovisioningWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -55,11 +55,11 @@ func (g *GetEntitlementDeprovisioningWorkflowResponse) GetRawResponse() *http.Re
 	return g.RawResponse
 }
 
-func (g *GetEntitlementDeprovisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetEntitlementDeprovisioningWorkflowResponse) GetEntitlementDeprovisioningWorkflow() *shared.EntitlementDeprovisioningWorkflow {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.EntitlementDeprovisioningWorkflow
 }
 
 func (g *GetEntitlementDeprovisioningWorkflowResponse) GetAPIError() *shared.APIError {

@@ -10,7 +10,7 @@ import (
 
 type SetAppApprovalWorkflowRequest struct {
 	AppUUID                  string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
-	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
+	AppApprovalWorkflowInput shared.AppApprovalWorkflowInput `request:"mediaType=application/json"`
 }
 
 func (s *SetAppApprovalWorkflowRequest) GetAppUUID() string {
@@ -20,11 +20,11 @@ func (s *SetAppApprovalWorkflowRequest) GetAppUUID() string {
 	return s.AppUUID
 }
 
-func (s *SetAppApprovalWorkflowRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
+func (s *SetAppApprovalWorkflowRequest) GetAppApprovalWorkflowInput() shared.AppApprovalWorkflowInput {
 	if s == nil {
-		return shared.WorkflowAssociationInput{}
+		return shared.AppApprovalWorkflowInput{}
 	}
-	return s.WorkflowAssociationInput
+	return s.AppApprovalWorkflowInput
 }
 
 type SetAppApprovalWorkflowResponse struct {
@@ -35,7 +35,7 @@ type SetAppApprovalWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppApprovalWorkflow *shared.AppApprovalWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -63,11 +63,11 @@ func (s *SetAppApprovalWorkflowResponse) GetRawResponse() *http.Response {
 	return s.RawResponse
 }
 
-func (s *SetAppApprovalWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (s *SetAppApprovalWorkflowResponse) GetAppApprovalWorkflow() *shared.AppApprovalWorkflow {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.AppApprovalWorkflow
 }
 
 func (s *SetAppApprovalWorkflowResponse) GetAPIError() *shared.APIError {
