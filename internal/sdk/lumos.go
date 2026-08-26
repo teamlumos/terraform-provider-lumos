@@ -50,9 +50,167 @@ func Pointer[T any](v T) *T { return &v }
 
 // Lumos - Lumos: ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.10.x (version = "~> 0.10").
 type Lumos struct {
-	SDKVersion   string
-	Apps         *Apps
+	SDKVersion string
+	// An account is a person's presence inside a connected app. Accounts arrive through sync; you cannot
+	// create one through this API.
+	//
+	// `GET /v1/accounts/{account_uuid}/entitlements` lists what one account holds. It reads the same
+	// relationship as `GET /v1/entitlements/{entitlement_uuid}/accounts`, from the account's side rather
+	// than the entitlement's.
+	//
+	Accounts *Accounts
+	// An app is an integration you have connected, one per connected instance of a service. Your Okta
+	// tenant is an app. A second Slack workspace is a second app.
+	//
+	// ### Connecting one
+	//
+	// 1. `GET /v1/integrations/{app_class_id}/connection-schema` to see which `auth` and `settings`
+	//    keys the integration expects.
+	// 2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect and
+	//    start an initial sync. Apps that need browser consent are finished in the Lumos UI.
+	// 3. `GET /v1/apps/{app_uuid}` to follow `sync_status`.
+	// 4. `POST /v1/apps/{app_uuid}/sync` to resync later. Only one sync runs per app at a time, so a
+	//    second request while one is in flight returns 409.
+	//
+	// Rotate credentials with `PUT /v1/apps/{app_uuid}`. `DELETE /v1/apps/{app_uuid}` drops the stored
+	// credentials and returns the app to a connectable state.
+	//
+	// ### Reading apps
+	//
+	// `expand` is opt-in and evaluated per field: ask for `admins`, `custom_attributes`,
+	// `appstore_settings`, or any of the three workflow slots. A field you lack permission to read is
+	// left out of the response instead of failing the whole request, so a 200 does not prove every field
+	// you asked for came back.
+	//
+	// To reconcile the apps you manage from automation such as Terraform, combine
+	// `connection_source=API` with `disconnected=false`.
+	//
+	// ### Workflow slots
+	//
+	// Each app carries three bindings: an approval workflow, a default provisioning workflow, and a
+	// default deprovisioning workflow. The two `default_` slots supply the workflow that entitlements on
+	// the app fall back to. To bind a workflow to one entitlement instead, use the Entitlements
+	// endpoints.
+	//
+	Apps *Apps
+	// Custom attributes are the extra fields your organization keeps on users and accounts. These
+	// endpoints read their *definitions*, not the values stored against any particular user.
+	//
+	// `GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that
+	// supplies it. Narrow the list with `config_type` to separate user attributes from account
+	// attributes, with `source_type` to tell attributes synced from an app apart from ones your team
+	// created, or with `app_id` to see only what a single app supplies.
+	//
+	CustomAttributeDefinitions *CustomAttributeDefinitions
+	// An entitlement is a grantable unit of access on an app: a role, a license tier, a group, a
+	// permission. Accounts hold entitlements.
+	//
+	// - `POST /v1/entitlements` creates a requestable entitlement on an app.
+	// - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
+	// - `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.
+	// - `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change
+	//   today, and sending any other field returns 400.
+	// - `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,
+	//   returning 409 with an `active_accounts` count.
+	//
+	// ### Per-entitlement workflows
+	//
+	// Three slots bind a workflow to a single entitlement rather than to the whole app: an approval
+	// override, a provisioning workflow, and a deprovisioning workflow. Each has a GET and a PUT.
+	//
+	// Not every entitlement supports them. An entitlement with no request configuration behind it
+	// returns 404 with `Workflows are not available for this entitlement.` on all six.
+	//
+	Entitlements *Entitlements
+	// An integration is a service Lumos knows how to connect to, identified by an `app_class_id` such as
+	// `okta.com` or `workspace.google.com`. This is the catalog you connect *from*. Apps you have
+	// already connected are read through the Apps endpoints.
+	//
+	// Only connectable integrations appear here. Software discovered in your environment that has no
+	// Lumos integration behind it is excluded.
+	//
+	// ### Discovering how to connect
+	//
+	// 1. `GET /v1/integrations?query=google` to find the integration. The filter matches both the
+	//    `app_class_id` and the display name, so `google` returns `workspace.google.com` and
+	//    `cloud.google.com`.
+	// 2. `GET /v1/integrations/{app_class_id}/connection-schema` for the JSON schema of the `auth` and
+	//    `settings` fields it expects.
+	// 3. `POST /v1/apps` with those values.
+	//
+	// Step 2 is the point of this group: it lets you build a connect form, or generate a Terraform
+	// resource, without hardcoding one credential shape per integration. Integrations whose connection
+	// schema Lumos cannot describe yet return 404.
+	//
 	Integrations *Integrations
+	// Knowledge entries are the documents and notes Lumos agents draw on when they answer access
+	// questions. Each entry carries a title, body, tags, and product scopes, plus an optional file
+	// attachment.
+	//
+	// Because of that attachment, create and update send `multipart/form-data` rather than JSON. On
+	// update, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`
+	// removes an existing file without uploading a replacement.
+	//
+	// `DELETE` archives rather than destroys. The entry stops appearing in list results and stays
+	// recoverable.
+	//
+	// Pages here are small: `page_size` defaults to 10 and is clamped to 25.
+	//
+	Knowledge *Knowledge
+	// **Tasks** are work items emitted by Lumos workflows — things that need a human (or an
+	// automated caller) to make a decision or perform a step before the workflow can proceed.
+	// Typical examples:
+	//
+	// - An access request is waiting on an approver's decision.
+	// - A provisioning or deprovisioning step needs manual fulfillment.
+	// - An error needs acknowledgement.
+	//
+	// Each task carries two classification fields you can filter on:
+	//
+	// - **`task_category`** — what kind of decision or step the task represents. Values:
+	//   `APPROVAL`, `PROVISIONING`, `DEPROVISIONING`, `ERROR`.
+	// - **`product_area`** — which Lumos product surface emitted the task. Values:
+	//   `APPSTORE`, `ACCESS_REVIEWS`, `MOVER`, `ATTRIBUTE_SYNC`, `OFFBOARDING`, `ONBOARDING`,
+	//   `PLATFORM`, `SAVINGS`.
+	//
+	// ### Which endpoint should I call?
+	//
+	// - **To approve or deny an access request**, use `POST /tasks/{task_id}/complete`
+	//   (approve) or `POST /tasks/{task_id}/dismiss` (deny).
+	// - **To find pending approval tasks**, call
+	//   `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING` (access
+	//   requests).
+	// - **Only use `POST /tasks/{task_id}/perform-action`** for tasks that expose custom workflow
+	//   actions. Discover those actions via `GET /tasks/{task_id}/actions`. Approval tasks do not
+	//   require this endpoint — `complete` and `dismiss` are the right primitives.
+	//
+	// For a full walkthrough with `curl` and Python examples, see the
+	// [Tasks API How-To](https://developers.lumos.com/docs/tasks-api-how-to) guide.
+	//
+	Tasks *Tasks
+	Users *Users
+	// A workflow is a reusable definition of the steps Lumos runs to approve a request, provision access,
+	// or deprovision it. Create the definition here, then bind it to an app or an entitlement through
+	// their own workflow endpoints.
+	//
+	// ### Building one
+	//
+	// 1. `GET /v1/workflow-steps?app_id={app_uuid}` to discover the steps available for that app, each
+	//    with the input schema it accepts.
+	// 2. `POST /v1/workflows` with the steps you want.
+	// 3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.
+	//
+	// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` rejects changes to
+	// either.
+	//
+	// ### Workflows this API cannot describe
+	//
+	// Some workflows Lumos builds for you, including the out-of-the-box provisioning defaults, contain
+	// steps with no public representation. `GET /v1/workflows` skips them, so a page can hold fewer items
+	// than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as
+	// the end of the list. Binding one of these to a slot returns 400.
+	//
+	Workflows *Workflows
 
 	sdkConfiguration config.SDKConfiguration
 	hooks            *hooks.Hooks
@@ -151,8 +309,15 @@ func New(opts ...SDKOption) *Lumos {
 		sdk.sdkConfiguration.ServerURL = serverURL
 	}
 
+	sdk.Accounts = newAccounts(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Apps = newApps(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.CustomAttributeDefinitions = newCustomAttributeDefinitions(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Entitlements = newEntitlements(sdk, sdk.sdkConfiguration, sdk.hooks)
 	sdk.Integrations = newIntegrations(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Knowledge = newKnowledge(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Tasks = newTasks(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Users = newUsers(sdk, sdk.sdkConfiguration, sdk.hooks)
+	sdk.Workflows = newWorkflows(sdk, sdk.sdkConfiguration, sdk.hooks)
 
 	return sdk
 }

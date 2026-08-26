@@ -33,12 +33,14 @@ type AppsDataSource struct {
 
 // AppsDataSourceModel describes the data model.
 type AppsDataSourceModel struct {
-	ConnectionSource types.String                      `queryParam:"style=form,explode=true,name=connection_source" tfsdk:"connection_source"`
-	Items            []tfTypes.AppWithCustomAttributes `tfsdk:"items"`
-	Page             types.Int64                       `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages            types.Int64                       `tfsdk:"pages"`
-	Size             types.Int64                       `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total            types.Int64                       `tfsdk:"total"`
+	Apps             []tfTypes.AppResponse `tfsdk:"apps"`
+	ConnectionSource types.String          `queryParam:"style=form,explode=true,name=connection_source" tfsdk:"connection_source"`
+	Disconnected     types.Bool            `queryParam:"style=form,explode=true,name=disconnected" tfsdk:"disconnected"`
+	Expand           []types.String        `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
+	InAppStore       types.Bool            `queryParam:"style=form,explode=true,name=in_app_store" tfsdk:"in_app_store"`
+	NextPageToken    types.String          `tfsdk:"next_page_token"`
+	PageSize         types.Int64           `queryParam:"style=form,explode=true,name=page_size" tfsdk:"page_size"`
+	PageToken        types.String          `queryParam:"style=form,explode=true,name=page_token" tfsdk:"page_token"`
 }
 
 // Metadata returns the data source type name.
@@ -52,31 +54,211 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 		MarkdownDescription: "Apps DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"connection_source": schema.StringAttribute{
-				Optional:    true,
-				Description: `Filter to integrations connected via this source (` + "`" + `API` + "`" + ` or ` + "`" + `UI` + "`" + `). must be one of ["API", "UI"]`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"API",
-						"UI",
-					),
-				},
-			},
-			"items": schema.ListNestedAttribute{
+			"apps": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"allow_multiple_permission_selection": schema.BoolAttribute{
-							Computed:    true,
-							Description: `Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.`,
+						"admins": schema.ListNestedAttribute{
+							Computed: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"id": schema.StringAttribute{
+										Computed:    true,
+										Description: `The UUID of the admin user or group.`,
+									},
+									"type": schema.StringAttribute{
+										Computed: true,
+									},
+								},
+							},
+							Description: `Users and groups that administer this app. Only present when expand=admins is requested.`,
 						},
 						"app_class_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
+							Description: `The catalog identifier of the underlying app (e.g. "github.com"). Custom apps return "custom".`,
+						},
+						"approval_workflow": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"workflow": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"app_id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the app this Workflow belongs to, if associated.`,
+										},
+										"description": schema.StringAttribute{
+											Computed:    true,
+											Description: `A description of this Workflow.`,
+										},
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `A UUID identifying this Workflow.`,
+										},
+										"name": schema.StringAttribute{
+											Computed:    true,
+											Description: `A name for this Workflow.`,
+										},
+										"steps": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"inputs": schema.SingleNestedAttribute{
+														Computed:    true,
+														Description: `The configured inputs for this step.`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `Server-derived human-readable name for this step. Read-only.`,
+													},
+													"step": schema.StringAttribute{
+														Computed:    true,
+														Description: `Identifier (catalogue slug) for the step to execute.`,
+													},
+												},
+											},
+											Description: `The ordered steps of the workflow.`,
+										},
+										"type": schema.StringAttribute{
+											Computed:    true,
+											Description: `The kind of workflow.`,
+										},
+									},
+									Description: `Response shape for a Workflow.`,
+								},
+								"workflow_ref": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the bound workflow.`,
+										},
+									},
+									MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+										`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
+								},
+							},
+							Description: `The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.`,
+						},
+						"appstore_settings": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"app_store_settings_compact": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"in_app_store": schema.BoolAttribute{
+											Computed:    true,
+											Description: `Whether this app is visible in App Store for config/management.`,
+										},
+									},
+								},
+								"app_store_settings_response": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"allow_multiple_permission_selection": schema.BoolAttribute{
+											Computed:    true,
+											Description: `When true, requesters may select more than one permission in a single request.`,
+										},
+										"allow_permission_selection": schema.BoolAttribute{
+											Computed:    true,
+											Description: `When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.`,
+										},
+										"allowed_requester_group_uuids": schema.ListAttribute{
+											Computed:    true,
+											ElementType: types.StringType,
+											Description: `UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.`,
+										},
+										"catalog_visibility": schema.StringAttribute{
+											Computed:    true,
+											Description: `Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.`,
+										},
+										"custom_intake_fields": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"description": schema.StringAttribute{
+														Computed:    true,
+														Description: `Additional guidance shown alongside the prompt.`,
+													},
+													"dropdown_options": schema.ListAttribute{
+														Computed:    true,
+														ElementType: types.StringType,
+														Description: `Selectable options for this field. Present only when field_type is "dropdown".`,
+													},
+													"field_type": schema.StringAttribute{
+														Computed: true,
+													},
+													"is_required": schema.BoolAttribute{
+														Computed:    true,
+														Description: `Whether the requester must answer this field to submit a request.`,
+													},
+													"prompt": schema.StringAttribute{
+														Computed:    true,
+														Description: `The question shown to the requester.`,
+													},
+												},
+											},
+											Description: `Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured. Read-only.`,
+										},
+										"default_entitlement": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"id": schema.StringAttribute{
+													Computed:    true,
+													Description: `The UUID of the entitlement.`,
+												},
+											},
+											Description: `The entitlement pre-selected by default when a user opens the request form. Null means no default is set.`,
+										},
+										"in_app_store": schema.BoolAttribute{
+											Computed:    true,
+											Description: `Whether this app is listed in the App Store catalog.`,
+										},
+										"redirect_url": schema.StringAttribute{
+											Computed:    true,
+											Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.`,
+										},
+										"request_instructions": schema.StringAttribute{
+											Computed:    true,
+											Description: `Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.`,
+										},
+										"request_validation_webhook_uuid": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.`,
+										},
+										"time_based_access": schema.SingleNestedAttribute{
+											Computed: true,
+											Attributes: map[string]schema.Attribute{
+												"default": schema.StringAttribute{
+													Computed:    true,
+													Description: `Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.`,
+												},
+												"options": schema.ListNestedAttribute{
+													Computed: true,
+													NestedObject: schema.NestedAttributeObject{
+														Attributes: map[string]schema.Attribute{
+															"label": schema.StringAttribute{
+																Computed:    true,
+																Description: `Display label for this time-based access option.`,
+															},
+															"value_seconds": schema.Int64Attribute{
+																Computed:    true,
+																Description: `Duration in seconds. Null indicates a permanent (unlimited) access option.`,
+															},
+														},
+													},
+													Description: `Time-based access options available for this app. Null means the app uses the domain-level defaults.`,
+												},
+											},
+										},
+									},
+								},
+							},
+							Description: `App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.`,
 						},
 						"category": schema.StringAttribute{
 							Computed:    true,
-							Description: `The category of the app, as shown in the AppStore`,
+							Description: `The category this app belongs to.`,
 						},
 						"custom_attributes": schema.MapNestedAttribute{
 							Computed: true,
@@ -129,81 +311,215 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 									},
 								},
 							},
-							Description: `Custom attributes configured on the app`,
+							Description: `Custom attributes configured on this app. Only present when expand=custom_attributes is requested.`,
+						},
+						"default_deprovisioning_workflow": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"workflow": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"app_id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the app this Workflow belongs to, if associated.`,
+										},
+										"description": schema.StringAttribute{
+											Computed:    true,
+											Description: `A description of this Workflow.`,
+										},
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `A UUID identifying this Workflow.`,
+										},
+										"name": schema.StringAttribute{
+											Computed:    true,
+											Description: `A name for this Workflow.`,
+										},
+										"steps": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"inputs": schema.SingleNestedAttribute{
+														Computed:    true,
+														Description: `The configured inputs for this step.`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `Server-derived human-readable name for this step. Read-only.`,
+													},
+													"step": schema.StringAttribute{
+														Computed:    true,
+														Description: `Identifier (catalogue slug) for the step to execute.`,
+													},
+												},
+											},
+											Description: `The ordered steps of the workflow.`,
+										},
+										"type": schema.StringAttribute{
+											Computed:    true,
+											Description: `The kind of workflow.`,
+										},
+									},
+									Description: `Response shape for a Workflow.`,
+								},
+								"workflow_ref": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the bound workflow.`,
+										},
+									},
+									MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+										`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
+								},
+							},
+							Description: `The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
+						},
+						"default_provisioning_workflow": schema.SingleNestedAttribute{
+							Computed: true,
+							Attributes: map[string]schema.Attribute{
+								"workflow": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"app_id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the app this Workflow belongs to, if associated.`,
+										},
+										"description": schema.StringAttribute{
+											Computed:    true,
+											Description: `A description of this Workflow.`,
+										},
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `A UUID identifying this Workflow.`,
+										},
+										"name": schema.StringAttribute{
+											Computed:    true,
+											Description: `A name for this Workflow.`,
+										},
+										"steps": schema.ListNestedAttribute{
+											Computed: true,
+											NestedObject: schema.NestedAttributeObject{
+												Attributes: map[string]schema.Attribute{
+													"inputs": schema.SingleNestedAttribute{
+														Computed:    true,
+														Description: `The configured inputs for this step.`,
+													},
+													"name": schema.StringAttribute{
+														Computed:    true,
+														Description: `Server-derived human-readable name for this step. Read-only.`,
+													},
+													"step": schema.StringAttribute{
+														Computed:    true,
+														Description: `Identifier (catalogue slug) for the step to execute.`,
+													},
+												},
+											},
+											Description: `The ordered steps of the workflow.`,
+										},
+										"type": schema.StringAttribute{
+											Computed:    true,
+											Description: `The kind of workflow.`,
+										},
+									},
+									Description: `Response shape for a Workflow.`,
+								},
+								"workflow_ref": schema.SingleNestedAttribute{
+									Computed: true,
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Computed:    true,
+											Description: `UUID of the bound workflow.`,
+										},
+									},
+									MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+										`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
+								},
+							},
+							Description: `The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
-							Description: `The user-facing description of the app`,
+							Description: `A description of the app.`,
+						},
+						"disconnected": schema.BoolAttribute{
+							Computed:    true,
+							Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /v1/apps/{app_uuid}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /v1/apps/{app_uuid}` + "`" + `.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of this app.`,
+							Description: `The unique identifier of the app.`,
 						},
 						"instance_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
+							Description: `The app-instance identifier distinguishing multiple instances of the same app.`,
 						},
-						"links": schema.SingleNestedAttribute{
-							Computed: true,
-							Attributes: map[string]schema.Attribute{
-								"admin_url": schema.StringAttribute{
-									Computed:    true,
-									Description: `A URL to access this application within the Lumos web UI`,
-								},
-								"self": schema.StringAttribute{
-									Computed:    true,
-									Description: `The canonical API URL for retrieving this specific application`,
-								},
-							},
+						"label": schema.StringAttribute{
+							Computed:    true,
+							Description: `The display name of the app.`,
 						},
 						"logo_url": schema.StringAttribute{
 							Computed:    true,
-							Description: `The URL of the logo of this app.`,
+							Description: `URL of the app logo image.`,
 						},
-						"request_instructions": schema.StringAttribute{
+						"post_approval_message": schema.StringAttribute{
 							Computed:    true,
-							Description: `The request instructions.`,
-						},
-						"sources": schema.ListAttribute{
-							Computed:    true,
-							ElementType: types.StringType,
-							Description: `The sources of this app.`,
+							Description: `Custom message shown to the requester after their access request is approved.`,
 						},
 						"status": schema.StringAttribute{
-							Computed: true,
-						},
-						"user_friendly_label": schema.StringAttribute{
 							Computed:    true,
-							Description: `The user-friendly label of this app.`,
+							Description: `The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.`,
+						},
+						"sync_status": schema.StringAttribute{
+							Computed:    true,
+							Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.`,
 						},
 						"website_url": schema.StringAttribute{
 							Computed:    true,
-							Description: `The URL of the website of this app.`,
+							Description: `URL of the app's official website.`,
 						},
 					},
 				},
+				Description: `Apps returned in this page.`,
 			},
-			"page": schema.Int64Attribute{
-				Computed:    true,
+			"connection_source": schema.StringAttribute{
 				Optional:    true,
-				Description: `Page number`,
+				Description: `Filter to integrations connected via this source (` + "`" + `API` + "`" + ` or ` + "`" + `UI` + "`" + `). must be one of ["API", "UI"]`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"API",
+						"UI",
+					),
+				},
+			},
+			"disconnected": schema.BoolAttribute{
+				Optional:    true,
+				Description: `Filter on whether the app has been disconnected. ` + "`" + `false` + "`" + ` excludes disconnected apps, ` + "`" + `true` + "`" + ` returns only disconnected apps whose record Lumos still holds, and omitting it lists every app. Pair ` + "`" + `false` + "`" + ` with ` + "`" + `connection_source=API` + "`" + ` to reconcile the integrations you manage from automation such as Terraform.`,
+			},
+			"expand": schema.ListAttribute{
+				Optional:    true,
+				ElementType: types.StringType,
+				Description: `Fields to expand. Supported fields: admins, approval_workflow, default_provisioning_workflow, default_deprovisioning_workflow, custom_attributes, appstore_settings.`,
+			},
+			"in_app_store": schema.BoolAttribute{
+				Optional:    true,
+				Description: `Filter by AppStore membership. ` + "`" + `true` + "`" + ` returns only apps in the AppStore; ` + "`" + `false` + "`" + ` returns only apps not in the AppStore; omit for all apps.`,
+			},
+			"next_page_token": schema.StringAttribute{
+				Computed:    true,
+				Description: `Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than ` + "`" + `page_size` + "`" + ` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.`,
+			},
+			"page_size": schema.Int64Attribute{
+				Optional:    true,
+				Description: `Maximum number of items to return per page. Values above 250 are clamped to 250 rather than rejected.`,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
 				},
 			},
-			"pages": schema.Int64Attribute{
-				Computed: true,
-			},
-			"size": schema.Int64Attribute{
-				Computed:    true,
+			"page_token": schema.StringAttribute{
 				Optional:    true,
-				Description: `Page size`,
-				Validators: []validator.Int64{
-					int64validator.Between(1, 100),
-				},
-			},
-			"total": schema.Int64Attribute{
-				Computed: true,
+				Description: `Opaque cursor from a previous response's ` + "`" + `next_page_token` + "`" + `. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.`,
 			},
 		},
 	}
@@ -247,13 +563,13 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	request, requestDiags := data.ToOperationsListAppsV1Request(ctx)
+	request, requestDiags := data.ToOperationsV1ListAppsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Apps.ListAppsV1(ctx, *request)
+	res, err := r.client.Apps.V1ListApps(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -269,11 +585,11 @@ func (r *AppsDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.PageAppWithCustomAttributes != nil) {
+	if !(res.AppListOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedPageAppWithCustomAttributes(ctx, res.PageAppWithCustomAttributes)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppListOutput(ctx, res.AppListOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return

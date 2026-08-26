@@ -5,41 +5,27 @@ package shared
 
 // IntegrationCatalogOutput - A connectable integration from the app catalog (not a connected instance).
 //
-// Read via `GET /v1/integrations` and `GET /v1/integrations/{app_id}`. Carries
+// Read via `GET /integrations` and `GET /integrations/{app_class_id}`. Carries
 // catalog metadata only — no connection status. To read the state of an
 // integration you have connected, use the Apps API (`GET /apps`).
 type IntegrationCatalogOutput struct {
-	// Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_id` when connecting via `POST /v1/apps`.
-	AppID string `json:"app_id"`
-	// Display name of the integration.
-	Name string `json:"name"`
-	// Short description of the integration.
-	Description *string `json:"description,omitempty"`
+	// Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting via `POST /apps`.
+	AppClassID string `json:"app_class_id"`
 	// Category of the integration (e.g. `IT & Security`).
 	Category *string `json:"category,omitempty"`
+	// Short description of the integration.
+	Description *string `json:"description,omitempty"`
 	// URL of the integration's logo.
 	LogoURL *string `json:"logo_url,omitempty"`
+	// Display name of the integration.
+	Name string `json:"name"`
 }
 
-func (i *IntegrationCatalogOutput) GetAppID() string {
+func (i *IntegrationCatalogOutput) GetAppClassID() string {
 	if i == nil {
 		return ""
 	}
-	return i.AppID
-}
-
-func (i *IntegrationCatalogOutput) GetName() string {
-	if i == nil {
-		return ""
-	}
-	return i.Name
-}
-
-func (i *IntegrationCatalogOutput) GetDescription() *string {
-	if i == nil {
-		return nil
-	}
-	return i.Description
+	return i.AppClassID
 }
 
 func (i *IntegrationCatalogOutput) GetCategory() *string {
@@ -49,9 +35,23 @@ func (i *IntegrationCatalogOutput) GetCategory() *string {
 	return i.Category
 }
 
+func (i *IntegrationCatalogOutput) GetDescription() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Description
+}
+
 func (i *IntegrationCatalogOutput) GetLogoURL() *string {
 	if i == nil {
 		return nil
 	}
 	return i.LogoURL
+}
+
+func (i *IntegrationCatalogOutput) GetName() string {
+	if i == nil {
+		return ""
+	}
+	return i.Name
 }

@@ -9,6 +9,7 @@ require (
     github.com/hashicorp/terraform-plugin-framework-validators v0.19.0
     github.com/hashicorp/terraform-plugin-go v0.31.0
     github.com/hashicorp/terraform-plugin-log v0.11.0
+    github.com/speakeasy-api/terraform-plugin-framework-base64types v0.1.0
     golang.org/x/crypto v0.52.0
     golang.org/x/net v0.56.0
     google.golang.org/grpc v1.82.1

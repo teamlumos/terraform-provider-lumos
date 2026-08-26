@@ -1,4 +1,5 @@
 data "lumos_integrations" "my_integrations" {
-  page = 1
-  size = 50
+  page_size  = 100
+  page_token = "...my_page_token..."
+  query      = "...my_query..."
 }

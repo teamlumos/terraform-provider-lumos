@@ -1,5 +1,10 @@
 data "lumos_apps" "my_apps" {
   connection_source = "API"
-  page              = 1
-  size              = 50
+  disconnected      = false
+  expand = [
+    "..."
+  ]
+  in_app_store = true
+  page_size    = 100
+  page_token   = "...my_page_token..."
 }

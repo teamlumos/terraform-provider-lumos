@@ -13,12 +13,122 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.Context, resp *shared.AppWithCustomAttributes) diag.Diagnostics {
+func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, resp *shared.AppResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.AllowMultiplePermissionSelection = types.BoolValue(resp.AllowMultiplePermissionSelection)
-		r.AppClassID = types.StringValue(resp.AppClassID)
+		if resp.Admins != nil {
+			r.Admins = []tfTypes.AdminAssignee{}
+
+			for _, adminsItem := range resp.Admins {
+				var admins tfTypes.AdminAssignee
+
+				admins.ID = types.StringValue(adminsItem.ID)
+				admins.Type = types.StringValue(string(adminsItem.Type))
+
+				r.Admins = append(r.Admins, admins)
+			}
+		} else {
+			r.Admins = nil
+		}
+		r.AppClassID = types.StringPointerValue(resp.AppClassID)
+		if resp.ApprovalWorkflow != nil {
+			r.ApprovalWorkflow = &tfTypes.ApprovalWorkflow{}
+			if resp.ApprovalWorkflow.Workflow != nil {
+				r.ApprovalWorkflow.Workflow = &tfTypes.Workflow{}
+				r.ApprovalWorkflow.Workflow.AppID = types.StringPointerValue(resp.ApprovalWorkflow.Workflow.AppID)
+				r.ApprovalWorkflow.Workflow.Description = types.StringPointerValue(resp.ApprovalWorkflow.Workflow.Description)
+				r.ApprovalWorkflow.Workflow.ID = types.StringValue(resp.ApprovalWorkflow.Workflow.ID)
+				r.ApprovalWorkflow.Workflow.Name = types.StringPointerValue(resp.ApprovalWorkflow.Workflow.Name)
+				r.ApprovalWorkflow.Workflow.Steps = []tfTypes.WorkflowStepOutput{}
+
+				for _, stepsItem := range resp.ApprovalWorkflow.Workflow.Steps {
+					var steps tfTypes.WorkflowStepOutput
+
+					steps.Inputs = &tfTypes.Inputs{}
+					steps.Name = types.StringPointerValue(stepsItem.Name)
+					steps.Step = types.StringValue(stepsItem.Step)
+
+					r.ApprovalWorkflow.Workflow.Steps = append(r.ApprovalWorkflow.Workflow.Steps, steps)
+				}
+				r.ApprovalWorkflow.Workflow.Type = types.StringValue(string(resp.ApprovalWorkflow.Workflow.Type))
+			}
+			if resp.ApprovalWorkflow.WorkflowRef != nil {
+				r.ApprovalWorkflow.WorkflowRef = &tfTypes.WorkflowRef{}
+				r.ApprovalWorkflow.WorkflowRef.ID = types.StringValue(resp.ApprovalWorkflow.WorkflowRef.ID)
+			}
+		}
+		if resp.AppstoreSettings != nil {
+			r.AppstoreSettings = &tfTypes.AppstoreSettings{}
+			if resp.AppstoreSettings.AppStoreSettingsCompact != nil {
+				r.AppstoreSettings.AppStoreSettingsCompact = &tfTypes.AppStoreSettingsCompact{}
+				r.AppstoreSettings.AppStoreSettingsCompact.InAppStore = types.BoolValue(resp.AppstoreSettings.AppStoreSettingsCompact.InAppStore)
+			}
+			if resp.AppstoreSettings.AppStoreSettingsResponse != nil {
+				r.AppstoreSettings.AppStoreSettingsResponse = &tfTypes.AppStoreSettingsResponse{}
+				r.AppstoreSettings.AppStoreSettingsResponse.AllowMultiplePermissionSelection = types.BoolValue(resp.AppstoreSettings.AppStoreSettingsResponse.AllowMultiplePermissionSelection)
+				r.AppstoreSettings.AppStoreSettingsResponse.AllowPermissionSelection = types.BoolValue(resp.AppstoreSettings.AppStoreSettingsResponse.AllowPermissionSelection)
+				if resp.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids != nil {
+					r.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids = make([]types.String, 0, len(resp.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids))
+					for _, v := range resp.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids {
+						r.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids = append(r.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids, types.StringValue(v))
+					}
+				} else {
+					r.AppstoreSettings.AppStoreSettingsResponse.AllowedRequesterGroupUuids = nil
+				}
+				r.AppstoreSettings.AppStoreSettingsResponse.CatalogVisibility = types.StringValue(string(resp.AppstoreSettings.AppStoreSettingsResponse.CatalogVisibility))
+				if resp.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields != nil {
+					r.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields = []tfTypes.CustomIntakeField{}
+
+					for _, customIntakeFieldsItem := range resp.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields {
+						var customIntakeFields tfTypes.CustomIntakeField
+
+						customIntakeFields.Description = types.StringPointerValue(customIntakeFieldsItem.Description)
+						if customIntakeFieldsItem.DropdownOptions != nil {
+							customIntakeFields.DropdownOptions = make([]types.String, 0, len(customIntakeFieldsItem.DropdownOptions))
+							for _, v := range customIntakeFieldsItem.DropdownOptions {
+								customIntakeFields.DropdownOptions = append(customIntakeFields.DropdownOptions, types.StringValue(v))
+							}
+						} else {
+							customIntakeFields.DropdownOptions = nil
+						}
+						customIntakeFields.FieldType = types.StringValue(string(customIntakeFieldsItem.FieldType))
+						customIntakeFields.IsRequired = types.BoolValue(customIntakeFieldsItem.IsRequired)
+						customIntakeFields.Prompt = types.StringValue(customIntakeFieldsItem.Prompt)
+
+						r.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields = append(r.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields, customIntakeFields)
+					}
+				} else {
+					r.AppstoreSettings.AppStoreSettingsResponse.CustomIntakeFields = nil
+				}
+				if resp.AppstoreSettings.AppStoreSettingsResponse.DefaultEntitlement == nil {
+					r.AppstoreSettings.AppStoreSettingsResponse.DefaultEntitlement = nil
+				} else {
+					r.AppstoreSettings.AppStoreSettingsResponse.DefaultEntitlement = &tfTypes.WorkflowRef{}
+					r.AppstoreSettings.AppStoreSettingsResponse.DefaultEntitlement.ID = types.StringValue(resp.AppstoreSettings.AppStoreSettingsResponse.DefaultEntitlement.ID)
+				}
+				r.AppstoreSettings.AppStoreSettingsResponse.InAppStore = types.BoolValue(resp.AppstoreSettings.AppStoreSettingsResponse.InAppStore)
+				r.AppstoreSettings.AppStoreSettingsResponse.RedirectURL = types.StringPointerValue(resp.AppstoreSettings.AppStoreSettingsResponse.RedirectURL)
+				r.AppstoreSettings.AppStoreSettingsResponse.RequestInstructions = types.StringPointerValue(resp.AppstoreSettings.AppStoreSettingsResponse.RequestInstructions)
+				r.AppstoreSettings.AppStoreSettingsResponse.RequestValidationWebhookUUID = types.StringPointerValue(resp.AppstoreSettings.AppStoreSettingsResponse.RequestValidationWebhookUUID)
+				r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess = &tfTypes.TimeBasedAccess{}
+				r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Default = types.StringPointerValue(resp.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Default)
+				if resp.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options != nil {
+					r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options = []tfTypes.TimeBasedAccessOption{}
+
+					for _, optionsVarItem := range resp.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options {
+						var optionsVar tfTypes.TimeBasedAccessOption
+
+						optionsVar.Label = types.StringValue(optionsVarItem.Label)
+						optionsVar.ValueSeconds = types.Int64PointerValue(optionsVarItem.ValueSeconds)
+
+						r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options = append(r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options, optionsVar)
+					}
+				} else {
+					r.AppstoreSettings.AppStoreSettingsResponse.TimeBasedAccess.Options = nil
+				}
+			}
+		}
 		r.Category = types.StringPointerValue(resp.Category)
 		if resp.CustomAttributes != nil {
 			r.CustomAttributes = make(map[string]tfTypes.CustomAttribute, len(resp.CustomAttributes))
@@ -60,53 +170,91 @@ func (r *AppResourceModel) RefreshFromSharedAppWithCustomAttributes(ctx context.
 				r.CustomAttributes[customAttributeKey] = customAttributeResult
 			}
 		}
-		r.Description = types.StringPointerValue(resp.Description)
-		r.ID = types.StringValue(resp.ID)
-		r.InstanceID = types.StringValue(resp.InstanceID)
-		r.Links = &tfTypes.AppLinks{}
-		r.Links.AdminURL = types.StringValue(resp.Links.AdminURL)
-		r.Links.Self = types.StringValue(resp.Links.Self)
-		r.LogoURL = types.StringPointerValue(resp.LogoURL)
-		r.RequestInstructions = types.StringPointerValue(resp.RequestInstructions)
-		r.Sources = make([]types.String, 0, len(resp.Sources))
-		for _, v := range resp.Sources {
-			r.Sources = append(r.Sources, types.StringValue(string(v)))
+		if resp.DefaultDeprovisioningWorkflow != nil {
+			r.DefaultDeprovisioningWorkflow = &tfTypes.ApprovalWorkflow{}
+			if resp.DefaultDeprovisioningWorkflow.Workflow != nil {
+				r.DefaultDeprovisioningWorkflow.Workflow = &tfTypes.Workflow{}
+				r.DefaultDeprovisioningWorkflow.Workflow.AppID = types.StringPointerValue(resp.DefaultDeprovisioningWorkflow.Workflow.AppID)
+				r.DefaultDeprovisioningWorkflow.Workflow.Description = types.StringPointerValue(resp.DefaultDeprovisioningWorkflow.Workflow.Description)
+				r.DefaultDeprovisioningWorkflow.Workflow.ID = types.StringValue(resp.DefaultDeprovisioningWorkflow.Workflow.ID)
+				r.DefaultDeprovisioningWorkflow.Workflow.Name = types.StringPointerValue(resp.DefaultDeprovisioningWorkflow.Workflow.Name)
+				r.DefaultDeprovisioningWorkflow.Workflow.Steps = []tfTypes.WorkflowStepOutput{}
+
+				for _, stepsItem1 := range resp.DefaultDeprovisioningWorkflow.Workflow.Steps {
+					var steps1 tfTypes.WorkflowStepOutput
+
+					steps1.Inputs = &tfTypes.Inputs{}
+					steps1.Name = types.StringPointerValue(stepsItem1.Name)
+					steps1.Step = types.StringValue(stepsItem1.Step)
+
+					r.DefaultDeprovisioningWorkflow.Workflow.Steps = append(r.DefaultDeprovisioningWorkflow.Workflow.Steps, steps1)
+				}
+				r.DefaultDeprovisioningWorkflow.Workflow.Type = types.StringValue(string(resp.DefaultDeprovisioningWorkflow.Workflow.Type))
+			}
+			if resp.DefaultDeprovisioningWorkflow.WorkflowRef != nil {
+				r.DefaultDeprovisioningWorkflow.WorkflowRef = &tfTypes.WorkflowRef{}
+				r.DefaultDeprovisioningWorkflow.WorkflowRef.ID = types.StringValue(resp.DefaultDeprovisioningWorkflow.WorkflowRef.ID)
+			}
 		}
-		r.Status = types.StringValue(string(resp.Status))
-		r.UserFriendlyLabel = types.StringValue(resp.UserFriendlyLabel)
+		if resp.DefaultProvisioningWorkflow != nil {
+			r.DefaultProvisioningWorkflow = &tfTypes.ApprovalWorkflow{}
+			if resp.DefaultProvisioningWorkflow.Workflow != nil {
+				r.DefaultProvisioningWorkflow.Workflow = &tfTypes.Workflow{}
+				r.DefaultProvisioningWorkflow.Workflow.AppID = types.StringPointerValue(resp.DefaultProvisioningWorkflow.Workflow.AppID)
+				r.DefaultProvisioningWorkflow.Workflow.Description = types.StringPointerValue(resp.DefaultProvisioningWorkflow.Workflow.Description)
+				r.DefaultProvisioningWorkflow.Workflow.ID = types.StringValue(resp.DefaultProvisioningWorkflow.Workflow.ID)
+				r.DefaultProvisioningWorkflow.Workflow.Name = types.StringPointerValue(resp.DefaultProvisioningWorkflow.Workflow.Name)
+				r.DefaultProvisioningWorkflow.Workflow.Steps = []tfTypes.WorkflowStepOutput{}
+
+				for _, stepsItem2 := range resp.DefaultProvisioningWorkflow.Workflow.Steps {
+					var steps2 tfTypes.WorkflowStepOutput
+
+					steps2.Inputs = &tfTypes.Inputs{}
+					steps2.Name = types.StringPointerValue(stepsItem2.Name)
+					steps2.Step = types.StringValue(stepsItem2.Step)
+
+					r.DefaultProvisioningWorkflow.Workflow.Steps = append(r.DefaultProvisioningWorkflow.Workflow.Steps, steps2)
+				}
+				r.DefaultProvisioningWorkflow.Workflow.Type = types.StringValue(string(resp.DefaultProvisioningWorkflow.Workflow.Type))
+			}
+			if resp.DefaultProvisioningWorkflow.WorkflowRef != nil {
+				r.DefaultProvisioningWorkflow.WorkflowRef = &tfTypes.WorkflowRef{}
+				r.DefaultProvisioningWorkflow.WorkflowRef.ID = types.StringValue(resp.DefaultProvisioningWorkflow.WorkflowRef.ID)
+			}
+		}
+		r.Description = types.StringPointerValue(resp.Description)
+		r.Disconnected = types.BoolPointerValue(resp.Disconnected)
+		r.ID = types.StringValue(resp.ID)
+		r.InstanceID = types.StringPointerValue(resp.InstanceID)
+		r.Label = types.StringPointerValue(resp.Label)
+		r.LogoURL = types.StringPointerValue(resp.LogoURL)
+		r.PostApprovalMessage = types.StringPointerValue(resp.PostApprovalMessage)
+		r.Status = types.StringPointerValue(resp.Status)
+		if resp.SyncStatus != nil {
+			r.SyncStatus = types.StringValue(string(*resp.SyncStatus))
+		} else {
+			r.SyncStatus = types.StringNull()
+		}
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
 	}
 
 	return diags
 }
 
-func (r *AppResourceModel) ToOperationsDisconnectAppRequest(ctx context.Context) (*operations.DisconnectAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsDisconnectAppV1Request(ctx context.Context) (*operations.DisconnectAppV1Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
 	id = r.ID.ValueString()
 
-	out := operations.DisconnectAppRequest{
+	out := operations.DisconnectAppV1Request{
 		ID: id,
 	}
 
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToOperationsGetAppV1Request(ctx context.Context) (*operations.GetAppV1Request, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	var id string
-	id = r.ID.ValueString()
-
-	out := operations.GetAppV1Request{
-		ID: id,
-	}
-
-	return &out, diags
-}
-
-func (r *AppResourceModel) ToOperationsReconnectAppRequest(ctx context.Context) (*operations.ReconnectAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsReconnectAppV1Request(ctx context.Context) (*operations.ReconnectAppV1Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var id string
@@ -119,9 +267,22 @@ func (r *AppResourceModel) ToOperationsReconnectAppRequest(ctx context.Context) 
 		return nil, diags
 	}
 
-	out := operations.ReconnectAppRequest{
+	out := operations.ReconnectAppV1Request{
 		ID:                      id,
 		ConnectIntegrationInput: *connectIntegrationInput,
+	}
+
+	return &out, diags
+}
+
+func (r *AppResourceModel) ToOperationsV1GetAppRequest(ctx context.Context) (*operations.V1GetAppRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var id string
+	id = r.ID.ValueString()
+
+	out := operations.V1GetAppRequest{
+		ID: id,
 	}
 
 	return &out, diags
@@ -130,22 +291,16 @@ func (r *AppResourceModel) ToOperationsReconnectAppRequest(ctx context.Context) 
 func (r *AppResourceModel) ToSharedConnectIntegrationInput(ctx context.Context) (*shared.ConnectIntegrationInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var appID string
-	appID = r.AppID.ValueString()
+	var appClassID string
+	appClassID = r.AppClassID.ValueString()
 
-	var settings *shared.Settings
-	if r.Settings != nil {
-		settings = &shared.Settings{}
-	}
 	var auth *shared.Auth
 	if r.Auth != nil {
 		auth = &shared.Auth{}
 	}
-	appInstanceIdentifier := new(string)
-	if !r.AppInstanceIdentifier.IsUnknown() && !r.AppInstanceIdentifier.IsNull() {
-		*appInstanceIdentifier = r.AppInstanceIdentifier.ValueString()
-	} else {
-		appInstanceIdentifier = nil
+	var settings *shared.Settings
+	if r.Settings != nil {
+		settings = &shared.Settings{}
 	}
 	version := new(string)
 	if !r.Version.IsUnknown() && !r.Version.IsNull() {
@@ -154,11 +309,10 @@ func (r *AppResourceModel) ToSharedConnectIntegrationInput(ctx context.Context) 
 		version = nil
 	}
 	out := shared.ConnectIntegrationInput{
-		AppID:                 appID,
-		Settings:              settings,
-		Auth:                  auth,
-		AppInstanceIdentifier: appInstanceIdentifier,
-		Version:               version,
+		AppClassID: appClassID,
+		Auth:       auth,
+		Settings:   settings,
+		Version:    version,
 	}
 
 	return &out, diags

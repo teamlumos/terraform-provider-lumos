@@ -32,11 +32,11 @@ type IntegrationsDataSource struct {
 
 // IntegrationsDataSourceModel describes the data model.
 type IntegrationsDataSourceModel struct {
-	Items []tfTypes.IntegrationCatalogOutput `tfsdk:"items"`
-	Page  types.Int64                        `queryParam:"style=form,explode=true,name=page" tfsdk:"page"`
-	Pages types.Int64                        `tfsdk:"pages"`
-	Size  types.Int64                        `queryParam:"style=form,explode=true,name=size" tfsdk:"size"`
-	Total types.Int64                        `tfsdk:"total"`
+	Integrations  []tfTypes.IntegrationCatalogOutput `tfsdk:"integrations"`
+	NextPageToken types.String                       `tfsdk:"next_page_token"`
+	PageSize      types.Int64                        `queryParam:"style=form,explode=true,name=page_size" tfsdk:"page_size"`
+	PageToken     types.String                       `queryParam:"style=form,explode=true,name=page_token" tfsdk:"page_token"`
+	Query         types.String                       `queryParam:"style=form,explode=true,name=query" tfsdk:"query"`
 }
 
 // Metadata returns the data source type name.
@@ -50,13 +50,13 @@ func (r *IntegrationsDataSource) Schema(ctx context.Context, req datasource.Sche
 		MarkdownDescription: "Integrations DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"items": schema.ListNestedAttribute{
+			"integrations": schema.ListNestedAttribute{
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"app_id": schema.StringAttribute{
+						"app_class_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `Canonical identifier of the integration (e.g. ` + "`" + `okta.com` + "`" + `). Pass it as ` + "`" + `app_id` + "`" + ` when connecting via ` + "`" + `POST /v1/apps` + "`" + `.`,
+							Description: `Canonical identifier of the integration (e.g. ` + "`" + `okta.com` + "`" + `). Pass it as ` + "`" + `app_class_id` + "`" + ` when connecting via ` + "`" + `POST /apps` + "`" + `.`,
 						},
 						"category": schema.StringAttribute{
 							Computed:    true,
@@ -76,28 +76,26 @@ func (r *IntegrationsDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 					},
 				},
+				Description: `Integrations returned in this page.`,
 			},
-			"page": schema.Int64Attribute{
+			"next_page_token": schema.StringAttribute{
 				Computed:    true,
+				Description: `Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than ` + "`" + `page_size` + "`" + ` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.`,
+			},
+			"page_size": schema.Int64Attribute{
 				Optional:    true,
-				Description: `Page number`,
+				Description: `Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected.`,
 				Validators: []validator.Int64{
 					int64validator.AtLeast(1),
 				},
 			},
-			"pages": schema.Int64Attribute{
-				Computed: true,
-			},
-			"size": schema.Int64Attribute{
-				Computed:    true,
+			"page_token": schema.StringAttribute{
 				Optional:    true,
-				Description: `Page size`,
-				Validators: []validator.Int64{
-					int64validator.Between(1, 100),
-				},
+				Description: `Opaque cursor from a previous response's ` + "`" + `next_page_token` + "`" + `. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.`,
 			},
-			"total": schema.Int64Attribute{
-				Computed: true,
+			"query": schema.StringAttribute{
+				Optional:    true,
+				Description: `Case-insensitive substring filter over the integration's ` + "`" + `app_class_id` + "`" + ` and name. ` + "`" + `google` + "`" + ` matches both ` + "`" + `workspace.google.com` + "`" + ` and ` + "`" + `cloud.google.com` + "`" + `.`,
 			},
 		},
 	}
@@ -141,13 +139,13 @@ func (r *IntegrationsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	request, requestDiags := data.ToOperationsListIntegrationsRequest(ctx)
+	request, requestDiags := data.ToOperationsListIntegrationsV1Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.ListIntegrations(ctx, *request)
+	res, err := r.client.Integrations.ListIntegrationsV1(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {
@@ -163,11 +161,11 @@ func (r *IntegrationsDataSource) Read(ctx context.Context, req datasource.ReadRe
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.PageIntegrationCatalogOutput != nil) {
+	if !(res.IntegrationCatalogListOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedPageIntegrationCatalogOutput(ctx, res.PageIntegrationCatalogOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedIntegrationCatalogListOutput(ctx, res.IntegrationCatalogListOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return
