@@ -134,7 +134,7 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 	return []func() datasource.DataSource{
 		NewAppDataSource,
 		NewEntitlementDataSource,
-		NewEntitlementAccountsDataSource,
+		NewEntitlementAppStoreSettingsDataSource,
 		NewWorkflowDataSource,
 	}
 }
