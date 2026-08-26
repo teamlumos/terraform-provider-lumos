@@ -66,7 +66,7 @@ type ListAccountEntitlementsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	EntitlementListOutput *shared.EntitlementListOutput
+	AccountEntitlementsOutput *shared.AccountEntitlementsOutput
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -94,11 +94,11 @@ func (l *ListAccountEntitlementsResponse) GetRawResponse() *http.Response {
 	return l.RawResponse
 }
 
-func (l *ListAccountEntitlementsResponse) GetEntitlementListOutput() *shared.EntitlementListOutput {
+func (l *ListAccountEntitlementsResponse) GetAccountEntitlementsOutput() *shared.AccountEntitlementsOutput {
 	if l == nil {
 		return nil
 	}
-	return l.EntitlementListOutput
+	return l.AccountEntitlementsOutput
 }
 
 func (l *ListAccountEntitlementsResponse) GetAPIError() *shared.APIError {
