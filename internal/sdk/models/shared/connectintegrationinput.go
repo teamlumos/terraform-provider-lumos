@@ -3,54 +3,30 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
-// Settings - Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Optional — defaults to an empty object.
-type Settings struct {
+// Auth - Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Discover the accepted keys for a given app via `GET /integrations/{app_class_id}/connection-schema`. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`). Others require browser consent and are finished in the Lumos UI — for those, `auth` may be empty (`{}`). Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.
+type Auth struct {
 }
 
-// Auth - Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`). Others require browser consent and are finished in the Lumos UI — for those, `auth` may be empty (`{}`) and the connection begins `PARTIALLY_CONNECTED`. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.
-type Auth struct {
+// Settings - Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Integrations whose tenant is set manually take it here as `app_instance_identifier` (e.g. an Okta domain); others derive it from the credentials during connect. Discover the accepted keys via `GET /integrations/{app_class_id}/connection-schema`. Optional — defaults to an empty object.
+type Settings struct {
 }
 
 type ConnectIntegrationInput struct {
 	// Canonical identifier of the integration to connect, e.g. `okta.com`. Determines the credentials and settings the integration expects. Must be an integration Lumos supports for your domain; an unknown value is rejected with 400. Required — omitting it fails request validation with 422.
-	AppID string `json:"app_id"`
-	// Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Optional — defaults to an empty object.
-	Settings *Settings `json:"settings,omitempty"`
-	// Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`). Others require browser consent and are finished in the Lumos UI — for those, `auth` may be empty (`{}`) and the connection begins `PARTIALLY_CONNECTED`. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.
+	AppClassID string `json:"app_class_id"`
+	// Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Discover the accepted keys for a given app via `GET /integrations/{app_class_id}/connection-schema`. Some integrations connect in-band from these credentials (e.g. an `api_key`, or an OAuth `client_id`/`client_secret`). Others require browser consent and are finished in the Lumos UI — for those, `auth` may be empty (`{}`). Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.
 	Auth *Auth `json:"auth,omitempty"`
-	// Identifier of the specific tenant/instance being connected — e.g. an Okta org URL (`https://myorg.okta.com`) or an ICS tenant `sub` / slug. Disambiguates multiple instances of the same app within one domain and is echoed back (canonicalized) on the response. A caller-supplied value wins on connect; on reconnect the detected id wins so Lumos tracks vendor tenant renames. Optional — when omitted it is auto-detected from the credentials where possible; some multi-instance integrations return 400 when it can't be derived.
-	AppInstanceIdentifier *string `default:"" json:"app_instance_identifier"`
+	// Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Integrations whose tenant is set manually take it here as `app_instance_identifier` (e.g. an Okta domain); others derive it from the credentials during connect. Discover the accepted keys via `GET /integrations/{app_class_id}/connection-schema`. Optional — defaults to an empty object.
+	Settings *Settings `json:"settings,omitempty"`
 	// Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default — used for staged rollouts and back-compat. Leave unset (`null`) to use the default version, which is correct for nearly all callers; an unregistered version is rejected with 400.
 	Version *string `json:"version,omitempty"`
 }
 
-func (c ConnectIntegrationInput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
-}
-
-func (c *ConnectIntegrationInput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (c *ConnectIntegrationInput) GetAppID() string {
+func (c *ConnectIntegrationInput) GetAppClassID() string {
 	if c == nil {
 		return ""
 	}
-	return c.AppID
-}
-
-func (c *ConnectIntegrationInput) GetSettings() *Settings {
-	if c == nil {
-		return nil
-	}
-	return c.Settings
+	return c.AppClassID
 }
 
 func (c *ConnectIntegrationInput) GetAuth() *Auth {
@@ -60,11 +36,11 @@ func (c *ConnectIntegrationInput) GetAuth() *Auth {
 	return c.Auth
 }
 
-func (c *ConnectIntegrationInput) GetAppInstanceIdentifier() *string {
+func (c *ConnectIntegrationInput) GetSettings() *Settings {
 	if c == nil {
 		return nil
 	}
-	return c.AppInstanceIdentifier
+	return c.Settings
 }
 
 func (c *ConnectIntegrationInput) GetVersion() *string {

@@ -14,8 +14,9 @@ Integrations DataSource
 
 ```terraform
 data "lumos_integrations" "my_integrations" {
-  page = 1
-  size = 50
+  page_size  = 100
+  page_token = "...my_page_token..."
+  query      = "...my_query..."
 }
 ```
 
@@ -24,21 +25,21 @@ data "lumos_integrations" "my_integrations" {
 
 ### Optional
 
-- `page` (Number) Page number
-- `size` (Number) Page size
+- `page_size` (Number) Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected.
+- `page_token` (String) Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
+- `query` (String) Case-insensitive substring filter over the integration's `app_class_id` and name. `google` matches both `workspace.google.com` and `cloud.google.com`.
 
 ### Read-Only
 
-- `items` (Attributes List) (see [below for nested schema](#nestedatt--items))
-- `pages` (Number)
-- `total` (Number)
+- `integrations` (Attributes List) Integrations returned in this page. (see [below for nested schema](#nestedatt--integrations))
+- `next_page_token` (String) Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.
 
-<a id="nestedatt--items"></a>
-### Nested Schema for `items`
+<a id="nestedatt--integrations"></a>
+### Nested Schema for `integrations`
 
 Read-Only:
 
-- `app_id` (String) Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_id` when connecting via `POST /v1/apps`.
+- `app_class_id` (String) Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting via `POST /apps`.
 - `category` (String) Category of the integration (e.g. `IT & Security`).
 - `description` (String) Short description of the integration.
 - `logo_url` (String) URL of the integration's logo.

@@ -14,7 +14,7 @@ Integration DataSource
 
 ```terraform
 data "lumos_integration" "my_integration" {
-  app_id = "...my_app_id..."
+  app_class_id = "...my_app_class_id..."
 }
 ```
 
@@ -23,7 +23,7 @@ data "lumos_integration" "my_integration" {
 
 ### Required
 
-- `app_id` (String) Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_id` when connecting via `POST /v1/apps`.
+- `app_class_id` (String) Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting via `POST /apps`.
 
 ### Read-Only
 

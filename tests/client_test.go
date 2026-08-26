@@ -30,34 +30,34 @@ func GetNewClient(t *testing.T) (*sdk.Lumos, context.Context) {
 
 func TestListIntegrations(t *testing.T) {
 	client, ctx := GetNewClient(t)
-	response, err := client.Integrations.ListIntegrations(ctx, operations.ListIntegrationsRequest{})
+	response, err := client.Integrations.ListIntegrationsV1(ctx, operations.ListIntegrationsV1Request{})
 	if err != nil || response == nil {
-		t.Fatalf(`client.Integrations.ListIntegrations() was unsuccessful, %v, %v`, response, err)
+		t.Fatalf(`client.Integrations.ListIntegrationsV1() was unsuccessful, %v, %v`, response, err)
 	}
-	if response.PageIntegrationCatalogOutput == nil {
-		t.Fatalf(`client.Integrations.ListIntegrations() returned no page payload, %v`, response)
+	if response.IntegrationCatalogListOutput == nil {
+		t.Fatalf(`client.Integrations.ListIntegrationsV1() returned no page payload, %v`, response)
 	}
-	if len(response.PageIntegrationCatalogOutput.Items) == 0 {
-		t.Fatalf(`client.Integrations.ListIntegrations() returned zero integrations`)
+	if len(response.IntegrationCatalogListOutput.Integrations) == 0 {
+		t.Fatalf(`client.Integrations.ListIntegrationsV1() returned zero integrations`)
 	}
 }
 
-func TestGetAppV1(t *testing.T) {
+func TestGetApp(t *testing.T) {
 	client, ctx := GetNewClient(t)
 	appID := os.Getenv("APP_ID")
 	if appID == "" {
 		t.Skip(`APP_ID is not set`)
 	}
-	response, err := client.Apps.GetAppV1(ctx, operations.GetAppV1Request{
+	response, err := client.Apps.V1GetApp(ctx, operations.V1GetAppRequest{
 		ID: appID,
 	})
 	if err != nil || response == nil {
-		t.Fatalf(`client.Apps.GetAppV1(%s) was unsuccessful, %v, %v`, appID, response, err)
+		t.Fatalf(`client.Apps.V1GetApp(%s) was unsuccessful, %v, %v`, appID, response, err)
 	}
-	if response.AppWithCustomAttributes == nil {
-		t.Fatalf(`client.Apps.GetAppV1(%s) returned no app, %v`, appID, response)
+	if response.AppResponse == nil {
+		t.Fatalf(`client.Apps.V1GetApp(%s) returned no app, %v`, appID, response)
 	}
-	if response.AppWithCustomAttributes.ID != appID {
-		t.Fatalf(`client.Apps.GetAppV1(%s) returned id %q`, appID, response.AppWithCustomAttributes.ID)
+	if response.AppResponse.ID != appID {
+		t.Fatalf(`client.Apps.V1GetApp(%s) returned id %q`, appID, response.AppResponse.ID)
 	}
 }

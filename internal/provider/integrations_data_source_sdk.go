@@ -12,50 +12,54 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-func (r *IntegrationsDataSourceModel) RefreshFromSharedPageIntegrationCatalogOutput(ctx context.Context, resp *shared.PageIntegrationCatalogOutput) diag.Diagnostics {
+func (r *IntegrationsDataSourceModel) RefreshFromSharedIntegrationCatalogListOutput(ctx context.Context, resp *shared.IntegrationCatalogListOutput) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.Items = []tfTypes.IntegrationCatalogOutput{}
+		r.Integrations = []tfTypes.IntegrationCatalogOutput{}
 
-		for _, itemsItem := range resp.Items {
-			var items tfTypes.IntegrationCatalogOutput
+		for _, integrationsItem := range resp.Integrations {
+			var integrations tfTypes.IntegrationCatalogOutput
 
-			items.AppID = types.StringValue(itemsItem.AppID)
-			items.Category = types.StringPointerValue(itemsItem.Category)
-			items.Description = types.StringPointerValue(itemsItem.Description)
-			items.LogoURL = types.StringPointerValue(itemsItem.LogoURL)
-			items.Name = types.StringValue(itemsItem.Name)
+			integrations.AppClassID = types.StringValue(integrationsItem.AppClassID)
+			integrations.Category = types.StringPointerValue(integrationsItem.Category)
+			integrations.Description = types.StringPointerValue(integrationsItem.Description)
+			integrations.LogoURL = types.StringPointerValue(integrationsItem.LogoURL)
+			integrations.Name = types.StringValue(integrationsItem.Name)
 
-			r.Items = append(r.Items, items)
+			r.Integrations = append(r.Integrations, integrations)
 		}
-		r.Page = types.Int64PointerValue(resp.Page)
-		r.Pages = types.Int64PointerValue(resp.Pages)
-		r.Size = types.Int64PointerValue(resp.Size)
-		r.Total = types.Int64PointerValue(resp.Total)
+		r.NextPageToken = types.StringPointerValue(resp.NextPageToken)
 	}
 
 	return diags
 }
 
-func (r *IntegrationsDataSourceModel) ToOperationsListIntegrationsRequest(ctx context.Context) (*operations.ListIntegrationsRequest, diag.Diagnostics) {
+func (r *IntegrationsDataSourceModel) ToOperationsListIntegrationsV1Request(ctx context.Context) (*operations.ListIntegrationsV1Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	page := new(int64)
-	if !r.Page.IsUnknown() && !r.Page.IsNull() {
-		*page = r.Page.ValueInt64()
+	query := new(string)
+	if !r.Query.IsUnknown() && !r.Query.IsNull() {
+		*query = r.Query.ValueString()
 	} else {
-		page = nil
+		query = nil
 	}
-	size := new(int64)
-	if !r.Size.IsUnknown() && !r.Size.IsNull() {
-		*size = r.Size.ValueInt64()
+	pageToken := new(string)
+	if !r.PageToken.IsUnknown() && !r.PageToken.IsNull() {
+		*pageToken = r.PageToken.ValueString()
 	} else {
-		size = nil
+		pageToken = nil
 	}
-	out := operations.ListIntegrationsRequest{
-		Page: page,
-		Size: size,
+	pageSize := new(int64)
+	if !r.PageSize.IsUnknown() && !r.PageSize.IsNull() {
+		*pageSize = r.PageSize.ValueInt64()
+	} else {
+		pageSize = nil
+	}
+	out := operations.ListIntegrationsV1Request{
+		Query:     query,
+		PageToken: pageToken,
+		PageSize:  pageSize,
 	}
 
 	return &out, diags

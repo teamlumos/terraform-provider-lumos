@@ -7,12 +7,14 @@
 >
 > **For production, stay on 0.10.x:** `version = "~> 0.10"`
 >
-> The 1.x line exposes **only** V1 API resources: `lumos_app` plus the `lumos_apps`,
-> `lumos_integration`, and `lumos_integrations` data sources. The app store, access
-> policy, pre-approval rule, requestable permission, user, and group resources from
-> 0.10.x are not present; they arrive in later 1.x alphas as they land in the V1 API.
+> The 1.x line exposes **only** V1 API resources — it covers the whole `/v1`
+> surface, but the 0.10.x resources built on the un-prefixed endpoints (access
+> policy, pre-approval rule, requestable permission, group) are not carried over.
 > A single configuration cannot use 0.10.x and 1.x together — Terraform loads one
 > version per provider address. Use separate root modules if you need both.
+>
+> The V1 API is itself gated: endpoints return 404 unless the
+> `external-v1-api-enabled` flag is on for your tenant.
 
 <div align="left">
   <a href="https://speakeasyapi.dev/">
@@ -130,19 +132,20 @@ Configuration precedence:
 
 ## Available Resources and Data Sources
 
-The 1.x line exposes only V1 API resources. See the generated list further down
-(under "Available Resources and Data Sources") for the authoritative set.
+Generated from the V1 API surface: **3 managed resources** and **27 data
+sources**. The authoritative list is generated further down this file, under
+[Available Resources and Data Sources](#available-resources-and-data-sources-1)
+— it is rewritten on every `make provider`, so it never drifts.
 
-### Resources
+Managed resources are the V1 entities with full create/read/update/delete:
+`lumos_app`, `lumos_entitlement`, and `lumos_workflow`. Everything else in the
+V1 API is exposed read-only.
 
-* [lumos_app](docs/resources/app.md)
-
-### Data Sources
-
-* [lumos_app](docs/data-sources/app.md)
-* [lumos_apps](docs/data-sources/apps.md)
-* [lumos_integration](docs/data-sources/integration.md)
-* [lumos_integrations](docs/data-sources/integrations.md)
+Not every V1 endpoint maps onto Terraform. The generated SDK covers all 61 V1
+operations, but 25 of them are imperative actions or multipart uploads with no
+declarative representation — triggering an app sync, completing or reassigning a
+task, uploading a knowledge-context document. Those are reachable through the
+SDK, not through a resource or data source.
 
 ---
 
@@ -255,9 +258,10 @@ provider "lumos" {
 
 ```hcl
 resource "lumos_app" "example" {
-  app_id = "okta.com"
+  app_class_id = "okta.com"
   auth = {
-    # credentials vary by integration - see docs/resources/app.md
+    # credentials vary by integration - discover them with the
+    # lumos_integration_connection_schema data source
   }
 }
 ```
@@ -361,13 +365,38 @@ Available configuration:
 ### Managed Resources
 
 * [lumos_app](docs/resources/app.md)
+* [lumos_entitlement](docs/resources/entitlement.md)
+* [lumos_workflow](docs/resources/workflow.md)
 
 ### Data Sources
 
+* [lumos_account_entitlements](docs/data-sources/account_entitlements.md)
 * [lumos_app](docs/data-sources/app.md)
+* [lumos_app_entitlement_app_store_catalog](docs/data-sources/app_entitlement_app_store_catalog.md)
+* [lumos_app_entitlements](docs/data-sources/app_entitlements.md)
+* [lumos_app_store_catalog](docs/data-sources/app_store_catalog.md)
+* [lumos_app_store_settings](docs/data-sources/app_store_settings.md)
 * [lumos_apps](docs/data-sources/apps.md)
+* [lumos_current_user](docs/data-sources/current_user.md)
+* [lumos_custom_attribute_definitions](docs/data-sources/custom_attribute_definitions.md)
+* [lumos_entitlement](docs/data-sources/entitlement.md)
+* [lumos_entitlement_accounts](docs/data-sources/entitlement_accounts.md)
+* [lumos_entitlement_app_store_settings](docs/data-sources/entitlement_app_store_settings.md)
 * [lumos_integration](docs/data-sources/integration.md)
+* [lumos_integration_connection_schema](docs/data-sources/integration_connection_schema.md)
 * [lumos_integrations](docs/data-sources/integrations.md)
+* [lumos_knowledge_context](docs/data-sources/knowledge_context.md)
+* [lumos_knowledge_contexts](docs/data-sources/knowledge_contexts.md)
+* [lumos_task](docs/data-sources/task.md)
+* [lumos_task_actions](docs/data-sources/task_actions.md)
+* [lumos_tasks](docs/data-sources/tasks.md)
+* [lumos_user](docs/data-sources/user.md)
+* [lumos_user_accounts](docs/data-sources/user_accounts.md)
+* [lumos_user_roles](docs/data-sources/user_roles.md)
+* [lumos_users](docs/data-sources/users.md)
+* [lumos_workflow](docs/data-sources/workflow.md)
+* [lumos_workflow_steps](docs/data-sources/workflow_steps.md)
+* [lumos_workflows](docs/data-sources/workflows.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->

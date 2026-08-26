@@ -14,6 +14,9 @@ App DataSource
 
 ```terraform
 data "lumos_app" "my_app" {
+  expand = [
+    "..."
+  ]
   id = "...my_id..."
 }
 ```
@@ -23,23 +26,158 @@ data "lumos_app" "my_app" {
 
 ### Required
 
-- `id` (String) The ID of this app.
+- `id` (String) The unique identifier of the app.
+
+### Optional
+
+- `expand` (List of String) Fields to expand. Supported fields: admins, approval_workflow, default_provisioning_workflow, default_deprovisioning_workflow, custom_attributes, appstore_settings.
 
 ### Read-Only
 
-- `allow_multiple_permission_selection` (Boolean) Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
-- `app_class_id` (String) The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
-- `category` (String) The category of the app, as shown in the AppStore
-- `custom_attributes` (Attributes Map) Custom attributes configured on the app (see [below for nested schema](#nestedatt--custom_attributes))
-- `description` (String) The user-facing description of the app
-- `instance_id` (String) The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
-- `links` (Attributes) (see [below for nested schema](#nestedatt--links))
-- `logo_url` (String) The URL of the logo of this app.
-- `request_instructions` (String) The request instructions.
-- `sources` (List of String) The sources of this app.
-- `status` (String)
-- `user_friendly_label` (String) The user-friendly label of this app.
-- `website_url` (String) The URL of the website of this app.
+- `admins` (Attributes List) Users and groups that administer this app. Only present when expand=admins is requested. (see [below for nested schema](#nestedatt--admins))
+- `app_class_id` (String) The catalog identifier of the underlying app (e.g. "github.com"). Custom apps return "custom".
+- `approval_workflow` (Attributes) The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates. (see [below for nested schema](#nestedatt--approval_workflow))
+- `appstore_settings` (Attributes) App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object. (see [below for nested schema](#nestedatt--appstore_settings))
+- `category` (String) The category this app belongs to.
+- `custom_attributes` (Attributes Map) Custom attributes configured on this app. Only present when expand=custom_attributes is requested. (see [below for nested schema](#nestedatt--custom_attributes))
+- `default_deprovisioning_workflow` (Attributes) The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow))
+- `default_provisioning_workflow` (Attributes) The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows. (see [below for nested schema](#nestedatt--default_provisioning_workflow))
+- `description` (String) A description of the app.
+- `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `DELETE /v1/apps/{app_uuid}`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it with `PUT /v1/apps/{app_uuid}`.
+- `instance_id` (String) The app-instance identifier distinguishing multiple instances of the same app.
+- `label` (String) The display name of the app.
+- `logo_url` (String) URL of the app logo image.
+- `post_approval_message` (String) Custom message shown to the requester after their access request is approved.
+- `status` (String) The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
+- `sync_status` (String) The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
+- `website_url` (String) URL of the app's official website.
+
+<a id="nestedatt--admins"></a>
+### Nested Schema for `admins`
+
+Read-Only:
+
+- `id` (String) The UUID of the admin user or group.
+- `type` (String)
+
+
+<a id="nestedatt--approval_workflow"></a>
+### Nested Schema for `approval_workflow`
+
+Read-Only:
+
+- `workflow` (Attributes) Response shape for a Workflow. (see [below for nested schema](#nestedatt--approval_workflow--workflow))
+- `workflow_ref` (Attributes) A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+`<slot>.id` is stable whether or not the slot is expanded. (see [below for nested schema](#nestedatt--approval_workflow--workflow_ref))
+
+<a id="nestedatt--approval_workflow--workflow"></a>
+### Nested Schema for `approval_workflow.workflow`
+
+Read-Only:
+
+- `app_id` (String) UUID of the app this Workflow belongs to, if associated.
+- `description` (String) A description of this Workflow.
+- `id` (String) A UUID identifying this Workflow.
+- `name` (String) A name for this Workflow.
+- `steps` (Attributes List) The ordered steps of the workflow. (see [below for nested schema](#nestedatt--approval_workflow--workflow--steps))
+- `type` (String) The kind of workflow.
+
+<a id="nestedatt--approval_workflow--workflow--steps"></a>
+### Nested Schema for `approval_workflow.workflow.steps`
+
+Read-Only:
+
+- `inputs` (Attributes) The configured inputs for this step. (see [below for nested schema](#nestedatt--approval_workflow--workflow--steps--inputs))
+- `name` (String) Server-derived human-readable name for this step. Read-only.
+- `step` (String) Identifier (catalogue slug) for the step to execute.
+
+<a id="nestedatt--approval_workflow--workflow--steps--inputs"></a>
+### Nested Schema for `approval_workflow.workflow.steps.inputs`
+
+
+
+
+<a id="nestedatt--approval_workflow--workflow_ref"></a>
+### Nested Schema for `approval_workflow.workflow_ref`
+
+Read-Only:
+
+- `id` (String) UUID of the bound workflow.
+
+
+
+<a id="nestedatt--appstore_settings"></a>
+### Nested Schema for `appstore_settings`
+
+Read-Only:
+
+- `app_store_settings_compact` (Attributes) (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_compact))
+- `app_store_settings_response` (Attributes) (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_response))
+
+<a id="nestedatt--appstore_settings--app_store_settings_compact"></a>
+### Nested Schema for `appstore_settings.app_store_settings_compact`
+
+Read-Only:
+
+- `in_app_store` (Boolean) Whether this app is visible in App Store for config/management.
+
+
+<a id="nestedatt--appstore_settings--app_store_settings_response"></a>
+### Nested Schema for `appstore_settings.app_store_settings_response`
+
+Read-Only:
+
+- `allow_multiple_permission_selection` (Boolean) When true, requesters may select more than one permission in a single request.
+- `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.
+- `allowed_requester_group_uuids` (List of String) UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+- `catalog_visibility` (String) Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
+- `custom_intake_fields` (Attributes List) Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured. Read-only. (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_response--custom_intake_fields))
+- `default_entitlement` (Attributes) The entitlement pre-selected by default when a user opens the request form. Null means no default is set. (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_response--default_entitlement))
+- `in_app_store` (Boolean) Whether this app is listed in the App Store catalog.
+- `redirect_url` (String) If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.
+- `request_instructions` (String) Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
+- `request_validation_webhook_uuid` (String) UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.
+- `time_based_access` (Attributes) (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_response--time_based_access))
+
+<a id="nestedatt--appstore_settings--app_store_settings_response--custom_intake_fields"></a>
+### Nested Schema for `appstore_settings.app_store_settings_response.custom_intake_fields`
+
+Read-Only:
+
+- `description` (String) Additional guidance shown alongside the prompt.
+- `dropdown_options` (List of String) Selectable options for this field. Present only when field_type is "dropdown".
+- `field_type` (String)
+- `is_required` (Boolean) Whether the requester must answer this field to submit a request.
+- `prompt` (String) The question shown to the requester.
+
+
+<a id="nestedatt--appstore_settings--app_store_settings_response--default_entitlement"></a>
+### Nested Schema for `appstore_settings.app_store_settings_response.default_entitlement`
+
+Read-Only:
+
+- `id` (String) The UUID of the entitlement.
+
+
+<a id="nestedatt--appstore_settings--app_store_settings_response--time_based_access"></a>
+### Nested Schema for `appstore_settings.app_store_settings_response.time_based_access`
+
+Read-Only:
+
+- `default` (String) Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
+- `options` (Attributes List) Time-based access options available for this app. Null means the app uses the domain-level defaults. (see [below for nested schema](#nestedatt--appstore_settings--app_store_settings_response--time_based_access--options))
+
+<a id="nestedatt--appstore_settings--app_store_settings_response--time_based_access--options"></a>
+### Nested Schema for `appstore_settings.app_store_settings_response.time_based_access.options`
+
+Read-Only:
+
+- `label` (String) Display label for this time-based access option.
+- `value_seconds` (Number) Duration in seconds. Null indicates a permanent (unlimited) access option.
+
+
+
+
 
 <a id="nestedatt--custom_attributes"></a>
 ### Nested Schema for `custom_attributes`
@@ -73,10 +211,90 @@ Read-Only:
 
 
 
-<a id="nestedatt--links"></a>
-### Nested Schema for `links`
+<a id="nestedatt--default_deprovisioning_workflow"></a>
+### Nested Schema for `default_deprovisioning_workflow`
 
 Read-Only:
 
-- `admin_url` (String) A URL to access this application within the Lumos web UI
-- `self` (String) The canonical API URL for retrieving this specific application
+- `workflow` (Attributes) Response shape for a Workflow. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow--workflow))
+- `workflow_ref` (Attributes) A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+`<slot>.id` is stable whether or not the slot is expanded. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow--workflow_ref))
+
+<a id="nestedatt--default_deprovisioning_workflow--workflow"></a>
+### Nested Schema for `default_deprovisioning_workflow.workflow`
+
+Read-Only:
+
+- `app_id` (String) UUID of the app this Workflow belongs to, if associated.
+- `description` (String) A description of this Workflow.
+- `id` (String) A UUID identifying this Workflow.
+- `name` (String) A name for this Workflow.
+- `steps` (Attributes List) The ordered steps of the workflow. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow--workflow--steps))
+- `type` (String) The kind of workflow.
+
+<a id="nestedatt--default_deprovisioning_workflow--workflow--steps"></a>
+### Nested Schema for `default_deprovisioning_workflow.workflow.steps`
+
+Read-Only:
+
+- `inputs` (Attributes) The configured inputs for this step. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow--workflow--steps--inputs))
+- `name` (String) Server-derived human-readable name for this step. Read-only.
+- `step` (String) Identifier (catalogue slug) for the step to execute.
+
+<a id="nestedatt--default_deprovisioning_workflow--workflow--steps--inputs"></a>
+### Nested Schema for `default_deprovisioning_workflow.workflow.steps.inputs`
+
+
+
+
+<a id="nestedatt--default_deprovisioning_workflow--workflow_ref"></a>
+### Nested Schema for `default_deprovisioning_workflow.workflow_ref`
+
+Read-Only:
+
+- `id` (String) UUID of the bound workflow.
+
+
+
+<a id="nestedatt--default_provisioning_workflow"></a>
+### Nested Schema for `default_provisioning_workflow`
+
+Read-Only:
+
+- `workflow` (Attributes) Response shape for a Workflow. (see [below for nested schema](#nestedatt--default_provisioning_workflow--workflow))
+- `workflow_ref` (Attributes) A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+`<slot>.id` is stable whether or not the slot is expanded. (see [below for nested schema](#nestedatt--default_provisioning_workflow--workflow_ref))
+
+<a id="nestedatt--default_provisioning_workflow--workflow"></a>
+### Nested Schema for `default_provisioning_workflow.workflow`
+
+Read-Only:
+
+- `app_id` (String) UUID of the app this Workflow belongs to, if associated.
+- `description` (String) A description of this Workflow.
+- `id` (String) A UUID identifying this Workflow.
+- `name` (String) A name for this Workflow.
+- `steps` (Attributes List) The ordered steps of the workflow. (see [below for nested schema](#nestedatt--default_provisioning_workflow--workflow--steps))
+- `type` (String) The kind of workflow.
+
+<a id="nestedatt--default_provisioning_workflow--workflow--steps"></a>
+### Nested Schema for `default_provisioning_workflow.workflow.steps`
+
+Read-Only:
+
+- `inputs` (Attributes) The configured inputs for this step. (see [below for nested schema](#nestedatt--default_provisioning_workflow--workflow--steps--inputs))
+- `name` (String) Server-derived human-readable name for this step. Read-only.
+- `step` (String) Identifier (catalogue slug) for the step to execute.
+
+<a id="nestedatt--default_provisioning_workflow--workflow--steps--inputs"></a>
+### Nested Schema for `default_provisioning_workflow.workflow.steps.inputs`
+
+
+
+
+<a id="nestedatt--default_provisioning_workflow--workflow_ref"></a>
+### Nested Schema for `default_provisioning_workflow.workflow_ref`
+
+Read-Only:
+
+- `id` (String) UUID of the bound workflow.

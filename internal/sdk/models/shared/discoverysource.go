@@ -25,6 +25,7 @@ const (
 	DiscoverySourceLumosIntegration   DiscoverySource = "LUMOS_INTEGRATION"
 	DiscoverySourceJumpcloud          DiscoverySource = "JUMPCLOUD"
 	DiscoverySourceCustom             DiscoverySource = "CUSTOM"
+	DiscoverySourceMcp                DiscoverySource = "MCP"
 )
 
 func (e DiscoverySource) ToPointer() *DiscoverySource {
@@ -63,6 +64,8 @@ func (e *DiscoverySource) UnmarshalJSON(data []byte) error {
 	case "JUMPCLOUD":
 		fallthrough
 	case "CUSTOM":
+		fallthrough
+	case "MCP":
 		*e = DiscoverySource(v)
 		return nil
 	default:

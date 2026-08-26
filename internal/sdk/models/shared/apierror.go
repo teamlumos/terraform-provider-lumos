@@ -5,27 +5,13 @@ package shared
 
 // APIError - The V1 error envelope.
 type APIError struct {
-	// Human-readable summary of the error.
-	Detail string    `json:"detail"`
-	Type   ErrorType `json:"type"`
-	// Stable machine-readable error code.
+	// Stable machine-readable error code; branch on this, not 'detail'.
 	Code string `json:"code"`
+	// Human-readable summary of the error.
+	Detail string `json:"detail"`
 	// Field-level errors; empty for non-validation errors.
 	Errors []APIErrorField `json:"errors,omitempty"`
-}
-
-func (a *APIError) GetDetail() string {
-	if a == nil {
-		return ""
-	}
-	return a.Detail
-}
-
-func (a *APIError) GetType() ErrorType {
-	if a == nil {
-		return ErrorType("")
-	}
-	return a.Type
+	Type   ErrorType       `json:"type"`
 }
 
 func (a *APIError) GetCode() string {
@@ -35,9 +21,23 @@ func (a *APIError) GetCode() string {
 	return a.Code
 }
 
+func (a *APIError) GetDetail() string {
+	if a == nil {
+		return ""
+	}
+	return a.Detail
+}
+
 func (a *APIError) GetErrors() []APIErrorField {
 	if a == nil {
 		return nil
 	}
 	return a.Errors
+}
+
+func (a *APIError) GetType() ErrorType {
+	if a == nil {
+		return ErrorType("")
+	}
+	return a.Type
 }

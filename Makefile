@@ -1,3 +1,16 @@
+LUMOS_APISERVER ?= $(HOME)/develop/lumos/backend/python/services/apiserver
+
+.PHONY: spec
+spec:
+	@echo "Dumping the apiserver OpenAPI document (including the gated /v1 surface)..."
+	@cd $(LUMOS_APISERVER) && IS_NONDOCKERIZED_PROCESS=1 ENVIRONMENT=LOCAL \
+	  uv run python $(CURDIR)/scripts/dump-openapi.py --out $(CURDIR)/original-openapi.json
+	@echo "Building the V1-only annotated spec..."
+	@python3 scripts/build-v1-spec.py
+	@$(MAKE) overlay
+	@echo "✓ spec inputs refreshed - run 'make provider' to regenerate"
+
+
 .PHONY: provider
 provider: overlay-v1.yaml
 	@echo "Syncing gen.yaml version..."

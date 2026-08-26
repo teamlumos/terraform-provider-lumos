@@ -8,7 +8,7 @@ import (
 )
 
 type IntegrationCatalogOutput struct {
-	AppID       types.String `tfsdk:"app_id"`
+	AppClassID  types.String `tfsdk:"app_class_id"`
 	Category    types.String `tfsdk:"category"`
 	Description types.String `tfsdk:"description"`
 	LogoURL     types.String `tfsdk:"logo_url"`

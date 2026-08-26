@@ -4,38 +4,580 @@ info:
   title: Overlay original-openapi.json => openapi-v1.json
   version: 0.0.0
 actions:
+  - target: $["components"]["schemas"]
+    update:
+      "AccountEntitlementsOutput": {"properties": {"entitlements": {"description": "Entitlements returned in this page.", "items": {"$ref": "#/components/schemas/EntitlementOutput"}, "title": "Entitlements", "type": "array"}, "next_page_token": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.", "title": "Next Page Token"}}, "required": ["entitlements"], "title": "EntitlementListOutput", "type": "object", "x-speakeasy-entity": "AccountEntitlements"}
+  - target: $["components"]["schemas"]["AccountListOutput"]
+    update:
+      "x-speakeasy-entity": "EntitlementAccounts"
+  - target: $["components"]["schemas"]["AppListOutput"]
+    update:
+      "x-speakeasy-entity": "Apps"
+  - target: $["components"]["schemas"]["AppResponse"]
+    update:
+      "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["AppStoreCatalogListOutput"]
+    update:
+      "x-speakeasy-entity": "AppStoreCatalog"
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
+    update:
+      "x-speakeasy-entity": "AppStoreSettings"
+  - target: $["components"]["schemas"]["ConnectIntegrationInput"]["properties"]["app_class_id"]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["components"]["schemas"]["ConnectIntegrationInput"]
+    update:
+      "x-speakeasy-entity": "App"
+  - target: $["components"]["schemas"]["CustomAttributeDefinitionListOutput"]
+    update:
+      "x-speakeasy-entity": "CustomAttributeDefinitions"
+  - target: $["components"]["schemas"]["EntitlementAppStoreCatalogListOutput"]
+    update:
+      "x-speakeasy-entity": "AppEntitlementAppStoreCatalog"
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]
+    update:
+      "x-speakeasy-entity": "EntitlementAppStoreSettings"
+  - target: $["components"]["schemas"]["EntitlementCreateInput"]
+    update:
+      "x-speakeasy-entity": "Entitlement"
+  - target: $["components"]["schemas"]["EntitlementListOutput"]
+    update:
+      "x-speakeasy-entity": "AppEntitlements"
+  - target: $["components"]["schemas"]["EntitlementOutput"]
+    update:
+      "x-speakeasy-entity": "Entitlement"
+  - target: $["components"]["schemas"]["EntitlementUpdateInput"]
+    update:
+      "x-speakeasy-entity": "Entitlement"
+  - target: $["components"]["schemas"]["IntegrationCatalogListOutput"]
+    update:
+      "x-speakeasy-entity": "Integrations"
+  - target: $["components"]["schemas"]["IntegrationCatalogOutput"]
+    update:
+      "x-speakeasy-entity": "Integration"
+  - target: $["components"]["schemas"]["IntegrationConnectionSchemaOutput"]["properties"]["auth_schema"]["description"]
+    update: "JSON Schema (draft-07 style) describing the `auth` object to pass to `POST /apps`. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods — mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{} }`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
+  - target: $["components"]["schemas"]["IntegrationConnectionSchemaOutput"]
+    update:
+      "x-speakeasy-entity": "IntegrationConnectionSchema"
+  - target: $["components"]["schemas"]["KnowledgeContextOutput"]
+    update:
+      "x-speakeasy-entity": "KnowledgeContext"
+  - target: $["components"]["schemas"]["ListKnowledgeContextOutput"]
+    update:
+      "x-speakeasy-entity": "KnowledgeContexts"
+  - target: $["components"]["schemas"]["TaskListOutput"]
+    update:
+      "x-speakeasy-entity": "Tasks"
+  - target: $["components"]["schemas"]["User"]
+    update:
+      "x-speakeasy-entity": "CurrentUser"
+  - target: $["components"]["schemas"]["UserAccountListOutput"]
+    update:
+      "x-speakeasy-entity": "UserAccounts"
+  - target: $["components"]["schemas"]["UserListOutput"]
+    update:
+      "x-speakeasy-entity": "Users"
+  - target: $["components"]["schemas"]["UserRolesOutput"]
+    update:
+      "x-speakeasy-entity": "UserRoles"
+  - target: $["components"]["schemas"]["UserWithCustomAttributes"]
+    update:
+      "x-speakeasy-entity": "User"
+  - target: $["components"]["schemas"]["Workflow"]
+    update:
+      "x-speakeasy-entity": "Workflow"
+  - target: $["components"]["schemas"]["WorkflowInput"]
+    update:
+      "x-speakeasy-entity": "Workflow"
+  - target: $["components"]["schemas"]["WorkflowListOutput"]
+    update:
+      "x-speakeasy-entity": "Workflows"
+  - target: $["components"]["schemas"]["WorkflowStepTemplateListOutput"]
+    update:
+      "x-speakeasy-entity": "WorkflowSteps"
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__v1_models__Task"]
+    update:
+      "x-speakeasy-entity": "Task"
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyAppOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyPermissionInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyPermissionOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessRequest"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewDomainAppConfigurableEvidenceUpload"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewDomainAppErrorOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewDomainAppInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewDomainAppOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessReviewRemovalAction"]
+    remove: true
+  - target: $["components"]["schemas"]["AccountInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityLog"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecord"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordAccountInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordAppInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordEventInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordEventType"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ActivityRecordOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AddAppToAppStoreInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AddAppsInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AddAppsOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AirbasePurchaseRequestEvent"]
+    remove: true
+  - target: $["components"]["schemas"]["AllowedGroupsConfigInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AllowedGroupsConfigOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AllowedGroupsConfigType"]
+    remove: true
+  - target: $["components"]["schemas"]["AppAdminsInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppAdminsOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppApproversInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppApproversOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppInputCreate"]
+    remove: true
+  - target: $["components"]["schemas"]["AppInputPut"]
+    remove: true
+  - target: $["components"]["schemas"]["AppInputUpdate"]
+    remove: true
+  - target: $["components"]["schemas"]["AppSettingInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppSettingOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreApp"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsProvisioningOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsRequestFlowInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreAppSettingsRequestFlowOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreVisibility"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreVisibilityOption"]
+    remove: true
+  - target: $["components"]["schemas"]["AppWithCustomAttributes"]
+    remove: true
+  - target: $["components"]["schemas"]["ApproverInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ApproverOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["ApproverType"]
+    remove: true
+  - target: $["components"]["schemas"]["AttributeEqualityRule"]
+    remove: true
+  - target: $["components"]["schemas"]["AttributeInput"]
+    remove: true
+  - target: $["components"]["schemas"]["AttributeOperand"]
+    remove: true
+  - target: $["components"]["schemas"]["BaseApp"]
+    remove: true
+  - target: $["components"]["schemas"]["BaseGroup"]
+    remove: true
+  - target: $["components"]["schemas"]["BaseInlineWebhook"]
+    remove: true
+  - target: $["components"]["schemas"]["BaseUser"]
+    remove: true
+  - target: $["components"]["schemas"]["Condition-Input"]
+    remove: true
+  - target: $["components"]["schemas"]["Condition-Output"]
+    remove: true
+  - target: $["components"]["schemas"]["Cost"]
+    remove: true
+  - target: $["components"]["schemas"]["CreateAccessRequestInput"]
+    remove: true
+  - target: $["components"]["schemas"]["CreateAccessReviewInput"]
+    remove: true
+  - target: $["components"]["schemas"]["CreateAccessReviewOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["CustomAttributeScopeFilterInput"]
+    remove: true
+  - target: $["components"]["schemas"]["CustomIntakeFieldResponseOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["DatetimeScopeFilterInput"]
+    remove: true
+  - target: $["components"]["schemas"]["FileUpload"]
+    remove: true
+  - target: $["components"]["schemas"]["FileUploadType"]
+    remove: true
+  - target: $["components"]["schemas"]["FlowState"]
+    remove: true
+  - target: $["components"]["schemas"]["FlowsV2NormalizedDisplayStatus"]
+    remove: true
+  - target: $["components"]["schemas"]["FoundDocumentsUpload"]
+    remove: true
+  - target: $["components"]["schemas"]["Group"]
+    remove: true
+  - target: $["components"]["schemas"]["GroupProvisioningOption"]
+    remove: true
+  - target: $["components"]["schemas"]["IdentityEvent"]
+    remove: true
+  - target: $["components"]["schemas"]["IdentityEventsResult"]
+    remove: true
+  - target: $["components"]["schemas"]["InlineWebhook"]
+    remove: true
+  - target: $["components"]["schemas"]["InlineWebhookType"]
+    remove: true
+  - target: $["components"]["schemas"]["JobStateOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["Lifecycle"]
+    remove: true
+  - target: $["components"]["schemas"]["LimitOffsetPage_ActivityLog_"]
+    remove: true
+  - target: $["components"]["schemas"]["LineItem"]
+    remove: true
+  - target: $["components"]["schemas"]["LineItemInput"]
+    remove: true
+  - target: $["components"]["schemas"]["LineItemUnitCost"]
+    remove: true
+  - target: $["components"]["schemas"]["LineItemUnitCostInput"]
+    remove: true
+  - target: $["components"]["schemas"]["LineItemUpload"]
+    remove: true
+  - target: $["components"]["schemas"]["Links"]
+    remove: true
+  - target: $["components"]["schemas"]["ManagerApprovalOption"]
+    remove: true
+  - target: $["components"]["schemas"]["OrderInput"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_AccessPolicyOutput_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_AccessRequest_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_AccessReviewOutput_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_Account_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_AppStoreApp_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_AppWithCustomAttributes_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_Group_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_IntegrationCatalogOutput_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_PreApprovalRuleOutput_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_RequestablePermissionOutput_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_Task_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_UserWithCustomAttributes_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_User_"]
+    remove: true
+  - target: $["components"]["schemas"]["Page_VendorAgreement_"]
+    remove: true
+  - target: $["components"]["schemas"]["PermissionInput"]
+    remove: true
+  - target: $["components"]["schemas"]["PermissionType"]
+    remove: true
+  - target: $["components"]["schemas"]["PositionalWeekday"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ProductArea"]
+    remove: true
+  - target: $["components"]["schemas"]["RecurrenceConfig"]
+    remove: true
+  - target: $["components"]["schemas"]["RecurrenceConfigInput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestApprovalConfigInput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestApprovalConfigOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestApprovalStageInput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestApprovalStageOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestConfigInputCreate"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestConfigInputUpdate"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestConfigOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigInputUpdate"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestFulfillmentConfigOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestablePermissionBase"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestablePermissionBaseOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestablePermissionInput"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestablePermissionInputUpdate"]
+    remove: true
+  - target: $["components"]["schemas"]["RequestablePermissionOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["ReviewType"]
+    remove: true
+  - target: $["components"]["schemas"]["RunInfoStatus"]
+    remove: true
+  - target: $["components"]["schemas"]["ScalarScopeFilterInput"]
+    remove: true
+  - target: $["components"]["schemas"]["ScopablePropertyGroup"]
+    remove: true
+  - target: $["components"]["schemas"]["ScopeFilterGroupOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["ScopeOptionsResponse"]
+    remove: true
+  - target: $["components"]["schemas"]["SupportRequestStatus"]
+    remove: true
+  - target: $["components"]["schemas"]["SyncTaskOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["TaskAssignee"]
+    remove: true
+  - target: $["components"]["schemas"]["TaskAssigneeType"]
+    remove: true
+  - target: $["components"]["schemas"]["TaskCategory"]
+    remove: true
+  - target: $["components"]["schemas"]["TaskProductArea"]
+    remove: true
+  - target: $["components"]["schemas"]["TaskStatus"]
+    remove: true
+  - target: $["components"]["schemas"]["UpdateAccessReviewArdaInput"]
+    remove: true
+  - target: $["components"]["schemas"]["UpdateAccessReviewInput"]
+    remove: true
+  - target: $["components"]["schemas"]["UserOffboardingInput"]
+    remove: true
+  - target: $["components"]["schemas"]["UserOffboardingOutput"]
+    remove: true
+  - target: $["components"]["schemas"]["ValueOption"]
+    remove: true
+  - target: $["components"]["schemas"]["Vendor"]
+    remove: true
+  - target: $["components"]["schemas"]["VendorAgreement"]
+    remove: true
+  - target: $["components"]["schemas"]["VendorAgreementCustomAttribute-Input"]
+    remove: true
+  - target: $["components"]["schemas"]["VendorAgreementCustomAttribute-Output"]
+    remove: true
+  - target: $["components"]["schemas"]["VendorAgreementCustomAttributeType"]
+    remove: true
+  - target: $["components"]["schemas"]["VendorAgreementCustomAttributeUpdateInput"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__AddCommentInput"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__PerformTaskActionInput"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__ReassignTaskInput"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__Task"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__TaskAction"]
+    remove: true
+  - target: $["components"]["schemas"]["apiserver__modules__tasks__models__TaskActionTransition"]
+    remove: true
   - target: $["info"]["description"]
     update: "ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.10.x (version = \"~> 0.10\")."
+  - target: $["paths"]["/v1/accounts/{account_uuid}/entitlements"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AccountEntitlementsOutput"
+  - target: $["paths"]["/v1/accounts/{account_uuid}/entitlements"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AccountEntitlements#read"
   - target: $["paths"]["/v1/apps"]["get"]
     update:
       "x-speakeasy-entity-operation": "Apps#read"
   - target: $["paths"]["/v1/apps"]["post"]
     update:
       "x-speakeasy-entity-operation": "App#create"
-  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][0]
+  - target: $["paths"]["/v1/apps/appstore_catalog"]["get"]
     update:
-      "x-speakeasy-name-override": "id"
-  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
-    update:
-      "x-speakeasy-entity-operation": "App#read"
+      "x-speakeasy-entity-operation": "AppStoreCatalog#read"
   - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
   - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "App#delete"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "App#read"
   - target: $["paths"]["/v1/apps/{app_uuid}"]["put"]["parameters"][0]
     update:
       "x-speakeasy-name-override": "id"
   - target: $["paths"]["/v1/apps/{app_uuid}"]["put"]
     update:
       "x-speakeasy-entity-operation": "App#update"
+  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppStoreSettings#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppEntitlements#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/entitlements/appstore_catalog"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppEntitlementAppStoreCatalog#read"
+  - target: $["paths"]["/v1/custom-attribute-definitions"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "CustomAttributeDefinitions#read"
+  - target: $["paths"]["/v1/entitlements"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "Entitlement#create"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["delete"]
+    update:
+      "x-speakeasy-entity-operation": "Entitlement#delete"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Entitlement#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["patch"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["patch"]
+    update:
+      "x-speakeasy-entity-operation": "Entitlement#update"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/accounts"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "EntitlementAccounts#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore_settings"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "EntitlementAppStoreSettings#read"
   - target: $["paths"]["/v1/integrations"]["get"]
     update:
       "x-speakeasy-entity-operation": "Integrations#read"
-  - target: $["paths"]["/v1/integrations/{app_id}"]["get"]
+  - target: $["paths"]["/v1/integrations/{app_class_id}"]["get"]
     update:
       "x-speakeasy-entity-operation": "Integration#read"
+  - target: $["paths"]["/v1/integrations/{app_class_id}/connection-schema"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "IntegrationConnectionSchema#read"
+  - target: $["paths"]["/v1/knowledge/context"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "KnowledgeContexts#read"
+  - target: $["paths"]["/v1/knowledge/context/{knowledge_context_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "KnowledgeContext#read"
+  - target: $["paths"]["/v1/tasks"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Tasks#read"
+  - target: $["paths"]["/v1/tasks/{task_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Task#read"
+  - target: $["paths"]["/v1/tasks/{task_id}/actions"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "TaskActions#read"
+  - target: $["paths"]["/v1/users"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Users#read"
+  - target: $["paths"]["/v1/users/current"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "CurrentUser#read"
+  - target: $["paths"]["/v1/users/{user_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "User#read"
+  - target: $["paths"]["/v1/users/{user_id}/accounts"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "UserAccounts#read"
+  - target: $["paths"]["/v1/users/{user_id}/roles"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "UserRoles#read"
+  - target: $["paths"]["/v1/workflow-steps"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "WorkflowSteps#read"
+  - target: $["paths"]["/v1/workflows"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Workflows#read"
+  - target: $["paths"]["/v1/workflows"]["post"]
+    update:
+      "x-speakeasy-entity-operation": "Workflow#create"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["delete"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["delete"]
+    update:
+      "x-speakeasy-entity-operation": "Workflow#delete"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "Workflow#read"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-name-override": "id"
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["put"]
+    update:
+      "x-speakeasy-entity-operation": "Workflow#update"
+  - target: $["paths"]["/access_policies"]
+    remove: true
+  - target: $["paths"]["/access_policies/{access_policy_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews"]
+    remove: true
+  - target: $["paths"]["/access_reviews/scope_options"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps"]
+    remove: true
+  - target: $["paths"]["/access_reviews/{access_review_id}/apps/{arda_id}"]
+    remove: true
+  - target: $["paths"]["/accounts"]
+    remove: true
+  - target: $["paths"]["/accounts/upload"]
+    remove: true
+  - target: $["paths"]["/accounts/upload/{job_id}"]
+    remove: true
+  - target: $["paths"]["/activity_logs"]
+    remove: true
+  - target: $["paths"]["/activity_records"]
+    remove: true
+  - target: $["paths"]["/activity_records/job/{job_id}"]
+    remove: true
   - target: $["paths"]["/apps"]
     remove: true
   - target: $["paths"]["/apps/categories"]
@@ -44,85 +586,57 @@ actions:
     remove: true
   - target: $["paths"]["/apps/{app_id}/settings"]
     remove: true
-  - target: $["paths"]["/users/current"]
-    remove: true
-  - target: $["paths"]["/users"]
-    remove: true
-  - target: $["paths"]["/users/{user_id}"]
-    remove: true
-  - target: $["paths"]["/users/{user_id}/accounts"]
-    remove: true
-  - target: $["paths"]["/inline_webhooks"]
-    remove: true
-  - target: $["paths"]["/accounts"]
-    remove: true
-  - target: $["paths"]["/groups/{group_id}/users"]
-    remove: true
-  - target: $["paths"]["/groups/{group_id}"]
-    remove: true
-  - target: $["paths"]["/groups"]
-    remove: true
-  - target: $["paths"]["/accounts/upload/{job_id}"]
-    remove: true
-  - target: $["paths"]["/activity_logs"]
-    remove: true
-  - target: $["paths"]["/identity_events"]
-    remove: true
-  - target: $["paths"]["/accounts/upload"]
-    remove: true
-  - target: $["paths"]["/activity_records"]
-    remove: true
-  - target: $["paths"]["/activity_records/job/{job_id}"]
-    remove: true
-  - target: $["paths"]["/users/{user_id}/roles"]
-    remove: true
-  - target: $["paths"]["/users/{user_id}/roles/{role_name}"]
-    remove: true
-  - target: $["paths"]["/appstore/apps/{app_id}/requestable_permissions"]
-    remove: true
-  - target: $["paths"]["/appstore/requestable_permissions"]
-    remove: true
-  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]
-    remove: true
-  - target: $["paths"]["/appstore/pre_approval_rules"]
-    remove: true
-  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]
-    remove: true
-  - target: $["paths"]["/appstore/apps/{app_id}/settings"]
-    remove: true
-  - target: $["paths"]["/appstore/apps"]
-    remove: true
-  - target: $["paths"]["/appstore/apps/{app_id}"]
-    remove: true
-  - target: $["paths"]["/appstore/access_requests/{id}"]
+  - target: $["paths"]["/apps/{app_id}/sync"]
     remove: true
   - target: $["paths"]["/appstore/access_request"]
     remove: true
   - target: $["paths"]["/appstore/access_requests"]
     remove: true
-  - target: $["paths"]["/access_policies"]
+  - target: $["paths"]["/appstore/access_requests/{id}"]
     remove: true
-  - target: $["paths"]["/access_policies/{access_policy_id}"]
+  - target: $["paths"]["/appstore/apps"]
     remove: true
-  - target: $["paths"]["/access_reviews"]
+  - target: $["paths"]["/appstore/apps/{app_id}"]
     remove: true
-  - target: $["paths"]["/access_reviews/{access_review_id}/apps"]
+  - target: $["paths"]["/appstore/apps/{app_id}/requestable_permissions"]
     remove: true
-  - target: $["paths"]["/access_reviews/{access_review_id}"]
+  - target: $["paths"]["/appstore/apps/{app_id}/settings"]
     remove: true
-  - target: $["paths"]["/access_reviews/{access_review_id}/apps/{arda_id}"]
+  - target: $["paths"]["/appstore/pre_approval_rules"]
     remove: true
-  - target: $["paths"]["/access_reviews/scope_options"]
+  - target: $["paths"]["/appstore/pre_approval_rules/{pre_approval_rule_id}"]
     remove: true
-  - target: $["paths"]["/v1/knowledge/context"]
+  - target: $["paths"]["/appstore/requestable_permissions"]
     remove: true
-  - target: $["paths"]["/v1/knowledge/context/{knowledge_context_id}"]
+  - target: $["paths"]["/appstore/requestable_permissions/{permission_id}"]
     remove: true
-  - target: $["paths"]["/vendor_agreements"]
-    remove: true
-  - target: $["paths"]["/vendor_agreements/{vendor_agreement_id}/custom_attributes/{label}"]
+  - target: $["paths"]["/art"]
     remove: true
   - target: $["paths"]["/found_documents"]
+    remove: true
+  - target: $["paths"]["/groups"]
+    remove: true
+  - target: $["paths"]["/groups/{group_id}"]
+    remove: true
+  - target: $["paths"]["/groups/{group_id}/users"]
+    remove: true
+  - target: $["paths"]["/identity_events"]
+    remove: true
+  - target: $["paths"]["/info"]
+    remove: true
+  - target: $["paths"]["/inline_webhooks"]
+    remove: true
+  - target: $["paths"]["/integrations"]
+    remove: true
+  - target: $["paths"]["/integrations/{app_class_id}"]
+    remove: true
+  - target: $["paths"]["/integrations/{app_class_id}/connection-schema"]
+    remove: true
+  - target: $["paths"]["/lifecycle-management/user-offboardings"]
+    remove: true
+  - target: $["paths"]["/lifecycle-management/user-offboardings/{user_offboarding_id}"]
+    remove: true
+  - target: $["paths"]["/lifecycle-management/user-offboardings/{user_offboarding_id}/cancel"]
     remove: true
   - target: $["paths"]["/orders"]
     remove: true
@@ -132,45 +646,36 @@ actions:
     remove: true
   - target: $["paths"]["/tasks/{task_id}/actions"]
     remove: true
-  - target: $["paths"]["/tasks/{task_id}/perform-action"]
-    remove: true
-  - target: $["paths"]["/tasks/{task_id}/reassign"]
-    remove: true
   - target: $["paths"]["/tasks/{task_id}/comments"]
     remove: true
   - target: $["paths"]["/tasks/{task_id}/complete"]
     remove: true
   - target: $["paths"]["/tasks/{task_id}/dismiss"]
     remove: true
-  - target: $["paths"]["/art"]
+  - target: $["paths"]["/tasks/{task_id}/perform-action"]
     remove: true
-  - target: $["paths"]["/info"]
+  - target: $["paths"]["/tasks/{task_id}/reassign"]
+    remove: true
+  - target: $["paths"]["/users"]
+    remove: true
+  - target: $["paths"]["/users/current"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/accounts"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/roles"]
+    remove: true
+  - target: $["paths"]["/users/{user_id}/roles/{role_name}"]
+    remove: true
+  - target: $["paths"]["/vendor_agreements"]
+    remove: true
+  - target: $["paths"]["/vendor_agreements/{vendor_agreement_id}/custom_attributes/{label}"]
     remove: true
   - target: $["paths"]["/webhooks/airbase/purchase_request_approved/{domain_app_uuid}"]
     remove: true
   - target: $["paths"]["/webhooks/vendr/request_completed/{domain_app_uuid}"]
     remove: true
-  - target: $["components"]["schemas"]["AppWithCustomAttributes"]
-    update:
-      "x-speakeasy-entity": "App"
-  - target: $["components"]["schemas"]["ConnectIntegrationInput"]["properties"]["app_id"]
-    update:
-      "x-speakeasy-param-force-new": true
-  - target: $["components"]["schemas"]["ConnectIntegrationInput"]["properties"]["app_instance_identifier"]
-    update:
-      "x-speakeasy-param-force-new": true
-  - target: $["components"]["schemas"]["ConnectIntegrationInput"]
-    update:
-      "x-speakeasy-entity": "App"
-  - target: $["components"]["schemas"]["IntegrationCatalogOutput"]
-    update:
-      "x-speakeasy-entity": "Integration"
-  - target: $["components"]["schemas"]["Page_AppWithCustomAttributes_"]
-    update:
-      "x-speakeasy-entity": "Apps"
-  - target: $["components"]["schemas"]["Page_IntegrationCatalogOutput_"]
-    update:
-      "x-speakeasy-entity": "Integrations"
   - target: $
     update:
-      "x-speakeasy-retries": {"strategy": "backoff", "backoff": {"initialInterval": 500, "maxInterval": 30000, "maxElapsedTime": 60000, "exponent": 1.5}, "statusCodes": ["5XX"], "retryConnectionErrors": true}
+      "x-speakeasy-retries": {"backoff": {"exponent": 1.5, "initialInterval": 500, "maxElapsedTime": 60000, "maxInterval": 30000}, "retryConnectionErrors": true, "statusCodes": ["5XX"], "strategy": "backoff"}

@@ -5,19 +5,12 @@ package shared
 
 // APIErrorField - A single field-level error (used for validation failures).
 type APIErrorField struct {
-	// Input field this error refers to, e.g. 'steps[2].inputs.group_id'.
-	Field string `json:"field"`
 	// Stable machine-readable code for this field error.
 	Code string `json:"code"`
+	// Input field this error refers to, e.g. 'steps[2].inputs.group_id'.
+	Field string `json:"field"`
 	// Human-readable description of the field error.
 	Message string `json:"message"`
-}
-
-func (a *APIErrorField) GetField() string {
-	if a == nil {
-		return ""
-	}
-	return a.Field
 }
 
 func (a *APIErrorField) GetCode() string {
@@ -25,6 +18,13 @@ func (a *APIErrorField) GetCode() string {
 		return ""
 	}
 	return a.Code
+}
+
+func (a *APIErrorField) GetField() string {
+	if a == nil {
+		return ""
+	}
+	return a.Field
 }
 
 func (a *APIErrorField) GetMessage() string {

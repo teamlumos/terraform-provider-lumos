@@ -18,6 +18,26 @@ import (
 	"net/url"
 )
 
+// Integrations -
+// An integration is a service Lumos knows how to connect to, identified by an `app_class_id` such as
+// `okta.com` or `workspace.google.com`. This is the catalog you connect *from*. Apps you have
+// already connected are read through the Apps endpoints.
+//
+// Only connectable integrations appear here. Software discovered in your environment that has no
+// Lumos integration behind it is excluded.
+//
+// ### Discovering how to connect
+//
+//  1. `GET /v1/integrations?query=google` to find the integration. The filter matches both the
+//     `app_class_id` and the display name, so `google` returns `workspace.google.com` and
+//     `cloud.google.com`.
+//  2. `GET /v1/integrations/{app_class_id}/connection-schema` for the JSON schema of the `auth` and
+//     `settings` fields it expects.
+//  3. `POST /v1/apps` with those values.
+//
+// Step 2 is the point of this group: it lets you build a connect form, or generate a Terraform
+// resource, without hardcoding one credential shape per integration. Integrations whose connection
+// schema Lumos cannot describe yet return 404.
 type Integrations struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -32,9 +52,11 @@ func newIntegrations(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 	}
 }
 
-// ListIntegrations - List Integrations
-// List the integrations (apps) available to connect in your domain (paginated). Returns catalog metadata only — name, category, and logo. The connection status of integrations you have connected is read via the Apps API (`GET /apps`).
-func (s *Integrations) ListIntegrations(ctx context.Context, request operations.ListIntegrationsRequest, opts ...operations.Option) (*operations.ListIntegrationsResponse, error) {
+// ListIntegrationsV1 - List Integrations
+// List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned — catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only — name, category, and logo. Integrations you have connected are read via the Apps API (`GET /apps`).
+//
+// Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.
+func (s *Integrations) ListIntegrationsV1(ctx context.Context, request operations.ListIntegrationsV1Request, opts ...operations.Option) (*operations.ListIntegrationsV1Response, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionRetries,
@@ -63,7 +85,7 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "listIntegrations",
+		OperationID:      "listIntegrationsV1",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -195,7 +217,7 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 		}
 	}
 
-	res := &operations.ListIntegrationsResponse{
+	res := &operations.ListIntegrationsV1Response{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -210,12 +232,12 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 				return nil, err
 			}
 
-			var out shared.PageIntegrationCatalogOutput
+			var out shared.IntegrationCatalogListOutput
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.PageIntegrationCatalogOutput = &out
+			res.IntegrationCatalogListOutput = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -223,6 +245,8 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		utils.DrainBody(httpRes)
 	case httpRes.StatusCode == 422:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -247,8 +271,6 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 	case httpRes.StatusCode == 400:
 		fallthrough
 	case httpRes.StatusCode == 401:
-		fallthrough
-	case httpRes.StatusCode == 403:
 		fallthrough
 	case httpRes.StatusCode == 404:
 		fallthrough
@@ -308,9 +330,9 @@ func (s *Integrations) ListIntegrations(ctx context.Context, request operations.
 
 }
 
-// GetIntegration - Get Integration
-// Get a connectable integration (app) by its `app_id` (e.g. `okta.com`). Returns catalog metadata only; the connection status of an integration you have connected is read via the Apps API (`GET /apps`).
-func (s *Integrations) GetIntegration(ctx context.Context, request operations.GetIntegrationRequest, opts ...operations.Option) (*operations.GetIntegrationResponse, error) {
+// GetIntegrationV1 - Get Integration
+// Get a connectable integration (app) by its `app_class_id` (e.g. `okta.com`). Returns catalog metadata only; integrations you have connected are read via the Apps API (`GET /apps`).
+func (s *Integrations) GetIntegrationV1(ctx context.Context, request operations.GetIntegrationV1Request, opts ...operations.Option) (*operations.GetIntegrationV1Response, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
 		operations.SupportedOptionRetries,
@@ -329,7 +351,7 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/integrations/{app_id}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/integrations/{app_class_id}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -339,7 +361,7 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 		SDKConfiguration: s.sdkConfiguration,
 		BaseURL:          baseURL,
 		Context:          ctx,
-		OperationID:      "getIntegration",
+		OperationID:      "getIntegrationV1",
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
@@ -467,7 +489,7 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 		}
 	}
 
-	res := &operations.GetIntegrationResponse{
+	res := &operations.GetIntegrationV1Response{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
@@ -495,6 +517,8 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 			}
 			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
 		}
+	case httpRes.StatusCode == 403:
+		fallthrough
 	case httpRes.StatusCode == 404:
 		utils.DrainBody(httpRes)
 	case httpRes.StatusCode == 422:
@@ -522,7 +546,277 @@ func (s *Integrations) GetIntegration(ctx context.Context, request operations.Ge
 		fallthrough
 	case httpRes.StatusCode == 401:
 		fallthrough
+	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 429:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.APIError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.APIError = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 500:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.APIError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.APIError = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	default:
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.NewSDKError("unknown status code returned", httpRes.StatusCode, string(rawBody), httpRes)
+	}
+
+	return res, nil
+
+}
+
+// GetIntegrationConnectionSchemaV1 - Get Integration Connection Schema
+// Get the connection schema for an integration — the JSON schema of the `auth` and `settings` fields needed to connect it via `POST /apps`. Use it to discover how to connect an integration *before* connecting it (e.g. to populate a Terraform resource). `app_class_id` is the canonical identifier (e.g. `okta.com`, `slack_ics`) — the same value the connect body uses. Integrations whose connection schema Lumos cannot describe yet return 404.
+func (s *Integrations) GetIntegrationConnectionSchemaV1(ctx context.Context, request operations.GetIntegrationConnectionSchemaV1Request, opts ...operations.Option) (*operations.GetIntegrationConnectionSchemaV1Response, error) {
+	o := operations.Options{}
+	supportedOptions := []string{
+		operations.SupportedOptionRetries,
+		operations.SupportedOptionTimeout,
+	}
+
+	for _, opt := range opts {
+		if err := opt(&o, supportedOptions...); err != nil {
+			return nil, fmt.Errorf("error applying option: %w", err)
+		}
+	}
+
+	var baseURL string
+	if o.ServerURL == nil {
+		baseURL = utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	} else {
+		baseURL = *o.ServerURL
+	}
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/integrations/{app_class_id}/connection-schema", request, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error generating URL: %w", err)
+	}
+
+	hookCtx := hooks.HookContext{
+		SDK:              s.rootSDK,
+		SDKConfiguration: s.sdkConfiguration,
+		BaseURL:          baseURL,
+		Context:          ctx,
+		OperationID:      "getIntegrationConnectionSchemaV1",
+		OAuth2Scopes:     nil,
+		SecuritySource:   s.sdkConfiguration.Security,
+	}
+
+	timeout := o.Timeout
+	if timeout == nil {
+		timeout = s.sdkConfiguration.Timeout
+	}
+
+	if timeout != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, *timeout)
+		defer cancel()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", opURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
+		return nil, err
+	}
+
+	for k, v := range o.SetHeaders {
+		req.Header.Set(k, v)
+	}
+
+	globalRetryConfig := s.sdkConfiguration.RetryConfig
+	retryConfig := o.Retries
+	if retryConfig == nil {
+		if globalRetryConfig != nil {
+			retryConfig = globalRetryConfig
+		} else {
+			retryConfig = &retry.Config{
+				Strategy: "backoff", Backoff: &retry.BackoffStrategy{
+					InitialInterval: 500,
+					MaxInterval:     30000,
+					Exponent:        1.5,
+					MaxElapsedTime:  60000,
+				},
+				RetryConnectionErrors: true,
+			}
+		}
+	}
+
+	var httpRes *http.Response
+	if retryConfig != nil {
+		httpRes, err = utils.Retry(ctx, utils.Retries{
+			Config: retryConfig,
+			StatusCodes: []string{
+				"5XX",
+			},
+		}, func() (*http.Response, error) {
+			if req.Body != nil && req.Body != http.NoBody && req.GetBody != nil {
+				copyBody, err := req.GetBody()
+
+				if err != nil {
+					return nil, err
+				}
+
+				req.Body = copyBody
+			}
+
+			req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+			if err != nil {
+				if retry.IsPermanentError(err) || retry.IsTemporaryError(err) {
+					return nil, err
+				}
+
+				return nil, retry.Permanent(err)
+			}
+
+			httpRes, err := s.sdkConfiguration.Client.Do(req)
+			if err != nil || httpRes == nil {
+				if err != nil {
+					err = fmt.Errorf("error sending request: %w", err)
+				} else {
+					err = fmt.Errorf("error sending request: no response")
+				}
+
+				_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			}
+			return httpRes, err
+		})
+
+		if err != nil {
+			return nil, err
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	} else {
+		req, err = s.hooks.BeforeRequest(hooks.BeforeRequestContext{HookContext: hookCtx}, req)
+		if err != nil {
+			return nil, err
+		}
+
+		httpRes, err = s.sdkConfiguration.Client.Do(req)
+		if err != nil || httpRes == nil {
+			if err != nil {
+				err = fmt.Errorf("error sending request: %w", err)
+			} else {
+				err = fmt.Errorf("error sending request: no response")
+			}
+
+			_, err = s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, nil, err)
+			return nil, err
+		} else if utils.MatchStatusCodes([]string{}, httpRes.StatusCode) {
+			_httpRes, err := s.hooks.AfterError(hooks.AfterErrorContext{HookContext: hookCtx}, httpRes, nil)
+			if err != nil {
+				return nil, err
+			} else if _httpRes != nil {
+				httpRes = _httpRes
+			}
+		} else {
+			httpRes, err = s.hooks.AfterSuccess(hooks.AfterSuccessContext{HookContext: hookCtx}, httpRes)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	res := &operations.GetIntegrationConnectionSchemaV1Response{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: httpRes.Header.Get("Content-Type"),
+		RawResponse: httpRes,
+	}
+
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.IntegrationConnectionSchemaOutput
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.IntegrationConnectionSchemaOutput = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 403:
+		fallthrough
+	case httpRes.StatusCode == 404:
+		utils.DrainBody(httpRes)
+	case httpRes.StatusCode == 422:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.HTTPValidationError
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.HTTPValidationError = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
+	case httpRes.StatusCode == 400:
+		fallthrough
+	case httpRes.StatusCode == 401:
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough

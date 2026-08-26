@@ -29,7 +29,7 @@ type IntegrationDataSource struct {
 
 // IntegrationDataSourceModel describes the data model.
 type IntegrationDataSourceModel struct {
-	AppID       types.String `tfsdk:"app_id"`
+	AppClassID  types.String `tfsdk:"app_class_id"`
 	Category    types.String `tfsdk:"category"`
 	Description types.String `tfsdk:"description"`
 	LogoURL     types.String `tfsdk:"logo_url"`
@@ -47,9 +47,9 @@ func (r *IntegrationDataSource) Schema(ctx context.Context, req datasource.Schem
 		MarkdownDescription: "Integration DataSource",
 
 		Attributes: map[string]schema.Attribute{
-			"app_id": schema.StringAttribute{
+			"app_class_id": schema.StringAttribute{
 				Required:    true,
-				Description: `Canonical identifier of the integration (e.g. ` + "`" + `okta.com` + "`" + `). Pass it as ` + "`" + `app_id` + "`" + ` when connecting via ` + "`" + `POST /v1/apps` + "`" + `.`,
+				Description: `Canonical identifier of the integration (e.g. ` + "`" + `okta.com` + "`" + `). Pass it as ` + "`" + `app_class_id` + "`" + ` when connecting via ` + "`" + `POST /apps` + "`" + `.`,
 			},
 			"category": schema.StringAttribute{
 				Computed:    true,
@@ -109,13 +109,13 @@ func (r *IntegrationDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	request, requestDiags := data.ToOperationsGetIntegrationRequest(ctx)
+	request, requestDiags := data.ToOperationsGetIntegrationV1Request(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Integrations.GetIntegration(ctx, *request)
+	res, err := r.client.Integrations.GetIntegrationV1(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
 		if res != nil && res.RawResponse != nil {

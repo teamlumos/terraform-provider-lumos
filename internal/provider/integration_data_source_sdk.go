@@ -15,7 +15,7 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationCatalogOutput(c
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.AppID = types.StringValue(resp.AppID)
+		r.AppClassID = types.StringValue(resp.AppClassID)
 		r.Category = types.StringPointerValue(resp.Category)
 		r.Description = types.StringPointerValue(resp.Description)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
@@ -25,14 +25,14 @@ func (r *IntegrationDataSourceModel) RefreshFromSharedIntegrationCatalogOutput(c
 	return diags
 }
 
-func (r *IntegrationDataSourceModel) ToOperationsGetIntegrationRequest(ctx context.Context) (*operations.GetIntegrationRequest, diag.Diagnostics) {
+func (r *IntegrationDataSourceModel) ToOperationsGetIntegrationV1Request(ctx context.Context) (*operations.GetIntegrationV1Request, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var appID string
-	appID = r.AppID.ValueString()
+	var appClassID string
+	appClassID = r.AppClassID.ValueString()
 
-	out := operations.GetIntegrationRequest{
-		AppID: appID,
+	out := operations.GetIntegrationV1Request{
+		AppClassID: appClassID,
 	}
 
 	return &out, diags
