@@ -31,7 +31,7 @@ import (
 //  1. `GET /v1/integrations?query=google` to find the integration. The filter matches both the
 //     `app_class_id` and the display name, so `google` returns `workspace.google.com` and
 //     `cloud.google.com`.
-//  2. `GET /v1/integrations/{app_class_id}/connection-schema` for the JSON schema of the `auth` and
+//  2. `GET /v1/integrations/(app_class_id)/connection-schema` for the JSON schema of the `auth` and
 //     `settings` fields it expects.
 //  3. `POST /v1/apps` with those values.
 //

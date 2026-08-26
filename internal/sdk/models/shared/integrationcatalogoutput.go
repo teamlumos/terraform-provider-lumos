@@ -5,7 +5,7 @@ package shared
 
 // IntegrationCatalogOutput - A connectable integration from the app catalog (not a connected instance).
 //
-// Read via `GET /integrations` and `GET /integrations/{app_class_id}`. Carries
+// Read via `GET /integrations` and `GET /integrations/(app_class_id)`. Carries
 // catalog metadata only — no connection status. To read the state of an
 // integration you have connected, use the Apps API (`GET /apps`).
 type IntegrationCatalogOutput struct {

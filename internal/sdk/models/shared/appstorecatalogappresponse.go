@@ -22,7 +22,7 @@ type AppStoreCatalogAppResponse struct {
 	Category *string `json:"category,omitempty"`
 	// A description of the app.
 	Description *string `json:"description,omitempty"`
-	// Whether this app has been disconnected (its stored credentials removed via `DELETE /v1/apps/{app_uuid}`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it with `PUT /v1/apps/{app_uuid}`.
+	// Whether this app has been disconnected (its stored credentials removed via `DELETE /v1/apps/(app_uuid)`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it with `PUT /v1/apps/(app_uuid)`.
 	Disconnected *bool `default:"false" json:"disconnected"`
 	// The unique identifier of the app.
 	ID string `json:"id"`

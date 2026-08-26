@@ -10,7 +10,7 @@ import (
 type TriggerSyncOutput struct {
 	// UUID of the app (domain app) the sync was triggered for.
 	AppID string `json:"app_id"`
-	// Sync state immediately after the trigger was accepted — typically `SYNCING`. The sync itself runs asynchronously; poll `GET /apps/{app_id}` to follow the app.
+	// Sync state immediately after the trigger was accepted — typically `SYNCING`. The sync itself runs asynchronously; poll `GET /apps/(app_id)` to follow the app.
 	Status string `json:"status"`
 	// The kind of sync to trigger. MVP supports full integration sync only.
 	//

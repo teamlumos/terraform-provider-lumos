@@ -12,7 +12,7 @@ type App struct {
 	Category *string `json:"category,omitempty"`
 	// The user-facing description of the app
 	Description *string `json:"description,omitempty"`
-	// Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
+	// Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/(app_id)`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/(app_id)`.
 	Disconnected bool `json:"disconnected"`
 	// The ID of this app.
 	ID string `json:"id"`
@@ -26,7 +26,7 @@ type App struct {
 	// The sources of this app.
 	Sources []DiscoverySource `json:"sources"`
 	Status  DomainAppStatus   `json:"status"`
-	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
+	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/(app_id)/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
 	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
 	// The user-friendly label of this app.
 	UserFriendlyLabel string `json:"user_friendly_label"`

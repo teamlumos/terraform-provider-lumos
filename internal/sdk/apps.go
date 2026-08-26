@@ -24,15 +24,15 @@ import (
 //
 // ### Connecting one
 //
-//  1. `GET /v1/integrations/{app_class_id}/connection-schema` to see which `auth` and `settings`
+//  1. `GET /v1/integrations/(app_class_id)/connection-schema` to see which `auth` and `settings`
 //     keys the integration expects.
 //  2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect and
 //     start an initial sync. Apps that need browser consent are finished in the Lumos UI.
-//  3. `GET /v1/apps/{app_uuid}` to follow `sync_status`.
-//  4. `POST /v1/apps/{app_uuid}/sync` to resync later. Only one sync runs per app at a time, so a
+//  3. `GET /v1/apps/(app_uuid)` to follow `sync_status`.
+//  4. `POST /v1/apps/(app_uuid)/sync` to resync later. Only one sync runs per app at a time, so a
 //     second request while one is in flight returns 409.
 //
-// Rotate credentials with `PUT /v1/apps/{app_uuid}`. `DELETE /v1/apps/{app_uuid}` drops the stored
+// Rotate credentials with `PUT /v1/apps/(app_uuid)`. `DELETE /v1/apps/(app_uuid)` drops the stored
 // credentials and returns the app to a connectable state.
 //
 // ### Reading apps
@@ -346,7 +346,7 @@ func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequ
 }
 
 // ConnectAppV1 - Connect App
-// Connect a new app by supplying its credentials in `auth`. Which keys are required varies by integration. Read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them.
+// Connect a new app by supplying its credentials in `auth`. Which keys are required varies by integration. Read them from `GET /v1/integrations/(app_class_id)/connection-schema` rather than hardcoding them.
 //
 // Credentials that validate right away connect the app and start an initial sync. Integrations that need browser consent are finished in the Lumos UI instead. The response is the connected app. To list the apps you manage this way afterwards, call `GET /v1/apps?connection_source=API&disconnected=false`.
 func (s *Apps) ConnectAppV1(ctx context.Context, request shared.ConnectIntegrationInput, opts ...operations.Option) (*operations.ConnectAppV1Response, error) {
@@ -913,7 +913,7 @@ func (s *Apps) V1GetAppStoreCatalog(ctx context.Context, request operations.V1Ge
 }
 
 // DisconnectAppV1 - Disconnect App
-// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later with `PUT /v1/apps/{app_uuid}`. Returns 404 if `app_uuid` is unknown in the caller's organization.
+// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later with `PUT /v1/apps/(app_uuid)`. Returns 404 if `app_uuid` is unknown in the caller's organization.
 func (s *Apps) DisconnectAppV1(ctx context.Context, request operations.DisconnectAppV1Request, opts ...operations.Option) (*operations.DisconnectAppV1Response, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1189,7 +1189,7 @@ func (s *Apps) DisconnectAppV1(ctx context.Context, request operations.Disconnec
 // V1GetApp - Get App
 // Get one app by its UUID.
 //
-// The three workflow slots are always present, either as an `{ "id": ... }` reference or as `null` when nothing is bound. Name a slot in `expand` to get its full definition inline instead. Fields you lack permission to read are left out of the response rather than returned as `null`, so absence and `null` carry different meanings here.
+// The three workflow slots are always present, either as an `( "id": ... )` reference or as `null` when nothing is bound. Name a slot in `expand` to get its full definition inline instead. Fields you lack permission to read are left out of the response rather than returned as `null`, so absence and `null` carry different meanings here.
 func (s *Apps) V1GetApp(ctx context.Context, request operations.V1GetAppRequest, opts ...operations.Option) (*operations.V1GetAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2307,7 +2307,7 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 // V1GetAppStoreSettings - Get App Store Settings
 // Get an app's App Store configuration: whether it appears in the catalog, who is allowed to request it, which time-based access durations are offered, and any custom intake fields shown on the request form.
 //
-// If you are already fetching the app, `GET /v1/apps/{app_uuid}?expand=appstore_settings` returns the same object inline.
+// If you are already fetching the app, `GET /v1/apps/(app_uuid)?expand=appstore_settings` returns the same object inline.
 func (s *Apps) V1GetAppStoreSettings(ctx context.Context, request operations.V1GetAppStoreSettingsRequest, opts ...operations.Option) (*operations.V1GetAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4530,7 +4530,7 @@ func (s *Apps) V1GetAppEntitlementAppStoreCatalog(ctx context.Context, request o
 }
 
 // TriggerAppSyncV1 - Trigger App Sync
-// Trigger a sync for a connected app on demand (e.g. from automation, after Terraform has connected it). The sync runs asynchronously — the call returns `202 Accepted` once the sync is launched; poll `GET /apps/{app_id}` to follow status.
+// Trigger a sync for a connected app on demand (e.g. from automation, after Terraform has connected it). The sync runs asynchronously — the call returns `202 Accepted` once the sync is launched; poll `GET /apps/(app_id)` to follow status.
 //
 // Requires `sync_type` (only `full_sync` is supported today). The app must be connected or in an error state from a prior sync (so callers can retry after failure). Manual/CSV apps are not supported. Only one sync may run at a time: while a sync is in flight the request is rejected with `409` — wait for the running sync to finish, then retry.
 func (s *Apps) TriggerAppSyncV1(ctx context.Context, request operations.TriggerAppSyncV1Request, opts ...operations.Option) (*operations.TriggerAppSyncV1Response, error) {

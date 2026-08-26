@@ -23,11 +23,11 @@ import (
 // permission. Accounts hold entitlements.
 //
 //   - `POST /v1/entitlements` creates a requestable entitlement on an app.
-//   - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
-//   - `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.
-//   - `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change
+//   - `GET /v1/apps/(app_uuid)/entitlements` lists the entitlements on one app.
+//   - `GET /v1/entitlements/(entitlement_uuid)/accounts` lists who currently holds one.
+//   - `PATCH /v1/entitlements/(entitlement_uuid)` renames it. `label` is the only field you can change
 //     today, and sending any other field returns 400.
-//   - `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,
+//   - `DELETE /v1/entitlements/(entitlement_uuid)` refuses while the entitlement is still held,
 //     returning 409 with an `active_accounts` count.
 //
 // ### Per-entitlement workflows

@@ -139,11 +139,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.`,
+				Description: `The approval workflow for this app. Returns (id) by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.`,
 			},
 			"appstore_settings": schema.SingleNestedAttribute{
 				Computed: true,
@@ -259,11 +259,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						},
 					},
 				},
-				Description: `App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.`,
+				Description: `App Store membership and settings. Present when the caller has read access to App Store items. Returns (in_app_store) by default; expand with expand=appstore_settings for the full settings object.`,
 			},
 			"auth": schema.SingleNestedAttribute{
 				Optional:    true,
-				Description: `Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Discover the accepted keys for a given app via ` + "`" + `GET /integrations/{app_class_id}/connection-schema` + "`" + `. Some integrations connect in-band from these credentials (e.g. an ` + "`" + `api_key` + "`" + `, or an OAuth ` + "`" + `client_id` + "`" + `/` + "`" + `client_secret` + "`" + `). Others require browser consent and are finished in the Lumos UI — for those, ` + "`" + `auth` + "`" + ` may be empty (` + "`" + `{}` + "`" + `). Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.`,
+				Description: `Credentials as a JSON object. **All secrets go here** — there are no top-level credential fields. The accepted keys depend on the integration and are validated server-side; see the per-integration request examples. Discover the accepted keys for a given app via ` + "`" + `GET /integrations/(app_class_id)/connection-schema` + "`" + `. Some integrations connect in-band from these credentials (e.g. an ` + "`" + `api_key` + "`" + `, or an OAuth ` + "`" + `client_id` + "`" + `/` + "`" + `client_secret` + "`" + `). Others require browser consent and are finished in the Lumos UI — for those, ` + "`" + `auth` + "`" + ` may be empty (` + "`" + `()` + "`" + `). Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502.`,
 			},
 			"category": schema.StringAttribute{
 				Computed:    true,
@@ -379,11 +379,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
+				Description: `The default deprovisioning workflow for this app. Returns (id) by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
 			},
 			"default_provisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -442,11 +442,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
+				Description: `The default provisioning workflow for this app. Returns (id) by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
 			},
 			"description": schema.StringAttribute{
 				Computed:    true,
@@ -455,7 +455,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"disconnected": schema.BoolAttribute{
 				Computed:    true,
 				Default:     booldefault.StaticBool(false),
-				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /v1/apps/{app_uuid}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /v1/apps/{app_uuid}` + "`" + `. Default: false`,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /v1/apps/(app_uuid)` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /v1/apps/(app_uuid)` + "`" + `. Default: false`,
 			},
 			"id": schema.StringAttribute{
 				Computed:    true,
@@ -479,7 +479,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"settings": schema.SingleNestedAttribute{
 				Optional:    true,
-				Description: `Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Integrations whose tenant is set manually take it here as ` + "`" + `app_instance_identifier` + "`" + ` (e.g. an Okta domain); others derive it from the credentials during connect. Discover the accepted keys via ` + "`" + `GET /integrations/{app_class_id}/connection-schema` + "`" + `. Optional — defaults to an empty object.`,
+				Description: `Non-secret configuration as a JSON object — e.g. host, port, region, or tenant / instance URL. Carries the per-deployment tuning an integration needs that isn't a credential; the accepted keys vary by integration and some integrations need none. Integrations whose tenant is set manually take it here as ` + "`" + `app_instance_identifier` + "`" + ` (e.g. an Okta domain); others derive it from the credentials during connect. Discover the accepted keys via ` + "`" + `GET /integrations/(app_class_id)/connection-schema` + "`" + `. Optional — defaults to an empty object.`,
 			},
 			"status": schema.StringAttribute{
 				Computed:    true,
@@ -487,7 +487,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"sync_status": schema.StringAttribute{
 				Computed:    true,
-				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.`,
+				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/(app_id)/sync` + "`" + ` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.`,
 			},
 			"version": schema.StringAttribute{
 				Optional:    true,

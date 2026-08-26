@@ -138,11 +138,11 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.`,
+				Description: `The approval workflow for this app. Returns (id) by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.`,
 			},
 			"appstore_settings": schema.SingleNestedAttribute{
 				Computed: true,
@@ -258,7 +258,7 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 						},
 					},
 				},
-				Description: `App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.`,
+				Description: `App Store membership and settings. Present when the caller has read access to App Store items. Returns (in_app_store) by default; expand with expand=appstore_settings for the full settings object.`,
 			},
 			"category": schema.StringAttribute{
 				Computed:    true,
@@ -374,11 +374,11 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
+				Description: `The default deprovisioning workflow for this app. Returns (id) by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
 			},
 			"default_provisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -437,11 +437,11 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
+				Description: `The default provisioning workflow for this app. Returns (id) by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.`,
 			},
 			"description": schema.StringAttribute{
 				Computed:    true,
@@ -449,7 +449,7 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			},
 			"disconnected": schema.BoolAttribute{
 				Computed:    true,
-				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /v1/apps/{app_uuid}` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /v1/apps/{app_uuid}` + "`" + `.`,
+				Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `DELETE /v1/apps/(app_uuid)` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it with ` + "`" + `PUT /v1/apps/(app_uuid)` + "`" + `.`,
 			},
 			"expand": schema.ListAttribute{
 				Optional:    true,
@@ -482,7 +482,7 @@ func (r *AppDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 			},
 			"sync_status": schema.StringAttribute{
 				Computed:    true,
-				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/{app_id}/sync` + "`" + ` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.`,
+				Description: `The state of this app's most recent sync: ` + "`" + `SYNCING` + "`" + ` while one is running, ` + "`" + `SUCCESS` + "`" + ` or ` + "`" + `FAILED` + "`" + ` once it finished. Poll this after ` + "`" + `POST /apps/(app_id)/sync` + "`" + ` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.`,
 			},
 			"website_url": schema.StringAttribute{
 				Computed:    true,
