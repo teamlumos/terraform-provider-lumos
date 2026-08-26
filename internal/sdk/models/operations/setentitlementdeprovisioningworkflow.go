@@ -9,8 +9,8 @@ import (
 )
 
 type SetEntitlementDeprovisioningWorkflowRequest struct {
-	EntitlementUUID          string                          `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
-	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
+	EntitlementUUID                        string                                        `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementDeprovisioningWorkflowInput shared.EntitlementDeprovisioningWorkflowInput `request:"mediaType=application/json"`
 }
 
 func (s *SetEntitlementDeprovisioningWorkflowRequest) GetEntitlementUUID() string {
@@ -20,11 +20,11 @@ func (s *SetEntitlementDeprovisioningWorkflowRequest) GetEntitlementUUID() strin
 	return s.EntitlementUUID
 }
 
-func (s *SetEntitlementDeprovisioningWorkflowRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
+func (s *SetEntitlementDeprovisioningWorkflowRequest) GetEntitlementDeprovisioningWorkflowInput() shared.EntitlementDeprovisioningWorkflowInput {
 	if s == nil {
-		return shared.WorkflowAssociationInput{}
+		return shared.EntitlementDeprovisioningWorkflowInput{}
 	}
-	return s.WorkflowAssociationInput
+	return s.EntitlementDeprovisioningWorkflowInput
 }
 
 type SetEntitlementDeprovisioningWorkflowResponse struct {
@@ -35,7 +35,7 @@ type SetEntitlementDeprovisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	EntitlementDeprovisioningWorkflow *shared.EntitlementDeprovisioningWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -63,11 +63,11 @@ func (s *SetEntitlementDeprovisioningWorkflowResponse) GetRawResponse() *http.Re
 	return s.RawResponse
 }
 
-func (s *SetEntitlementDeprovisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (s *SetEntitlementDeprovisioningWorkflowResponse) GetEntitlementDeprovisioningWorkflow() *shared.EntitlementDeprovisioningWorkflow {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.EntitlementDeprovisioningWorkflow
 }
 
 func (s *SetEntitlementDeprovisioningWorkflowResponse) GetAPIError() *shared.APIError {

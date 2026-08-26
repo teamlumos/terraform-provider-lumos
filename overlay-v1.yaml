@@ -10,9 +10,27 @@ actions:
   - target: $["components"]["schemas"]["AccountListOutput"]
     update:
       "x-speakeasy-entity": "EntitlementAccounts"
+  - target: $["components"]["schemas"]
+    update:
+      "AppApprovalWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "AppApprovalWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "AppApprovalWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "AppApprovalWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "AppDeprovisioningWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "AppDeprovisioningWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "AppDeprovisioningWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "AppDeprovisioningWorkflow"}
   - target: $["components"]["schemas"]["AppListOutput"]
     update:
       "x-speakeasy-entity": "Apps"
+  - target: $["components"]["schemas"]
+    update:
+      "AppProvisioningWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "AppProvisioningWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "AppProvisioningWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "AppProvisioningWorkflow"}
   - target: $["components"]["schemas"]["AppResponse"]
     update:
       "x-speakeasy-entity": "App"
@@ -37,15 +55,33 @@ actions:
   - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]
     update:
       "x-speakeasy-entity": "EntitlementAppStoreSettings"
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementApprovalWorkflowOverride": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"}
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementApprovalWorkflowOverrideInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"}
   - target: $["components"]["schemas"]["EntitlementCreateInput"]
     update:
       "x-speakeasy-entity": "Entitlement"
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementDeprovisioningWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "EntitlementDeprovisioningWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementDeprovisioningWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "EntitlementDeprovisioningWorkflow"}
   - target: $["components"]["schemas"]["EntitlementListOutput"]
     update:
       "x-speakeasy-entity": "AppEntitlements"
   - target: $["components"]["schemas"]["EntitlementOutput"]
     update:
       "x-speakeasy-entity": "Entitlement"
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementProvisioningWorkflow": {"description": "Response shape for a Workflow.", "properties": {"app_id": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "UUID of the app this Workflow belongs to, if associated.", "title": "App Id"}, "description": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A description of this Workflow.", "title": "Description"}, "id": {"description": "A UUID identifying this Workflow.", "title": "Id", "type": "string"}, "name": {"anyOf": [{"type": "string"}, {"type": "null"}], "description": "A name for this Workflow.", "title": "Name"}, "steps": {"description": "The ordered steps of the workflow.", "items": {"$ref": "#/components/schemas/WorkflowStepOutput"}, "title": "Steps", "type": "array"}, "type": {"description": "The kind of workflow.", "enum": ["approval", "approval-chain", "entitlement-provisioning", "entitlement-deprovisioning", "account-provisioning", "account-deprovisioning"], "title": "Type", "type": "string"}}, "required": ["id", "type", "steps"], "title": "Workflow", "type": "object", "x-speakeasy-entity": "EntitlementProvisioningWorkflow"}
+  - target: $["components"]["schemas"]
+    update:
+      "EntitlementProvisioningWorkflowInput": {"additionalProperties": false, "description": "Request body to bind a workflow to a resource slot.", "properties": {"workflow_id": {"description": "UUID of the workflow to associate.", "title": "Workflow Id", "type": "string"}}, "required": ["workflow_id"], "title": "WorkflowAssociationInput", "type": "object", "x-speakeasy-entity": "EntitlementProvisioningWorkflow"}
   - target: $["components"]["schemas"]["EntitlementUpdateInput"]
     update:
       "x-speakeasy-entity": "Entitlement"
@@ -401,6 +437,8 @@ actions:
     remove: true
   - target: $["components"]["schemas"]["VendorAgreementCustomAttributeUpdateInput"]
     remove: true
+  - target: $["components"]["schemas"]["WorkflowAssociationInput"]
+    remove: true
   - target: $["components"]["schemas"]["apiserver__modules__tasks__models__AddCommentInput"]
     remove: true
   - target: $["components"]["schemas"]["apiserver__modules__tasks__models__PerformTaskActionInput"]
@@ -447,9 +485,63 @@ actions:
   - target: $["paths"]["/v1/apps/{app_uuid}"]["put"]
     update:
       "x-speakeasy-entity-operation": "App#update"
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppApprovalWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppApprovalWorkflow#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppApprovalWorkflowInput"
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppApprovalWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["AppApprovalWorkflow#create", "AppApprovalWorkflow#update"]
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppStoreSettings#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppDeprovisioningWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppDeprovisioningWorkflow#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppDeprovisioningWorkflowInput"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppDeprovisioningWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["AppDeprovisioningWorkflow#create", "AppDeprovisioningWorkflow#update"]
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppProvisioningWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "AppProvisioningWorkflow#read"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppProvisioningWorkflowInput"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/AppProvisioningWorkflow"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["AppProvisioningWorkflow#create", "AppProvisioningWorkflow#update"]
   - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]
     update:
       "x-speakeasy-entity-operation": "AppEntitlements#read"
@@ -483,9 +575,63 @@ actions:
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/accounts"]["get"]
     update:
       "x-speakeasy-entity-operation": "EntitlementAccounts#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementApprovalWorkflowOverride"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "EntitlementApprovalWorkflowOverride#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementApprovalWorkflowOverrideInput"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementApprovalWorkflowOverride"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["EntitlementApprovalWorkflowOverride#create", "EntitlementApprovalWorkflowOverride#update"]
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore_settings"]["get"]
     update:
       "x-speakeasy-entity-operation": "EntitlementAppStoreSettings#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementDeprovisioningWorkflow"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "EntitlementDeprovisioningWorkflow#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementDeprovisioningWorkflowInput"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementDeprovisioningWorkflow"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["EntitlementDeprovisioningWorkflow#create", "EntitlementDeprovisioningWorkflow#update"]
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["get"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementProvisioningWorkflow"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["get"]
+    update:
+      "x-speakeasy-entity-operation": "EntitlementProvisioningWorkflow#read"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["put"]["parameters"][0]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["put"]["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementProvisioningWorkflowInput"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["put"]["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+    update: "#/components/schemas/EntitlementProvisioningWorkflow"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["put"]
+    update:
+      "x-speakeasy-entity-operation": ["EntitlementProvisioningWorkflow#create", "EntitlementProvisioningWorkflow#update"]
   - target: $["paths"]["/v1/integrations"]["get"]
     update:
       "x-speakeasy-entity-operation": "Integrations#read"

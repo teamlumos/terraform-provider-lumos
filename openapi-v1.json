@@ -471,6 +471,190 @@
         "title": "App",
         "type": "object"
       },
+      "AppApprovalWorkflow": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "AppApprovalWorkflow"
+      },
+      "AppApprovalWorkflowInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "AppApprovalWorkflow"
+      },
+      "AppDeprovisioningWorkflow": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "AppDeprovisioningWorkflow"
+      },
+      "AppDeprovisioningWorkflowInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "AppDeprovisioningWorkflow"
+      },
       "AppLinks": {
         "properties": {
           "admin_url": {
@@ -520,6 +704,98 @@
         "title": "AppListOutput",
         "type": "object",
         "x-speakeasy-entity": "Apps"
+      },
+      "AppProvisioningWorkflow": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "AppProvisioningWorkflow"
+      },
+      "AppProvisioningWorkflowInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "AppProvisioningWorkflow"
       },
       "AppResponse": {
         "properties": {
@@ -2041,6 +2317,98 @@
         "title": "EntitlementAppStoreSettingsPatchInput",
         "type": "object"
       },
+      "EntitlementApprovalWorkflowOverride": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"
+      },
+      "EntitlementApprovalWorkflowOverrideInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementApprovalWorkflowOverride"
+      },
       "EntitlementCreateInput": {
         "additionalProperties": false,
         "description": "Request body for `POST /entitlements`.",
@@ -2063,6 +2431,98 @@
         "title": "EntitlementCreateInput",
         "type": "object",
         "x-speakeasy-entity": "Entitlement"
+      },
+      "EntitlementDeprovisioningWorkflow": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementDeprovisioningWorkflow"
+      },
+      "EntitlementDeprovisioningWorkflowInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementDeprovisioningWorkflow"
       },
       "EntitlementListOutput": {
         "properties": {
@@ -2212,6 +2672,98 @@
         "title": "EntitlementOutput",
         "type": "object",
         "x-speakeasy-entity": "Entitlement"
+      },
+      "EntitlementProvisioningWorkflow": {
+        "description": "Response shape for a Workflow.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the app this Workflow belongs to, if associated.",
+            "title": "App Id"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A description of this Workflow.",
+            "title": "Description"
+          },
+          "id": {
+            "description": "A UUID identifying this Workflow.",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A name for this Workflow.",
+            "title": "Name"
+          },
+          "steps": {
+            "description": "The ordered steps of the workflow.",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStepOutput"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "type": {
+            "description": "The kind of workflow.",
+            "enum": [
+              "approval",
+              "approval-chain",
+              "entitlement-provisioning",
+              "entitlement-deprovisioning",
+              "account-provisioning",
+              "account-deprovisioning"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "steps"
+        ],
+        "title": "Workflow",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementProvisioningWorkflow"
+      },
+      "EntitlementProvisioningWorkflowInput": {
+        "additionalProperties": false,
+        "description": "Request body to bind a workflow to a resource slot.",
+        "properties": {
+          "workflow_id": {
+            "description": "UUID of the workflow to associate.",
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "WorkflowAssociationInput",
+        "type": "object",
+        "x-speakeasy-entity": "EntitlementProvisioningWorkflow"
       },
       "EntitlementRef": {
         "description": "Reference to an Entitlement embedded in another resource (e.g. AppStoreSettingsResponse).",
@@ -3259,22 +3811,6 @@
         "title": "Workflow",
         "type": "object",
         "x-speakeasy-entity": "Workflow"
-      },
-      "WorkflowAssociationInput": {
-        "additionalProperties": false,
-        "description": "Request body to bind a workflow to a resource slot.",
-        "properties": {
-          "workflow_id": {
-            "description": "UUID of the workflow to associate.",
-            "title": "Workflow Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "workflow_id"
-        ],
-        "title": "WorkflowAssociationInput",
-        "type": "object"
       },
       "WorkflowInput": {
         "additionalProperties": false,
@@ -4658,7 +5194,8 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -4666,7 +5203,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppApprovalWorkflow"
                 }
               }
             },
@@ -4761,7 +5298,8 @@
         "summary": "Get App Approval Workflow",
         "tags": [
           "Apps"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "AppApprovalWorkflow#read"
       },
       "put": {
         "description": "Bind an approval workflow to this app, replacing whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. It also has to be a usable template: its assignees must resolve inside your organization, and it cannot already be bound to a different app. Any of those failing returns 400.",
@@ -4774,14 +5312,15 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/AppApprovalWorkflowInput"
               }
             }
           },
@@ -4792,7 +5331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppApprovalWorkflow"
                 }
               }
             },
@@ -4887,6 +5426,10 @@
         "summary": "Set App Approval Workflow",
         "tags": [
           "Apps"
+        ],
+        "x-speakeasy-entity-operation": [
+          "AppApprovalWorkflow#create",
+          "AppApprovalWorkflow#update"
         ]
       }
     },
@@ -5147,7 +5690,8 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -5155,7 +5699,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppDeprovisioningWorkflow"
                 }
               }
             },
@@ -5250,7 +5794,8 @@
         "summary": "Get App Default Deprovisioning Workflow",
         "tags": [
           "Apps"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "AppDeprovisioningWorkflow#read"
       },
       "put": {
         "description": "Bind the default deprovisioning workflow for this app, replacing whatever was bound before. Entitlements with no deprovisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account deprovisioning workflow. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.",
@@ -5263,14 +5808,15 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/AppDeprovisioningWorkflowInput"
               }
             }
           },
@@ -5281,7 +5827,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppDeprovisioningWorkflow"
                 }
               }
             },
@@ -5376,6 +5922,10 @@
         "summary": "Set App Default Deprovisioning Workflow",
         "tags": [
           "Apps"
+        ],
+        "x-speakeasy-entity-operation": [
+          "AppDeprovisioningWorkflow#create",
+          "AppDeprovisioningWorkflow#update"
         ]
       }
     },
@@ -5391,7 +5941,8 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -5399,7 +5950,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppProvisioningWorkflow"
                 }
               }
             },
@@ -5494,7 +6045,8 @@
         "summary": "Get App Default Provisioning Workflow",
         "tags": [
           "Apps"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "AppProvisioningWorkflow#read"
       },
       "put": {
         "description": "Bind the default provisioning workflow for this app, replacing whatever was bound before. Entitlements with no provisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account provisioning workflow. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.",
@@ -5507,14 +6059,15 @@
             "schema": {
               "title": "App Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/AppProvisioningWorkflowInput"
               }
             }
           },
@@ -5525,7 +6078,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/AppProvisioningWorkflow"
                 }
               }
             },
@@ -5620,6 +6173,10 @@
         "summary": "Set App Default Provisioning Workflow",
         "tags": [
           "Apps"
+        ],
+        "x-speakeasy-entity-operation": [
+          "AppProvisioningWorkflow#create",
+          "AppProvisioningWorkflow#update"
         ]
       }
     },
@@ -6971,7 +7528,8 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -6979,7 +7537,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverride"
                 }
               }
             },
@@ -7074,7 +7632,8 @@
         "summary": "Get Entitlement Approval Workflow Override",
         "tags": [
           "Entitlements"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "EntitlementApprovalWorkflowOverride#read"
       },
       "put": {
         "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. Entitlements with no request configuration behind them cannot take an override and return 404.",
@@ -7087,14 +7646,15 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverrideInput"
               }
             }
           },
@@ -7105,7 +7665,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementApprovalWorkflowOverride"
                 }
               }
             },
@@ -7200,6 +7760,10 @@
         "summary": "Set Entitlement Approval Workflow Override",
         "tags": [
           "Entitlements"
+        ],
+        "x-speakeasy-entity-operation": [
+          "EntitlementApprovalWorkflowOverride#create",
+          "EntitlementApprovalWorkflowOverride#update"
         ]
       }
     },
@@ -7460,7 +8024,8 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -7468,7 +8033,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementDeprovisioningWorkflow"
                 }
               }
             },
@@ -7563,7 +8128,8 @@
         "summary": "Get Entitlement Deprovisioning Workflow",
         "tags": [
           "Entitlements"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "EntitlementDeprovisioningWorkflow#read"
       },
       "put": {
         "description": "Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.",
@@ -7576,14 +8142,15 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/EntitlementDeprovisioningWorkflowInput"
               }
             }
           },
@@ -7594,7 +8161,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementDeprovisioningWorkflow"
                 }
               }
             },
@@ -7689,6 +8256,10 @@
         "summary": "Set Entitlement Deprovisioning Workflow",
         "tags": [
           "Entitlements"
+        ],
+        "x-speakeasy-entity-operation": [
+          "EntitlementDeprovisioningWorkflow#create",
+          "EntitlementDeprovisioningWorkflow#update"
         ]
       }
     },
@@ -7704,7 +8275,8 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "responses": {
@@ -7712,7 +8284,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementProvisioningWorkflow"
                 }
               }
             },
@@ -7807,7 +8379,8 @@
         "summary": "Get Entitlement Provisioning Workflow",
         "tags": [
           "Entitlements"
-        ]
+        ],
+        "x-speakeasy-entity-operation": "EntitlementProvisioningWorkflow#read"
       },
       "put": {
         "description": "Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.",
@@ -7820,14 +8393,15 @@
             "schema": {
               "title": "Entitlement Uuid",
               "type": "string"
-            }
+            },
+            "x-speakeasy-param-force-new": true
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WorkflowAssociationInput"
+                "$ref": "#/components/schemas/EntitlementProvisioningWorkflowInput"
               }
             }
           },
@@ -7838,7 +8412,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Workflow"
+                  "$ref": "#/components/schemas/EntitlementProvisioningWorkflow"
                 }
               }
             },
@@ -7933,6 +8507,10 @@
         "summary": "Set Entitlement Provisioning Workflow",
         "tags": [
           "Entitlements"
+        ],
+        "x-speakeasy-entity-operation": [
+          "EntitlementProvisioningWorkflow#create",
+          "EntitlementProvisioningWorkflow#update"
         ]
       }
     },

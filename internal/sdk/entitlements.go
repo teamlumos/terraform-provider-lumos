@@ -1596,12 +1596,12 @@ func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementApprovalWorkflowOverride
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementApprovalWorkflowOverride = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -1731,7 +1731,7 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "EntitlementApprovalWorkflowOverrideInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -1877,12 +1877,12 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementApprovalWorkflowOverride
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementApprovalWorkflowOverride = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -2702,12 +2702,12 @@ func (s *Entitlements) GetEntitlementDeprovisioningWorkflow(ctx context.Context,
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementDeprovisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementDeprovisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -2837,7 +2837,7 @@ func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context,
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "EntitlementDeprovisioningWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -2983,12 +2983,12 @@ func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context,
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementDeprovisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementDeprovisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3257,12 +3257,12 @@ func (s *Entitlements) GetEntitlementProvisioningWorkflow(ctx context.Context, r
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementProvisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementProvisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3392,7 +3392,7 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "EntitlementProvisioningWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -3538,12 +3538,12 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementProvisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementProvisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

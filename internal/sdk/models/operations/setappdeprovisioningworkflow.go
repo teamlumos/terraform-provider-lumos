@@ -9,8 +9,8 @@ import (
 )
 
 type SetAppDeprovisioningWorkflowRequest struct {
-	AppUUID                  string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
-	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
+	AppUUID                        string                                `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppDeprovisioningWorkflowInput shared.AppDeprovisioningWorkflowInput `request:"mediaType=application/json"`
 }
 
 func (s *SetAppDeprovisioningWorkflowRequest) GetAppUUID() string {
@@ -20,11 +20,11 @@ func (s *SetAppDeprovisioningWorkflowRequest) GetAppUUID() string {
 	return s.AppUUID
 }
 
-func (s *SetAppDeprovisioningWorkflowRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
+func (s *SetAppDeprovisioningWorkflowRequest) GetAppDeprovisioningWorkflowInput() shared.AppDeprovisioningWorkflowInput {
 	if s == nil {
-		return shared.WorkflowAssociationInput{}
+		return shared.AppDeprovisioningWorkflowInput{}
 	}
-	return s.WorkflowAssociationInput
+	return s.AppDeprovisioningWorkflowInput
 }
 
 type SetAppDeprovisioningWorkflowResponse struct {
@@ -35,7 +35,7 @@ type SetAppDeprovisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppDeprovisioningWorkflow *shared.AppDeprovisioningWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -63,11 +63,11 @@ func (s *SetAppDeprovisioningWorkflowResponse) GetRawResponse() *http.Response {
 	return s.RawResponse
 }
 
-func (s *SetAppDeprovisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (s *SetAppDeprovisioningWorkflowResponse) GetAppDeprovisioningWorkflow() *shared.AppDeprovisioningWorkflow {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.AppDeprovisioningWorkflow
 }
 
 func (s *SetAppDeprovisioningWorkflowResponse) GetAPIError() *shared.APIError {

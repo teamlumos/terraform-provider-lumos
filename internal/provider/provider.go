@@ -125,7 +125,13 @@ func (p *LumosProvider) Actions(_ context.Context) []func() action.Action {
 func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewAppResource,
+		NewAppApprovalWorkflowResource,
+		NewAppDeprovisioningWorkflowResource,
+		NewAppProvisioningWorkflowResource,
 		NewEntitlementResource,
+		NewEntitlementApprovalWorkflowOverrideResource,
+		NewEntitlementDeprovisioningWorkflowResource,
+		NewEntitlementProvisioningWorkflowResource,
 		NewWorkflowResource,
 	}
 }
@@ -134,8 +140,11 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 	return []func() datasource.DataSource{
 		NewAccountEntitlementsDataSource,
 		NewAppDataSource,
+		NewAppApprovalWorkflowDataSource,
+		NewAppDeprovisioningWorkflowDataSource,
 		NewAppEntitlementAppStoreCatalogDataSource,
 		NewAppEntitlementsDataSource,
+		NewAppProvisioningWorkflowDataSource,
 		NewAppStoreCatalogDataSource,
 		NewAppStoreSettingsDataSource,
 		NewAppsDataSource,
@@ -144,6 +153,9 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 		NewEntitlementDataSource,
 		NewEntitlementAccountsDataSource,
 		NewEntitlementAppStoreSettingsDataSource,
+		NewEntitlementApprovalWorkflowOverrideDataSource,
+		NewEntitlementDeprovisioningWorkflowDataSource,
+		NewEntitlementProvisioningWorkflowDataSource,
 		NewIntegrationDataSource,
 		NewIntegrationConnectionSchemaDataSource,
 		NewIntegrationsDataSource,

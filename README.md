@@ -132,17 +132,34 @@ Configuration precedence:
 
 ## Available Resources and Data Sources
 
-Generated from the V1 API surface: **3 managed resources** and **27 data
+Generated from the V1 API surface: **9 managed resources** and **33 data
 sources**. The authoritative list is generated further down this file, under
 [Available Resources and Data Sources](#available-resources-and-data-sources-1)
 — it is rewritten on every `make provider`, so it never drifts.
 
-Managed resources are the V1 entities with full create/read/update/delete:
-`lumos_app`, `lumos_entitlement`, and `lumos_workflow`. Everything else in the
-V1 API is exposed read-only.
+Three resources are full-lifecycle V1 entities: `lumos_app`,
+`lumos_entitlement`, and `lumos_workflow`.
+
+The other six bind a workflow to a slot on an app or an entitlement:
+
+| Resource | Slot |
+| --- | --- |
+| `lumos_app_approval_workflow` | app approval |
+| `lumos_app_provisioning_workflow` | app default provisioning |
+| `lumos_app_deprovisioning_workflow` | app default deprovisioning |
+| `lumos_entitlement_approval_workflow_override` | entitlement approval override |
+| `lumos_entitlement_provisioning_workflow` | entitlement provisioning |
+| `lumos_entitlement_deprovisioning_workflow` | entitlement deprovisioning |
+
+A binding points at a workflow you created separately — set `workflow_id` to an
+existing `lumos_workflow`. The API has no unbind operation for these slots, so
+`terraform destroy` drops the binding from state without calling the API and the
+workflow stays bound. Each resource's page documents this.
+
+Everything else in the V1 API is exposed read-only.
 
 Not every V1 endpoint maps onto Terraform. The generated SDK covers all 61 V1
-operations, but 25 of them are imperative actions or multipart uploads with no
+operations, but 13 of them are imperative actions or multipart uploads with no
 declarative representation — triggering an app sync, completing or reassigning a
 task, uploading a knowledge-context document. Those are reachable through the
 SDK, not through a resource or data source.
@@ -365,15 +382,24 @@ Available configuration:
 ### Managed Resources
 
 * [lumos_app](docs/resources/app.md)
+* [lumos_app_approval_workflow](docs/resources/app_approval_workflow.md)
+* [lumos_app_deprovisioning_workflow](docs/resources/app_deprovisioning_workflow.md)
+* [lumos_app_provisioning_workflow](docs/resources/app_provisioning_workflow.md)
 * [lumos_entitlement](docs/resources/entitlement.md)
+* [lumos_entitlement_approval_workflow_override](docs/resources/entitlement_approval_workflow_override.md)
+* [lumos_entitlement_deprovisioning_workflow](docs/resources/entitlement_deprovisioning_workflow.md)
+* [lumos_entitlement_provisioning_workflow](docs/resources/entitlement_provisioning_workflow.md)
 * [lumos_workflow](docs/resources/workflow.md)
 
 ### Data Sources
 
 * [lumos_account_entitlements](docs/data-sources/account_entitlements.md)
 * [lumos_app](docs/data-sources/app.md)
+* [lumos_app_approval_workflow](docs/data-sources/app_approval_workflow.md)
+* [lumos_app_deprovisioning_workflow](docs/data-sources/app_deprovisioning_workflow.md)
 * [lumos_app_entitlement_app_store_catalog](docs/data-sources/app_entitlement_app_store_catalog.md)
 * [lumos_app_entitlements](docs/data-sources/app_entitlements.md)
+* [lumos_app_provisioning_workflow](docs/data-sources/app_provisioning_workflow.md)
 * [lumos_app_store_catalog](docs/data-sources/app_store_catalog.md)
 * [lumos_app_store_settings](docs/data-sources/app_store_settings.md)
 * [lumos_apps](docs/data-sources/apps.md)
@@ -382,6 +408,9 @@ Available configuration:
 * [lumos_entitlement](docs/data-sources/entitlement.md)
 * [lumos_entitlement_accounts](docs/data-sources/entitlement_accounts.md)
 * [lumos_entitlement_app_store_settings](docs/data-sources/entitlement_app_store_settings.md)
+* [lumos_entitlement_approval_workflow_override](docs/data-sources/entitlement_approval_workflow_override.md)
+* [lumos_entitlement_deprovisioning_workflow](docs/data-sources/entitlement_deprovisioning_workflow.md)
+* [lumos_entitlement_provisioning_workflow](docs/data-sources/entitlement_provisioning_workflow.md)
 * [lumos_integration](docs/data-sources/integration.md)
 * [lumos_integration_connection_schema](docs/data-sources/integration_connection_schema.md)
 * [lumos_integrations](docs/data-sources/integrations.md)

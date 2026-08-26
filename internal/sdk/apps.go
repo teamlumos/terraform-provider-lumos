@@ -1925,12 +1925,12 @@ func (s *Apps) GetAppApprovalWorkflow(ctx context.Context, request operations.Ge
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppApprovalWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppApprovalWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -2060,7 +2060,7 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppApprovalWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -2206,12 +2206,12 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppApprovalWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppApprovalWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3035,12 +3035,12 @@ func (s *Apps) GetAppDeprovisioningWorkflow(ctx context.Context, request operati
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppDeprovisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppDeprovisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3170,7 +3170,7 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppDeprovisioningWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -3316,12 +3316,12 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppDeprovisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppDeprovisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3590,12 +3590,12 @@ func (s *Apps) GetAppProvisioningWorkflow(ctx context.Context, request operation
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppProvisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppProvisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3725,7 +3725,7 @@ func (s *Apps) SetAppProvisioningWorkflow(ctx context.Context, request operation
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "WorkflowAssociationInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "AppProvisioningWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -3871,12 +3871,12 @@ func (s *Apps) SetAppProvisioningWorkflow(ctx context.Context, request operation
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppProvisioningWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppProvisioningWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

@@ -72,6 +72,39 @@ DATA_SOURCES = {
     "WorkflowSteps": ("/v1/workflow-steps", "get"),
 }
 
+# Singleton workflow bindings: GET reads the bound workflow, PUT binds one.
+# There is no unbind endpoint, so these resources have no delete.
+#
+# All six share the Workflow and WorkflowAssociationInput schemas, and
+# x-speakeasy-entity binds at the schema level, so each association needs its own
+# cloned pair before it can be its own Terraform resource.
+#
+# entity -> (path, owning path parameter)
+WORKFLOW_ASSOCIATIONS = {
+    "AppApprovalWorkflow": ("/v1/apps/{app_uuid}/approval-workflow", "app_uuid"),
+    "AppProvisioningWorkflow": (
+        "/v1/apps/{app_uuid}/default-provisioning-workflow",
+        "app_uuid",
+    ),
+    "AppDeprovisioningWorkflow": (
+        "/v1/apps/{app_uuid}/default-deprovisioning-workflow",
+        "app_uuid",
+    ),
+    "EntitlementApprovalWorkflowOverride": (
+        "/v1/entitlements/{entitlement_uuid}/approval-workflow-override",
+        "entitlement_uuid",
+    ),
+    "EntitlementProvisioningWorkflow": (
+        "/v1/entitlements/{entitlement_uuid}/provisioning-workflow",
+        "entitlement_uuid",
+    ),
+    "EntitlementDeprovisioningWorkflow": (
+        "/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow",
+        "entitlement_uuid",
+    ),
+}
+
+
 # Path parameter that identifies the resource, surfaced to Terraform as `id`.
 ID_PARAM = {
     "App": "app_uuid",
@@ -152,6 +185,12 @@ def sanitize_descriptions(node, counter):
     elif isinstance(node, list):
         for value in node:
             sanitize_descriptions(value, counter)
+
+
+def set_request_ref(op, name):
+    content = (op.get("requestBody") or {}).get("content", {}).get("application/json")
+    if content and "$ref" in (content.get("schema") or {}):
+        content["schema"]["$ref"] = f"#/components/schemas/{name}"
 
 
 def collect_refs(node, acc):
@@ -263,6 +302,29 @@ def main() -> None:
         for field in fields:
             if field in props:
                 props[field]["x-speakeasy-param-force-new"] = True
+
+    # 3b. Workflow bindings: clone the shared schemas so each binding is its own entity.
+    for entity, (path, owner) in WORKFLOW_ASSOCIATIONS.items():
+        out_name, in_name = entity, f"{entity}Input"
+        schemas[out_name] = copy.deepcopy(schemas["Workflow"])
+        schemas[in_name] = copy.deepcopy(schemas["WorkflowAssociationInput"])
+        schemas[out_name]["x-speakeasy-entity"] = entity
+        schemas[in_name]["x-speakeasy-entity"] = entity
+
+        read_op = op_of(spec, path, "get")
+        write_op = op_of(spec, path, "put")
+        set_response_ref(read_op, out_name)
+        set_response_ref(write_op, out_name)
+        set_request_ref(write_op, in_name)
+        read_op["x-speakeasy-entity-operation"] = f"{entity}#read"
+        # One idempotent PUT serves as both create and update.
+        write_op["x-speakeasy-entity-operation"] = [f"{entity}#create", f"{entity}#update"]
+
+        # Rebinding to a different app or entitlement is a different association.
+        for op in (read_op, write_op):
+            for param in op.get("parameters", []):
+                if param.get("name") == owner and param.get("in") == "path":
+                    param["x-speakeasy-param-force-new"] = True
 
     # 4. Keep Speakeasy's template parser out of the descriptions.
     touched = []

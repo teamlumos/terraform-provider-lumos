@@ -9,8 +9,8 @@ import (
 )
 
 type SetEntitlementApprovalWorkflowOverrideRequest struct {
-	EntitlementUUID          string                          `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
-	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
+	EntitlementUUID                          string                                          `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementApprovalWorkflowOverrideInput shared.EntitlementApprovalWorkflowOverrideInput `request:"mediaType=application/json"`
 }
 
 func (s *SetEntitlementApprovalWorkflowOverrideRequest) GetEntitlementUUID() string {
@@ -20,11 +20,11 @@ func (s *SetEntitlementApprovalWorkflowOverrideRequest) GetEntitlementUUID() str
 	return s.EntitlementUUID
 }
 
-func (s *SetEntitlementApprovalWorkflowOverrideRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
+func (s *SetEntitlementApprovalWorkflowOverrideRequest) GetEntitlementApprovalWorkflowOverrideInput() shared.EntitlementApprovalWorkflowOverrideInput {
 	if s == nil {
-		return shared.WorkflowAssociationInput{}
+		return shared.EntitlementApprovalWorkflowOverrideInput{}
 	}
-	return s.WorkflowAssociationInput
+	return s.EntitlementApprovalWorkflowOverrideInput
 }
 
 type SetEntitlementApprovalWorkflowOverrideResponse struct {
@@ -35,7 +35,7 @@ type SetEntitlementApprovalWorkflowOverrideResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	EntitlementApprovalWorkflowOverride *shared.EntitlementApprovalWorkflowOverride
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -63,11 +63,11 @@ func (s *SetEntitlementApprovalWorkflowOverrideResponse) GetRawResponse() *http.
 	return s.RawResponse
 }
 
-func (s *SetEntitlementApprovalWorkflowOverrideResponse) GetWorkflow() *shared.Workflow {
+func (s *SetEntitlementApprovalWorkflowOverrideResponse) GetEntitlementApprovalWorkflowOverride() *shared.EntitlementApprovalWorkflowOverride {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.EntitlementApprovalWorkflowOverride
 }
 
 func (s *SetEntitlementApprovalWorkflowOverrideResponse) GetAPIError() *shared.APIError {

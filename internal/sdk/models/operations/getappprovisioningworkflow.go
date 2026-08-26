@@ -27,7 +27,7 @@ type GetAppProvisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppProvisioningWorkflow *shared.AppProvisioningWorkflow
 	// Bad Request
 	APIError *shared.APIError
 	// Validation Error
@@ -55,11 +55,11 @@ func (g *GetAppProvisioningWorkflowResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppProvisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetAppProvisioningWorkflowResponse) GetAppProvisioningWorkflow() *shared.AppProvisioningWorkflow {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.AppProvisioningWorkflow
 }
 
 func (g *GetAppProvisioningWorkflowResponse) GetAPIError() *shared.APIError {
