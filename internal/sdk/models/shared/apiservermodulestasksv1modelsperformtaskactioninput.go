@@ -53,7 +53,7 @@ func (e *ApiserverModulesTasksV1ModelsPerformTaskActionInputTransitionTo) Unmars
 }
 
 type ApiserverModulesTasksV1ModelsPerformTaskActionInput struct {
-	// The action to perform, as returned by `GET /v1/tasks/(task_id)/actions`.
+	// The action to perform, as returned by `GET /v1/tasks/{task_id}/actions`.
 	ActionType string `json:"action_type"`
 	// Status to transition to; inferred if omitted and the action has one target.
 	TransitionTo *ApiserverModulesTasksV1ModelsPerformTaskActionInputTransitionTo `json:"transition_to,omitempty"`

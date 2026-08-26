@@ -7,7 +7,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// WorkflowRef - A reference to a bound workflow — shaped `( "id": "..." )` so the path
+// WorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
 // `<slot>.id` is stable whether or not the slot is expanded.
 type WorkflowRef struct {
 	// UUID of the bound workflow.

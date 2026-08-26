@@ -54,8 +54,8 @@ type Lumos struct {
 	// An account is a person's presence inside a connected app. Accounts arrive through sync; you cannot
 	// create one through this API.
 	//
-	// `GET /v1/accounts/(account_uuid)/entitlements` lists what one account holds. It reads the same
-	// relationship as `GET /v1/entitlements/(entitlement_uuid)/accounts`, from the account's side rather
+	// `GET /v1/accounts/{account_uuid}/entitlements` lists what one account holds. It reads the same
+	// relationship as `GET /v1/entitlements/{entitlement_uuid}/accounts`, from the account's side rather
 	// than the entitlement's.
 	//
 	Accounts *Accounts
@@ -64,15 +64,15 @@ type Lumos struct {
 	//
 	// ### Connecting one
 	//
-	// 1. `GET /v1/integrations/(app_class_id)/connection-schema` to see which `auth` and `settings`
+	// 1. `GET /v1/integrations/{app_class_id}/connection-schema` to see which `auth` and `settings`
 	//    keys the integration expects.
 	// 2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect and
 	//    start an initial sync. Apps that need browser consent are finished in the Lumos UI.
-	// 3. `GET /v1/apps/(app_uuid)` to follow `sync_status`.
-	// 4. `POST /v1/apps/(app_uuid)/sync` to resync later. Only one sync runs per app at a time, so a
+	// 3. `GET /v1/apps/{app_uuid}` to follow `sync_status`.
+	// 4. `POST /v1/apps/{app_uuid}/sync` to resync later. Only one sync runs per app at a time, so a
 	//    second request while one is in flight returns 409.
 	//
-	// Rotate credentials with `PUT /v1/apps/(app_uuid)`. `DELETE /v1/apps/(app_uuid)` drops the stored
+	// Rotate credentials with `PUT /v1/apps/{app_uuid}`. `DELETE /v1/apps/{app_uuid}` drops the stored
 	// credentials and returns the app to a connectable state.
 	//
 	// ### Reading apps
@@ -106,11 +106,11 @@ type Lumos struct {
 	// permission. Accounts hold entitlements.
 	//
 	// - `POST /v1/entitlements` creates a requestable entitlement on an app.
-	// - `GET /v1/apps/(app_uuid)/entitlements` lists the entitlements on one app.
-	// - `GET /v1/entitlements/(entitlement_uuid)/accounts` lists who currently holds one.
-	// - `PATCH /v1/entitlements/(entitlement_uuid)` renames it. `label` is the only field you can change
+	// - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
+	// - `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.
+	// - `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change
 	//   today, and sending any other field returns 400.
-	// - `DELETE /v1/entitlements/(entitlement_uuid)` refuses while the entitlement is still held,
+	// - `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,
 	//   returning 409 with an `active_accounts` count.
 	//
 	// ### Per-entitlement workflows
@@ -134,7 +134,7 @@ type Lumos struct {
 	// 1. `GET /v1/integrations?query=google` to find the integration. The filter matches both the
 	//    `app_class_id` and the display name, so `google` returns `workspace.google.com` and
 	//    `cloud.google.com`.
-	// 2. `GET /v1/integrations/(app_class_id)/connection-schema` for the JSON schema of the `auth` and
+	// 2. `GET /v1/integrations/{app_class_id}/connection-schema` for the JSON schema of the `auth` and
 	//    `settings` fields it expects.
 	// 3. `POST /v1/apps` with those values.
 	//
@@ -175,13 +175,13 @@ type Lumos struct {
 	//
 	// ### Which endpoint should I call?
 	//
-	// - **To approve or deny an access request**, use `POST /tasks/(task_id)/complete`
-	//   (approve) or `POST /tasks/(task_id)/dismiss` (deny).
+	// - **To approve or deny an access request**, use `POST /tasks/{task_id}/complete`
+	//   (approve) or `POST /tasks/{task_id}/dismiss` (deny).
 	// - **To find pending approval tasks**, call
 	//   `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING` (access
 	//   requests).
-	// - **Only use `POST /tasks/(task_id)/perform-action`** for tasks that expose custom workflow
-	//   actions. Discover those actions via `GET /tasks/(task_id)/actions`. Approval tasks do not
+	// - **Only use `POST /tasks/{task_id}/perform-action`** for tasks that expose custom workflow
+	//   actions. Discover those actions via `GET /tasks/{task_id}/actions`. Approval tasks do not
 	//   require this endpoint — `complete` and `dismiss` are the right primitives.
 	//
 	// For a full walkthrough with `curl` and Python examples, see the
@@ -195,12 +195,12 @@ type Lumos struct {
 	//
 	// ### Building one
 	//
-	// 1. `GET /v1/workflow-steps?app_id=(app_uuid)` to discover the steps available for that app, each
+	// 1. `GET /v1/workflow-steps?app_id={app_uuid}` to discover the steps available for that app, each
 	//    with the input schema it accepts.
 	// 2. `POST /v1/workflows` with the steps you want.
-	// 3. Bind it, for example with `PUT /v1/apps/(app_uuid)/default-provisioning-workflow`.
+	// 3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.
 	//
-	// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/(workflow_id)` rejects changes to
+	// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` rejects changes to
 	// either.
 	//
 	// ### Workflows this API cannot describe

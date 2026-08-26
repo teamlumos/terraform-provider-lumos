@@ -4,7 +4,7 @@
 package shared
 
 type ApiserverModulesTasksV1ModelsTaskAction struct {
-	// Identifier for POST /v1/tasks/(task_id):perform-action.
+	// Identifier for POST /v1/tasks/{task_id}:perform-action.
 	ActionType string `json:"action_type"`
 	// The possible status transitions for this action.
 	Transitions []ApiserverModulesTasksV1ModelsTaskActionTransition `json:"transitions"`

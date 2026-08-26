@@ -16,7 +16,7 @@ const (
 	ApprovalWorkflowTypeWorkflowRef ApprovalWorkflowType = "WorkflowRef"
 )
 
-// ApprovalWorkflow - The approval workflow for this app. Returns (id) by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
+// ApprovalWorkflow - The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
 type ApprovalWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -106,7 +106,7 @@ const (
 	AppstoreSettingsTypeAppStoreSettingsResponse AppstoreSettingsType = "AppStoreSettingsResponse"
 )
 
-// AppstoreSettings - App Store membership and settings. Present when the caller has read access to App Store items. Returns (in_app_store) by default; expand with expand=appstore_settings for the full settings object.
+// AppstoreSettings - App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
 type AppstoreSettings struct {
 	AppStoreSettingsCompact  *AppStoreSettingsCompact  `queryParam:"inline" union:"member"`
 	AppStoreSettingsResponse *AppStoreSettingsResponse `queryParam:"inline" union:"member"`
@@ -196,7 +196,7 @@ const (
 	DefaultDeprovisioningWorkflowTypeWorkflowRef DefaultDeprovisioningWorkflowType = "WorkflowRef"
 )
 
-// DefaultDeprovisioningWorkflow - The default deprovisioning workflow for this app. Returns (id) by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+// DefaultDeprovisioningWorkflow - The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
 type DefaultDeprovisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -286,7 +286,7 @@ const (
 	DefaultProvisioningWorkflowTypeWorkflowRef DefaultProvisioningWorkflowType = "WorkflowRef"
 )
 
-// DefaultProvisioningWorkflow - The default provisioning workflow for this app. Returns (id) by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+// DefaultProvisioningWorkflow - The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
 type DefaultProvisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -374,21 +374,21 @@ type AppResponse struct {
 	Admins []AdminAssignee `json:"admins,omitempty"`
 	// The catalog identifier of the underlying app (e.g. "github.com"). Custom apps return "custom".
 	AppClassID *string `json:"app_class_id,omitempty"`
-	// The approval workflow for this app. Returns (id) by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
+	// The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
 	ApprovalWorkflow *ApprovalWorkflow `json:"approval_workflow,omitempty"`
-	// App Store membership and settings. Present when the caller has read access to App Store items. Returns (in_app_store) by default; expand with expand=appstore_settings for the full settings object.
+	// App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
 	AppstoreSettings *AppstoreSettings `json:"appstore_settings,omitempty"`
 	// The category this app belongs to.
 	Category *string `json:"category,omitempty"`
 	// Custom attributes configured on this app. Only present when expand=custom_attributes is requested.
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
-	// The default deprovisioning workflow for this app. Returns (id) by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+	// The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
 	DefaultDeprovisioningWorkflow *DefaultDeprovisioningWorkflow `json:"default_deprovisioning_workflow,omitempty"`
-	// The default provisioning workflow for this app. Returns (id) by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+	// The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
 	DefaultProvisioningWorkflow *DefaultProvisioningWorkflow `json:"default_provisioning_workflow,omitempty"`
 	// A description of the app.
 	Description *string `json:"description,omitempty"`
-	// Whether this app has been disconnected (its stored credentials removed via `DELETE /v1/apps/(app_uuid)`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it with `PUT /v1/apps/(app_uuid)`.
+	// Whether this app has been disconnected (its stored credentials removed via `DELETE /v1/apps/{app_uuid}`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it with `PUT /v1/apps/{app_uuid}`.
 	Disconnected *bool `default:"false" json:"disconnected"`
 	// The unique identifier of the app.
 	ID string `json:"id"`
@@ -402,7 +402,7 @@ type AppResponse struct {
 	PostApprovalMessage *string `json:"post_approval_message,omitempty"`
 	// The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
 	Status *string `json:"status,omitempty"`
-	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/(app_id)/sync` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
+	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
 	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
 	// URL of the app's official website.
 	WebsiteURL *string `json:"website_url,omitempty"`

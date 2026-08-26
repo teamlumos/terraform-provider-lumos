@@ -16,7 +16,7 @@ const (
 	ApprovalWorkflowOverrideTypeWorkflowRef ApprovalWorkflowOverrideType = "WorkflowRef"
 )
 
-// ApprovalWorkflowOverride - The entitlement's approval workflow override. Returns (id) by default; expand with expand=approval_workflow_override for the full workflow.
+// ApprovalWorkflowOverride - The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
 type ApprovalWorkflowOverride struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -106,7 +106,7 @@ const (
 	DeprovisioningWorkflowTypeWorkflowRef DeprovisioningWorkflowType = "WorkflowRef"
 )
 
-// DeprovisioningWorkflow - The entitlement's deprovisioning workflow. Returns (id) by default; expand with expand=deprovisioning_workflow for the full workflow.
+// DeprovisioningWorkflow - The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.
 type DeprovisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -196,7 +196,7 @@ const (
 	ProvisioningWorkflowTypeWorkflowRef ProvisioningWorkflowType = "WorkflowRef"
 )
 
-// ProvisioningWorkflow - The entitlement's provisioning workflow. Returns (id) by default; expand with expand=provisioning_workflow for the full workflow.
+// ProvisioningWorkflow - The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
 type ProvisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -283,13 +283,13 @@ func (u ProvisioningWorkflow) MarshalJSON() ([]byte, error) {
 type EntitlementOutput struct {
 	// The ID of the app that owns this entitlement.
 	AppID string `json:"app_id"`
-	// The entitlement's approval workflow override. Returns (id) by default; expand with expand=approval_workflow_override for the full workflow.
+	// The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
 	ApprovalWorkflowOverride *ApprovalWorkflowOverride `json:"approval_workflow_override,omitempty"`
 	// The entitlement's App Store-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the App Store.
 	AppstoreSettings *EntitlementAppStoreSettings `json:"appstore_settings,omitempty"`
 	// This entitlement's own custom approval message, shown to requesters when the entitlement is approved, overriding the app's. Null means this entitlement inherits the app's approval message.
 	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitempty"`
-	// The entitlement's deprovisioning workflow. Returns (id) by default; expand with expand=deprovisioning_workflow for the full workflow.
+	// The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.
 	DeprovisioningWorkflow *DeprovisioningWorkflow `json:"deprovisioning_workflow,omitempty"`
 	// Optional long-form description of the entitlement.
 	Description *string `json:"description,omitempty"`
@@ -299,7 +299,7 @@ type EntitlementOutput struct {
 	ID string `json:"id"`
 	// Human-readable label for the entitlement (e.g. a role or permission name).
 	Label string `json:"label"`
-	// The entitlement's provisioning workflow. Returns (id) by default; expand with expand=provisioning_workflow for the full workflow.
+	// The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
 	ProvisioningWorkflow *ProvisioningWorkflow `json:"provisioning_workflow,omitempty"`
 	Source               DiscoverySource       `json:"source"`
 }

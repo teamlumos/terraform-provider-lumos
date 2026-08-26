@@ -116,11 +116,11 @@ func (r *EntitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The entitlement's approval workflow override. Returns (id) by default; expand with expand=approval_workflow_override for the full workflow.`,
+				Description: `The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.`,
 			},
 			"appstore_settings": schema.SingleNestedAttribute{
 				Computed: true,
@@ -237,11 +237,11 @@ func (r *EntitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The entitlement's deprovisioning workflow. Returns (id) by default; expand with expand=deprovisioning_workflow for the full workflow.`,
+				Description: `The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.`,
 			},
 			"description": schema.StringAttribute{
 				Computed:    true,
@@ -321,11 +321,11 @@ func (r *EntitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 								Description: `UUID of the bound workflow.`,
 							},
 						},
-						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `( "id": "..." )` + "`" + ` so the path` + "\n" +
+						MarkdownDescription: `A reference to a bound workflow — shaped ` + "`" + `{ "id": "..." }` + "`" + ` so the path` + "\n" +
 							`` + "`" + `<slot>.id` + "`" + ` is stable whether or not the slot is expanded.`,
 					},
 				},
-				Description: `The entitlement's provisioning workflow. Returns (id) by default; expand with expand=provisioning_workflow for the full workflow.`,
+				Description: `The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.`,
 			},
 			"source": schema.StringAttribute{
 				Computed: true,

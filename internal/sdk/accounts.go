@@ -21,8 +21,8 @@ import (
 // An account is a person's presence inside a connected app. Accounts arrive through sync; you cannot
 // create one through this API.
 //
-// `GET /v1/accounts/(account_uuid)/entitlements` lists what one account holds. It reads the same
-// relationship as `GET /v1/entitlements/(entitlement_uuid)/accounts`, from the account's side rather
+// `GET /v1/accounts/{account_uuid}/entitlements` lists what one account holds. It reads the same
+// relationship as `GET /v1/entitlements/{entitlement_uuid}/accounts`, from the account's side rather
 // than the entitlement's.
 type Accounts struct {
 	rootSDK          *Lumos

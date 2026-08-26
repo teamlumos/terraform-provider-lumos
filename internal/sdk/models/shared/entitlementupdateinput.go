@@ -3,7 +3,7 @@
 
 package shared
 
-// EntitlementUpdateInput - Request body for `PATCH /entitlements/(entitlement_uuid)`.
+// EntitlementUpdateInput - Request body for `PATCH /entitlements/{entitlement_uuid}`.
 type EntitlementUpdateInput struct {
 	// New human-readable label for the entitlement.
 	Label string `json:"label"`

@@ -37,13 +37,13 @@ import (
 //
 // ### Which endpoint should I call?
 //
-//   - **To approve or deny an access request**, use `POST /tasks/(task_id)/complete`
-//     (approve) or `POST /tasks/(task_id)/dismiss` (deny).
+//   - **To approve or deny an access request**, use `POST /tasks/{task_id}/complete`
+//     (approve) or `POST /tasks/{task_id}/dismiss` (deny).
 //   - **To find pending approval tasks**, call
 //     `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING` (access
 //     requests).
-//   - **Only use `POST /tasks/(task_id)/perform-action`** for tasks that expose custom workflow
-//     actions. Discover those actions via `GET /tasks/(task_id)/actions`. Approval tasks do not
+//   - **Only use `POST /tasks/{task_id}/perform-action`** for tasks that expose custom workflow
+//     actions. Discover those actions via `GET /tasks/{task_id}/actions`. Approval tasks do not
 //     require this endpoint — `complete` and `dismiss` are the right primitives.
 //
 // For a full walkthrough with `curl` and Python examples, see the
@@ -623,7 +623,7 @@ func (s *Tasks) GetTask(ctx context.Context, request operations.GetTaskRequest, 
 }
 
 // ListTaskActions - List Task Actions
-// Actions the caller may perform on a task, with the transitions each can produce. Pass an `action_type` from this response to `POST /v1/tasks/(task_id):perform-action`.
+// Actions the caller may perform on a task, with the transitions each can produce. Pass an `action_type` from this response to `POST /v1/tasks/{task_id}:perform-action`.
 func (s *Tasks) ListTaskActions(ctx context.Context, request operations.ListTaskActionsRequest, opts ...operations.Option) (*operations.ListTaskActionsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1178,8 +1178,8 @@ func (s *Tasks) CreateTaskComment(ctx context.Context, request operations.Create
 // approval tasks that action is "approve". The caller must be an assignee or a domain
 // admin, and there is no request body. When more than one action could complete the task
 // this returns `400 task.action_ambiguous` — use
-// `POST /v1/tasks/(task_id):perform-action` to pick one. To deny instead, use
-// `POST /v1/tasks/(task_id):dismiss`.
+// `POST /v1/tasks/{task_id}:perform-action` to pick one. To deny instead, use
+// `POST /v1/tasks/{task_id}:dismiss`.
 func (s *Tasks) CompleteTask(ctx context.Context, request operations.CompleteTaskRequest, opts ...operations.Option) (*operations.CompleteTaskResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1436,8 +1436,8 @@ func (s *Tasks) CompleteTask(ctx context.Context, request operations.CompleteTas
 // approval tasks that action is "deny/reject". For other tasks it cancels the task without
 // doing its work. The caller must be an assignee or a domain admin, and there is no request
 // body. When more than one action could dismiss the task this returns
-// `400 task.action_ambiguous` — use `POST /v1/tasks/(task_id):perform-action` to pick one.
-// To approve instead, use `POST /v1/tasks/(task_id):complete`.
+// `400 task.action_ambiguous` — use `POST /v1/tasks/{task_id}:perform-action` to pick one.
+// To approve instead, use `POST /v1/tasks/{task_id}:complete`.
 func (s *Tasks) DismissTask(ctx context.Context, request operations.DismissTaskRequest, opts ...operations.Option) (*operations.DismissTaskResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1692,7 +1692,7 @@ func (s *Tasks) DismissTask(ctx context.Context, request operations.DismissTaskR
 // PerformTaskAction - Perform Task Action
 // **Perform a custom action on a task** — the escape hatch for workflow-specific actions
 // beyond approve/deny, and for disambiguating when multiple actions produce the same
-// transition. Discover available actions via `GET /v1/tasks/(task_id)/actions`, then pass
+// transition. Discover available actions via `GET /v1/tasks/{task_id}/actions`, then pass
 // the returned `action_type` here. `transition_to` is optional when the action has one
 // target. It must be one of the transitions that action lists, otherwise the request is
 // rejected with `400 task.transition_not_allowed`.

@@ -25,12 +25,12 @@ import (
 //
 // ### Building one
 //
-//  1. `GET /v1/workflow-steps?app_id=(app_uuid)` to discover the steps available for that app, each
+//  1. `GET /v1/workflow-steps?app_id={app_uuid}` to discover the steps available for that app, each
 //     with the input schema it accepts.
 //  2. `POST /v1/workflows` with the steps you want.
-//  3. Bind it, for example with `PUT /v1/apps/(app_uuid)/default-provisioning-workflow`.
+//  3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.
 //
-// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/(workflow_id)` rejects changes to
+// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` rejects changes to
 // either.
 //
 // ### Workflows this API cannot describe
@@ -616,9 +616,9 @@ func (s *Workflows) ListWorkflows(ctx context.Context, request operations.ListWo
 // CreateWorkflow - Create Workflow
 // Create a workflow definition.
 //
-// Build the `steps` from `GET /v1/workflow-steps?app_id=(app_uuid)`, which lists the steps available for an app together with the input schema each one accepts.
+// Build the `steps` from `GET /v1/workflow-steps?app_id={app_uuid}`, which lists the steps available for an app together with the input schema each one accepts.
 //
-// Creating a workflow does not put it to work. Bind it to an app or an entitlement through their workflow endpoints, for example `PUT /v1/apps/(app_uuid)/default-provisioning-workflow`. `type` and `app_id` are fixed once set.
+// Creating a workflow does not put it to work. Bind it to an app or an entitlement through their workflow endpoints, for example `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`. `type` and `app_id` are fixed once set.
 func (s *Workflows) CreateWorkflow(ctx context.Context, request shared.WorkflowInput, opts ...operations.Option) (*operations.CreateWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
