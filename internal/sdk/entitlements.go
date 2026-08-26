@@ -1596,12 +1596,12 @@ func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.EntitlementApprovalWorkflowOverride
+			var out shared.EntitlementApprovalWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.EntitlementApprovalWorkflowOverride = &out
+			res.EntitlementApprovalWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -1731,7 +1731,7 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 		OAuth2Scopes:     nil,
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
-	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "EntitlementApprovalWorkflowOverrideInput", "json", `request:"mediaType=application/json"`)
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, false, "EntitlementApprovalWorkflowInput", "json", `request:"mediaType=application/json"`)
 	if err != nil {
 		return nil, err
 	}
@@ -1877,12 +1877,12 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.EntitlementApprovalWorkflowOverride
+			var out shared.EntitlementApprovalWorkflow
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.EntitlementApprovalWorkflowOverride = &out
+			res.EntitlementApprovalWorkflow = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
