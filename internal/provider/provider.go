@@ -132,10 +132,33 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 
 func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewAccountEntitlementsDataSource,
 		NewAppDataSource,
+		NewAppEntitlementAppStoreCatalogDataSource,
+		NewAppEntitlementsDataSource,
+		NewAppStoreCatalogDataSource,
+		NewAppStoreSettingsDataSource,
+		NewAppsDataSource,
+		NewCurrentUserDataSource,
+		NewCustomAttributeDefinitionsDataSource,
 		NewEntitlementDataSource,
+		NewEntitlementAccountsDataSource,
+		NewEntitlementAppStoreSettingsDataSource,
+		NewIntegrationDataSource,
 		NewIntegrationConnectionSchemaDataSource,
+		NewIntegrationsDataSource,
+		NewKnowledgeContextDataSource,
+		NewKnowledgeContextsDataSource,
+		NewTaskDataSource,
+		NewTaskActionsDataSource,
+		NewTasksDataSource,
+		NewUserDataSource,
+		NewUserAccountsDataSource,
+		NewUserRolesDataSource,
+		NewUsersDataSource,
 		NewWorkflowDataSource,
+		NewWorkflowStepsDataSource,
+		NewWorkflowsDataSource,
 	}
 }
 
