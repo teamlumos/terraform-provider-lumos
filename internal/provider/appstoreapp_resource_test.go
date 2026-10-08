@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
-func appStoreAppConfig(approverUserID string) string {
+func appStoreAppConfig(approverUserID, approvalMessage string) string {
 	return providerConfig() + fmt.Sprintf(`
 	data "lumos_user" "approver" {
 		user_id = "%[1]s"
@@ -26,6 +26,7 @@ func appStoreAppConfig(approverUserID string) string {
 	resource "lumos_app_store_app" "test_app_store_app" {
 		app_id        = lumos_app.test_app.id
 		request_flow = {
+			custom_approval_message = "%[3]s"
 			approvers = {
 				users = [{ id = "%[1]s" }]
 			}
@@ -33,7 +34,17 @@ func appStoreAppConfig(approverUserID string) string {
 				users = [{ id = "%[2]s" }]
 			}
 		}
-	}`, approverUserID, os.Getenv("USER_ID"))
+	}`, approverUserID, os.Getenv("USER_ID"), approvalMessage)
+}
+
+// userDisplayFieldChecks applies check to the read-only display fields of the
+// first user in the users set at usersPath.
+func userDisplayFieldChecks(resourceName string, usersPath tfjsonpath.Path, check func(string, tfjsonpath.Path) plancheck.PlanCheck) []plancheck.PlanCheck {
+	checks := []plancheck.PlanCheck{}
+	for _, attr := range []string{"email", "given_name", "family_name", "status"} {
+		checks = append(checks, check(resourceName, usersPath.AtSliceIndex(0).AtMapKey(attr)))
+	}
+	return checks
 }
 
 func TestAccAppStoreAppResource(t *testing.T) {
@@ -52,7 +63,7 @@ func TestAccAppStoreAppResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Read testing
 			{
-				Config: appStoreAppConfig(os.Getenv("USER_ID")),
+				Config: appStoreAppConfig(os.Getenv("USER_ID"), "Approved"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(resourceName, "user_friendly_label", "Terraform Testing - Appstore app"),
 					resource.TestCheckResourceAttr(resourceName, "instance_id", "custom_app_import"),
@@ -66,14 +77,27 @@ func TestAccAppStoreAppResource(t *testing.T) {
 			// Swapping the approver id must not carry the previous approver's
 			// name and email into the plan.
 			{
-				Config: appStoreAppConfig(secondApproverID),
+				Config: appStoreAppConfig(secondApproverID, "Approved"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate),
-						plancheck.ExpectUnknownValue(resourceName, approverUsersPath.AtSliceIndex(0).AtMapKey("email")),
-						plancheck.ExpectUnknownValue(resourceName, approverUsersPath.AtSliceIndex(0).AtMapKey("given_name")),
-						plancheck.ExpectUnknownValue(resourceName, approverUsersPath.AtSliceIndex(0).AtMapKey("family_name")),
-					},
+					PreApply: append(
+						[]plancheck.PlanCheck{plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate)},
+						userDisplayFieldChecks(resourceName, approverUsersPath, plancheck.ExpectUnknownValue)...,
+					),
+				},
+			},
+			{
+				RefreshState: true,
+				Check:        checkApproverMatchesUser,
+			},
+			// An update that leaves the approvers alone does not plan their
+			// display fields as "(known after apply)".
+			{
+				Config: appStoreAppConfig(secondApproverID, "Approved, updated"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: append(
+						[]plancheck.PlanCheck{plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate)},
+						userDisplayFieldChecks(resourceName, approverUsersPath, expectNotUnknownValue)...,
+					),
 				},
 			},
 			{
