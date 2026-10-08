@@ -13,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -178,18 +179,13 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											Description: `The ID of the app that sources this group.`,
 										},
 										"description": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The description of this group.`,
 										},
 										"group_lifecycle": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
-											Description: `The lifecycle of this group.`,
+											Computed:    true,
+											Default:     stringdefault.StaticString(`SYNCED`),
+											Description: `The lifecycle of this group. Default: "SYNCED"`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -208,17 +204,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											Description: `The ID of this group, specific to the integration.`,
 										},
 										"name": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The name of this group.`,
 										},
 										"source_app_id": schema.StringAttribute{
-											Computed: true,
-											PlanModifiers: []planmodifier.String{
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-											},
+											Computed:    true,
 											Description: `The ID of the app that sources this group.`,
 										},
 									},
@@ -301,18 +291,13 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The description of this group.`,
 												},
 												"group_lifecycle": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
-													Description: `The lifecycle of this group.`,
+													Computed:    true,
+													Default:     stringdefault.StaticString(`SYNCED`),
+													Description: `The lifecycle of this group. Default: "SYNCED"`,
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
@@ -331,17 +316,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The name of this group.`,
 												},
 												"source_app_id": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The ID of the app that sources this group.`,
 												},
 											},
@@ -363,24 +342,15 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The email of this user.`,
 												},
 												"family_name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The family name of this user.`,
 												},
 												"given_name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The given name of this user.`,
 												},
 												"id": schema.StringAttribute{
@@ -395,10 +365,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													},
 												},
 												"status": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The status of this user.`,
 												},
 											},
@@ -438,18 +405,13 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													Description: `The ID of the app that sources this group.`,
 												},
 												"description": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The description of this group.`,
 												},
 												"group_lifecycle": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
-													Description: `The lifecycle of this group.`,
+													Computed:    true,
+													Default:     stringdefault.StaticString(`SYNCED`),
+													Description: `The lifecycle of this group. Default: "SYNCED"`,
 												},
 												"id": schema.StringAttribute{
 													Computed: true,
@@ -468,17 +430,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													Description: `The ID of this group, specific to the integration.`,
 												},
 												"name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The name of this group.`,
 												},
 												"source_app_id": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The ID of the app that sources this group.`,
 												},
 											},
@@ -500,24 +456,15 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											},
 											Attributes: map[string]schema.Attribute{
 												"email": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The email of this user.`,
 												},
 												"family_name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The family name of this user.`,
 												},
 												"given_name": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The given name of this user.`,
 												},
 												"id": schema.StringAttribute{
@@ -532,10 +479,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													},
 												},
 												"status": schema.StringAttribute{
-													Computed: true,
-													PlanModifiers: []planmodifier.String{
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
+													Computed:    true,
 													Description: `The status of this user.`,
 												},
 											},
@@ -642,18 +586,13 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Description: `The ID of the app that sources this group. Requires replacement if changed.`,
 									},
 									"description": schema.StringAttribute{
-										Computed: true,
-										PlanModifiers: []planmodifier.String{
-											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-										},
+										Computed:    true,
 										Description: `The description of this group.`,
 									},
 									"group_lifecycle": schema.StringAttribute{
-										Computed: true,
-										PlanModifiers: []planmodifier.String{
-											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-										},
-										Description: `The lifecycle of this group.`,
+										Computed:    true,
+										Default:     stringdefault.StaticString(`SYNCED`),
+										Description: `The lifecycle of this group. Default: "SYNCED"`,
 									},
 									"id": schema.StringAttribute{
 										Computed: true,
@@ -674,17 +613,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										Description: `The ID of this group, specific to the integration. Requires replacement if changed.`,
 									},
 									"name": schema.StringAttribute{
-										Computed: true,
-										PlanModifiers: []planmodifier.String{
-											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-										},
+										Computed:    true,
 										Description: `The name of this group.`,
 									},
 									"source_app_id": schema.StringAttribute{
-										Computed: true,
-										PlanModifiers: []planmodifier.String{
-											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-										},
+										Computed:    true,
 										Description: `The ID of the app that sources this group.`,
 									},
 								},
