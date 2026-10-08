@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -409,8 +408,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Default:     stringdefault.StaticString(`SYNCED`),
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -522,8 +520,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Default:     stringdefault.StaticString(`SYNCED`),
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -605,8 +602,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Default:     stringdefault.StaticString(`SYNCED`),
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,
@@ -718,8 +714,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 										},
 										"group_lifecycle": schema.StringAttribute{
 											Computed:    true,
-											Default:     stringdefault.StaticString(`SYNCED`),
-											Description: `The lifecycle of this group. Default: "SYNCED"`,
+											Description: `The lifecycle of this group.`,
 										},
 										"id": schema.StringAttribute{
 											Computed: true,

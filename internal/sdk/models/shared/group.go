@@ -6,7 +6,6 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 type Lifecycle string
@@ -47,20 +46,9 @@ type Group struct {
 	// The description of this group.
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
-	GroupLifecycle *Lifecycle `default:"SYNCED" json:"group_lifecycle"`
+	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitempty"`
 	// The ID of the app that sources this group.
 	SourceAppID *string `json:"source_app_id,omitempty"`
-}
-
-func (g Group) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(g, "", false)
-}
-
-func (g *Group) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (g *Group) GetID() *string {
