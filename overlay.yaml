@@ -362,12 +362,43 @@ actions:
     update:
       "x-speakeasy-entity": "AppStoreApp"
       "x-speakeasy-param-suppress-computed-diff": true
-  - target: $["components"]["schemas"]["AppApproversOutput"]
-    update:
-      "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["AppStoreAppSettingsOutput"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
+
+  # User and group display fields describe whichever user or group the sibling id
+  # names, so they must plan as unknown when that id changes. Opt them out of the
+  # schema-wide suppress-computed-diff above, or a plan pairs a new id with the
+  # previous user's or group's name and email.
+  - target: $["components"]["schemas"]["User"]["properties"]["email"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["User"]["properties"]["given_name"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["User"]["properties"]["family_name"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["User"]["properties"]["status"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["Group"]["properties"]["name"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["Group"]["properties"]["description"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["Group"]["properties"]["group_lifecycle"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  - target: $["components"]["schemas"]["Group"]["properties"]["source_app_id"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": false
+  # Read-only, so it must not carry a Terraform default: a default on an attribute
+  # of a set element changes the element while planning, and the framework then
+  # leaves the element's other computed attributes null instead of unknown.
+  - target: $["components"]["schemas"]["Group"]["properties"]["group_lifecycle"]["default"]
+    remove: true
 
   # Groups
   - target: $["components"]["schemas"]["Page_Group_"]
