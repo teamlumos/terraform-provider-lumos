@@ -124,8 +124,11 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 					},
 					Attributes: map[string]schema.Attribute{
 						"app_id": schema.StringAttribute{
-							Computed:    true,
-							Optional:    true,
+							Computed: true,
+							Optional: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 							Description: `The ID of the app that sources this group.`,
 						},
 						"description": schema.StringAttribute{
@@ -137,13 +140,19 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The lifecycle of this group.`,
 						},
 						"id": schema.StringAttribute{
-							Computed:    true,
-							Optional:    true,
+							Computed: true,
+							Optional: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 							Description: `The ID of this group.`,
 						},
 						"integration_specific_id": schema.StringAttribute{
-							Computed:    true,
-							Optional:    true,
+							Computed: true,
+							Optional: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
 							Description: `The ID of this group, specific to the integration.`,
 						},
 						"name": schema.StringAttribute{

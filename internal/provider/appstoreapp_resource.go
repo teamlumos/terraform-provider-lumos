@@ -136,7 +136,10 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 												Description: `The given name of this user.`,
 											},
 											"id": schema.StringAttribute{
-												Computed:    true,
+												Computed: true,
+												PlanModifiers: []planmodifier.String{
+													speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+												},
 												Description: `The ID of this user.`,
 											},
 											"status": schema.StringAttribute{
