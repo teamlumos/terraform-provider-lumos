@@ -1,16 +1,16 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 5db1029aed7de652c1506347eb81dc1a
+  docChecksum: 377afa6d584902574b1172ec842fce7f
   docVersion: 0.1.0
   speakeasyVersion: 1.700.2
   generationVersion: 2.801.2
   releaseVersion: 0.10.4
   configChecksum: a2deef5fcc9751166b13fb253f4fd7de
 persistentEdits:
-  generation_id: 9e9c7775-27d2-4db1-8dfe-bf8627f74482
-  pristine_commit_hash: e8e8a9d0e34c0c0e114532211563fa3e4a455925
-  pristine_tree_hash: 868f377aa2b455dea4cb3e76df72a50b18920164
+  generation_id: b05e83b5-11b8-47eb-8a6c-c5d19c7ba5c8
+  pristine_commit_hash: da5d5df6e4a7ebb0cfd4f1d899c493837e8efb62
+  pristine_tree_hash: e731f44d6df83502d701e817b3d9ac2ad21f1560
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -295,8 +295,8 @@ trackedFiles:
     pristine_git_object: f3b6f4e4e1f91eedd7be71e494147ade1a2dda1b
   internal/provider/appstoreapp_resource.go:
     id: a9caac9725ec
-    last_write_checksum: sha1:ae738eae982fa9fd26b518b7ee421ae465827dfa
-    pristine_git_object: 40fc38ed874c936027535d8a6c2dc3ea96a70c42
+    last_write_checksum: sha1:3a475b874e02ee25d2f938e181fcdfbc59697345
+    pristine_git_object: a54b3b81c37fb20441e6fb3958568b75937cce9e
   internal/provider/appstoreapp_resource_sdk.go:
     id: decb26a5b1d6
     last_write_checksum: sha1:25a3d3e067f281ea29da53e81c5cbbab6e35063f
@@ -411,8 +411,8 @@ trackedFiles:
     pristine_git_object: 5c21a2944143b5dcbe2a1409882f77ee3845ea0d
   internal/provider/requestablepermission_resource.go:
     id: 3d192a0504f1
-    last_write_checksum: sha1:f18f05ed752ae393f76ce10159b1add7028498e1
-    pristine_git_object: 76530d2e0fa038755e105c33ae9be8b889f38386
+    last_write_checksum: sha1:335eb2196632629ffea0f3b4bf96d41f24425cf7
+    pristine_git_object: 42ade0c56d4cbdd5d2a1f92ba3590f79b13d40aa
   internal/provider/requestablepermission_resource_sdk.go:
     id: f91e9c9a73f7
     last_write_checksum: sha1:709f73db4fb9c3cbdf90560dec95d00af0616d15
@@ -1163,8 +1163,8 @@ trackedFiles:
     pristine_git_object: aa9b6b68c5a18dbf3307747caa20b95b2cb81e92
   internal/sdk/models/shared/group.go:
     id: 941f75eafff0
-    last_write_checksum: sha1:b615850834fc97a098d4ce766096dd600b019c2f
-    pristine_git_object: 7fbdc7a26f3cd2c84910cb579bfce76db22da3ba
+    last_write_checksum: sha1:5e13a4f5251a1899bdc7bf4b9ba67dae1f3ef965
+    pristine_git_object: cc24c0067020223317010f2b96da57effa3fb4f1
   internal/sdk/models/shared/groupprovisioningoption.go:
     id: 78e08a0c175e
     last_write_checksum: sha1:a2020ff33a3f8170924f9a6f318d9ae6659e8389
@@ -1193,10 +1193,6 @@ trackedFiles:
     id: 4af80ac474db
     last_write_checksum: sha1:bb4529ed8d9e7cdf0a38df97bf0334130a449e5e
     pristine_git_object: 15a101dc0251fbafba41ee34eafc7202dc5420d5
-  internal/sdk/models/shared/lifecycle.go:
-    id: 90ebd9cea397
-    last_write_checksum: sha1:c9ac83bdbe2b3a1ea1b3d12af7fb91efb90f42e3
-    pristine_git_object: 31817f2a9adc429511d1a75b51988aebe2f1dcd3
   internal/sdk/models/shared/limitoffsetpageactivitylog.go:
     id: d32551b272c4
     last_write_checksum: sha1:0995a7d9fc1724d8be5ecb17621dac5f403eb935
@@ -1379,8 +1375,8 @@ trackedFiles:
     pristine_git_object: a46d16cd3f48c3b25197191a20a1fbed91d59c28
   internal/sdk/models/shared/user.go:
     id: 9a5b526115dc
-    last_write_checksum: sha1:3e09a30856d378a39c6b562a011fa8f83b9ba9cc
-    pristine_git_object: 4ceb64e1c4da8c73dbe974296350fab996deee8d
+    last_write_checksum: sha1:d93b9e92dd17ab8317fd76634b38dab3a0d0a3da
+    pristine_git_object: 73a9ea06a7abd9d25e27e5fc4fda5eba6b9926f8
   internal/sdk/models/shared/userlifecyclestatus.go:
     id: 07a48343f7db
     last_write_checksum: sha1:346f179d39e13b8c88e0928abc5876353e067138
@@ -1682,7 +1678,7 @@ examples:
           size: 50
       responses:
         "200":
-          application/json: {"items": [{}], "total": 254949, "page": 571802, "size": 474240}
+          application/json: {"items": [{"group_lifecycle": "SYNCED"}], "total": 254949, "page": 571802, "size": 474240}
         "422":
           application/json: {}
   getUploadJobState:
