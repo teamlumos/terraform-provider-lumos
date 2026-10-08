@@ -76,7 +76,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 				if resp.RequestConfig.RequestApprovalConfig.Approvers == nil {
 					r.RequestConfig.RequestApprovalConfig.Approvers = nil
 				} else {
-					r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppAdminsInput{}
+					r.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 					r.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 
 					for _, groupsItem1 := range resp.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -117,7 +117,7 @@ func (r *RequestablePermissionResourceModel) RefreshFromSharedRequestablePermiss
 				if resp.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 				} else {
-					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppAdminsInput{}
+					r.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 					r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 
 					for _, groupsItem2 := range resp.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {

@@ -10,8 +10,8 @@ import (
 type AppStoreAppSettingsRequestFlowInput struct {
 	Admins                                  *AppAdminsInput           `tfsdk:"admins"`
 	AllowedGroups                           *AllowedGroupsConfigInput `tfsdk:"allowed_groups"`
-	Approvers                               *AppAdminsInput           `tfsdk:"approvers"`
-	ApproversStage2                         *AppAdminsInput           `tfsdk:"approvers_stage_2"`
+	Approvers                               *AppApproversInput        `tfsdk:"approvers"`
+	ApproversStage2                         *AppApproversInput        `tfsdk:"approvers_stage_2"`
 	CustomApprovalMessage                   types.String              `tfsdk:"custom_approval_message"`
 	Discoverability                         types.String              `tfsdk:"discoverability"`
 	RequestValidationInlineWebhook          *BaseInlineWebhook        `tfsdk:"request_validation_inline_webhook"`

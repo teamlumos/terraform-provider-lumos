@@ -81,7 +81,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					if itemsItem.RequestConfig.RequestApprovalConfig.Approvers == nil {
 						items.RequestConfig.RequestApprovalConfig.Approvers = nil
 					} else {
-						items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppAdminsInput{}
+						items.RequestConfig.RequestApprovalConfig.Approvers = &tfTypes.AppApproversInput{}
 						items.RequestConfig.RequestApprovalConfig.Approvers.Groups = []tfTypes.Group{}
 
 						for _, groupsItem1 := range itemsItem.RequestConfig.RequestApprovalConfig.Approvers.Groups {
@@ -122,7 +122,7 @@ func (r *RequestablePermissionsDataSourceModel) RefreshFromSharedPageRequestable
 					if itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2 == nil {
 						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = nil
 					} else {
-						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppAdminsInput{}
+						items.RequestConfig.RequestApprovalConfig.ApproversStage2 = &tfTypes.AppApproversInput{}
 						items.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups = []tfTypes.Group{}
 
 						for _, groupsItem2 := range itemsItem.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {

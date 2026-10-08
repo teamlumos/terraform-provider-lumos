@@ -247,7 +247,7 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 					"admins": schema.SingleNestedAttribute{
 						Computed: true,
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.SetNestedAttribute{
+							"groups": schema.ListNestedAttribute{
 								Computed: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{
@@ -283,7 +283,7 @@ func (r *AppStoreAppDataSource) Schema(ctx context.Context, req datasource.Schem
 								},
 								Description: `Groups assigned as app admins.`,
 							},
-							"users": schema.SetNestedAttribute{
+							"users": schema.ListNestedAttribute{
 								Computed: true,
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: map[string]schema.Attribute{

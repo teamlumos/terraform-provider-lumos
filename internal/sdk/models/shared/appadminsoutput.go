@@ -3,26 +3,11 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type AppAdminsOutput struct {
 	// Groups assigned as app admins.
-	Groups []Group `json:"groups"`
+	Groups []Group `json:"groups,omitempty"`
 	// Users assigned as app admins.
-	Users []User `json:"users"`
-}
-
-func (a AppAdminsOutput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AppAdminsOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
+	Users []User `json:"users,omitempty"`
 }
 
 func (a *AppAdminsOutput) GetGroups() []Group {
