@@ -380,11 +380,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 						},
 						Attributes: map[string]schema.Attribute{
-							"groups": schema.ListNestedAttribute{
+							"groups": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
@@ -438,11 +438,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								},
 								Description: `Groups assigned as app admins.`,
 							},
-							"users": schema.ListNestedAttribute{
+							"users": schema.SetNestedAttribute{
 								Computed: true,
 								Optional: true,
-								PlanModifiers: []planmodifier.List{
-									speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+								PlanModifiers: []planmodifier.Set{
+									speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 								},
 								NestedObject: schema.NestedAttributeObject{
 									Validators: []validator.Object{
