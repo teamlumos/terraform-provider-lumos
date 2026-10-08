@@ -344,14 +344,18 @@ func checkApproverDisplayFieldsMatch(resourceName string) resource.TestCheckFunc
 	return resource.ComposeAggregateTestCheckFunc(checks...)
 }
 
-func expectApproverDisplayFieldsUnknown(resourceName string) []plancheck.PlanCheck {
+// approverDisplayFieldChecks applies check to the read-only display fields of
+// the single user and group in each approval stage.
+func approverDisplayFieldChecks(resourceName string, check func(string, tfjsonpath.Path) plancheck.PlanCheck) []plancheck.PlanCheck {
 	checks := []plancheck.PlanCheck{}
 	for _, stage := range []string{"approvers", "approvers_stage_2"} {
 		stagePath := tfjsonpath.New("request_config").AtMapKey("request_approval_config").AtMapKey(stage)
 		for _, attr := range []string{"email", "given_name", "family_name", "status"} {
-			checks = append(checks, plancheck.ExpectUnknownValue(resourceName, stagePath.AtMapKey("users").AtSliceIndex(0).AtMapKey(attr)))
+			checks = append(checks, check(resourceName, stagePath.AtMapKey("users").AtSliceIndex(0).AtMapKey(attr)))
 		}
-		checks = append(checks, plancheck.ExpectUnknownValue(resourceName, stagePath.AtMapKey("groups").AtSliceIndex(0).AtMapKey("name")))
+		for _, attr := range []string{"name", "description", "group_lifecycle", "source_app_id"} {
+			checks = append(checks, check(resourceName, stagePath.AtMapKey("groups").AtSliceIndex(0).AtMapKey(attr)))
+		}
 	}
 	return checks
 }
@@ -378,7 +382,7 @@ func TestAccPermissionResourceApproverChange(t *testing.T) {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: append(
 						[]plancheck.PlanCheck{plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate)},
-						expectApproverDisplayFieldsUnknown(resourceName)...,
+						approverDisplayFieldChecks(resourceName, plancheck.ExpectUnknownValue)...,
 					),
 				},
 			},
@@ -386,11 +390,15 @@ func TestAccPermissionResourceApproverChange(t *testing.T) {
 				RefreshState: true,
 				Check:        checkApproverDisplayFieldsMatch(resourceName),
 			},
-			// An update that leaves the approvers alone keeps them intact.
+			// An update that leaves the approvers alone keeps them intact, and does
+			// not plan their display fields as "(known after apply)".
 			{
 				Config: approverChangeConfig("Approver change renamed", userB, groupB, userA, groupA),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate)},
+					PreApply: append(
+						[]plancheck.PlanCheck{plancheck.ExpectResourceAction(resourceName, plancheck.ResourceActionUpdate)},
+						approverDisplayFieldChecks(resourceName, expectNotUnknownValue)...,
+					),
 				},
 			},
 			{

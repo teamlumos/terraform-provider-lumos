@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
@@ -46,6 +48,36 @@ func testAccClient(t *testing.T) *sdk.Lumos {
 		sdk.WithSecurity(shared.Security{HTTPBearer: os.Getenv("LUMOS_API_TOKEN")}),
 		sdk.WithClient(http.DefaultClient),
 	)
+}
+
+// expectNotUnknownValue is the inverse of plancheck.ExpectUnknownValue: it fails
+// only when the planned value is "(known after apply)", so a value planned as
+// known null still passes.
+func expectNotUnknownValue(resourceAddress string, attributePath tfjsonpath.Path) plancheck.PlanCheck {
+	return expectNotUnknownValueCheck{resourceAddress: resourceAddress, attributePath: attributePath}
+}
+
+type expectNotUnknownValueCheck struct {
+	resourceAddress string
+	attributePath   tfjsonpath.Path
+}
+
+func (e expectNotUnknownValueCheck) CheckPlan(_ context.Context, req plancheck.CheckPlanRequest, resp *plancheck.CheckPlanResponse) {
+	for _, rc := range req.Plan.ResourceChanges {
+		if rc.Address != e.resourceAddress {
+			continue
+		}
+		result, err := tfjsonpath.Traverse(rc.Change.AfterUnknown, e.attributePath)
+		if err != nil {
+			// after_unknown only lists unknown values, so a missing path is known.
+			return
+		}
+		if isUnknown, ok := result.(bool); ok && isUnknown {
+			resp.Error = fmt.Errorf("Expected known value at %q, but found unknown value", e.attributePath.String())
+		}
+		return
+	}
+	resp.Error = fmt.Errorf("%s - Resource not found in plan ResourceChanges", e.resourceAddress)
 }
 
 // otherActiveUserID returns an active user in the test domain other than
