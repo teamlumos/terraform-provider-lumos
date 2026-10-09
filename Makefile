@@ -17,11 +17,20 @@ spec:
 	fi
 	@echo "Generating the V1 spec from lumos $(LUMOS_COMMIT)..."
 	direnv exec "$(LUMOS_REPO)" sh -c 'cd "$(LUMOS_SPEC_WORKTREE)" && inv api.codegen-openapi-v1 --out "$(CURDIR)/original-openapi.json"'
+	@$(MAKE) --no-print-directory check-overlay
 	@echo "✓ original-openapi.json regenerated - run 'make provider' next"
 
 
+# Fails if any overlay target matches nothing in the spec, e.g. a mapped
+# endpoint that was renamed or removed in the API.
+.PHONY: check-overlay
+check-overlay:
+	@speakeasy overlay apply --strict -s original-openapi.json -o overlay.yaml > /dev/null
+	@echo "✓ every overlay target matches the spec"
+
+
 .PHONY: provider
-provider: overlay.yaml
+provider: check-overlay
 	@echo "Syncing gen.yaml version from latest v1.* git tag..."
 	@VERSION=$$(git describe --tags --abbrev=0 --match 'v1.*' 2>/dev/null | sed 's/^v//'); \
 	if [ -n "$$VERSION" ]; then \
@@ -41,13 +50,6 @@ provider: overlay.yaml
 	@go generate ./...
 	@if [ -d .docs-guides-backup ]; then rm -rf docs/guides && mv .docs-guides-backup docs/guides; fi
 	@echo "✓ Successfully generated and compiled the provider and ran tests"
-
-
-.PHONY: overlay
-overlay: openapi.json original-openapi.json
-	@echo "Generating overlay.yaml from openapi.json and original-openapi.json..."
-	speakeasy overlay compare --schemas original-openapi.json --schemas openapi.json > overlay.yaml
-	@echo "✓ overlay.yaml generated"
 
 
 .PHONY: testacc
