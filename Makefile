@@ -29,7 +29,7 @@ provider: overlay.yaml
 	  echo "  Set terraform.version to $$VERSION"; \
 	fi
 	@echo "Running Speakeasy to generate the provider..."
-	speakeasy run --skip-compile --skip-versioning
+	speakeasy run --skip-compile --skip-versioning --skip-upload-spec
 	@echo "Running go mod tidy..."
 	@go mod tidy
 	@echo "Compiling provider..."

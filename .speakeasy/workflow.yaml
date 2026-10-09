@@ -6,8 +6,6 @@ sources:
             - location: ./original-openapi.json
         overlays:
             - location: ./overlay.yaml
-        registry:
-            location: registry.speakeasyapi.dev/lumos/lumos/fast-api
 targets:
     lumos-terraform-provider-target:
         target: terraform
