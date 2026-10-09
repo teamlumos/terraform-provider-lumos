@@ -1,0 +1,31 @@
+name: Check overlay
+
+# Fails a PR if overlay.yaml targets anything the committed V1 spec doesn't
+# have, e.g. a mapped endpoint renamed or removed by a spec bump.
+on:
+  pull_request:
+  push:
+    branches:
+      - 'release/v1'
+
+permissions:
+  contents: read
+
+jobs:
+  check_overlay:
+    name: "Check overlay"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same version as .speakeasy/workflow.yaml's speakeasyVersion.
+      - name: Install Speakeasy CLI
+        env:
+          SPEAKEASY_VERSION: 1.800.1
+        run: |
+          curl -fsSL -o speakeasy.zip "https://github.com/speakeasy-api/speakeasy/releases/download/v${SPEAKEASY_VERSION}/speakeasy_linux_amd64.zip"
+          unzip -q speakeasy.zip speakeasy -d "$RUNNER_TEMP/speakeasy"
+          echo "$RUNNER_TEMP/speakeasy" >> "$GITHUB_PATH"
+
+      - name: Check every overlay target matches the spec
+        run: make check-overlay
