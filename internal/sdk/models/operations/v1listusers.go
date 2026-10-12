@@ -18,7 +18,7 @@ type V1ListUsersRequest struct {
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
 	PageToken *string `queryParam:"style=form,explode=true,name=page_token"`
 	// Maximum number of items to return per page. Values above 100 are clamped to 100 rather than rejected.
-	PageSize *int64 `default:"50" queryParam:"style=form,explode=true,name=page_size"`
+	PageSize *int64 `default:"100" queryParam:"style=form,explode=true,name=page_size"`
 }
 
 func (v V1ListUsersRequest) MarshalJSON() ([]byte, error) {
@@ -81,6 +81,8 @@ type V1ListUsersResponse struct {
 	UserListOutput *shared.UserListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*V1ListUsersResponse, error)
 }
 
 func (v *V1ListUsersResponse) GetContentType() string {
