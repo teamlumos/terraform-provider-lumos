@@ -36,7 +36,4 @@ original-openapi.json              linguist-generated=true
 # diffs visible.
 tests/**                                                                      linguist-generated=false
 internal/**/*_test.go                                                         linguist-generated=false
-examples/resources/lumos_access_policy/resource.tf                            linguist-generated=false
-examples/resources/lumos_requestable_permission/resource.tf                   linguist-generated=false
 internal/sdk/internal/hooks/registration.go                                   linguist-generated=false
-internal/validators/objectvalidators/request_config_input_validator.go        linguist-generated=false
