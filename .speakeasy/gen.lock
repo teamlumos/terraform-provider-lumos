@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: c65cd43f36ee56fcd56231e00c139a1b
+  docChecksum: c59d43a670d7fcc0d951809e51caa002
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -20,16 +20,15 @@ features:
     globalSecurity: 2.82.3
     globalServerURLs: 2.83.2
     nullables: 0.0.0
+    pagination: 2.83.7
     retries: 2.81.6
     unions: 2.82.20
 trackedFiles:
-  .gitattributes:
-    id: 24139dae6567
-    pristine_git_object: e6a994416d0f527912d2d272e2583458f4fc9bcb
   USAGE.md:
     id: 3aed33ce6e6f
     pristine_git_object: 8e707bb129af1da185ba30b4c289b0160819c437
   examples/data-sources/lumos_current_user/data-source.tf: {}
+  examples/data-sources/lumos_users/data-source.tf: {}
   examples/provider/provider.tf:
     id: 954e955c0240
     pristine_git_object: 7e0d9b9fffadefc671336d169d61f02a5d2ded72
@@ -174,12 +173,15 @@ trackedFiles:
   internal/provider/typeconvert/int.go:
     id: c44fcd78fccc
     pristine_git_object: 85e79406782c5e6fb67d15b25784be652dc08478
+  internal/provider/types/custom_attribute.go: {}
+  internal/provider/types/user.go: {}
+  internal/provider/types/user_with_custom_attributes.go: {}
+  internal/provider/types/value.go: {}
+  internal/provider/users_data_source.go: {}
+  internal/provider/users_data_source_sdk.go: {}
   internal/provider/utils.go:
     id: 312d50f148af
     pristine_git_object: d2cc34dd0d2340d2ee5ad7c7e0211481dc1badbb
-  internal/sdk/.gitattributes:
-    id: 1ea4c4e0a39d
-    pristine_git_object: e6a994416d0f527912d2d272e2583458f4fc9bcb
   internal/sdk/accesspolicies.go: {}
   internal/sdk/accessrequests.go: {}
   internal/sdk/accessreviews.go: {}
@@ -2525,7 +2527,7 @@ examples:
       parameters:
         query:
           exact_match: false
-          page_size: 50
+          page_size: 100
       responses:
         "200":
           application/json: {"users": []}
