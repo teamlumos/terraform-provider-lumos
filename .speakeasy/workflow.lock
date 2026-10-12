@@ -1,4 +1,4 @@
-speakeasyVersion: 1.700.2
+speakeasyVersion: 1.800.1
 sources:
     FastAPI:
         sourceNamespace: fast-api
@@ -15,15 +15,13 @@ targets:
         sourceBlobDigest: sha256:c491d4752536cdccaead03c8eb17b2dae97475be1aefe79149d4a82dc7555bc9
 workflow:
     workflowVersion: 1.0.0
-    speakeasyVersion: latest
+    speakeasyVersion: 1.800.1
     sources:
         FastAPI:
             inputs:
                 - location: ./original-openapi.json
             overlays:
                 - location: ./overlay.yaml
-            registry:
-                location: registry.speakeasyapi.dev/lumos/lumos/fast-api
     targets:
         lumos-terraform-provider-target:
             target: terraform
