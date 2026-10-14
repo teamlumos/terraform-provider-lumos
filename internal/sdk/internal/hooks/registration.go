@@ -15,4 +15,5 @@ func initHooks(h *Hooks) {
 	h.registerAfterSuccessHook(listPageError{})
 	h.registerBeforeRequestHook(appStoreSettingsExpand{})
 	h.registerBeforeRequestHook(removeAppFromAppStore{})
+	h.registerAfterSuccessHook(appDeleteRecordKept{})
 }
