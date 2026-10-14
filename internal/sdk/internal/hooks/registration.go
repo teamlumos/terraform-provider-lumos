@@ -14,4 +14,5 @@ func initHooks(h *Hooks) {
 	// Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance
 	h.registerAfterSuccessHook(listPageError{})
 	h.registerBeforeRequestHook(appStoreSettingsExpand{})
+	h.registerBeforeRequestHook(removeAppFromAppStore{})
 }
