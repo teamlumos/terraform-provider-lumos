@@ -87,9 +87,16 @@ actions:
   - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true
+  # Send only the fields that changed, so an unchanged metadata field isn't
+  # written back as an override of the app's own default. auth and settings
+  # are still sent whenever they're set.
   - target: $["paths"]["/v1/apps/{app_uuid}"]["patch"]
     update:
-      x-speakeasy-entity-operation: App#update
+      x-speakeasy-entity-operation:
+        - entityOperation: App#update
+          options:
+            patch:
+              style: only-send-changed-attributes
   - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]
     update:
       x-speakeasy-entity-operation: App#delete
@@ -179,6 +186,20 @@ actions:
   - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["request_instructions"]
     update:
       x-speakeasy-terraform-ignore: true
+
+  # A lumos_app update can't change these, so a plan keeps their current
+  # values instead of showing them as known after apply. The slots and
+  # appstore_settings change only through their own resources, and an
+  # omitted metadata field keeps its value in the merge patch.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description","logo_url","website_url"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+  # These change only when an update reconnects the integration. Updates
+  # resend auth and settings whenever they're set, so a connected app
+  # reconnects on every update and a custom app never does.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["sync_status","disconnected","instance_id"]
+    update:
+      x-speakeasy-plan-modifiers: UnknownOnReconnect
 
   # Expanded-only fields stay off the resource; the data source reads them.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]
