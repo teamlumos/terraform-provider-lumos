@@ -106,6 +106,9 @@ actions:
   - target: $["components"]["schemas"]["AppResponse"]
     update:
       x-speakeasy-entity: App
+      x-speakeasy-entity-description: >-
+        A custom app, or a connected integration. App Store settings show here
+        read-only; manage them with `lumos_app_appstore_settings`.
   # Expanded, the settings are always the full shape.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]["anyOf"]
     remove: true
@@ -141,6 +144,9 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
     update:
       x-speakeasy-entity: AppAppstoreSettings
+      x-speakeasy-entity-description: >-
+        An app's App Store settings: whether it's listed, who can request it,
+        and what the request form asks. Keyed by the app's ID.
   # The API takes an app out of the App Store by setting in_app_store to
   # false, not with a DELETE. Destroy needs its own operation for that, so
   # this one exists only in the provider's spec: the trailing slash keeps its
