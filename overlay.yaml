@@ -134,6 +134,28 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
     update:
       x-speakeasy-entity: AppAppstoreSettings
+  # The API takes an app out of the App Store by setting in_app_store to
+  # false, not with a DELETE. Destroy needs its own operation for that, so
+  # this one exists only in the provider's spec: the trailing slash keeps its
+  # path distinct, and the removeAppFromAppStore hook sends it to the real
+  # settings endpoint with that body.
+  - target: $["paths"]
+    update:
+      "/v1/apps/{app_uuid}/appstore-settings/":
+        patch:
+          operationId: v1RemoveAppFromAppStore
+          summary: Remove an app from the App Store
+          tags: ["Apps"]
+          x-speakeasy-entity-operation: AppAppstoreSettings#delete
+          parameters:
+            - name: app_uuid
+              in: path
+              required: true
+              schema: {type: string}
+              x-speakeasy-name-override: app_id
+          responses:
+            "200":
+              description: The app is no longer listed in the App Store.
 
   # Credentials are free-form per integration and never shown in plans.
   # A different app_class_id is a different integration, so it replaces.
