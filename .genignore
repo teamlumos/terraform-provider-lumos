@@ -1,6 +1,8 @@
 internal/sdk/internal/hooks/registration.go
 internal/sdk/internal/hooks/app_expand.go
 internal/sdk/internal/hooks/app_expand_test.go
+internal/sdk/internal/hooks/app_store_remove.go
+internal/sdk/internal/hooks/app_store_remove_test.go
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go
