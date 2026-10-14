@@ -212,13 +212,32 @@ actions:
     update:
       anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
 
-  # Written and read in different shapes (labels in, objects out), which
-  # Speakeasy can't merge into one attribute. Left out until the resource
-  # converts them itself.
-  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput","AppStoreSettingsResponse"]["properties"]["time_based_access","default_entitlement","custom_intake_fields"]
+  # Time-based access options are written as labels but read back as
+  # {label, value_seconds} objects, and one attribute needs one shape. The
+  # settings read keeps only the labels, so Terraform works in labels both
+  # ways. Overridden inline here because the catalog response shares the
+  # TimeBasedAccess schema.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]["$ref"]
     remove: true
-  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["required"][?@=="time_based_access"]
-    remove: true
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]
+    update:
+      type: object
+      properties:
+        options:
+          anyOf: [{"type": "array", "items": {"type": "string"}}, {"type": "null"}]
+          description: Labels of the time-based access options offered for this app. An empty list means the app uses the domain-level defaults.
+        default:
+          anyOf: [{"type": "string"}, {"type": "null"}]
+          description: Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
+  # The API also reads an empty list back as null, so the read turns those
+  # into [] and a config that sets [] to clear one matches what's read.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: |
+          .allowed_requester_group_uuids |= (. // [])
+          | .custom_intake_fields |= (. // [])
+          | .time_based_access.options |= (if . == null then [] else map(.label) end)
 
   # Requester groups have no order and no duplicates in the API.
   - target: $["components"]["schemas"]["AppStoreSettingsPatchInput","AppStoreSettingsResponse"]["properties"]["allowed_requester_group_uuids"]["anyOf"][?@.type=="array"]
