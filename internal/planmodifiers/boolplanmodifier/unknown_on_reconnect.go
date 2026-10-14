@@ -1,0 +1,43 @@
+package boolplanmodifier
+
+import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/utils"
+)
+
+var _ planmodifier.Bool = BoolUnknownOnReconnectPlanModifier{}
+
+// BoolUnknownOnReconnectPlanModifier plans a lumos_app attribute that only a
+// reconnect changes. A connected app reconnects on every update, so the
+// value stays unknown until the API answers; a custom app never reconnects,
+// so it keeps its current value.
+type BoolUnknownOnReconnectPlanModifier struct{}
+
+// Description describes the plan modification in plain text formatting.
+func (v BoolUnknownOnReconnectPlanModifier) Description(_ context.Context) string {
+	return "Keeps the current value unless the update reconnects the integration."
+}
+
+// MarkdownDescription describes the plan modification in Markdown formatting.
+func (v BoolUnknownOnReconnectPlanModifier) MarkdownDescription(ctx context.Context) string {
+	return v.Description(ctx)
+}
+
+// PlanModifyBool performs the plan modification.
+func (v BoolUnknownOnReconnectPlanModifier) PlanModifyBool(ctx context.Context, req planmodifier.BoolRequest, resp *planmodifier.BoolResponse) {
+	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() || !req.PlanValue.IsUnknown() {
+		return
+	}
+	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config)
+	resp.Diagnostics.Append(diags...)
+	if diags.HasError() || reconnects {
+		return
+	}
+	resp.PlanValue = req.StateValue
+}
+
+func UnknownOnReconnect() planmodifier.Bool {
+	return BoolUnknownOnReconnectPlanModifier{}
+}
