@@ -166,6 +166,13 @@ actions:
   - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["app_class_id"]
     update:
       x-speakeasy-param-force-new: true
+  # A create body either connects an integration (app_class_id + auth) or
+  # creates a custom app (label, category, description, ...); the API
+  # rejects a body that mixes them. Checking it here fails the plan instead
+  # of the apply. Connected apps don't set the metadata fields at all.
+  - target: $["components"]["schemas"]["AppCreateInput"]["properties"]["app_class_id"]
+    update:
+      x-speakeasy-conflicts-with: [label, category, description, logo_url, website_url]
 
   # request_instructions is writable through the app and through App Store
   # settings; only the latter can clear it, so only that one is exposed.
