@@ -1,0 +1,51 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Behavior
+
+* **One per entitlement.** Changing `entitlement_id` replaces the resource: the old entitlement is hidden from the App Store, keeping its overrides, and the new entitlement's settings are written.
+* **The app must be in the App Store.** Otherwise, or if the entitlement has no request settings, the API returns 404.
+* **Overrides follow the config.** Omitting `allowed_requester_group_uuids_override` or `time_based_access_override`, or setting it to `null`, means the entitlement inherits the app's setting. Omitting `request_validation_webhook_uuid`, or setting it to `null`, means the entitlement has no webhook of its own. This differs from `lumos_app_appstore_settings`, where omitted settings are left as they are.
+* **An empty `allowed_requester_group_uuids_override`** (`[]`) lets anyone in the organization request the entitlement, even if the app limits requests to some groups.
+* **`visible_in_appstore`** keeps its current value when omitted or set to `null`.
+* **Time-based access options** are set and shown by their labels.
+
+## Destroy behavior
+
+Destroy hides the entitlement from the App Store (`visible_in_appstore = false`). Its overrides stay. To stop managing the settings without hiding the entitlement, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_entitlement_appstore_settings.deploy_admin
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+## Import
+
+The import ID is the entitlement's ID. Importing works for entitlements Terraform doesn't manage, including ones synced from an integration.
+
+In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}

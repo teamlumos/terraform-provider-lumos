@@ -1,0 +1,53 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Behavior
+
+* **Creating** adds a manual entitlement to the app. Entitlements synced from an integration can't be created, but they can be imported, for example to manage their App Store settings.
+* **Only `label` can change, and only on manual entitlements.** Renaming one synced from an integration fails, because the sync owns its label. Renaming also changes the name shown in the App Store. Changing `app_id` replaces the entitlement.
+* **App Store settings** appear read-only in `appstore_settings`. They're null while the app isn't in the App Store or the entitlement has no request settings. Change them with `lumos_entitlement_appstore_settings`.
+
+## Destroy behavior
+
+Destroy deletes the entitlement and its App Store settings. Lumos refuses the delete, and destroy fails with the API's error, when the entitlement:
+
+* is synced from an integration,
+* is still held by anyone,
+* has pending access requests, or time-based access scheduled for removal, or
+* is referenced by an access policy.
+
+To stop managing an entitlement without deleting it, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_entitlement.deploy_admin
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+## Import
+
+In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the entitlement's ID:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}
