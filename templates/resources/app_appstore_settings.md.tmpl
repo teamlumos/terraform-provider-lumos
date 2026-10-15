@@ -1,0 +1,49 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Behavior
+
+* **One per app.** Changing `app_id` replaces the resource: the old app is taken out of the App Store, keeping its other settings, and the new app's settings are written.
+* **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
+* **Time-based access options** are set and shown by their labels.
+* **Omitted settings are left as they are.** Only the settings in the config are managed.
+
+## Destroy behavior
+
+Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays. To stop managing the settings without unlisting the app, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_app_appstore_settings.okta
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+## Import
+
+The import ID is the app's ID. Importing works for apps Terraform doesn't manage, including apps connected in the Lumos UI.
+
+In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}
