@@ -1,13 +1,11 @@
 workflowVersion: 1.0.0
-speakeasyVersion: latest
+speakeasyVersion: 1.800.1
 sources:
     FastAPI:
         inputs:
             - location: ./original-openapi.json
         overlays:
             - location: ./overlay.yaml
-        registry:
-            location: registry.speakeasyapi.dev/lumos/lumos/fast-api
 targets:
     lumos-terraform-provider-target:
         target: terraform

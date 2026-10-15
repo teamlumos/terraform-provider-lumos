@@ -292,7 +292,7 @@ This SDK is generated and maintained using [Speakeasy](https://docs.speakeasyapi
 <!-- Start Summary [summary] -->
 ## Summary
 
-Lumos: The Lumos provider allows you to manage resources such as Apps, Permissions, and Pre-Approval Rules
+Lumos API (v1): ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.x (version = "~> 0.10").
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -305,8 +305,13 @@ Lumos: The Lumos provider allows you to manage resources such as Apps, Permissio
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
   * [Release](#release)
   * [Local Development & Testing](#local-development-testing)
-* [Copy the TF_REATTACH_PROVIDERS env var](#copy-the-tfreattachproviders-env-var)
-* [In a new terminal](#in-a-new-terminal)
+  * [Contributions](#contributions)
+  * [License](#license)
+  * [SDK Created by Speakeasy](#sdk-created-by-speakeasy)
+  * [Installation](#installation-1)
+  * [Authentication](#authentication-1)
+  * [Available Resources and Data Sources](#available-resources-and-data-sources-1)
+  * [Testing the provider locally](#testing-the-provider-locally)
 
 <!-- End Table of Contents [toc] -->
 
@@ -320,7 +325,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "0.10.4"
+      version = "1.0.0-alpha.1"
     }
   }
 }
@@ -351,34 +356,13 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
-### Resources
-
-* [lumos_access_policy](docs/resources/access_policy.md)
-* [lumos_app](docs/resources/app.md)
-* [lumos_app_store_app](docs/resources/app_store_app.md)
-* [lumos_pre_approval_rule](docs/resources/pre_approval_rule.md)
-* [lumos_requestable_permission](docs/resources/requestable_permission.md)
 ### Data Sources
 
-* [lumos_access_policies](docs/data-sources/access_policies.md)
-* [lumos_access_policy](docs/data-sources/access_policy.md)
-* [lumos_app](docs/data-sources/app.md)
-* [lumos_apps](docs/data-sources/apps.md)
-* [lumos_app_store_app](docs/data-sources/app_store_app.md)
-* [lumos_app_store_app_settings](docs/data-sources/app_store_app_settings.md)
-* [lumos_group](docs/data-sources/group.md)
-* [lumos_groups](docs/data-sources/groups.md)
-* [lumos_pre_approval_rule](docs/data-sources/pre_approval_rule.md)
-* [lumos_requestable_permission](docs/data-sources/requestable_permission.md)
-* [lumos_requestable_permissions](docs/data-sources/requestable_permissions.md)
-* [lumos_user](docs/data-sources/user.md)
-* [lumos_users](docs/data-sources/users.md)
+* [lumos_current_user](docs/data-sources/current_user.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->
 ## Testing the provider locally
-
-> **Note:** Running `make provider` requires Speakeasy CLI access. Ask Graham, Pat, Toshitha, or Yoshi for access.
 
 #### Local Provider
 
