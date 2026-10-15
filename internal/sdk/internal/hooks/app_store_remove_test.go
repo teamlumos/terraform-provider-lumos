@@ -9,20 +9,23 @@ import (
 
 // Runs through New() so the test also fails if the hook isn't registered:
 // without it, the request would go to the trailing-slash path with an empty
-// body and could succeed without taking the app out of the App Store.
-func TestRemoveAppFromAppStore(t *testing.T) {
+// body and could succeed without taking the app or entitlement out of the
+// App Store.
+func TestRemoveFromAppStore(t *testing.T) {
 	tests := []struct {
 		name        string
 		operationID string
+		path        string
 		wantPath    string
 		wantBody    string
 	}{
-		{name: "sends in_app_store false to the settings endpoint", operationID: "v1RemoveAppFromAppStore", wantPath: "/v1/apps/123/appstore-settings", wantBody: `{"in_app_store":false}`},
-		{name: "leaves other operations alone", operationID: "v1PatchAppStoreSettings", wantPath: "/v1/apps/123/appstore-settings/", wantBody: `{}`},
+		{name: "sends in_app_store false to the app settings endpoint", operationID: "v1RemoveAppFromAppStore", path: "/v1/apps/123/appstore-settings/", wantPath: "/v1/apps/123/appstore-settings", wantBody: `{"in_app_store":false}`},
+		{name: "sends visible_in_appstore false to the entitlement settings endpoint", operationID: "v1RemoveEntitlementFromAppStore", path: "/v1/entitlements/456/appstore-settings/", wantPath: "/v1/entitlements/456/appstore-settings", wantBody: `{"visible_in_appstore":false}`},
+		{name: "leaves other operations alone", operationID: "v1PatchAppStoreSettings", path: "/v1/apps/123/appstore-settings/", wantPath: "/v1/apps/123/appstore-settings/", wantBody: `{}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req, err := http.NewRequest(http.MethodPatch, "https://api.example.com/v1/apps/123/appstore-settings/", strings.NewReader(`{}`))
+			req, err := http.NewRequest(http.MethodPatch, "https://api.example.com"+tt.path, strings.NewReader(`{}`))
 			if err != nil {
 				t.Fatal(err)
 			}

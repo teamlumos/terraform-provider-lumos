@@ -5,6 +5,8 @@ internal/sdk/internal/hooks/app_store_remove.go
 internal/sdk/internal/hooks/app_store_remove_test.go
 internal/sdk/internal/hooks/app_delete.go
 internal/sdk/internal/hooks/app_delete_test.go
+internal/sdk/internal/hooks/entitlement_override_inherit.go
+internal/sdk/internal/hooks/entitlement_override_inherit_test.go
 internal/planmodifiers/utils/reconnect.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect_test.go
