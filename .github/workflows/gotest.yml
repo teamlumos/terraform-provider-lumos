@@ -17,6 +17,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'release/v1'
   workflow_dispatch:
     inputs:
       version:
@@ -120,10 +121,10 @@ jobs:
       - name: Check for baseline coverage
         id: check_baseline
         run: |
-          BASELINE_RUN=$(gh run list --status=success --branch=master --workflow=CI --event=push --json=databaseId --limit=1 -q '.[0].databaseId // empty' 2>/dev/null || echo "")
+          BASELINE_RUN=$(gh run list --status=success --branch="$BASE_REF" --workflow=CI --event=push --json=databaseId --limit=1 -q '.[0].databaseId // empty' 2>/dev/null || echo "")
           if [ -z "$BASELINE_RUN" ]; then
             echo "baseline_exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️  No baseline coverage found on master branch. This is expected for the first run."
+            echo "⚠️  No baseline coverage found on $BASE_REF branch. This is expected for the first run."
             echo "📝 Coverage report will be generated without comparison."
           else
             echo "baseline_exists=true" >> $GITHUB_OUTPUT
@@ -132,6 +133,8 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Compare against the branch the PR targets: master for 0.x, release/v1 for 1.x.
+          BASE_REF: ${{ github.base_ref }}
         continue-on-error: true
       
       - name: Generate coverage report (with baseline)
@@ -151,12 +154,14 @@ jobs:
       
       - name: Post coverage summary (no baseline)
         if: steps.check_baseline.outputs.baseline_exists == 'false' || steps.check_baseline.outcome == 'failure'
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           echo "## 📊 Code Coverage Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "⚠️ **Note:** No baseline coverage found on master branch. This is expected for the first run." >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Note:** No baseline coverage found on $BASE_REF branch. This is expected for the first run." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Once a successful run completes on master, future PRs will include coverage comparisons." >> $GITHUB_STEP_SUMMARY
+          echo "Once a successful run completes on $BASE_REF, future PRs will include coverage comparisons." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ -f coverage.txt ]; then
             echo "### Current Coverage" >> $GITHUB_STEP_SUMMARY
