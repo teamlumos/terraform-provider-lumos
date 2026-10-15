@@ -261,3 +261,180 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsResponse","CustomIntakeField"]["properties"][*]
     update:
       x-speakeasy-param-suppress-computed-diff: true
+
+  # resource "lumos_entitlement". The API creates, renames and deletes an
+  # entitlement; everything else on it is read-only here. App Store settings
+  # show read-only, which needs expand=appstore_settings on this read.
+  - target: $["paths"]["/v1/entitlements"]["post"]
+    update:
+      x-speakeasy-entity-operation: Entitlement#create
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: Entitlement#read
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]["parameters"][?@.name=="expand"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["patch"]
+    update:
+      x-speakeasy-entity-operation: Entitlement#update
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: Entitlement#delete
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"][*]["parameters"][?@.name=="entitlement_uuid"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["EntitlementOutput"]
+    update:
+      x-speakeasy-entity: Entitlement
+      x-speakeasy-entity-description: >-
+        An entitlement on an app: a role, license, group or permission. App
+        Store settings show here read-only; manage them with
+        `lumos_entitlement_appstore_settings`.
+  # An entitlement belongs to one app for its whole life.
+  - target: $["components"]["schemas"]["EntitlementCreateInput"]["properties"]["app_id"]
+    update:
+      x-speakeasy-param-force-new: true
+  # Unexpanded, a workflow slot is always {id}.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
+  # Speakeasy drops extensions written next to a $ref, so source is wrapped
+  # in allOf for the suppress-computed-diff below to reach it.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["source"]["$ref"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["source"]
+    update:
+      allOf: [{"$ref": "#/components/schemas/DiscoverySource"}]
+  # An update only renames, so a plan keeps the current value of everything
+  # else instead of showing it as known after apply.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["id","app_id","entitlement_type_label","source","description","approval_workflow_override","provisioning_workflow","deprovisioning_workflow","custom_approval_message_override","appstore_settings"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+
+  # resource "lumos_entitlement_appstore_settings": writes an entitlement's
+  # App Store settings through their own endpoint.
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore-settings"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: EntitlementAppstoreSettings#read
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore-settings"]["patch"]
+    update:
+      x-speakeasy-entity-operation:
+        - entityOperation: EntitlementAppstoreSettings#create,update
+  # Settings belong to one entitlement; pointing the resource at another
+  # entitlement means managing a different entitlement's settings.
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/appstore-settings"][*]["parameters"][?@.name=="entitlement_uuid"]
+    update:
+      x-speakeasy-name-override: entitlement_id
+      x-speakeasy-param-force-new: true
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]
+    update:
+      x-speakeasy-entity: EntitlementAppstoreSettings
+      x-speakeasy-entity-description: >-
+        An entitlement's App Store settings: whether it's listed, and its
+        overrides of the app's requester groups, time-based access options and
+        request validation webhook. Keyed by the entitlement's ID.
+  # The API hides an entitlement from the App Store by setting
+  # visible_in_appstore to false, not with a DELETE. As for apps, destroy
+  # uses an operation that exists only in the provider's spec, and a hook
+  # sends it to the real settings endpoint with that body.
+  - target: $["paths"]
+    update:
+      "/v1/entitlements/{entitlement_uuid}/appstore-settings/":
+        patch:
+          operationId: v1RemoveEntitlementFromAppStore
+          summary: Hide an entitlement from the App Store
+          tags: ["Entitlements"]
+          x-speakeasy-entity-operation: EntitlementAppstoreSettings#delete
+          parameters:
+            - name: entitlement_uuid
+              in: path
+              required: true
+              schema: {type: string}
+              x-speakeasy-name-override: entitlement_id
+          responses:
+            "200":
+              description: The entitlement is no longer listed in the App Store.
+
+  # The settings read returns groups and the webhook as {id} refs and
+  # time-based access options as {label, value_seconds}, while the write
+  # takes UUIDs and labels. One attribute needs one shape, so the read is
+  # reshaped into the write's fields. null stays null: for groups and
+  # time-based access, null means the entitlement inherits the app's
+  # setting, and an empty group list is a different setting.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["allowed_requester_groups_override","request_validation_webhook"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]
+    update:
+      allowed_requester_group_uuids_override:
+        anyOf: [{"type": "array", "items": {"type": "string"}, "format": "set"}, {"type": "null"}]
+        description: UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
+      request_validation_webhook_uuid:
+        anyOf: [{"type": "string"}, {"type": "null"}]
+        description: UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["time_based_access_override"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["time_based_access_override"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/EntitlementTimeBasedAccessOverridePatchInput"}, {"type": "null"}]
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: |
+          if . == null then . else
+            .allowed_requester_group_uuids_override = (.allowed_requester_groups_override | if . == null then null else map(.id) end)
+            | .request_validation_webhook_uuid = .request_validation_webhook.id
+            | .time_based_access_override |= (if . == null then null else {options: (.options | map(.label))} end)
+            | del(.allowed_requester_groups_override, .request_validation_webhook)
+          end
+  # Requester groups have no order and no duplicates in the API.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["allowed_requester_group_uuids_override"]["anyOf"][?@.type=="array"]
+    update:
+      format: set
+  # The spec's descriptions tell API callers what null and [] do in a
+  # request. In a config, omitting an override and setting it to null both
+  # send null, and an empty group list is its own setting.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["allowed_requester_group_uuids_override"]
+    update:
+      description: >-
+        UUIDs of the groups whose members may request this entitlement,
+        overriding the app's allowed requester groups. An empty list lets
+        anyone in the organization request it. Omitted or set to `null`, the
+        entitlement inherits the app's groups.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["time_based_access_override"]
+    update:
+      description: >-
+        This entitlement's own time-based access options, overriding the
+        app's. Omitted or set to `null`, the entitlement inherits the app's
+        options.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["request_validation_webhook_uuid"]
+    update:
+      description: >-
+        UUID of the inline webhook called to validate access requests for this
+        entitlement. Omitted or set to `null`, the entitlement has no webhook
+        of its own.
+  # The overrides follow the config: leaving one out means the entitlement
+  # inherits the app's setting, so the provider never fills one in from
+  # what the API holds.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["allowed_requester_group_uuids_override","request_validation_webhook_uuid","time_based_access_override"]
+    update:
+      x-speakeasy-param-computed: false
+  # The spec's description tells API callers to send null; in a config,
+  # that's omitting the block or setting it to null.
+  - target: $["components"]["schemas"]["EntitlementTimeBasedAccessOverridePatchInput"]["properties"]["options"]
+    update:
+      x-speakeasy-param-computed: false
+      description: >-
+        Labels of the time-based access options for this entitlement's
+        override, referencing options already defined for the organization.
+        Must contain at least one label. To inherit the app's options instead,
+        omit `time_based_access_override` or set it to `null`.
+  # visible_in_appstore keeps its value when the config leaves it out.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["visible_in_appstore"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
