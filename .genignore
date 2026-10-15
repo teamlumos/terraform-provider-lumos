@@ -13,6 +13,8 @@ internal/planmodifiers/stringplanmodifier/unknown_on_reconnect_test.go
 internal/planmodifiers/boolplanmodifier/unknown_on_reconnect.go
 examples/resources/lumos_app/
 examples/resources/lumos_app_appstore_settings/
+examples/resources/lumos_entitlement/
+examples/resources/lumos_entitlement_appstore_settings/
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go
