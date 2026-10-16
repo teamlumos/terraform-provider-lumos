@@ -15,7 +15,17 @@ import (
 type listPageError struct{}
 
 var listPageErrorOperations = map[string]bool{
-	"v1ListUsers": true,
+	"v1ListUsers":                    true,
+	"v1ListApps":                     true,
+	"listEntitlements":               true,
+	"listAppEntitlements":            true,
+	"listAccounts":                   true,
+	"listGroups":                     true,
+	"listInlineWebhooks":             true,
+	"listAppCategories":              true,
+	"listIntegrationsV1":             true,
+	"listCustomAttributeDefinitions": true,
+	"listWorkflowSteps":              true,
 }
 
 func (listPageError) AfterSuccess(hookCtx AfterSuccessContext, res *http.Response) (*http.Response, error) {
