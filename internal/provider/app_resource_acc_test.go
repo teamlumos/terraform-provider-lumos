@@ -66,8 +66,8 @@ func TestAccAppCustom(t *testing.T) {
 // provider can't assign, so TestAccAppStoreListing covers that with an
 // existing app. LUMOS_TEST_TBA_LABEL (one of the domain's time-based access
 // labels) and GROUP_ID add those settings when set. The first app's default
-// entitlement is one the test creates; the config can't clear it, so it's
-// still set when the post-test destroy deletes the entitlement and the app.
+// entitlement is one the test creates. Removing it from the config clears it
+// before the post-test destroy deletes the entitlement and the app.
 func TestAccAppStoreSettings(t *testing.T) {
 	prefix := "tf-acc-" + acctest.RandString(8)
 	tbaLabel := os.Getenv("LUMOS_TEST_TBA_LABEL")
@@ -80,7 +80,10 @@ resource "lumos_entitlement" "default" {
   label  = %q
 }
 `, prefix+"-default")
-	settings := func(appRef, visibility string, groups []string, intakeField bool, defaultEntitlement bool) string {
+	// clearable sets the settings that removing from the config clears:
+	// request instructions, redirect URL, default entitlement and, with
+	// LUMOS_TEST_TBA_LABEL, the time-based access default.
+	settings := func(appRef, visibility string, groups []string, intakeField bool, clearable bool) string {
 		intake := "[]"
 		if intakeField {
 			intake = `[{
@@ -92,7 +95,11 @@ resource "lumos_entitlement" "default" {
 		}
 		var extra []string
 		if tbaLabel != "" {
-			extra = append(extra, fmt.Sprintf("time_based_access = {\n    options = [%q]\n    default = %q\n  }", tbaLabel, tbaLabel))
+			tbaDefault := ""
+			if clearable {
+				tbaDefault = fmt.Sprintf("\n    default = %q", tbaLabel)
+			}
+			extra = append(extra, fmt.Sprintf("time_based_access = {\n    options = [%q]%s\n  }", tbaLabel, tbaDefault))
 		}
 		if groups != nil {
 			quoted := make([]string, len(groups))
@@ -101,15 +108,18 @@ resource "lumos_entitlement" "default" {
 			}
 			extra = append(extra, fmt.Sprintf("allowed_requester_group_uuids = [%s]", strings.Join(quoted, ", ")))
 		}
-		if defaultEntitlement {
-			extra = append(extra, "default_entitlement = {\n    id = lumos_entitlement.default.id\n  }")
+		if clearable {
+			extra = append(extra,
+				`request_instructions = "Set by an acceptance test."`,
+				`redirect_url = "https://example.com/tf-acc"`,
+				"default_entitlement = {\n    id = lumos_entitlement.default.id\n  }",
+			)
 		}
 		return fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "test" {
   app_id               = %s.id
   in_app_store         = false
   catalog_visibility   = %q
-  request_instructions = "Set by an acceptance test."
   custom_intake_fields = %s
   %s
 }
@@ -128,6 +138,7 @@ resource "lumos_app_appstore_settings" "test" {
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "custom_intake_fields.#", "1"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "app_id", "lumos_app.first", "id"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "default_entitlement.id", "lumos_entitlement.default", "id"),
+				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "redirect_url", "https://example.com/tf-acc"),
 			),
 		},
 		{
@@ -141,7 +152,8 @@ resource "lumos_app_appstore_settings" "test" {
 		},
 	}
 	// Empty lists are sent, so they clear the intake field and, when set, the
-	// requester groups. Clearing them also lets the post-test destroy delete
+	// requester groups. Removing the clearable settings plans them as null and
+	// clears them. Clearing all of this also lets the post-test destroy delete
 	// the app: rows that still point at a custom app make the API keep it.
 	var noGroups []string
 	if groupID != "" {
@@ -149,13 +161,29 @@ resource "lumos_app_appstore_settings" "test" {
 	}
 	clearedChecks := []resource.TestCheckFunc{
 		resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "custom_intake_fields.#", "0"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "request_instructions"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "redirect_url"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "default_entitlement.id"),
 	}
 	if groupID != "" {
 		clearedChecks = append(clearedChecks, resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "allowed_requester_group_uuids.#", "0"))
 	}
+	if tbaLabel != "" {
+		clearedChecks = append(clearedChecks,
+			resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "time_based_access.default"),
+			resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "time_based_access.options.0", tbaLabel),
+		)
+	}
 	steps = append(steps, resource.TestStep{
 		Config: providerConfig() + apps + settings("lumos_app.first", "search_only", noGroups, false, false),
-		Check:  resource.ComposeAggregateTestCheckFunc(clearedChecks...),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				expectOnlyAttributesChange("lumos_app_appstore_settings.test",
+					"custom_intake_fields", "allowed_requester_group_uuids", "time_based_access",
+					"request_instructions", "redirect_url", "default_entitlement"),
+			},
+		},
+		Check: resource.ComposeAggregateTestCheckFunc(clearedChecks...),
 	})
 	steps = append(steps, resource.TestStep{
 		// Settings belong to one app: pointing the resource at another app is
