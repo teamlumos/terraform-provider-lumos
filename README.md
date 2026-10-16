@@ -359,6 +359,7 @@ Available configuration:
 ### Data Sources
 
 * [lumos_current_user](docs/data-sources/current_user.md)
+* [lumos_users](docs/data-sources/users.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->
