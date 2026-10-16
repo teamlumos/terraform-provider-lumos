@@ -10,14 +10,14 @@ import (
 
 type GetEntitlementAppStoreSettingsRequest struct {
 	// The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.
-	EntitlementUUID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
 }
 
-func (g *GetEntitlementAppStoreSettingsRequest) GetEntitlementUUID() string {
+func (g *GetEntitlementAppStoreSettingsRequest) GetEntitlementID() string {
 	if g == nil {
 		return ""
 	}
-	return g.EntitlementUUID
+	return g.EntitlementID
 }
 
 type GetEntitlementAppStoreSettingsResponse struct {

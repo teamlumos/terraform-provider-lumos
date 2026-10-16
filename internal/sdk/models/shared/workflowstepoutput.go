@@ -2,23 +2,8 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 // Inputs - The configured inputs for this step.
 type Inputs struct {
-}
-
-func (i Inputs) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(i, "", false)
-}
-
-func (i *Inputs) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &i, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 // WorkflowStepOutput - A single configured step in a workflow (response shape).
@@ -29,17 +14,6 @@ type WorkflowStepOutput struct {
 	Name *string `json:"name,omitzero"`
 	// The configured inputs for this step.
 	Inputs Inputs `json:"inputs"`
-}
-
-func (w WorkflowStepOutput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(w, "", false)
-}
-
-func (w *WorkflowStepOutput) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (w *WorkflowStepOutput) GetStep() string {
