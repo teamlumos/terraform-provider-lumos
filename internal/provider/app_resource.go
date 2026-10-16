@@ -220,24 +220,15 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						Description: `Whether this app is listed in the App Store catalog.`,
 					},
 					"redirect_url": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.`,
 					},
 					"request_instructions": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.`,
 					},
 					"request_validation_webhook_uuid": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.`,
 					},
 					"time_based_access": schema.SingleNestedAttribute{
@@ -247,10 +238,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						},
 						Attributes: map[string]schema.Attribute{
 							"default": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.`,
 							},
 							"options": schema.ListAttribute{
