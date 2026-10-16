@@ -6,15 +6,27 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+type TimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput struct {
+	// Labels of the time-based access options for this entitlement's override, referencing options already defined for the organization. Must contain at least one label. To inherit the app's options instead, omit `time_based_access_override` or set it to `null`.
+	Options []string `json:"options"`
+}
+
+func (t *TimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput) GetOptions() []string {
+	if t == nil {
+		return []string{}
+	}
+	return t.Options
+}
+
 type EntitlementAppStoreSettings struct {
 	// Whether this entitlement is visible in the App Store catalog.
 	VisibleInAppstore bool `json:"visible_in_appstore"`
-	// Groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means this entitlement inherits the app's allowed requester groups.
-	AllowedRequesterGroupsOverride []GroupRef `json:"allowed_requester_groups_override,omitzero"`
 	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
-	TimeBasedAccessOverride *TimeBasedAccessOverride `json:"time_based_access_override,omitzero"`
-	// The inline webhook called to validate access requests for this entitlement. This is configured directly on the entitlement; null means no webhook is configured (there is no inheritance from the app).
-	RequestValidationWebhook *WebhookRef `json:"request_validation_webhook,omitzero"`
+	TimeBasedAccessOverride *TimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
+	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
+	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
+	// UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 }
 
 func (e EntitlementAppStoreSettings) MarshalJSON() ([]byte, error) {
@@ -22,6 +34,11 @@ func (e EntitlementAppStoreSettings) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EntitlementAppStoreSettings) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, "if . == null then . else .allowed_requester_group_uuids_override = (.allowed_requester_groups_override | if . == null then null else map(.id) end) | .request_validation_webhook_uuid = .request_validation_webhook.id | .time_based_access_override |= (if . == null then null else { options: (.options | map(.label)) } end) | del(.allowed_requester_groups_override, .request_validation_webhook) end"); err != nil {
+		return err
+	} else {
+		data = out
+	}
 	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
 		return err
 	}
@@ -35,23 +52,23 @@ func (e *EntitlementAppStoreSettings) GetVisibleInAppstore() bool {
 	return e.VisibleInAppstore
 }
 
-func (e *EntitlementAppStoreSettings) GetAllowedRequesterGroupsOverride() []GroupRef {
-	if e == nil {
-		return nil
-	}
-	return e.AllowedRequesterGroupsOverride
-}
-
-func (e *EntitlementAppStoreSettings) GetTimeBasedAccessOverride() *TimeBasedAccessOverride {
+func (e *EntitlementAppStoreSettings) GetTimeBasedAccessOverride() *TimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput {
 	if e == nil {
 		return nil
 	}
 	return e.TimeBasedAccessOverride
 }
 
-func (e *EntitlementAppStoreSettings) GetRequestValidationWebhook() *WebhookRef {
+func (e *EntitlementAppStoreSettings) GetAllowedRequesterGroupUuidsOverride() []string {
 	if e == nil {
 		return nil
 	}
-	return e.RequestValidationWebhook
+	return e.AllowedRequesterGroupUuidsOverride
+}
+
+func (e *EntitlementAppStoreSettings) GetRequestValidationWebhookUUID() *string {
+	if e == nil {
+		return nil
+	}
+	return e.RequestValidationWebhookUUID
 }

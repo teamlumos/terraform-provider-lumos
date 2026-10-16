@@ -65,15 +65,22 @@ func TestAccAppCustom(t *testing.T) {
 // test creates. The app stays unlisted: listing needs an admin, which the
 // provider can't assign, so TestAccAppStoreListing covers that with an
 // existing app. LUMOS_TEST_TBA_LABEL (one of the domain's time-based access
-// labels) and GROUP_ID add those settings when set.
+// labels) and GROUP_ID add those settings when set. The first app's default
+// entitlement is one the test creates; the config can't clear it, so it's
+// still set when the post-test destroy deletes the entitlement and the app.
 func TestAccAppStoreSettings(t *testing.T) {
 	prefix := "tf-acc-" + acctest.RandString(8)
 	tbaLabel := os.Getenv("LUMOS_TEST_TBA_LABEL")
 	groupID := os.Getenv("GROUP_ID")
 
 	apps := testAccCustomApp("first", prefix+"-first", "App Store settings test") +
-		testAccCustomApp("second", prefix+"-second", "App Store settings test")
-	settings := func(appRef, visibility string, groups []string, intakeField bool) string {
+		testAccCustomApp("second", prefix+"-second", "App Store settings test") + fmt.Sprintf(`
+resource "lumos_entitlement" "default" {
+  app_id = lumos_app.first.id
+  label  = %q
+}
+`, prefix+"-default")
+	settings := func(appRef, visibility string, groups []string, intakeField bool, defaultEntitlement bool) string {
 		intake := "[]"
 		if intakeField {
 			intake = `[{
@@ -94,6 +101,9 @@ func TestAccAppStoreSettings(t *testing.T) {
 			}
 			extra = append(extra, fmt.Sprintf("allowed_requester_group_uuids = [%s]", strings.Join(quoted, ", ")))
 		}
+		if defaultEntitlement {
+			extra = append(extra, "default_entitlement = {\n    id = lumos_entitlement.default.id\n  }")
+		}
 		return fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "test" {
   app_id               = %s.id
@@ -112,15 +122,16 @@ resource "lumos_app_appstore_settings" "test" {
 
 	steps := []resource.TestStep{
 		{
-			Config: providerConfig() + apps + settings("lumos_app.first", "visible", groups, true),
+			Config: providerConfig() + apps + settings("lumos_app.first", "visible", groups, true, true),
 			Check: resource.ComposeAggregateTestCheckFunc(
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "catalog_visibility", "visible"),
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "custom_intake_fields.#", "1"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "app_id", "lumos_app.first", "id"),
+				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "default_entitlement.id", "lumos_entitlement.default", "id"),
 			),
 		},
 		{
-			Config: providerConfig() + apps + settings("lumos_app.first", "search_only", groups, true),
+			Config: providerConfig() + apps + settings("lumos_app.first", "search_only", groups, true, true),
 			ConfigPlanChecks: resource.ConfigPlanChecks{
 				PreApply: []plancheck.PlanCheck{
 					expectOnlyAttributesChange("lumos_app_appstore_settings.test", "catalog_visibility"),
@@ -143,13 +154,13 @@ resource "lumos_app_appstore_settings" "test" {
 		clearedChecks = append(clearedChecks, resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "allowed_requester_group_uuids.#", "0"))
 	}
 	steps = append(steps, resource.TestStep{
-		Config: providerConfig() + apps + settings("lumos_app.first", "search_only", noGroups, false),
+		Config: providerConfig() + apps + settings("lumos_app.first", "search_only", noGroups, false, false),
 		Check:  resource.ComposeAggregateTestCheckFunc(clearedChecks...),
 	})
 	steps = append(steps, resource.TestStep{
 		// Settings belong to one app: pointing the resource at another app is
 		// a replace, not an update.
-		Config: providerConfig() + apps + settings("lumos_app.second", "search_only", noGroups, false),
+		Config: providerConfig() + apps + settings("lumos_app.second", "search_only", noGroups, false, false),
 		ConfigPlanChecks: resource.ConfigPlanChecks{
 			PreApply: []plancheck.PlanCheck{
 				plancheck.ExpectResourceAction("lumos_app_appstore_settings.test", plancheck.ResourceActionReplace),

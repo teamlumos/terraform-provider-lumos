@@ -16,6 +16,7 @@ func TestAppStoreSettingsExpand(t *testing.T) {
 		{name: "adds expand to an app read", operationID: "v1GetApp", rawQuery: "", want: []string{"appstore_settings"}},
 		{name: "keeps other expansions", operationID: "v1GetApp", rawQuery: "expand=admins", want: []string{"admins", "appstore_settings"}},
 		{name: "doesn't repeat it", operationID: "v1GetApp", rawQuery: "expand=appstore_settings", want: []string{"appstore_settings"}},
+		{name: "adds expand to an entitlement read", operationID: "getEntitlement", rawQuery: "", want: []string{"appstore_settings"}},
 		{name: "leaves other operations alone", operationID: "v1ListApps", rawQuery: "", want: nil},
 	}
 	for _, tt := range tests {

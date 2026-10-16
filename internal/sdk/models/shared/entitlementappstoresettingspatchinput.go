@@ -17,11 +17,11 @@ import (
 type EntitlementAppStoreSettingsPatchInput struct {
 	// Whether this entitlement is visible in the App Store catalog.
 	VisibleInAppstore *bool `json:"visible_in_appstore,omitzero"`
-	// UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. Null or an empty list clears the override so this entitlement inherits the app's allowed requester groups.
+	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. An empty list lets anyone in the organization request it. Omitted or set to `null`, the entitlement inherits the app's groups.
 	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
-	// This entitlement's own time-based access options, overriding the app's. Null clears the override so this entitlement inherits the app's time-based access options.
+	// This entitlement's own time-based access options, overriding the app's. Omitted or set to `null`, the entitlement inherits the app's options.
 	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
-	// UUID of the inline webhook to call to validate access requests for this entitlement, overriding the app's. Null clears the override so this entitlement inherits the app's webhook.
+	// UUID of the inline webhook called to validate access requests for this entitlement. Omitted or set to `null`, the entitlement has no webhook of its own.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 }
 
