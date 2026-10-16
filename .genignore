@@ -2,6 +2,8 @@ internal/sdk/internal/hooks/registration.go
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go
+internal/sdk/internal/hooks/app_expand.go
+internal/sdk/internal/hooks/app_expand_test.go
 examples/data-sources/lumos_apps/
 examples/data-sources/lumos_entitlements/
 examples/data-sources/lumos_app_entitlements/

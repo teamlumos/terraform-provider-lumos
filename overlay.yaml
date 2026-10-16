@@ -122,9 +122,8 @@ actions:
   - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true
-  # Unexpanded, a workflow slot is always {id}, and an app's App Store
-  # settings are {in_app_store}. Narrowing the unions keeps the lookups from
-  # nesting each value under a wrapper per shape.
+  # Unexpanded, a workflow slot is always {id}. Narrowing the unions keeps
+  # the lookups from nesting each value under a wrapper per shape.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]["anyOf"]
     remove: true
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]
@@ -135,11 +134,13 @@ actions:
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]
     update:
       anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
+  # lumos_apps asks for expand=appstore_settings (an SDK hook adds it), so an
+  # app's App Store settings are always the full shape.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]["anyOf"]
     remove: true
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]
     update:
-      anyOf: [{"$ref": "#/components/schemas/AppStoreSettingsCompact"}, {"type": "null"}]
+      anyOf: [{"$ref": "#/components/schemas/AppStoreSettingsResponse"}, {"type": "null"}]
   # Only filled in with expand.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]
     update:
