@@ -13,11 +13,11 @@ type IntegrationCatalogOutput struct {
 	// Display name of the integration.
 	Name string `json:"name"`
 	// Short description of the integration.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// Category of the integration (e.g. `IT & Security`).
-	Category *string `json:"category,omitempty"`
+	Category *string `json:"category,omitzero"`
 	// URL of the integration's logo.
-	LogoURL *string `json:"logo_url,omitempty"`
+	LogoURL *string `json:"logo_url,omitzero"`
 }
 
 func (i *IntegrationCatalogOutput) GetAppClassID() string {

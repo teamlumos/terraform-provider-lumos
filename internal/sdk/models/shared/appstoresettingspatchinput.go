@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 type CatalogVisibility string
@@ -38,27 +39,38 @@ func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
 
 type AppStoreSettingsPatchInput struct {
 	// Set to true to list this app in the App Store catalog.
-	InAppStore *bool `json:"in_app_store,omitempty"`
+	InAppStore *bool `json:"in_app_store,omitzero"`
 	// Visibility within the catalog. "visible", "search_only", or "hidden". Omit to leave unchanged.
-	CatalogVisibility *CatalogVisibility `json:"catalog_visibility,omitempty"`
+	CatalogVisibility *CatalogVisibility `json:"catalog_visibility,omitzero"`
 	// Custom instructions shown on the access-request form. Null clears any existing instructions.
-	RequestInstructions *string `json:"request_instructions,omitempty"`
+	RequestInstructions *string `json:"request_instructions,omitzero"`
 	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.
-	AllowPermissionSelection *bool `json:"allow_permission_selection,omitempty"`
+	AllowPermissionSelection *bool `json:"allow_permission_selection,omitzero"`
 	// When true, requesters may select more than one permission per request. Omit to leave unchanged.
-	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
+	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitzero"`
 	// UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant.
-	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitempty"`
+	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
 	// Time-based access configuration. Omit to leave all sub-fields unchanged.
-	TimeBasedAccess *TimeBasedAccessPatchInput `json:"time_based_access,omitempty"`
+	TimeBasedAccess *TimeBasedAccessPatchInput `json:"time_based_access,omitzero"`
 	// UUID of the inline webhook to use for request validation. Null clears any existing webhook.
-	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitempty"`
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
-	RedirectURL *string `json:"redirect_url,omitempty"`
+	RedirectURL *string `json:"redirect_url,omitzero"`
 	// Entitlement to pre-select on the access-request form. Must belong to this app. Null clears the pre-selection. Omit to leave unchanged.
-	DefaultEntitlement *EntitlementRefInput `json:"default_entitlement,omitempty"`
+	DefaultEntitlement *EntitlementRefInput `json:"default_entitlement,omitzero"`
 	// The complete desired custom intake field list, matched by reference_key. Fields you omit from the list are deleted. Null or an empty list deletes all of them. Omit this property to leave them unchanged.
-	CustomIntakeFields []CustomIntakeFieldPatchInput `json:"custom_intake_fields,omitempty"`
+	CustomIntakeFields []CustomIntakeFieldPatchInput `json:"custom_intake_fields,omitzero"`
+}
+
+func (a AppStoreSettingsPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppStoreSettingsPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AppStoreSettingsPatchInput) GetInAppStore() *bool {

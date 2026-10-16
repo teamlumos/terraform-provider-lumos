@@ -356,6 +356,11 @@ Available configuration:
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
+### Managed Resources
+
+* [lumos_app](docs/resources/app.md)
+* [lumos_app_appstore_settings](docs/resources/app_appstore_settings.md)
+
 ### Data Sources
 
 * [lumos_current_user](docs/data-sources/current_user.md)

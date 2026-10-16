@@ -6,7 +6,7 @@ type AccessRequestEntitlement struct {
 	// The Entitlement UUID; `GET /v1/entitlements/{entitlement_uuid}` serves it.
 	ID string `json:"id"`
 	// The entitlement's label.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 }
 
 func (a *AccessRequestEntitlement) GetID() string {

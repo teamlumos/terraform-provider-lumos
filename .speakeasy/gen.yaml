@@ -57,7 +57,7 @@ terraform:
   fixFlags:
     encodePathParams: false
   forwardCompatibleEnumsByDefault: false
-  includeEmptyObjects: false
+  includeEmptyObjects: true
   inferUnionDiscriminators: false
   packageName: lumos
   preApplyUnionDiscriminators: false

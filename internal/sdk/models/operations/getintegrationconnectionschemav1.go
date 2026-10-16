@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -33,6 +34,17 @@ type GetIntegrationConnectionSchemaV1Response struct {
 	IntegrationConnectionSchemaOutput *shared.IntegrationConnectionSchemaOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (g GetIntegrationConnectionSchemaV1Response) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetIntegrationConnectionSchemaV1Response) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetIntegrationConnectionSchemaV1Response) GetContentType() string {

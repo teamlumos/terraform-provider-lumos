@@ -11,9 +11,9 @@ type UserOffboardingInput struct {
 	// The UUID of the identity to offboard.
 	UserID string `json:"user_id"`
 	// When to run the offboarding, as an ISO 8601 datetime. Omit to trigger the offboarding immediately; provide a future datetime to schedule it.
-	ScheduledAt *time.Time `json:"scheduled_at,omitempty"`
+	ScheduledAt *time.Time `json:"scheduled_at,omitzero"`
 	// The UUID of the offboarding workflow configuration to run. Omit to use the configuration your organization has selected for automatic offboarding. This field is only accepted for organizations with the multiple offboarding workflows feature; a request that includes it is rejected otherwise.
-	WorkflowConfigID *string `json:"workflow_config_id,omitempty"`
+	WorkflowConfigID *string `json:"workflow_config_id,omitzero"`
 }
 
 func (u UserOffboardingInput) MarshalJSON() ([]byte, error) {

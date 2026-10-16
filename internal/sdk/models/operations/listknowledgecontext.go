@@ -71,6 +71,17 @@ type ListKnowledgeContextResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListKnowledgeContextResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListKnowledgeContextResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListKnowledgeContextResponse) GetContentType() string {
 	if l == nil {
 		return ""

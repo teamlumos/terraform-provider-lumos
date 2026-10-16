@@ -4,11 +4,11 @@ package shared
 
 type SubjectEntitlement struct {
 	// The entitlement's ID.
-	ID *string `json:"id,omitempty"`
+	ID *string `json:"id,omitzero"`
 	// The entitlement's name in the app.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 	// The entitlement's type in the app, e.g. `Role` or `Group`.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 }
 
 func (s *SubjectEntitlement) GetID() *string {

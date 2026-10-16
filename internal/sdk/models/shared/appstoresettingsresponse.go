@@ -8,6 +8,52 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+// AppStoreSettingsResponseTimeBasedAccess - Time-based access configuration for this app.
+type AppStoreSettingsResponseTimeBasedAccess struct {
+	// Labels of the time-based access options offered for this app. An empty list means the app uses the domain-level defaults.
+	Options []string `json:"options,omitzero"`
+	// Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
+	Default *string `json:"default,omitzero"`
+}
+
+func (a AppStoreSettingsResponseTimeBasedAccess) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppStoreSettingsResponseTimeBasedAccess) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AppStoreSettingsResponseTimeBasedAccess) GetOptions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Options
+}
+
+func (a *AppStoreSettingsResponseTimeBasedAccess) GetDefault() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Default
+}
+
+// DefaultEntitlementEntitlementRef - Reference to an Entitlement embedded in another resource (e.g. AppStoreSettingsResponse).
+type DefaultEntitlementEntitlementRef struct {
+	// The UUID of the entitlement.
+	ID string `json:"id"`
+}
+
+func (d *DefaultEntitlementEntitlementRef) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
+}
+
 // AppStoreSettingsResponseCatalogVisibility - Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
 type AppStoreSettingsResponseCatalogVisibility string
 
@@ -40,22 +86,23 @@ func (e *AppStoreSettingsResponseCatalogVisibility) UnmarshalJSON(data []byte) e
 
 type AppStoreSettingsResponse struct {
 	// Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
-	RequestInstructions *string `json:"request_instructions,omitempty"`
+	RequestInstructions *string `json:"request_instructions,omitzero"`
 	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
 	// When true, requesters may select more than one permission in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
 	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
-	AllowedRequesterGroupUuids []string        `json:"allowed_requester_group_uuids,omitempty"`
-	TimeBasedAccess            TimeBasedAccess `json:"time_based_access"`
+	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
+	// Time-based access configuration for this app.
+	TimeBasedAccess AppStoreSettingsResponseTimeBasedAccess `json:"time_based_access"`
 	// UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.
-	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitempty"`
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.
-	RedirectURL *string `json:"redirect_url,omitempty"`
+	RedirectURL *string `json:"redirect_url,omitzero"`
 	// The entitlement pre-selected by default when a user opens the request form. Null means no default is set.
-	DefaultEntitlement *EntitlementRef `json:"default_entitlement,omitempty"`
+	DefaultEntitlement *DefaultEntitlementEntitlementRef `json:"default_entitlement,omitzero"`
 	// Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured.
-	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitempty"`
+	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitzero"`
 	// Whether this app is listed in the App Store catalog.
 	InAppStore bool `json:"in_app_store"`
 	// Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
@@ -67,6 +114,11 @@ func (a AppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
 }
 
 func (a *AppStoreSettingsResponse) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, ".allowed_requester_group_uuids |= (. // []) | .custom_intake_fields |= (. // []) | .time_based_access.options |= (if . == null then [] else map(.label) end)"); err != nil {
+		return err
+	} else {
+		data = out
+	}
 	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
 		return err
 	}
@@ -101,9 +153,9 @@ func (a *AppStoreSettingsResponse) GetAllowedRequesterGroupUuids() []string {
 	return a.AllowedRequesterGroupUuids
 }
 
-func (a *AppStoreSettingsResponse) GetTimeBasedAccess() TimeBasedAccess {
+func (a *AppStoreSettingsResponse) GetTimeBasedAccess() AppStoreSettingsResponseTimeBasedAccess {
 	if a == nil {
-		return TimeBasedAccess{}
+		return AppStoreSettingsResponseTimeBasedAccess{}
 	}
 	return a.TimeBasedAccess
 }
@@ -122,7 +174,7 @@ func (a *AppStoreSettingsResponse) GetRedirectURL() *string {
 	return a.RedirectURL
 }
 
-func (a *AppStoreSettingsResponse) GetDefaultEntitlement() *EntitlementRef {
+func (a *AppStoreSettingsResponse) GetDefaultEntitlement() *DefaultEntitlementEntitlementRef {
 	if a == nil {
 		return nil
 	}

@@ -10,7 +10,7 @@ type AccountBase struct {
 	AppID       string      `json:"app_id"`
 	AccountType AccountType `json:"account_type"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	Status *AccountLifecycleStatus `json:"status,omitzero"`
 }
 
 func (a *AccountBase) GetID() string {

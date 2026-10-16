@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // PreApprovalRuleInput - Request body for creating a pre-approval rule. Leaving every entitlements field unset
 // is the same as `request_has_entitlements: false`, which covers only a request for the app
 // itself.
@@ -22,13 +26,24 @@ type PreApprovalRuleInput struct {
 	// - `access_request.access_length` accepts `equals`, `!=`, `>`, `>=`, `<`, `<=`, and `in`. Values are in seconds, for example `{"label": "<display name>", "value": <seconds>}`. To match unlimited access, use the value `2147483647` (2**31 - 1). Leaving this attribute out allows any duration, unlimited included.
 	//
 	// Required. Every rule must limit who it applies to, so leaving `condition` out returns 400.
-	Condition map[string]any `json:"condition,omitempty"`
+	Condition map[string]any `json:"condition,omitzero"`
 	// IDs of the entitlements this rule covers. The rule does not cover a request for any other entitlement. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestIncludesEntitlements []string `json:"request_includes_entitlements,omitempty"`
+	RequestIncludesEntitlements []string `json:"request_includes_entitlements,omitzero"`
 	// IDs of the entitlements this rule does not cover. The rule covers every other entitlement, and also a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestDoesNotIncludeEntitlements []string `json:"request_does_not_include_entitlements,omitempty"`
+	RequestDoesNotIncludeEntitlements []string `json:"request_does_not_include_entitlements,omitzero"`
 	// `true` covers a request for any entitlement of this app, so you don't need to keep a list of IDs up to date. `false` covers only a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestHasEntitlements *bool `json:"request_has_entitlements,omitempty"`
+	RequestHasEntitlements *bool `json:"request_has_entitlements,omitzero"`
+}
+
+func (p PreApprovalRuleInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PreApprovalRuleInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PreApprovalRuleInput) GetJustification() string {

@@ -24,7 +24,7 @@ type ActivityLog struct {
 	Outcome               string        `json:"outcome"`
 	Targets               []Targets     `json:"targets"`
 	Actor                 Actor         `json:"actor"`
-	EventBeganAt          *time.Time    `json:"event_began_at,omitempty"`
+	EventBeganAt          *time.Time    `json:"event_began_at,omitzero"`
 	EventMetadata         EventMetadata `json:"event_metadata"`
 }
 

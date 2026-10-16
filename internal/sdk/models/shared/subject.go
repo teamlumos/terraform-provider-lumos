@@ -51,25 +51,25 @@ type Subject struct {
 	ID          string      `json:"id"`
 	SubjectType SubjectType `json:"subject_type"`
 	// The account's name in the app being reviewed.
-	AccountName *string `json:"account_name,omitempty"`
+	AccountName *string `json:"account_name,omitzero"`
 	// The Lumos user the account belongs to. Null for an account that matched no user — an unmatched account is still reviewed.
-	Identity *User `json:"identity,omitempty"`
+	Identity *User `json:"identity,omitzero"`
 	// Who is assigned to decide this subject. Empty before reviewers are assigned.
-	Reviewers []SubjectAssignee `json:"reviewers,omitempty"`
+	Reviewers []SubjectAssignee `json:"reviewers,omitzero"`
 	// The entitlement under review. Present only when `subject_type` is `account-entitlement`.
-	Entitlement *SubjectEntitlement `json:"entitlement,omitempty"`
+	Entitlement *SubjectEntitlement `json:"entitlement,omitzero"`
 	// What the reviewer decided. `pending` until someone decides.
 	Decision Decision `json:"decision"`
 	// Who made the decision.
-	DecidedBy *User `json:"decided_by,omitempty"`
+	DecidedBy *User `json:"decided_by,omitzero"`
 	// When the decision was made.
-	DecidedAt *time.Time `json:"decided_at,omitempty"`
+	DecidedAt *time.Time `json:"decided_at,omitzero"`
 	// The note the reviewer left for the auditor alongside the decision.
-	Note *string `json:"note,omitempty"`
+	Note *string `json:"note,omitzero"`
 	// The removal this decision led to. Null when the decision leaves the access in place, or when removals have not started.
-	Removal *SubjectRemoval `json:"removal,omitempty"`
+	Removal *SubjectRemoval `json:"removal,omitzero"`
 	// What AI Assist recommended for this subject, if it reached one. Requires `expand=ai_recommendation`.
-	AiRecommendation *AiRecommendation `json:"ai_recommendation,omitempty"`
+	AiRecommendation *AiRecommendation `json:"ai_recommendation,omitzero"`
 }
 
 func (s Subject) MarshalJSON() ([]byte, error) {

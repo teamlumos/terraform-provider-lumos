@@ -26,7 +26,7 @@ type WorkflowStepOutput struct {
 	// Identifier (catalogue slug) for the step to execute.
 	Step string `json:"step"`
 	// Server-derived human-readable name for this step. Read-only.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The configured inputs for this step.
 	Inputs Inputs `json:"inputs"`
 }

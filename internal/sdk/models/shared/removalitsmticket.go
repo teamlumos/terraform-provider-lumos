@@ -6,7 +6,7 @@ type RemovalItsmTicket struct {
 	// The ticket's ID in the ITSM system.
 	ExternalID string `json:"external_id"`
 	// A link to the ticket.
-	URL *string `json:"url,omitempty"`
+	URL *string `json:"url,omitzero"`
 }
 
 func (r *RemovalItsmTicket) GetExternalID() string {

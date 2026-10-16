@@ -2,28 +2,43 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // AppStoreCatalogSettingsResponse - `AppStoreSettingsBase` as-is — no `in_app_store`/`catalog_visibility`.
 //
 // Used by the appstore-catalog endpoint, where both are implied by appearing in the
 // catalog at all (in the store, at FULL/LIMITED visibility) rather than informative.
 type AppStoreCatalogSettingsResponse struct {
 	// Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
-	RequestInstructions *string `json:"request_instructions,omitempty"`
+	RequestInstructions *string `json:"request_instructions,omitzero"`
 	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
 	// When true, requesters may select more than one permission in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
 	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
-	AllowedRequesterGroupUuids []string        `json:"allowed_requester_group_uuids,omitempty"`
+	AllowedRequesterGroupUuids []string        `json:"allowed_requester_group_uuids,omitzero"`
 	TimeBasedAccess            TimeBasedAccess `json:"time_based_access"`
 	// UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.
-	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitempty"`
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.
-	RedirectURL *string `json:"redirect_url,omitempty"`
+	RedirectURL *string `json:"redirect_url,omitzero"`
 	// The entitlement pre-selected by default when a user opens the request form. Null means no default is set.
-	DefaultEntitlement *EntitlementRef `json:"default_entitlement,omitempty"`
+	DefaultEntitlement *EntitlementRef `json:"default_entitlement,omitzero"`
 	// Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured.
-	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitempty"`
+	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitzero"`
+}
+
+func (a AppStoreCatalogSettingsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppStoreCatalogSettingsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AppStoreCatalogSettingsResponse) GetRequestInstructions() *string {

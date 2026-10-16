@@ -47,9 +47,9 @@ type AiRecommendation struct {
 	// What the recommendation is, and how firmly it is held.
 	Decision AiRecommendationDecision `json:"decision"`
 	// The kind of finding behind the recommendation, e.g. `Unusual Access`. Free text — group on it, but do not branch on a fixed set.
-	DecisionCategory *string `json:"decision_category,omitempty"`
+	DecisionCategory *string `json:"decision_category,omitzero"`
 	// Why the recommendation was made, in plain language.
-	Reasoning *string `json:"reasoning,omitempty"`
+	Reasoning *string `json:"reasoning,omitzero"`
 }
 
 func (a *AiRecommendation) GetDecision() AiRecommendationDecision {

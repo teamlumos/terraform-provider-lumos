@@ -70,3 +70,194 @@ actions:
   - target: $["components"]["schemas"]["UserListOutput"]["properties"]["next_page_token"]
     update:
       x-speakeasy-terraform-ignore: true
+
+  # resource "lumos_app". One resource covers custom apps and connected
+  # integrations; the create body's two halves are exclusive.
+  - target: $["paths"]["/v1/apps"]["post"]
+    update:
+      x-speakeasy-entity-operation: App#create
+  # Resource only; the app data sources are mapped separately. The app shows
+  # its App Store settings read-only, which needs expand=appstore_settings on
+  # this read.
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: App#read
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][?@.name=="expand"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  # Send only the fields that changed, so an unchanged metadata field isn't
+  # written back as an override of the app's own default. auth and settings
+  # are still sent whenever they're set.
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["patch"]
+    update:
+      x-speakeasy-entity-operation:
+        - entityOperation: App#update
+          options:
+            patch:
+              style: only-send-changed-attributes
+  - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: App#delete
+  - target: $["paths"]["/v1/apps/{app_uuid}"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["AppResponse"]
+    update:
+      x-speakeasy-entity: App
+      x-speakeasy-entity-description: >-
+        A custom app, or a connected integration. App Store settings show here
+        read-only; manage them with `lumos_app_appstore_settings`.
+  # Expanded, the settings are always the full shape.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/AppStoreSettingsResponse"}, {"type": "null"}]
+
+  # resource "lumos_app_appstore_settings": writes an app's App Store
+  # settings, which the API only accepts through their own endpoint. There is
+  # no delete endpoint, so destroy leaves the settings as they are.
+  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: AppAppstoreSettings#read
+  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["patch"]
+    update:
+      # An update sends only the settings that changed, so it never writes
+      # back current values for settings the config leaves out. Create and
+      # update share one request builder, so the option has to be on a
+      # combined entry to take effect.
+      x-speakeasy-entity-operation:
+        - entityOperation: AppAppstoreSettings#create,update
+          options:
+            patch:
+              style: only-send-changed-attributes
+  # Settings belong to one app; pointing the resource at another app means
+  # managing a different app's settings.
+  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+      x-speakeasy-param-force-new: true
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
+    update:
+      x-speakeasy-entity: AppAppstoreSettings
+      x-speakeasy-entity-description: >-
+        An app's App Store settings: whether it's listed, who can request it,
+        and what the request form asks. Keyed by the app's ID.
+  # The API takes an app out of the App Store by setting in_app_store to
+  # false, not with a DELETE. Destroy needs its own operation for that, so
+  # this one exists only in the provider's spec: the trailing slash keeps its
+  # path distinct, and the removeAppFromAppStore hook sends it to the real
+  # settings endpoint with that body.
+  - target: $["paths"]
+    update:
+      "/v1/apps/{app_uuid}/appstore-settings/":
+        patch:
+          operationId: v1RemoveAppFromAppStore
+          summary: Remove an app from the App Store
+          tags: ["Apps"]
+          x-speakeasy-entity-operation: AppAppstoreSettings#delete
+          parameters:
+            - name: app_uuid
+              in: path
+              required: true
+              schema: {type: string}
+              x-speakeasy-name-override: app_id
+          responses:
+            "200":
+              description: The app is no longer listed in the App Store.
+
+  # Credentials are free-form per integration and never shown in plans.
+  # A different app_class_id is a different integration, so it replaces.
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["auth","settings"]
+    update:
+      x-speakeasy-type-override: any
+      x-speakeasy-param-sensitive: true
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["app_class_id"]
+    update:
+      x-speakeasy-param-force-new: true
+  # A create body either connects an integration (app_class_id + auth) or
+  # creates a custom app (label, category, description, ...); the API
+  # rejects a body that mixes them. Checking it here fails the plan instead
+  # of the apply. Connected apps don't set the metadata fields at all.
+  - target: $["components"]["schemas"]["AppCreateInput"]["properties"]["app_class_id"]
+    update:
+      x-speakeasy-conflicts-with: [label, category, description, logo_url, website_url]
+
+  # request_instructions is writable through the app and through App Store
+  # settings; only the latter can clear it, so only that one is exposed.
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["request_instructions"]
+    update:
+      x-speakeasy-terraform-ignore: true
+
+  # A lumos_app update can't change these, so a plan keeps their current
+  # values instead of showing them as known after apply. The slots and
+  # appstore_settings change only through their own resources, and an
+  # omitted metadata field keeps its value in the merge patch.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description","logo_url","website_url"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+  # These change only when an update reconnects the integration. Updates
+  # resend auth and settings whenever they're set, so a connected app
+  # reconnects on every update and a custom app never does.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["sync_status","disconnected","instance_id"]
+    update:
+      x-speakeasy-plan-modifiers: UnknownOnReconnect
+  # A default fills every plan with that value, so the modifier above could
+  # never plan disconnected as unknown, and an app that reads back
+  # disconnected would plan a change to false on every run.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["disconnected"]["default"]
+    remove: true
+
+  # Expanded-only fields stay off the resource; the data source reads them.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  # Unexpanded, a workflow slot is always {id}.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
+
+  # Time-based access options are written as labels but read back as
+  # {label, value_seconds} objects, and one attribute needs one shape. The
+  # settings read keeps only the labels, so Terraform works in labels both
+  # ways. Overridden inline here because the catalog response shares the
+  # TimeBasedAccess schema.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]["$ref"]
+    remove: true
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]
+    update:
+      type: object
+      properties:
+        options:
+          anyOf: [{"type": "array", "items": {"type": "string"}}, {"type": "null"}]
+          description: Labels of the time-based access options offered for this app. An empty list means the app uses the domain-level defaults.
+        default:
+          anyOf: [{"type": "string"}, {"type": "null"}]
+          description: Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
+  # The API also reads an empty list back as null, so the read turns those
+  # into [] and a config that sets [] to clear one matches what's read.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: |
+          .allowed_requester_group_uuids |= (. // [])
+          | .custom_intake_fields |= (. // [])
+          | .time_based_access.options |= (if . == null then [] else map(.label) end)
+
+  # Requester groups have no order and no duplicates in the API.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput","AppStoreSettingsResponse"]["properties"]["allowed_requester_group_uuids"]["anyOf"][?@.type=="array"]
+    update:
+      format: set
+
+  # A settings update sends only what changed, and the API's merge patch
+  # leaves every other setting as it is, so plans keep their current values
+  # instead of showing them as known after apply.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse","CustomIntakeField"]["properties"][*]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true

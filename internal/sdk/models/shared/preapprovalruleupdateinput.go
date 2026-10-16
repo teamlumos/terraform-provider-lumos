@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // PreApprovalRuleUpdateInput - Request body for updating a pre-approval rule. A field you leave out keeps the rule's
 // current value, and a field you set to `null` is cleared.
 //
@@ -11,7 +15,7 @@ package shared
 // entitlements stay as they are.
 type PreApprovalRuleUpdateInput struct {
 	// Justification shown to requesters and reviewers for why this rule exists. Leave it out to keep the current value. It cannot be `null`.
-	Justification *string `json:"justification,omitempty"`
+	Justification *string `json:"justification,omitzero"`
 	// Who this rule pre-approves, and for how long they can have access.
 	//
 	// A condition is either a single check or several checks combined. A single check looks like `{"attribute": {"label": "<name>", "value": "<path>"}, "<operator>": <value>}` and uses exactly one operator. To require every check to match, wrap them in `{"and": [...]}`. To require at least one to match, wrap them in `{"or": [...]}`. To match the opposite of a check, wrap it in `{"not": {...}}`.
@@ -26,13 +30,24 @@ type PreApprovalRuleUpdateInput struct {
 	// - `access_request.access_length` accepts `equals`, `!=`, `>`, `>=`, `<`, `<=`, and `in`. Values are in seconds, for example `{"label": "<display name>", "value": <seconds>}`. To match unlimited access, use the value `2147483647` (2**31 - 1). Leaving this attribute out allows any duration, unlimited included.
 	//
 	// Leave it out to keep the current value. It cannot be `null`, because every rule must limit who it applies to.
-	Condition map[string]any `json:"condition,omitempty"`
+	Condition map[string]any `json:"condition,omitzero"`
 	// IDs of the entitlements this rule covers. The rule does not cover a request for any other entitlement. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestIncludesEntitlements []string `json:"request_includes_entitlements,omitempty"`
+	RequestIncludesEntitlements []string `json:"request_includes_entitlements,omitzero"`
 	// IDs of the entitlements this rule does not cover. The rule covers every other entitlement, and also a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestDoesNotIncludeEntitlements []string `json:"request_does_not_include_entitlements,omitempty"`
+	RequestDoesNotIncludeEntitlements []string `json:"request_does_not_include_entitlements,omitzero"`
 	// `true` covers a request for any entitlement of this app, so you don't need to keep a list of IDs up to date. `false` covers only a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
-	RequestHasEntitlements *bool `json:"request_has_entitlements,omitempty"`
+	RequestHasEntitlements *bool `json:"request_has_entitlements,omitzero"`
+}
+
+func (p PreApprovalRuleUpdateInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PreApprovalRuleUpdateInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PreApprovalRuleUpdateInput) GetJustification() *string {

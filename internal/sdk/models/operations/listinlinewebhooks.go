@@ -53,6 +53,17 @@ type ListInlineWebhooksResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListInlineWebhooksResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListInlineWebhooksResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListInlineWebhooksResponse) GetContentType() string {
 	if l == nil {
 		return ""

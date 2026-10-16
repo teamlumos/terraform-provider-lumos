@@ -65,6 +65,17 @@ type ListIntegrationsV1Response struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListIntegrationsV1Response) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListIntegrationsV1Response) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListIntegrationsV1Response) GetContentType() string {
 	if l == nil {
 		return ""

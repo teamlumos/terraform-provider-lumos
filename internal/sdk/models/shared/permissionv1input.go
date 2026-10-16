@@ -5,11 +5,11 @@ package shared
 // PermissionV1Input - One uploaded permission row, with unknown fields rejected instead of ignored.
 type PermissionV1Input struct {
 	// The unique identifier of the permission.
-	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
+	UniqueIdentifier *string `json:"unique_identifier,omitzero"`
 	// The type of the permission.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 	// The name of the permission.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 }
 
 func (p *PermissionV1Input) GetUniqueIdentifier() *string {

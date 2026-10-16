@@ -15,25 +15,25 @@ type AccessRequest struct {
 	// The name of the app the request is for.
 	AppName string `json:"app_name"`
 	// The user who requested access. It's possible for one user to request access on another's behalf. None for system-initiated requests, such as automated onboarding policies, that have no human requester.
-	RequesterUser *User `json:"requester_user,omitempty"`
+	RequesterUser *User `json:"requester_user,omitzero"`
 	TargetUser    User  `json:"target_user"`
 	// The user supporting this request, if any. None if no supporter has been assigned.
-	SupporterUser *User                `json:"supporter_user,omitempty"`
+	SupporterUser *User                `json:"supporter_user,omitzero"`
 	Status        SupportRequestStatus `json:"status"`
 	// The reason the user wrote for putting the access request into the given state.
-	Notes map[string]*string `json:"notes,omitempty"`
+	Notes map[string]*string `json:"notes,omitzero"`
 	// For time-based access, when the granted access is removed. None for permanent requests.
-	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	ExpiresAt *time.Time `json:"expires_at,omitzero"`
 	// For time-based access requests, the number of seconds after provisioning at which access should be removed. None for permanent requests.
-	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitempty"`
+	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitzero"`
 	// When the request was made.
-	RequestedAt *time.Time `json:"requested_at,omitempty"`
+	RequestedAt *time.Time `json:"requested_at,omitzero"`
 	// The entitlements requested. A requested permission that is not linked to an entitlement is left out.
-	Entitlements []AccessRequestEntitlement `json:"entitlements,omitempty"`
+	Entitlements []AccessRequestEntitlement `json:"entitlements,omitzero"`
 	// The tasks on this request that the caller can see. Only returned with `expand=tasks`.
-	Tasks []Task `json:"tasks,omitempty"`
+	Tasks []Task `json:"tasks,omitzero"`
 	// The requester's answers to the app's custom intake fields. Only returned with `expand=custom_fields`.
-	CustomFields []CustomIntakeFieldResponseOutput `json:"custom_fields,omitempty"`
+	CustomFields []CustomIntakeFieldResponseOutput `json:"custom_fields,omitzero"`
 }
 
 func (a AccessRequest) MarshalJSON() ([]byte, error) {
