@@ -177,3 +177,29 @@ data "lumos_users" "all" {}
 		})
 	}
 }
+
+// TestAccUsersDataSource looks up the token's own user by email, so it
+// needs no fixture users in the test domain.
+func TestAccUsersDataSource(t *testing.T) {
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config: providerConfig() + `
+data "lumos_current_user" "me" {}
+
+data "lumos_users" "me_by_email" {
+  search_term = data.lumos_current_user.me.email
+  exact_match = true
+}
+`,
+			Check: resource.ComposeAggregateTestCheckFunc(
+				resource.TestCheckResourceAttr("data.lumos_users.me_by_email", "users.#", "1"),
+				resource.TestCheckResourceAttrPair(
+					"data.lumos_users.me_by_email", "users.0.id",
+					"data.lumos_current_user.me", "id",
+				),
+			),
+		}},
+	})
+}
