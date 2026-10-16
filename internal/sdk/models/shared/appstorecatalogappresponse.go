@@ -16,25 +16,25 @@ type AppStoreCatalogAppResponse struct {
 	// The unique identifier of the app.
 	ID string `json:"id"`
 	// The display name of the app.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 	// The catalog identifier of the underlying app (e.g. "github.com"). Custom apps return "custom".
-	AppClassID *string `json:"app_class_id,omitempty"`
+	AppClassID *string `json:"app_class_id,omitzero"`
 	// The app-instance identifier distinguishing multiple instances of the same app.
-	InstanceID *string `json:"instance_id,omitempty"`
+	InstanceID *string `json:"instance_id,omitzero"`
 	// URL of the app logo image.
-	LogoURL *string `json:"logo_url,omitempty"`
+	LogoURL *string `json:"logo_url,omitzero"`
 	// URL of the app's official website.
-	WebsiteURL *string `json:"website_url,omitempty"`
+	WebsiteURL *string `json:"website_url,omitzero"`
 	// The category this app belongs to.
-	Category *string `json:"category,omitempty"`
+	Category *string `json:"category,omitzero"`
 	// A description of the app.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
-	Status *string `json:"status,omitempty"`
+	Status *string `json:"status,omitzero"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `default:"false" json:"disconnected"`
 	// App Store request settings. Present when the caller has read access to App Store items.
-	AppstoreSettings *AppStoreCatalogSettingsResponse `json:"appstore_settings,omitempty"`
+	AppstoreSettings *AppStoreCatalogSettingsResponse `json:"appstore_settings,omitzero"`
 }
 
 func (a AppStoreCatalogAppResponse) MarshalJSON() ([]byte, error) {

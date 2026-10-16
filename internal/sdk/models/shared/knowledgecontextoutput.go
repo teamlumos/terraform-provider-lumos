@@ -13,9 +13,9 @@ type KnowledgeContextOutput struct {
 	// Title of the knowledge entry.
 	Title string `json:"title"`
 	// Body text of the knowledge entry (markdown supported).
-	Content *string `json:"content,omitempty"`
+	Content *string `json:"content,omitzero"`
 	// URL of the attached file, if any.
-	FileURL *string `json:"file_url,omitempty"`
+	FileURL *string `json:"file_url,omitzero"`
 	// Freeform tag strings attached to the entry.
 	GenericTags []string `json:"generic_tags"`
 	// Application tags attached to the entry.
@@ -23,9 +23,9 @@ type KnowledgeContextOutput struct {
 	// Products that can consume this knowledge entry.
 	ProductScopes []KnowledgeProductScope `json:"product_scopes"`
 	// ISO 8601 creation timestamp.
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitzero"`
 	// ISO 8601 last-updated timestamp.
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitzero"`
 }
 
 func (k KnowledgeContextOutput) MarshalJSON() ([]byte, error) {

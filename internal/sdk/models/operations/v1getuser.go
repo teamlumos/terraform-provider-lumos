@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -12,6 +13,17 @@ type V1GetUserRequest struct {
 	UserID string `pathParam:"style=simple,explode=false,name=user_id"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (v V1GetUserRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetUserRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetUserRequest) GetUserID() string {
@@ -42,6 +54,17 @@ type V1GetUserResponse struct {
 	UserWithCustomAttributes *shared.UserWithCustomAttributes
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1GetUserResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetUserResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetUserResponse) GetContentType() string {

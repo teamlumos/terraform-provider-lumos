@@ -11,7 +11,7 @@ type TaskComment struct {
 	// The text content of the comment.
 	Body string `json:"body"`
 	// The user who created the comment.
-	CreatedBy *User `json:"created_by,omitempty"`
+	CreatedBy *User `json:"created_by,omitzero"`
 	// When the comment was created.
 	CreatedAt time.Time `json:"created_at"`
 }

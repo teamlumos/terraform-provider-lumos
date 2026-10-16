@@ -52,13 +52,13 @@ type Workflow struct {
 	// A UUID identifying this Workflow.
 	ID string `json:"id"`
 	// A name for this Workflow.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// A description of this Workflow.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The kind of workflow.
 	Type WorkflowType `json:"type"`
 	// UUID of the app this Workflow belongs to, if associated.
-	AppID *string `json:"app_id,omitempty"`
+	AppID *string `json:"app_id,omitzero"`
 	// The ordered steps of the workflow.
 	Steps []WorkflowStepOutput `json:"steps"`
 }

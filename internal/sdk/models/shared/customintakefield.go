@@ -13,11 +13,11 @@ type CustomIntakeField struct {
 	// The question shown to the requester.
 	Prompt string `json:"prompt"`
 	// Additional guidance shown alongside the prompt.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// Whether the requester must answer this field to submit a request.
 	IsRequired bool `json:"is_required"`
 	// Selectable options for this field. Present only when field_type is "dropdown".
-	DropdownOptions []string `json:"dropdown_options,omitempty"`
+	DropdownOptions []string `json:"dropdown_options,omitzero"`
 }
 
 func (c CustomIntakeField) MarshalJSON() ([]byte, error) {

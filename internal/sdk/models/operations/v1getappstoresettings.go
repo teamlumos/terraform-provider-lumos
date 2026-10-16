@@ -3,20 +3,21 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
 type V1GetAppStoreSettingsRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 }
 
-func (v *V1GetAppStoreSettingsRequest) GetAppUUID() string {
+func (v *V1GetAppStoreSettingsRequest) GetAppID() string {
 	if v == nil {
 		return ""
 	}
-	return v.AppUUID
+	return v.AppID
 }
 
 // #region class-body-v1getappstoresettingsrequest
@@ -33,6 +34,17 @@ type V1GetAppStoreSettingsResponse struct {
 	AppStoreSettingsResponse *shared.AppStoreSettingsResponse
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1GetAppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAppStoreSettingsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAppStoreSettingsResponse) GetContentType() string {

@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // AccountV1Input - One uploaded account row, with unknown fields rejected instead of ignored.
 //
 // `extra="forbid"` is not recursive, so every nested row model is overridden
@@ -11,21 +15,32 @@ type AccountV1Input struct {
 	// A unique identifier for this account, such as an account ID or email.
 	UniqueIdentifier *string `json:"unique_identifier"`
 	// The email of this account.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 	// The first name of the user.
-	FirstName *string `json:"first_name,omitempty"`
+	FirstName *string `json:"first_name,omitzero"`
 	// The last name of the user.
-	LastName *string `json:"last_name,omitempty"`
+	LastName *string `json:"last_name,omitzero"`
 	// The datetime of last activity of the user.
-	LastActivity *string `json:"last_activity,omitempty"`
+	LastActivity *string `json:"last_activity,omitzero"`
 	// The datetime of last login of the user.
-	LastLogin *string `json:"last_login,omitempty"`
+	LastLogin *string `json:"last_login,omitzero"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	Status *AccountLifecycleStatus `json:"status,omitzero"`
 	// The permissions of the account.
-	Permissions []PermissionV1Input `json:"permissions,omitempty"`
+	Permissions []PermissionV1Input `json:"permissions,omitzero"`
 	// The attributes of the account.
-	Attributes []AttributeV1Input `json:"attributes,omitempty"`
+	Attributes []AttributeV1Input `json:"attributes,omitzero"`
+}
+
+func (a AccountV1Input) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccountV1Input) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccountV1Input) GetUniqueIdentifier() *string {

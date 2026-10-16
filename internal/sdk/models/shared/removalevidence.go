@@ -18,11 +18,11 @@ type RemovalEvidence struct {
 	// The file's name as uploaded.
 	Filename string `json:"filename"`
 	// The file's media type, inferred from its extension. Null when the extension maps to no known type.
-	ContentType *string `json:"content_type,omitempty"`
+	ContentType *string `json:"content_type,omitzero"`
 	// The note the uploader attached.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// Who attached the file.
-	UploadedBy *User `json:"uploaded_by,omitempty"`
+	UploadedBy *User `json:"uploaded_by,omitzero"`
 	// When the file was attached.
 	UploadedAt time.Time `json:"uploaded_at"`
 }

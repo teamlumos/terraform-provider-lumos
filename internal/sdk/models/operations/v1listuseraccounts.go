@@ -74,6 +74,17 @@ type V1ListUserAccountsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (v V1ListUserAccountsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1ListUserAccountsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *V1ListUserAccountsResponse) GetContentType() string {
 	if v == nil {
 		return ""

@@ -10,13 +10,13 @@ type User struct {
 	// The ID of this user.
 	ID string `json:"id"`
 	// The email of this user.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
+	GivenName *string `json:"given_name,omitzero"`
 	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
+	FamilyName *string `json:"family_name,omitzero"`
 	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
+	Status *UserLifecycleStatus `json:"status,omitzero"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {

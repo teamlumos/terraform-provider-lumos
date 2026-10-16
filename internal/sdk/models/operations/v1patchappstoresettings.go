@@ -3,21 +3,22 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
 type V1PatchAppStoreSettingsRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID                    string                            `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID                      string                            `pathParam:"style=simple,explode=false,name=app_uuid"`
 	AppStoreSettingsPatchInput shared.AppStoreSettingsPatchInput `request:"mediaType=application/json"`
 }
 
-func (v *V1PatchAppStoreSettingsRequest) GetAppUUID() string {
+func (v *V1PatchAppStoreSettingsRequest) GetAppID() string {
 	if v == nil {
 		return ""
 	}
-	return v.AppUUID
+	return v.AppID
 }
 
 func (v *V1PatchAppStoreSettingsRequest) GetAppStoreSettingsPatchInput() shared.AppStoreSettingsPatchInput {
@@ -41,6 +42,17 @@ type V1PatchAppStoreSettingsResponse struct {
 	AppStoreSettingsResponse *shared.AppStoreSettingsResponse
 	// Invalid custom intake field collection or malformed request.
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1PatchAppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1PatchAppStoreSettingsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1PatchAppStoreSettingsResponse) GetContentType() string {

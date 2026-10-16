@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -11,6 +12,17 @@ type UpdateKnowledgeContextRequest struct {
 	// The knowledge entry's ID, which `GET /v1/knowledge/context` returns as `id`.
 	KnowledgeContextID         string                             `pathParam:"style=simple,explode=false,name=knowledge_context_id"`
 	BodyUpdateKnowledgeContext *shared.BodyUpdateKnowledgeContext `request:"mediaType=multipart/form-data"`
+}
+
+func (u UpdateKnowledgeContextRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UpdateKnowledgeContextRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *UpdateKnowledgeContextRequest) GetKnowledgeContextID() string {
@@ -38,6 +50,17 @@ type UpdateKnowledgeContextResponse struct {
 	KnowledgeContextOutput *shared.KnowledgeContextOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (u UpdateKnowledgeContextResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UpdateKnowledgeContextResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *UpdateKnowledgeContextResponse) GetContentType() string {

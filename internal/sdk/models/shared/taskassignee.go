@@ -7,9 +7,9 @@ type TaskAssignee struct {
 	ID   string           `json:"id"`
 	Type TaskAssigneeType `json:"type"`
 	// The display name of the assignee.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The email of the assignee. Only set for users.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 }
 
 func (t *TaskAssignee) GetID() string {

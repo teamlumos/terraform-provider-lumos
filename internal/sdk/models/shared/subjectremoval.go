@@ -59,17 +59,17 @@ type SubjectRemoval struct {
 	// `removal-errored` is the one value the subject filters do not accept: it is graded from the workflow rather than stored, so no row could match it.
 	Status SubjectRemovalStatus `json:"status"`
 	// How the access is being taken away: `workflow` when an integration does it, `manual-task` when a person does, `itsm` when it is tracked in a ticket. Null before the review decides how this subject will be removed.
-	Method *RemovalMethod `json:"method,omitempty"`
+	Method *RemovalMethod `json:"method,omitzero"`
 	// Who is responsible for carrying out a removal that a person performs. An entitlement also lists the removers assigned on its account, whose remit covers every entitlement bundled under it.
-	Assignees []SubjectAssignee `json:"assignees,omitempty"`
+	Assignees []SubjectAssignee `json:"assignees,omitzero"`
 	// Why the last removal attempt failed, if one did. Null when the run recorded no reason, which a `removal-errored` status does not by itself guarantee.
-	Error *RemovalError `json:"error,omitempty"`
+	Error *RemovalError `json:"error,omitzero"`
 	// When the access was removed.
-	CompletedAt *time.Time `json:"completed_at,omitempty"`
+	CompletedAt *time.Time `json:"completed_at,omitzero"`
 	// Files attached as proof the access was removed, identifying fields only and no download link. Requires `expand=removal.evidence`.
-	Evidence []RemovalEvidence `json:"evidence,omitempty"`
+	Evidence []RemovalEvidence `json:"evidence,omitzero"`
 	// The ITSM ticket tracking this removal. Requires `expand=removal.itsm_ticket`.
-	ItsmTicket *RemovalItsmTicket `json:"itsm_ticket,omitempty"`
+	ItsmTicket *RemovalItsmTicket `json:"itsm_ticket,omitzero"`
 }
 
 func (s SubjectRemoval) MarshalJSON() ([]byte, error) {

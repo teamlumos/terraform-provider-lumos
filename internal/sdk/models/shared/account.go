@@ -15,23 +15,23 @@ type Account struct {
 	AppID       string      `json:"app_id"`
 	AccountType AccountType `json:"account_type"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	Status *AccountLifecycleStatus `json:"status,omitzero"`
 	// The stable identifier of this account from the associated service.
 	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 	// The ID of the user associated with this account.
-	UserID *string `json:"user_id,omitempty"`
+	UserID *string `json:"user_id,omitzero"`
 	// The time that Lumos first discovered this account, in ISO 8601 format.
-	DiscoveredAt *time.Time `json:"discovered_at,omitempty"`
+	DiscoveredAt *time.Time `json:"discovered_at,omitzero"`
 	// The last time a user logged into this app, in ISO 8601 format.
-	LastLogin *time.Time `json:"last_login,omitempty"`
+	LastLogin *time.Time `json:"last_login,omitzero"`
 	// The last time a user completed an action tracked by Lumos, in ISO 8601 format.
-	LastActivity *time.Time `json:"last_activity,omitempty"`
+	LastActivity *time.Time `json:"last_activity,omitzero"`
 	// The discovery methods through which Lumos identified this account.
 	Sources []DiscoverySource `json:"sources"`
 	// The account's app. Present only with `expand=app`.
-	App *AppBase `json:"app,omitempty"`
+	App *AppBase `json:"app,omitzero"`
 }
 
 func (a Account) MarshalJSON() ([]byte, error) {

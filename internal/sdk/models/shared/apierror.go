@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // APIError - The V1 error object — the contents of the envelope's `error` field.
 type APIError struct {
 	// Human-readable summary of the error.
@@ -10,7 +14,18 @@ type APIError struct {
 	// Stable machine-readable error code; branch on this, not 'detail'.
 	Code string `json:"code"`
 	// Field-level errors; empty for non-validation errors.
-	Errors []APIErrorField `json:"errors,omitempty"`
+	Errors []APIErrorField `json:"errors,omitzero"`
+}
+
+func (a APIError) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *APIError) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *APIError) GetDetail() string {

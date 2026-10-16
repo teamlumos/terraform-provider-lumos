@@ -46,9 +46,9 @@ type CustomAttributeScopeFilterInput struct {
 	// Human-readable display label.
 	Label string `json:"label"`
 	// Value to filter by for this custom attribute.
-	Value *string `json:"value,omitempty"`
+	Value *string `json:"value,omitzero"`
 	// Attribute type (STRING, INTEGER, DATETIME, USER, GROUP, SINGLESELECT, MULTISELECT).
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 }
 
 func (c CustomAttributeScopeFilterInput) MarshalJSON() ([]byte, error) {

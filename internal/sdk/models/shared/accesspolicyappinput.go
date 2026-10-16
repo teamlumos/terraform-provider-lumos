@@ -2,13 +2,28 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type AccessPolicyAppInput struct {
 	// The ID of this app.
 	ID string `json:"id"`
 	// Whether approval is required for this app grant.
-	IsPreapproved *bool `json:"is_preapproved,omitempty"`
+	IsPreapproved *bool `json:"is_preapproved,omitzero"`
 	// The entitlements granted for this app. Omit, or send an empty list, to grant access to the app itself rather than to specific entitlements.
-	Entitlements []EntitlementRefInput `json:"entitlements,omitempty"`
+	Entitlements []EntitlementRefInput `json:"entitlements,omitzero"`
+}
+
+func (a AccessPolicyAppInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessPolicyAppInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccessPolicyAppInput) GetID() string {

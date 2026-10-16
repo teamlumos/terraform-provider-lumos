@@ -161,7 +161,7 @@ func (u Value) MarshalJSON() ([]byte, error) {
 type CustomAttribute struct {
 	Type CustomAttributeType `json:"type"`
 	// The value of the attribute for an individual Order
-	Value *Value `json:"value,omitempty"`
+	Value *Value `json:"value,omitzero"`
 }
 
 func (c *CustomAttribute) GetType() CustomAttributeType {

@@ -7,7 +7,7 @@ type CustomIntakeFieldResponseOutput struct {
 	// The custom intake field prompt shown to the requester.
 	Prompt string `json:"prompt"`
 	// The requester's response to the custom intake field.
-	Response *string `json:"response,omitempty"`
+	Response *string `json:"response,omitzero"`
 }
 
 func (c *CustomIntakeFieldResponseOutput) GetPrompt() string {

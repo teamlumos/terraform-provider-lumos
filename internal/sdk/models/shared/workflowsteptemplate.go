@@ -9,7 +9,7 @@ type WorkflowStepTemplate struct {
 	// The input schema for the step, describing available inputs.
 	InputSchema map[string]InputParameterSchema `json:"input_schema"`
 	// A human-readable name for this step.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 }
 
 func (w *WorkflowStepTemplate) GetStep() string {

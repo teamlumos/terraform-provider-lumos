@@ -99,9 +99,9 @@ type ScalarScopeFilterInput struct {
 	// Human-readable display label.
 	Label string `json:"label"`
 	// The value to filter by. This must be the exact `value` of an item returned by GET /access_reviews/scope_options for this app — the machine-matchable identifier, **not** the human-readable `label`. For ACCOUNT_ENTITLEMENT the value is the entitlement's integration_specific_entitlement_id, which may be an opaque id (e.g. a numeric team id) rather than its display name. Posting a `label`, or any value not present in scope_options, is rejected.
-	Value *string `json:"value,omitempty"`
+	Value *string `json:"value,omitzero"`
 	// Attribute type. Required for USER_OR_GROUP (must be 'USER' or 'GROUP'). Ignored for all other groups.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 }
 
 func (s ScalarScopeFilterInput) MarshalJSON() ([]byte, error) {

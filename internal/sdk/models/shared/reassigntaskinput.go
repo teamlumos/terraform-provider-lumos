@@ -8,9 +8,9 @@ import (
 
 type ReassignTaskInput struct {
 	// IDs of users to assign.
-	UserIds []string `json:"user_ids,omitempty"`
+	UserIds []string `json:"user_ids,omitzero"`
 	// IDs of groups to assign.
-	GroupIds []string `json:"group_ids,omitempty"`
+	GroupIds []string `json:"group_ids,omitzero"`
 	// Whether to replace existing assignees or add to them.
 	Replace *bool `default:"true" json:"replace"`
 }

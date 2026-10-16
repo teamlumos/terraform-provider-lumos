@@ -4,19 +4,19 @@ package shared
 
 type Group struct {
 	// The ID of this group.
-	ID *string `json:"id,omitempty"`
+	ID *string `json:"id,omitzero"`
 	// The ID of the app that sources this group.
-	AppID *string `json:"app_id,omitempty"`
+	AppID *string `json:"app_id,omitzero"`
 	// The ID of this group, specific to the integration.
-	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
+	IntegrationSpecificID *string `json:"integration_specific_id,omitzero"`
 	// The name of this group.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The description of this group.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The lifecycle of this group.
-	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitempty"`
+	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitzero"`
 	// The ID of the app that sources this group.
-	SourceAppID *string `json:"source_app_id,omitempty"`
+	SourceAppID *string `json:"source_app_id,omitzero"`
 }
 
 func (g *Group) GetID() *string {

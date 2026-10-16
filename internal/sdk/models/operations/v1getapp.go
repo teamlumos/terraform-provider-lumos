@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -12,6 +13,17 @@ type V1GetAppRequest struct {
 	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 	// Fields to expand. Supported fields: admins, approval_workflow, default_provisioning_workflow, default_deprovisioning_workflow, custom_attributes, appstore_settings.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (v V1GetAppRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAppRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAppRequest) GetAppUUID() string {
@@ -42,6 +54,17 @@ type V1GetAppResponse struct {
 	AppResponse *shared.AppResponse
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1GetAppResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAppResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAppResponse) GetContentType() string {

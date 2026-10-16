@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -47,6 +48,17 @@ type SyncAppReviewResponse struct {
 	OperationEnvelope *shared.OperationEnvelope
 	// Validation error — a filter names an unknown scopable property, or carries a value the property does not accept (`scope_filter.invalid`).
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (s SyncAppReviewResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *SyncAppReviewResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *SyncAppReviewResponse) GetContentType() string {

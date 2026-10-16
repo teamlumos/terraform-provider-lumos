@@ -51,11 +51,11 @@ type WorkflowInput struct {
 	// A name for this Workflow.
 	Name string `json:"name"`
 	// A description of this Workflow.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The kind of workflow.
 	Type WorkflowInputType `json:"type"`
 	// UUID of the app this Workflow belongs to. May be null for a shared, not-yet-associated Workflow. Immutable on update: a PUT whose app_id differs from the stored Workflow's app is rejected with a 400 (workflow.app_reassignment_not_allowed).
-	AppID *string `json:"app_id,omitempty"`
+	AppID *string `json:"app_id,omitzero"`
 	// The ordered steps of the workflow.
 	Steps []WorkflowStepInput `json:"steps"`
 }
