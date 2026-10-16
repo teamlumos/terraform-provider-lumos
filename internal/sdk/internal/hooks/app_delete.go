@@ -1,7 +1,9 @@
 package hooks
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -9,20 +11,31 @@ import (
 
 // appDeleteRecordKept handles DELETE /v1/apps/{id} answering 409 after it
 // already disconnected an integration: the API keeps the record when other
-// Lumos data references it. That 409 looks like the one for a refused
-// delete, so the hook reads the app back and treats the delete as done only
-// if the app is now disconnected. Any other 409 stays an error, including a
-// custom app's: the API's reset doesn't change a custom app, so when its
-// record is kept nothing happened at all, App Store listing included.
+// Lumos data references it. The API answers 409 for a refused delete too
+// (an app not managed through the API), and the two differ only in their
+// message, so the hook treats the delete as done only when the message says
+// the record was kept and the app reads back disconnected. Any other 409
+// stays an error, including a custom app's: the API's reset doesn't change a
+// custom app, so when its record is kept nothing happened at all, App Store
+// listing included.
 //
 // It is an AfterSuccess hook because the client runs those for every
 // response the server sends, whatever its status code.
 type appDeleteRecordKept struct{}
 
+const appDeleteRecordKeptMessage = "its record could not be deleted"
+
 func (appDeleteRecordKept) AfterSuccess(hookCtx AfterSuccessContext, res *http.Response) (*http.Response, error) {
 	if hookCtx.OperationID != "v1DeleteApp" || res.StatusCode != http.StatusConflict || res.Request == nil {
 		return res, nil
 	}
+	body, err := io.ReadAll(res.Body)
+	res.Body.Close()
+	res.Body = io.NopCloser(bytes.NewReader(body))
+	if err != nil || !bytes.Contains(body, []byte(appDeleteRecordKeptMessage)) {
+		return res, nil
+	}
+
 	get, err := http.NewRequestWithContext(hookCtx.Context, http.MethodGet, res.Request.URL.String(), nil)
 	if err != nil {
 		return res, nil
