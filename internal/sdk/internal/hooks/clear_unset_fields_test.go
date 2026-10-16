@@ -10,8 +10,9 @@ import (
 )
 
 // Runs through New() so the test also fails if the hook isn't registered:
-// without it, removing an override from the config would leave it in place.
-func TestInheritUnsetEntitlementOverrides(t *testing.T) {
+// without it, removing a clearable setting from the config would leave it in
+// place.
+func TestClearUnsetFields(t *testing.T) {
 	tests := []struct {
 		name        string
 		operationID string
@@ -43,8 +44,26 @@ func TestInheritUnsetEntitlementOverrides(t *testing.T) {
 			want:        `{"visible_in_appstore":true,"allowed_requester_group_uuids_override":null,"time_based_access_override":null,"request_validation_webhook_uuid":"w1"}`,
 		},
 		{
-			name:        "leaves other operations alone",
+			name:        "sends null for each unset app setting and keeps the rest",
 			operationID: "v1PatchAppStoreSettings",
+			body:        `{"in_app_store":true,"redirect_url":"https://example.com","time_based_access":{"options":["1 day"]}}`,
+			want:        `{"in_app_store":true,"redirect_url":"https://example.com","time_based_access":{"options":["1 day"],"default":null},"request_instructions":null,"request_validation_webhook_uuid":null,"default_entitlement":null}`,
+		},
+		{
+			name:        "keeps configured app settings",
+			operationID: "v1PatchAppStoreSettings",
+			body:        `{"request_instructions":"Ask first.","request_validation_webhook_uuid":"w1","redirect_url":"https://example.com","default_entitlement":{"id":"e1"},"time_based_access":{"default":"1 day"}}`,
+			want:        `{"request_instructions":"Ask first.","request_validation_webhook_uuid":"w1","redirect_url":"https://example.com","default_entitlement":{"id":"e1"},"time_based_access":{"default":"1 day"}}`,
+		},
+		{
+			name:        "keeps the time-based access default when the block is left out",
+			operationID: "v1PatchAppStoreSettings",
+			body:        `{}`,
+			want:        `{"request_instructions":null,"request_validation_webhook_uuid":null,"redirect_url":null,"default_entitlement":null}`,
+		},
+		{
+			name:        "leaves other operations alone",
+			operationID: "v1GetAppStoreSettings",
 			body:        `{}`,
 			want:        `{}`,
 		},
