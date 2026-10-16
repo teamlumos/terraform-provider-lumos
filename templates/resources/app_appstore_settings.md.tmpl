@@ -20,8 +20,8 @@ description: |-
 * **One per app.** Changing `app_id` replaces the resource: the old app is taken out of the App Store, keeping its other settings, and the new app's settings are written.
 * **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
 * **Time-based access options** are set and shown by their labels.
-* **Omitted settings are left as they are.** Only the settings in the config are managed.
-
+* **Omitting a setting** either clears it or keeps its current value, as each attribute's description says. `request_instructions`, `redirect_url`, `request_validation_webhook_uuid`, `default_entitlement` and `time_based_access.default` are cleared when omitted or set to `null`, including values set in the Lumos UI or present when the settings are imported. The plan shows each one that will be cleared as `-> null`. Every other setting keeps its current value.
+* **Every update sends all settings.** Settings the config leaves out are sent with the values read when the plan was made, so a change made in the Lumos UI between `terraform plan` and `terraform apply` is overwritten. Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins.
 ## Destroy behavior
 
 Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays. To stop managing the settings without unlisting the app, use a `removed` block:

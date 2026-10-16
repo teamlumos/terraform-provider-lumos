@@ -38,27 +38,27 @@ func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
 }
 
 type AppStoreSettingsPatchInput struct {
-	// Set to true to list this app in the App Store catalog.
+	// Whether this app is listed in the App Store catalog. Omitted, it keeps its current value.
 	InAppStore *bool `json:"in_app_store,omitzero"`
-	// Visibility within the catalog. "visible", "search_only", or "hidden". Omit to leave unchanged.
+	// Visibility within the catalog. Omitted, it keeps its current value.
 	CatalogVisibility *CatalogVisibility `json:"catalog_visibility,omitzero"`
-	// Custom instructions shown on the access-request form. Null clears any existing instructions.
+	// Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
-	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.
+	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omitted, it keeps its current value.
 	AllowPermissionSelection *bool `json:"allow_permission_selection,omitzero"`
-	// When true, requesters may select more than one permission per request. Omit to leave unchanged.
+	// When true, requesters may select more than one permission per request. Omitted, it keeps its current value.
 	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitzero"`
-	// UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant.
+	// UUIDs of the groups whose members may request this app. An empty set lets anyone in the organization request it. Omitted, the groups keep their current value.
 	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
-	// Time-based access configuration. Omit to leave all sub-fields unchanged.
+	// Time-based access options and the pre-selected default. Omitted, both keep their current values.
 	TimeBasedAccess *TimeBasedAccessPatchInput `json:"time_based_access,omitzero"`
-	// UUID of the inline webhook to use for request validation. Null clears any existing webhook.
+	// UUID of the inline webhook called to validate access requests. Omitted or set to `null`, the webhook is cleared.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
-	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
+	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to `null`, the redirect is cleared.
 	RedirectURL *string `json:"redirect_url,omitzero"`
-	// Entitlement to pre-select on the access-request form. Must belong to this app. Null clears the pre-selection. Omit to leave unchanged.
+	// Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
 	DefaultEntitlement *EntitlementRefInput `json:"default_entitlement,omitzero"`
-	// The complete desired custom intake field list, matched by reference_key. Fields you omit from the list are deleted. Null or an empty list deletes all of them. Omit this property to leave them unchanged.
+	// The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted, and an empty list deletes all of them. Omitted, the fields keep their current value.
 	CustomIntakeFields []CustomIntakeFieldPatchInput `json:"custom_intake_fields,omitzero"`
 }
 

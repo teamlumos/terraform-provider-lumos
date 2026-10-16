@@ -11,12 +11,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-// AppAppstoreSettingsResourceModelOptions enables patch sdk method construction.
-type AppAppstoreSettingsResourceModelOptions struct {
-	Config *AppAppstoreSettingsResourceModel
-	State  *AppAppstoreSettingsResourceModel
-}
-
 func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppStoreSettingsResponse(ctx context.Context, resp *shared.AppStoreSettingsResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -84,7 +78,7 @@ func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppStoreSettingsResp
 	return diags
 }
 
-func (r *AppAppstoreSettingsResourceModel) ToOperationsV1GetAppStoreSettingsRequest(ctx context.Context, opts *AppAppstoreSettingsResourceModelOptions) (*operations.V1GetAppStoreSettingsRequest, diag.Diagnostics) {
+func (r *AppAppstoreSettingsResourceModel) ToOperationsV1GetAppStoreSettingsRequest(ctx context.Context) (*operations.V1GetAppStoreSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appID string
@@ -97,13 +91,13 @@ func (r *AppAppstoreSettingsResourceModel) ToOperationsV1GetAppStoreSettingsRequ
 	return &out, diags
 }
 
-func (r *AppAppstoreSettingsResourceModel) ToOperationsV1PatchAppStoreSettingsRequest(ctx context.Context, opts *AppAppstoreSettingsResourceModelOptions) (*operations.V1PatchAppStoreSettingsRequest, diag.Diagnostics) {
+func (r *AppAppstoreSettingsResourceModel) ToOperationsV1PatchAppStoreSettingsRequest(ctx context.Context) (*operations.V1PatchAppStoreSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appID string
 	appID = r.AppID.ValueString()
 
-	appStoreSettingsPatchInput, appStoreSettingsPatchInputDiags := r.ToSharedAppStoreSettingsPatchInput(ctx, opts)
+	appStoreSettingsPatchInput, appStoreSettingsPatchInputDiags := r.ToSharedAppStoreSettingsPatchInput(ctx)
 	diags.Append(appStoreSettingsPatchInputDiags...)
 
 	if diags.HasError() {
@@ -118,7 +112,7 @@ func (r *AppAppstoreSettingsResourceModel) ToOperationsV1PatchAppStoreSettingsRe
 	return &out, diags
 }
 
-func (r *AppAppstoreSettingsResourceModel) ToOperationsV1RemoveAppFromAppStoreRequest(ctx context.Context, opts *AppAppstoreSettingsResourceModelOptions) (*operations.V1RemoveAppFromAppStoreRequest, diag.Diagnostics) {
+func (r *AppAppstoreSettingsResourceModel) ToOperationsV1RemoveAppFromAppStoreRequest(ctx context.Context) (*operations.V1RemoveAppFromAppStoreRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appID string
@@ -131,50 +125,41 @@ func (r *AppAppstoreSettingsResourceModel) ToOperationsV1RemoveAppFromAppStoreRe
 	return &out, diags
 }
 
-func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ctx context.Context, opts *AppAppstoreSettingsResourceModelOptions) (*shared.AppStoreSettingsPatchInput, diag.Diagnostics) {
+func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ctx context.Context) (*shared.AppStoreSettingsPatchInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	inAppStore := new(bool)
-	if !r.InAppStore.IsUnknown() && !r.InAppStore.IsNull() && (opts == nil || opts.State == nil || (!opts.State.InAppStore.Equal(r.InAppStore))) {
+	if !r.InAppStore.IsUnknown() && !r.InAppStore.IsNull() {
 		*inAppStore = r.InAppStore.ValueBool()
 	} else {
 		inAppStore = nil
 	}
 	catalogVisibility := new(shared.CatalogVisibility)
-	if !r.CatalogVisibility.IsUnknown() && !r.CatalogVisibility.IsNull() && (opts == nil || opts.State == nil || (!opts.State.CatalogVisibility.Equal(r.CatalogVisibility))) {
+	if !r.CatalogVisibility.IsUnknown() && !r.CatalogVisibility.IsNull() {
 		*catalogVisibility = shared.CatalogVisibility(r.CatalogVisibility.ValueString())
 	} else {
 		catalogVisibility = nil
 	}
 	requestInstructions := new(string)
-	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() && (opts == nil || opts.State == nil || (!opts.State.RequestInstructions.Equal(r.RequestInstructions))) {
+	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
 		*requestInstructions = r.RequestInstructions.ValueString()
 	} else {
 		requestInstructions = nil
 	}
 	allowPermissionSelection := new(bool)
-	if !r.AllowPermissionSelection.IsUnknown() && !r.AllowPermissionSelection.IsNull() && (opts == nil || opts.State == nil || (!opts.State.AllowPermissionSelection.Equal(r.AllowPermissionSelection))) {
+	if !r.AllowPermissionSelection.IsUnknown() && !r.AllowPermissionSelection.IsNull() {
 		*allowPermissionSelection = r.AllowPermissionSelection.ValueBool()
 	} else {
 		allowPermissionSelection = nil
 	}
 	allowMultiplePermissionSelection := new(bool)
-	if !r.AllowMultiplePermissionSelection.IsUnknown() && !r.AllowMultiplePermissionSelection.IsNull() && (opts == nil || opts.State == nil || (!opts.State.AllowMultiplePermissionSelection.Equal(r.AllowMultiplePermissionSelection))) {
+	if !r.AllowMultiplePermissionSelection.IsUnknown() && !r.AllowMultiplePermissionSelection.IsNull() {
 		*allowMultiplePermissionSelection = r.AllowMultiplePermissionSelection.ValueBool()
 	} else {
 		allowMultiplePermissionSelection = nil
 	}
-	allowedRequesterGroupUuidsChanged := opts == nil || opts.State == nil || len(opts.State.AllowedRequesterGroupUuids) != len(r.AllowedRequesterGroupUuids)
-	if !allowedRequesterGroupUuidsChanged {
-		for allowedRequesterGroupUuidsCheckIdx := range r.AllowedRequesterGroupUuids {
-			if !opts.State.AllowedRequesterGroupUuids[allowedRequesterGroupUuidsCheckIdx].Equal(r.AllowedRequesterGroupUuids[allowedRequesterGroupUuidsCheckIdx]) {
-				allowedRequesterGroupUuidsChanged = true
-				break
-			}
-		}
-	}
 	var allowedRequesterGroupUuids []string
-	if r.AllowedRequesterGroupUuids != nil && allowedRequesterGroupUuidsChanged {
+	if r.AllowedRequesterGroupUuids != nil {
 		allowedRequesterGroupUuids = make([]string, 0, len(r.AllowedRequesterGroupUuids))
 		for allowedRequesterGroupUuidsIndex := range r.AllowedRequesterGroupUuids {
 			allowedRequesterGroupUuids = append(allowedRequesterGroupUuids, r.AllowedRequesterGroupUuids[allowedRequesterGroupUuidsIndex].ValueString())
@@ -182,24 +167,15 @@ func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ct
 	}
 	var timeBasedAccess *shared.TimeBasedAccessPatchInput
 	if r.TimeBasedAccess != nil {
-		optionsChanged := opts == nil || opts.State == nil || len(opts.State.TimeBasedAccess.Options) != len(r.TimeBasedAccess.Options)
-		if !optionsChanged {
-			for optionsCheckIdx := range r.TimeBasedAccess.Options {
-				if !opts.State.TimeBasedAccess.Options[optionsCheckIdx].Equal(r.TimeBasedAccess.Options[optionsCheckIdx]) {
-					optionsChanged = true
-					break
-				}
-			}
-		}
 		var optionsVar []string
-		if r.TimeBasedAccess.Options != nil && optionsChanged {
+		if r.TimeBasedAccess.Options != nil {
 			optionsVar = make([]string, 0, len(r.TimeBasedAccess.Options))
 			for optionsIndex := range r.TimeBasedAccess.Options {
 				optionsVar = append(optionsVar, r.TimeBasedAccess.Options[optionsIndex].ValueString())
 			}
 		}
 		defaultVar := new(string)
-		if !r.TimeBasedAccess.Default.IsUnknown() && !r.TimeBasedAccess.Default.IsNull() && (opts == nil || opts.State == nil || (!opts.State.TimeBasedAccess.Default.Equal(r.TimeBasedAccess.Default))) {
+		if !r.TimeBasedAccess.Default.IsUnknown() && !r.TimeBasedAccess.Default.IsNull() {
 			*defaultVar = r.TimeBasedAccess.Default.ValueString()
 		} else {
 			defaultVar = nil
@@ -210,13 +186,13 @@ func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ct
 		}
 	}
 	requestValidationWebhookUUID := new(string)
-	if !r.RequestValidationWebhookUUID.IsUnknown() && !r.RequestValidationWebhookUUID.IsNull() && (opts == nil || opts.State == nil || (!opts.State.RequestValidationWebhookUUID.Equal(r.RequestValidationWebhookUUID))) {
+	if !r.RequestValidationWebhookUUID.IsUnknown() && !r.RequestValidationWebhookUUID.IsNull() {
 		*requestValidationWebhookUUID = r.RequestValidationWebhookUUID.ValueString()
 	} else {
 		requestValidationWebhookUUID = nil
 	}
 	redirectURL := new(string)
-	if !r.RedirectURL.IsUnknown() && !r.RedirectURL.IsNull() && (opts == nil || opts.State == nil || (!opts.State.RedirectURL.Equal(r.RedirectURL))) {
+	if !r.RedirectURL.IsUnknown() && !r.RedirectURL.IsNull() {
 		*redirectURL = r.RedirectURL.ValueString()
 	} else {
 		redirectURL = nil
@@ -232,11 +208,8 @@ func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ct
 	}
 	var customIntakeFields []shared.CustomIntakeFieldPatchInput
 	if r.CustomIntakeFields != nil {
-		customIntakeFieldsChanged := opts == nil || opts.State == nil || len(opts.State.CustomIntakeFields) != len(r.CustomIntakeFields)
 		customIntakeFields = make([]shared.CustomIntakeFieldPatchInput, 0, len(r.CustomIntakeFields))
 		for customIntakeFieldsIndex := range r.CustomIntakeFields {
-			var customIntakeFieldsItemChanged bool
-			customIntakeFieldsItemStatePresent := opts != nil && opts.State != nil && customIntakeFieldsIndex < len(opts.State.CustomIntakeFields)
 			var referenceKey string
 			referenceKey = r.CustomIntakeFields[customIntakeFieldsIndex].ReferenceKey.ValueString()
 
@@ -245,36 +218,20 @@ func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ct
 			prompt = r.CustomIntakeFields[customIntakeFieldsIndex].Prompt.ValueString()
 
 			description := new(string)
-			if !r.CustomIntakeFields[customIntakeFieldsIndex].Description.IsUnknown() && !r.CustomIntakeFields[customIntakeFieldsIndex].Description.IsNull() && (opts == nil || opts.State == nil || !(customIntakeFieldsItemStatePresent) || (!opts.State.CustomIntakeFields[customIntakeFieldsIndex].Description.Equal(r.CustomIntakeFields[customIntakeFieldsIndex].Description))) {
+			if !r.CustomIntakeFields[customIntakeFieldsIndex].Description.IsUnknown() && !r.CustomIntakeFields[customIntakeFieldsIndex].Description.IsNull() {
 				*description = r.CustomIntakeFields[customIntakeFieldsIndex].Description.ValueString()
-				customIntakeFieldsItemChanged = true
 			} else {
 				description = nil
 			}
 			var isRequired bool
 			isRequired = r.CustomIntakeFields[customIntakeFieldsIndex].IsRequired.ValueBool()
 
-			dropdownOptionsChanged := opts == nil || opts.State == nil || len(opts.State.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions) != len(r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions)
-			if !dropdownOptionsChanged {
-				for dropdownOptionsCheckIdx := range r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions {
-					if !opts.State.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions[dropdownOptionsCheckIdx].Equal(r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions[dropdownOptionsCheckIdx]) {
-						dropdownOptionsChanged = true
-						break
-					}
-				}
-			}
-			if dropdownOptionsChanged {
-				customIntakeFieldsItemChanged = true
-			}
 			var dropdownOptions []string
-			if r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions != nil && dropdownOptionsChanged {
+			if r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions != nil {
 				dropdownOptions = make([]string, 0, len(r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions))
 				for dropdownOptionsIndex := range r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions {
 					dropdownOptions = append(dropdownOptions, r.CustomIntakeFields[customIntakeFieldsIndex].DropdownOptions[dropdownOptionsIndex].ValueString())
 				}
-			}
-			if customIntakeFieldsItemChanged || (opts != nil && opts.State != nil && !customIntakeFieldsItemStatePresent) {
-				customIntakeFieldsChanged = true
 			}
 			customIntakeFields = append(customIntakeFields, shared.CustomIntakeFieldPatchInput{
 				ReferenceKey:    referenceKey,
@@ -284,9 +241,6 @@ func (r *AppAppstoreSettingsResourceModel) ToSharedAppStoreSettingsPatchInput(ct
 				IsRequired:      isRequired,
 				DropdownOptions: dropdownOptions,
 			})
-		}
-		if !customIntakeFieldsChanged {
-			customIntakeFields = nil
 		}
 	}
 	out := shared.AppStoreSettingsPatchInput{

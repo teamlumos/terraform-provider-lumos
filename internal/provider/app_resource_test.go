@@ -162,15 +162,17 @@ func (f *fakeAPI) sawRequest(want string) bool {
 }
 
 // TestAppStoreSettingsOnImportedApp manages the App Store settings of an app
-// Terraform doesn't own: import, a one-field change, then destroy. It uses a
-// fake API because a UI-connected app with known settings can't be set up on
-// demand in a shared test domain.
+// Terraform doesn't own: import, a change that also removes the request
+// validation webhook, then destroy. It uses a fake API because a
+// UI-connected app with known settings and a validation webhook can't be set
+// up on demand in a shared test domain.
 func TestAppStoreSettingsOnImportedApp(t *testing.T) {
 	api := newFakeAPI(t)
+	api.settings["request_validation_webhook_uuid"] = "webhook1"
 	server := httptest.NewServer(api)
 	defer server.Close()
 
-	settings := func(visibility string) string {
+	settings := func(visibility, webhook string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "slack" {
   app_id             = "app1"
@@ -180,8 +182,9 @@ resource "lumos_app_appstore_settings" "slack" {
     options = ["1 day"]
     default = "1 day"
   }
+  %s
 }
-`, visibility)
+`, visibility, webhook)
 	}
 
 	resource.UnitTest(t, resource.TestCase{
@@ -190,7 +193,7 @@ resource "lumos_app_appstore_settings" "slack" {
 			{
 				// Matching config: the import plans no change, which also
 				// shows time-based access options read back as labels.
-				Config: settings("visible") + `
+				Config: settings("visible", `request_validation_webhook_uuid = "webhook1"`) + `
 import {
   to = lumos_app_appstore_settings.slack
   id = "app1"
@@ -203,13 +206,17 @@ import {
 				},
 			},
 			{
-				Config: settings("search_only"),
+				Config: settings("search_only", ""),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_app_appstore_settings.slack", plancheck.ResourceActionUpdate),
+						expectOnlyAttributesChange("lumos_app_appstore_settings.slack", "catalog_visibility", "request_validation_webhook_uuid"),
 					},
 				},
-				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search_only"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search_only"),
+					resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.slack", "request_validation_webhook_uuid"),
+				),
 			},
 		},
 	})
@@ -222,8 +229,12 @@ import {
 	if got := api.patches[0]["catalog_visibility"]; got != "search_only" {
 		t.Errorf("update sent catalog_visibility %v, want search_only", got)
 	}
-	if _, sent := api.patches[0]["allowed_requester_group_uuids"]; sent {
-		t.Errorf("update sent allowed_requester_group_uuids, which the config leaves alone")
+	if got, sent := api.patches[0]["request_validation_webhook_uuid"]; !sent || got != nil {
+		t.Errorf("update sent request_validation_webhook_uuid %v (sent: %t), want null", got, sent)
+	}
+	// Settings the config leaves out are sent back with their current value.
+	if got := fmt.Sprint(api.patches[0]["allowed_requester_group_uuids"]); got != "[group1]" {
+		t.Errorf("update sent allowed_requester_group_uuids %s, want [group1]", got)
 	}
 	if got, want := api.patches[1], (map[string]any{"in_app_store": false}); fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Errorf("destroy sent %v, want %v", got, want)

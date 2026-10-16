@@ -7,9 +7,9 @@ import (
 )
 
 type TimeBasedAccessPatchInput struct {
-	// Labels of domain-level time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to the domain defaults.
+	// Labels of the organization's time-based access options to offer for this app. An empty list reverts to the organization's defaults. Omitted, the options keep their current value.
 	Options []string `json:"options,omitzero"`
-	// Label of the option to pre-select on the request form. Null clears the pre-selection.
+	// Label of the option pre-selected on the request form. Omitted or set to `null`, the pre-selection is cleared; omitting the whole `time_based_access` block keeps it.
 	Default *string `json:"default,omitzero"`
 }
 

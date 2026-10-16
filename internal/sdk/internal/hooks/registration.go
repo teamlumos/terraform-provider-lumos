@@ -15,6 +15,6 @@ func initHooks(h *Hooks) {
 	h.registerAfterSuccessHook(listPageError{})
 	h.registerBeforeRequestHook(appStoreSettingsExpand{})
 	h.registerBeforeRequestHook(removeFromAppStore{})
-	h.registerBeforeRequestHook(inheritUnsetEntitlementOverrides{})
+	h.registerBeforeRequestHook(clearUnsetFields{})
 	h.registerAfterSuccessHook(appDeleteRecordKept{})
 }
