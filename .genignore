@@ -1,2 +1,4 @@
 internal/sdk/internal/hooks/registration.go
 .gitattributes
+internal/sdk/internal/hooks/list_page_error.go
+internal/sdk/internal/hooks/list_page_error_test.go
