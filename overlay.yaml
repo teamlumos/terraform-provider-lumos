@@ -206,6 +206,11 @@ actions:
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["sync_status","disconnected","instance_id"]
     update:
       x-speakeasy-plan-modifiers: UnknownOnReconnect
+  # A default fills every plan with that value, so the modifier above could
+  # never plan disconnected as unknown, and an app that reads back
+  # disconnected would plan a change to false on every run.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["disconnected"]["default"]
+    remove: true
 
   # Expanded-only fields stay off the resource; the data source reads them.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]

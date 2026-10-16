@@ -234,8 +234,19 @@ import {
 // Lumos UI, then stops managing it with a removed block. The API refuses to
 // delete such an app, so the documented way out must never call DELETE. It
 // uses a fake API for the same reason as TestAppStoreSettingsOnImportedApp.
+// It runs for a connected and a disconnected app: either way, the import
+// plans no change.
 func TestAppImportedFromUIRemovedWithoutDelete(t *testing.T) {
+	for _, disconnected := range []bool{false, true} {
+		t.Run(fmt.Sprintf("disconnected=%t", disconnected), func(t *testing.T) {
+			testAppImportedFromUIRemovedWithoutDelete(t, disconnected)
+		})
+	}
+}
+
+func testAppImportedFromUIRemovedWithoutDelete(t *testing.T, disconnected bool) {
 	api := newFakeAPI(t)
+	api.app["disconnected"] = disconnected
 	server := httptest.NewServer(api)
 	defer server.Close()
 
@@ -258,7 +269,10 @@ resource "lumos_app" "slack" {
 						plancheck.ExpectResourceAction("lumos_app.slack", plancheck.ResourceActionNoop),
 					},
 				},
-				Check: resource.TestCheckResourceAttr("lumos_app.slack", "appstore_settings.in_app_store", "true"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("lumos_app.slack", "appstore_settings.in_app_store", "true"),
+					resource.TestCheckResourceAttr("lumos_app.slack", "disconnected", fmt.Sprint(disconnected)),
+				),
 			},
 			{
 				Config: fakeProviderConfig(server.URL) + `
