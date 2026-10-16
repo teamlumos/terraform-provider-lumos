@@ -78,6 +78,8 @@ type ListWorkflowStepsResponse struct {
 	WorkflowStepTemplateListOutput *shared.WorkflowStepTemplateListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListWorkflowStepsResponse, error)
 }
 
 func (l *ListWorkflowStepsResponse) GetContentType() string {

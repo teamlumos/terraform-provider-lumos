@@ -2,26 +2,11 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type TimeBasedAccess struct {
 	// Time-based access options available for this app. Null means the app uses the domain-level defaults.
 	Options []TimeBasedAccessOption `json:"options,omitempty"`
 	// Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
 	Default *string `json:"default,omitempty"`
-}
-
-func (t TimeBasedAccess) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(t, "", false)
-}
-
-func (t *TimeBasedAccess) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (t *TimeBasedAccess) GetOptions() []TimeBasedAccessOption {

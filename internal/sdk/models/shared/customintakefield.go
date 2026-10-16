@@ -2,10 +2,6 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type CustomIntakeField struct {
 	// Stable identifier for this field. It is unique within the app and cannot be changed.
 	ReferenceKey string                `json:"reference_key"`
@@ -18,17 +14,6 @@ type CustomIntakeField struct {
 	IsRequired bool `json:"is_required"`
 	// Selectable options for this field. Present only when field_type is "dropdown".
 	DropdownOptions []string `json:"dropdown_options,omitempty"`
-}
-
-func (c CustomIntakeField) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(c, "", false)
-}
-
-func (c *CustomIntakeField) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (c *CustomIntakeField) GetReferenceKey() string {

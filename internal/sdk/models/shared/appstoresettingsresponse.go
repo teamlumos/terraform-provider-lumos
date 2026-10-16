@@ -5,7 +5,6 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 // AppStoreSettingsResponseCatalogVisibility - Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
@@ -60,17 +59,6 @@ type AppStoreSettingsResponse struct {
 	InAppStore bool `json:"in_app_store"`
 	// Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
 	CatalogVisibility AppStoreSettingsResponseCatalogVisibility `json:"catalog_visibility"`
-}
-
-func (a AppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(a, "", false)
-}
-
-func (a *AppStoreSettingsResponse) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (a *AppStoreSettingsResponse) GetRequestInstructions() *string {

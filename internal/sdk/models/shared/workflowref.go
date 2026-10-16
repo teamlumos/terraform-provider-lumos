@@ -2,26 +2,11 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 // WorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
 // `<slot>.id` is stable whether or not the slot is expanded.
 type WorkflowRef struct {
 	// UUID of the bound workflow.
 	ID string `json:"id"`
-}
-
-func (w WorkflowRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(w, "", false)
-}
-
-func (w *WorkflowRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (w *WorkflowRef) GetID() string {
