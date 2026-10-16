@@ -18,3 +18,15 @@ examples/resources/lumos_entitlement_appstore_settings/
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go
+examples/data-sources/lumos_apps/
+examples/data-sources/lumos_entitlements/
+examples/data-sources/lumos_app_entitlements/
+examples/data-sources/lumos_accounts/
+examples/data-sources/lumos_user_roles/
+examples/data-sources/lumos_groups/
+examples/data-sources/lumos_inline_webhooks/
+examples/data-sources/lumos_app_categories/
+examples/data-sources/lumos_integrations/
+examples/data-sources/lumos_integration_connection_schema/
+examples/data-sources/lumos_custom_attribute_definitions/
+examples/data-sources/lumos_workflow_steps/
