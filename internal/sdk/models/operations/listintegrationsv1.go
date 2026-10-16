@@ -63,6 +63,8 @@ type ListIntegrationsV1Response struct {
 	IntegrationCatalogListOutput *shared.IntegrationCatalogListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListIntegrationsV1Response, error)
 }
 
 func (l *ListIntegrationsV1Response) GetContentType() string {

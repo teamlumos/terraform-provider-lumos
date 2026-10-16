@@ -51,6 +51,8 @@ type ListAppCategoriesResponse struct {
 	AppCategoryListOutput *shared.AppCategoryListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListAppCategoriesResponse, error)
 }
 
 func (l *ListAppCategoriesResponse) GetContentType() string {

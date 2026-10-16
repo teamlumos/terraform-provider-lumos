@@ -70,3 +70,208 @@ actions:
   - target: $["components"]["schemas"]["UserListOutput"]["properties"]["next_page_token"]
     update:
       x-speakeasy-terraform-ignore: true
+
+  # Lookup data sources. Each list endpoint pages the way /v1/users does, so
+  # each gets the same cursor pagination, hidden paging parameters, and the
+  # largest page size (the API clamps rather than rejects larger ones).
+  #
+  # The per-app entitlement list returns the same schema as the tenant-wide
+  # one, and a schema maps to one data source, so it gets its own copy.
+  - target: $["components"]["schemas"]
+    update:
+      AppEntitlementListOutput:
+        type: object
+        title: AppEntitlementListOutput
+        required: [entitlements]
+        properties:
+          next_page_token:
+            anyOf: [{"type": "string"}, {"type": "null"}]
+          entitlements:
+            type: array
+            items: {"$ref": "#/components/schemas/EntitlementOutput"}
+            description: The app's entitlements.
+  - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/AppEntitlementListOutput"
+  - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+
+  - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts","/v1/groups","/v1/inline-webhooks","/v1/app-categories","/v1/integrations","/v1/custom-attribute-definitions","/v1/workflow-steps"]["get"]
+    update:
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: page_token
+            in: parameters
+            type: cursor
+        # As for lumos_users: only a null next_page_token ends the list.
+        outputs:
+          nextCursor: $.next_page_token
+  - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts","/v1/groups","/v1/inline-webhooks","/v1/app-categories","/v1/integrations","/v1/custom-attribute-definitions","/v1/workflow-steps"]["get"]["parameters"][?@.name=="page_token" || @.name=="page_size"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts","/v1/groups","/v1/inline-webhooks","/v1/app-categories","/v1/integrations","/v1/custom-attribute-definitions","/v1/workflow-steps"]["get"]["parameters"][?@.name=="page_size"]["schema"]
+    update:
+      default: 100
+  - target: $["components"]["schemas"]["AppListOutput","EntitlementListOutput","AppEntitlementListOutput","DomainAccountListOutput","GroupListOutput","InlineWebhookListOutput","AppCategoryListOutput","IntegrationCatalogListOutput","CustomAttributeDefinitionListOutput","WorkflowStepTemplateListOutput"]["properties"]["next_page_token"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  # expand changes the shape of the items; the lookups return the default
+  # shape.
+  - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts"]["get"]["parameters"][?@.name=="expand"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  # Unexpanded, a workflow slot is always {id}. Narrowing the unions keeps
+  # the lookups from nesting each value under a wrapper per shape.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
+  # lumos_apps asks for expand=appstore_settings (an SDK hook adds it), so an
+  # app's App Store settings are always the full shape.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["appstore_settings"]
+    update:
+      anyOf: [{"$ref": "#/components/schemas/AppStoreSettingsResponse"}, {"type": "null"}]
+  # Only filled in with expand.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]
+    update:
+      x-speakeasy-terraform-ignore: true
+
+  # data "lumos_apps"
+  - target: $["paths"]["/v1/apps"]["get"]
+    update:
+      x-speakeasy-entity-operation: Apps#read
+  - target: $["components"]["schemas"]["AppListOutput"]
+    update:
+      x-speakeasy-entity: Apps
+      x-speakeasy-entity-description: Apps in the organization, custom apps and connected integrations, optionally filtered.
+
+  # data "lumos_entitlements": every entitlement in the organization.
+  - target: $["paths"]["/v1/entitlements"]["get"]
+    update:
+      x-speakeasy-entity-operation: Entitlements#read
+  - target: $["components"]["schemas"]["EntitlementListOutput"]
+    update:
+      x-speakeasy-entity: Entitlements
+      x-speakeasy-entity-description: >-
+        Entitlements across every app in the organization, optionally filtered.
+        A search that takes the API too long fails; narrow it, or use
+        `lumos_app_entitlements` for one app.
+
+  # data "lumos_app_entitlements": one app's entitlements.
+  - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]
+    update:
+      x-speakeasy-entity-operation: AppEntitlements#read
+  - target: $["components"]["schemas"]["AppEntitlementListOutput"]
+    update:
+      x-speakeasy-entity: AppEntitlements
+      x-speakeasy-entity-description: One app's entitlements, optionally filtered.
+
+  # data "lumos_accounts"
+  - target: $["paths"]["/v1/accounts"]["get"]
+    update:
+      x-speakeasy-entity-operation: Accounts#read
+  - target: $["components"]["schemas"]["DomainAccountListOutput"]
+    update:
+      x-speakeasy-entity: Accounts
+      x-speakeasy-entity-description: Accounts in the organization's apps, optionally filtered.
+
+  # data "lumos_user_roles": not paginated.
+  - target: $["paths"]["/v1/users/{user_id}/roles"]["get"]
+    update:
+      x-speakeasy-entity-operation: UserRoles#read
+  - target: $["components"]["schemas"]["UserRolesOutput"]
+    update:
+      x-speakeasy-entity: UserRoles
+      x-speakeasy-entity-description: The Lumos roles assigned to one user.
+
+  # data "lumos_groups"
+  - target: $["paths"]["/v1/groups"]["get"]
+    update:
+      x-speakeasy-entity-operation: Groups#read
+  - target: $["components"]["schemas"]["GroupListOutput"]
+    update:
+      x-speakeasy-entity: Groups
+      x-speakeasy-entity-description: Groups in the organization, optionally filtered.
+
+  # data "lumos_inline_webhooks"
+  - target: $["paths"]["/v1/inline-webhooks"]["get"]
+    update:
+      x-speakeasy-entity-operation: InlineWebhooks#read
+  - target: $["components"]["schemas"]["InlineWebhookListOutput"]
+    update:
+      x-speakeasy-entity: InlineWebhooks
+      x-speakeasy-entity-description: The organization's inline webhooks.
+
+  # data "lumos_app_categories"
+  - target: $["paths"]["/v1/app-categories"]["get"]
+    update:
+      x-speakeasy-entity-operation: AppCategories#read
+  - target: $["components"]["schemas"]["AppCategoryListOutput"]
+    update:
+      x-speakeasy-entity: AppCategories
+      x-speakeasy-entity-description: The categories an app can have.
+
+  # data "lumos_integrations"
+  - target: $["paths"]["/v1/integrations"]["get"]
+    update:
+      x-speakeasy-entity-operation: Integrations#read
+  - target: $["components"]["schemas"]["IntegrationCatalogListOutput"]
+    update:
+      x-speakeasy-entity: Integrations
+      x-speakeasy-entity-description: Integrations Lumos can connect, optionally filtered.
+
+  # data "lumos_integration_connection_schema": not paginated. The schemas
+  # are free-form JSON Schema documents, read as JSON strings.
+  - target: $["paths"]["/v1/integrations/{app_class_id}/connection-schema"]["get"]
+    update:
+      x-speakeasy-entity-operation: IntegrationConnectionSchema#read
+  - target: $["components"]["schemas"]["IntegrationConnectionSchemaOutput"]
+    update:
+      x-speakeasy-entity: IntegrationConnectionSchema
+      x-speakeasy-entity-description: >-
+        The credentials and settings an integration takes when connected with
+        `lumos_app`, as JSON Schema documents.
+  - target: $["components"]["schemas"]["IntegrationConnectionSchemaOutput"]["properties"]["auth_schema","settings_schema"]
+    update:
+      x-speakeasy-type-override: any
+  # The spec's auth_schema description quotes a JSON object whose closing
+  # braces end a template action in Speakeasy's data source template, which
+  # fails generation. This wording says the same without the literal.
+  - target: $["components"]["schemas"]["IntegrationConnectionSchemaOutput"]["properties"]["auth_schema"]
+    update:
+      description: >-
+        JSON Schema describing the auth object lumos_app takes for this
+        integration. Its properties are the credential keys the integration
+        accepts; secret fields are marked writeOnly, and fixed-choice fields
+        carry an enum. Some integrations nest credentials under named groups
+        when they support several authentication methods. An object schema
+        with no properties means no credentials are supplied up front: the
+        connection is completed through browser consent in the Lumos UI.
+
+  # data "lumos_custom_attribute_definitions"
+  - target: $["paths"]["/v1/custom-attribute-definitions"]["get"]
+    update:
+      x-speakeasy-entity-operation: CustomAttributeDefinitions#read
+  - target: $["components"]["schemas"]["CustomAttributeDefinitionListOutput"]
+    update:
+      x-speakeasy-entity: CustomAttributeDefinitions
+      x-speakeasy-entity-description: The organization's custom attribute definitions, optionally filtered.
+
+  # data "lumos_workflow_steps"
+  - target: $["paths"]["/v1/workflow-steps"]["get"]
+    update:
+      x-speakeasy-entity-operation: WorkflowSteps#read
+  - target: $["components"]["schemas"]["WorkflowStepTemplateListOutput"]
+    update:
+      x-speakeasy-entity: WorkflowSteps
+      x-speakeasy-entity-description: The workflow steps available for an app, optionally filtered by type.

@@ -2,26 +2,11 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 type TimeBasedAccessOption struct {
 	// Display label for this time-based access option.
 	Label string `json:"label"`
 	// Duration in seconds. Null indicates a permanent (unlimited) access option.
 	ValueSeconds *int64 `json:"value_seconds,omitempty"`
-}
-
-func (t TimeBasedAccessOption) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(t, "", false)
-}
-
-func (t *TimeBasedAccessOption) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (t *TimeBasedAccessOption) GetLabel() string {

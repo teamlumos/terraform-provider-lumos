@@ -2,25 +2,10 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 // EntitlementRef - Reference to an Entitlement embedded in another resource (e.g. AppStoreSettingsResponse).
 type EntitlementRef struct {
 	// The UUID of the entitlement.
 	ID string `json:"id"`
-}
-
-func (e EntitlementRef) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(e, "", false)
-}
-
-func (e *EntitlementRef) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (e *EntitlementRef) GetID() string {

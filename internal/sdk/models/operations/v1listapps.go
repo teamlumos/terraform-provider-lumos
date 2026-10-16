@@ -99,6 +99,8 @@ type V1ListAppsResponse struct {
 	AppListOutput *shared.AppListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*V1ListAppsResponse, error)
 }
 
 func (v *V1ListAppsResponse) GetContentType() string {
