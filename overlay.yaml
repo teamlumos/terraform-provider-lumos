@@ -724,3 +724,133 @@ actions:
     update:
       x-speakeasy-entity: WorkflowSteps
       x-speakeasy-entity-description: The workflow steps available for an app, optionally filtered by type.
+
+  # resource and data "lumos_access_policy". PUT, not PATCH: a policy's
+  # grants are always written as a whole set, which is what a config holds.
+  - target: $["paths"]["/v1/access-policies"]["post"]
+    update:
+      x-speakeasy-entity-operation: AccessPolicy#create
+  - target: $["paths"]["/v1/access-policies/{access_policy_id}"]["get"]
+    update:
+      x-speakeasy-entity-operation: AccessPolicy#read
+  - target: $["paths"]["/v1/access-policies/{access_policy_id}"]["put"]
+    update:
+      x-speakeasy-entity-operation: AccessPolicy#update
+  - target: $["paths"]["/v1/access-policies/{access_policy_id}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: AccessPolicy#delete
+  - target: $["paths"]["/v1/access-policies/{access_policy_id}"][*]["parameters"][?@.name=="access_policy_id"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]
+    update:
+      x-speakeasy-entity: AccessPolicy
+      x-speakeasy-entity-description: >-
+        An access policy: the apps and entitlements that identities matching
+        its condition can get. Destroying it doesn't revoke access already
+        granted through it.
+  # A read describes an everyone policy twice: is_everyone_condition is true
+  # and access_condition holds the condition Lumos uses to match everyone.
+  # A config sets one or the other, so the read keeps only the flag. Null
+  # operators (List writes every unset one) are dropped because a config
+  # never has them.
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: |
+          if . == null then . else
+            if .is_everyone_condition then .access_condition = null
+            else .access_condition |= (if . == null then . else walk(if type == "object" then with_entries(select(.value != null)) else . end) end)
+            end
+          end
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["is_everyone_condition"]
+    update:
+      description: True when the policy applies to everyone in your organization. `access_condition` is then null.
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["required"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]
+    update:
+      required: ["name", "business_justification", "id", "status", "is_enabled", "apps", "is_everyone_condition"]
+  # Labels are dropped: a config never sets them, and a set element has to
+  # match the config's whole value.
+  - target: $["components"]["schemas"]["AccessPolicyAppOutput","AccessPolicyEntitlementOutput"]["properties"]["label"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyAppOutput","AccessPolicyEntitlementOutput"]["required"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyAppOutput","AccessPolicyEntitlementOutput"]
+    update:
+      required: ["id"]
+  # The API doesn't keep the order of apps or entitlements.
+  - target: $["components"]["schemas"]["AccessPolicyInput","AccessPolicyOutput"]["properties"]["apps"]
+    update:
+      format: set
+  - target: $["components"]["schemas"]["AccessPolicyAppOutput"]["properties"]["entitlements"]
+    update:
+      format: set
+  # Set elements are matched on their whole value, so each app's fields need
+  # one value whether or not the config sets them. The API stores a missing
+  # is_preapproved as false. A grant on the app itself reads back as an empty
+  # entitlements set, so the config writes it that way too.
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]["properties"]["is_preapproved","entitlements"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]["properties"]["is_preapproved"]
+    update:
+      type: boolean
+      default: false
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]["properties"]["entitlements"]
+    update:
+      type: array
+      items: {"$ref": "#/components/schemas/EntitlementRefInput"}
+      format: set
+      x-speakeasy-param-computed: false
+      description: >-
+        The entitlements granted for this app. An empty set grants access to
+        the app itself rather than to specific entitlements.
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]["required"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyAppInput"]
+    update:
+      required: ["id", "entitlements"]
+  # Set in the config or not at all: an everyone policy has none, and
+  # removing it from the config must not send the previous one.
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["access_condition"]
+    update:
+      x-speakeasy-type-override: any
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["access_condition"]
+    update:
+      x-speakeasy-type-override: any
+  # status and is_enabled keep their current values when the config leaves
+  # them out, as PUT does.
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["status","is_enabled"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+
+  # data "lumos_access_policies", optionally filtered by name.
+  - target: $["paths"]["/v1/access-policies"]["get"]
+    update:
+      x-speakeasy-entity-operation: AccessPolicies#read
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: page_token
+            in: parameters
+            type: cursor
+        # No `results`: only a null next_page_token ends the list.
+        outputs:
+          nextCursor: $.next_page_token
+  - target: $["components"]["schemas"]["AccessPolicyListOutput"]
+    update:
+      x-speakeasy-entity: AccessPolicies
+  - target: $["components"]["schemas"]["AccessPolicyListOutput"]["properties"]["access_policies"]
+    update:
+      description: The organization's access policies, newest first.
+  - target: $["paths"]["/v1/access-policies"]["get"]["parameters"][?@.name=="page_token"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["paths"]["/v1/access-policies"]["get"]["parameters"][?@.name=="page_size"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["components"]["schemas"]["AccessPolicyListOutput"]["properties"]["next_page_token"]
+    update:
+      x-speakeasy-terraform-ignore: true
