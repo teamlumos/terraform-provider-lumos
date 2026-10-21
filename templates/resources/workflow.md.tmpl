@@ -1,0 +1,46 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+For approval templates and chains, see the [approvals guide](../guides/approvals.md).
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Writing steps
+
+* **`step`** is the step's identifier. `GET /v1/workflow-steps?app_id=<app id>&type=<workflow type>` lists the steps available to a workflow of that type on that app, with the inputs each one accepts.
+* **`inputs`** is written with `jsonencode`, in the form Lumos reads back, or every plan shows a change:
+  * durations in ISO 8601, for example `"P1D"` or `"PT12H"`;
+  * numbers, such as `stage_number`, as numbers;
+  * assignees as `{ uuid = "<id>", type = "<user | group>" }`, or `{ label = "<attribute>", type = "custom_attribute_definition" }` for a custom attribute;
+  * other workflows, groups and users by their IDs.
+* **Changing `type`**, or a configured `app_id`, replaces the workflow. Left out, `app_id` keeps the app Lumos assigns when the workflow is bound.
+* **`description`** can be left out, but can't be `""`.
+* **A workflow runs only once it's bound** to an app or an entitlement. An approval chain runs through the approval template that references it.
+
+## Limitations
+
+* Placeholder steps can't be imported and applied.
+* A chain can't move between approval templates.
+* A chain removed from its template but kept in the configuration is recreated on the next apply.
+
+## Import
+
+In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the workflow's ID:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}
