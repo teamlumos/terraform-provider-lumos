@@ -26,6 +26,7 @@ var listPageErrorOperations = map[string]bool{
 	"listIntegrationsV1":             true,
 	"listCustomAttributeDefinitions": true,
 	"listWorkflowSteps":              true,
+	"v1ListAccessPolicies":           true,
 }
 
 func (listPageError) AfterSuccess(hookCtx AfterSuccessContext, res *http.Response) (*http.Response, error) {
