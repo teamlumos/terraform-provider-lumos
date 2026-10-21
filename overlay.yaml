@@ -56,6 +56,8 @@ actions:
   - target: $["components"]["schemas"]["UserListOutput"]
     update:
       x-speakeasy-entity: Users
+      x-speakeasy-entity-description: >-
+        Users in the organization that match `search_term`, which is required.
   # Paging is the provider's job, so its parameters stay out of the
   # Terraform schema. Ask for the largest page to cut calls per read.
   - target: $["paths"]["/v1/users"]["get"]["parameters"][?@.name=="page_token"]
@@ -502,9 +504,9 @@ actions:
     update:
       x-speakeasy-entity: Entitlements
       x-speakeasy-entity-description: >-
-        Entitlements across every app in the organization, optionally filtered.
-        A search that takes the API too long fails; narrow it, or use
-        `lumos_app_entitlements` for one app.
+        Entitlements across every app in the organization that match `search`,
+        which is required. A search that takes the API too long fails; narrow
+        it, or use `lumos_app_entitlements` for one app.
 
   # data "lumos_app_entitlements": one app's entitlements.
   - target: $["paths"]["/v1/apps/{app_uuid}/entitlements"]["get"]
@@ -522,7 +524,8 @@ actions:
   - target: $["components"]["schemas"]["DomainAccountListOutput"]
     update:
       x-speakeasy-entity: Accounts
-      x-speakeasy-entity-description: Accounts in the organization's apps, optionally filtered.
+      x-speakeasy-entity-description: >-
+        Accounts in the organization's apps. Requires `app_id` or `email`.
 
   # data "lumos_user_roles": not paginated.
   - target: $["paths"]["/v1/users/{user_id}/roles"]["get"]
@@ -540,7 +543,9 @@ actions:
   - target: $["components"]["schemas"]["GroupListOutput"]
     update:
       x-speakeasy-entity: Groups
-      x-speakeasy-entity-description: Groups in the organization, optionally filtered.
+      x-speakeasy-entity-description: >-
+        Groups in the organization. Requires `name`, `integration_specific_id`
+        or `app_id`.
 
   # data "lumos_inline_webhooks"
   - target: $["paths"]["/v1/inline-webhooks"]["get"]
