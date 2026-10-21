@@ -1,0 +1,85 @@
+---
+page_title: "Approvals"
+subcategory: ""
+description: |-
+  Build an app's approval process from an approval template and approval chains.
+---
+
+# Approvals
+
+An app's approval process is built from `lumos_workflow` resources in two tiers:
+
+* An **approval template** (`type = "approval"`) decides which chain a request goes through. Its one step is a `branch` step with a list of branches, each pairing a condition with a chain, and a fallback chain. Branches are evaluated in order, and the first one whose condition matches picks the chain. A request that matches no branch goes through the fallback.
+* An **approval chain** (`type = "approval-chain"`) holds the approval stages a request goes through.
+
+The template and its chains must all reference the same app.
+
+## The app
+
+The template and its chains belong to one app. Here, a custom app:
+
+```terraform
+resource "lumos_app" "deploy_dashboard" {
+  label       = "Deploy Dashboard"
+  category    = "Developers"
+  description = "Internal deploy tool"
+}
+```
+
+## The approval template
+
+The template's `branch` step references chains by ID. This one sends every request through one chain:
+
+```terraform
+resource "lumos_workflow" "deploy_dashboard_approvals" {
+  app_id = lumos_app.deploy_dashboard.id
+  type   = "approval"
+  name   = "Deploy Dashboard approvals"
+  steps = [{
+    step = "branch"
+    inputs = jsonencode({
+      branches             = []
+      fallback_workflow_id = lumos_workflow.manager_then_it.id
+    })
+  }]
+}
+```
+
+* To send some requests through a different chain, add entries to `branches`, each `{ condition = <condition>, workflow_id = <chain id> }`.
+* A template with branches must also have a fallback.
+* When no approval is required, leave out both: `branches = []` and no `fallback_workflow_id`.
+
+## Approval chains
+
+Each chain lists its approval stages as `approval_task` steps. `stage_number` starts at 1 and counts up with no gaps; Lumos checks this when the template is bound. `assignees` lists who approves that stage:
+
+```terraform
+resource "lumos_workflow" "manager_then_it" {
+  app_id = lumos_app.deploy_dashboard.id
+  type   = "approval-chain"
+  name   = "Manager, then IT"
+  steps = [
+    {
+      step = "approval_task"
+      inputs = jsonencode({
+        stage_number = 1
+        assignees    = [{ uuid = "<managers group id>", type = "group" }]
+      })
+    },
+    {
+      step = "approval_task"
+      inputs = jsonencode({
+        stage_number = 2
+        assignees    = [{ uuid = "<IT group id>", type = "group" }]
+      })
+    },
+  ]
+}
+```
+
+The template does nothing until it's bound to the app or to one of its entitlements.
+
+## Limitations
+
+* A chain can't move between approval templates.
+* A chain removed from its template but kept in the configuration is recreated on the next apply.
