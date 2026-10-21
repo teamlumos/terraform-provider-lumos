@@ -30,3 +30,5 @@ examples/data-sources/lumos_integrations/
 examples/data-sources/lumos_integration_connection_schema/
 examples/data-sources/lumos_custom_attribute_definitions/
 examples/data-sources/lumos_workflow_steps/
+internal/sdk/internal/hooks/require_list_filter.go
+internal/sdk/internal/hooks/require_list_filter_test.go

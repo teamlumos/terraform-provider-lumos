@@ -17,4 +17,5 @@ func initHooks(h *Hooks) {
 	h.registerBeforeRequestHook(removeFromAppStore{})
 	h.registerBeforeRequestHook(inheritUnsetEntitlementOverrides{})
 	h.registerAfterSuccessHook(appDeleteRecordKept{})
+	h.registerBeforeRequestHook(requireListFilter{})
 }

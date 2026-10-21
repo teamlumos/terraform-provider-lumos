@@ -144,7 +144,9 @@ provider "lumos" {
   http_bearer = "test-token"
 }
 
-data "lumos_users" "all" {}
+data "lumos_users" "all" {
+  search_term = "example"
+}
 `, server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(checks...),
 			}
