@@ -889,3 +889,105 @@ actions:
   - target: $["components"]["schemas"]["AccessPolicyListOutput"]["properties"]["next_page_token"]
     update:
       x-speakeasy-terraform-ignore: true
+  # resource "lumos_workflow": a workflow of any type.
+  - target: $["paths"]["/v1/workflows"]["post"]
+    update:
+      x-speakeasy-entity-operation: Workflow#create
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: Workflow#read
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["put"]
+    update:
+      x-speakeasy-entity-operation: Workflow#update
+  - target: $["paths"]["/v1/workflows/{workflow_id}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: Workflow#delete
+  - target: $["paths"]["/v1/workflows/{workflow_id}"][*]["parameters"][?@.name=="workflow_id"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["Workflow"]
+    update:
+      x-speakeasy-entity: Workflow
+      x-speakeasy-entity-description: >-
+        A Lumos workflow: an ordered list of steps. Approval, provisioning and
+        deprovisioning workflows run only once they're bound to an app or
+        entitlement, which is a separate step.
+  # The API rejects a change to type on update, so changing it creates a new
+  # workflow.
+  - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["type"]
+    update:
+      x-speakeasy-param-force-new: true
+  # The API decides whether a workflow type needs an app, and gives an
+  # app-less workflow the app it's bound to. Left out of the config, app_id
+  # keeps the value the API holds, and updates send it back, since the API
+  # rejects an update whose app_id differs from the stored one. Changing a
+  # configured app_id creates a new workflow.
+  - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["app_id"]
+    update:
+      x-speakeasy-param-force-new: true
+      description: >-
+        UUID of the app this workflow belongs to. Left out, it keeps the app
+        Lumos assigns when the workflow is bound.
+  - target: $["components"]["schemas"]["Workflow"]["properties"]["app_id"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+  # The API stores an omitted description as "" and reads it back that way.
+  # The read turns "" into null so a config without a description matches,
+  # and the input refuses "" so a config can't ask for the value that reads
+  # back as null.
+  - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["description"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["description"]
+    update:
+      type: string
+      minLength: 1
+  - target: $["components"]["schemas"]["Workflow"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: 'if .description == "" then .description = null else . end'
+  - target: $["components"]["schemas"]["Workflow"]["properties"]["description"]
+    update:
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["Workflow"]["properties"]["id"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+
+  # Steps: each is a step slug plus its inputs.
+  # - inputs is a JSON string, written with jsonencode. The SDK parses it into
+  #   an object on the way out and turns the API's object back into a string
+  #   on the way in.
+  # - inputs uses the StepInputs type, so a key set to null matches the API
+  #   leaving that key out.
+  # - step comes only from the config, never from the API.
+  # - name, a display label the API derives from the step, is left out: the
+  #   generated code saves a read-only field inside a list item as null after
+  #   every apply.
+  - target: $["components"]["schemas"]["WorkflowStepOutput"]["properties"]["step"]
+    update:
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["WorkflowStepOutput"]["properties"]["name"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["components"]["schemas"]["WorkflowStepInput","WorkflowStepOutput"]["properties"]["inputs"]["type"]
+    remove: true
+  - target: $["components"]["schemas"]["WorkflowStepOutput"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: 'if .inputs == null then . else .inputs |= tojson end'
+  - target: $["components"]["schemas"]["WorkflowStepInput"]
+    update:
+      x-speakeasy-transform-to-api:
+        jq: 'if .inputs == null then . else .inputs |= fromjson end'
+  - target: $["components"]["schemas"]["WorkflowStepInput","WorkflowStepOutput"]["properties"]["inputs"]
+    update:
+      type: string
+      description: >-
+        The step's inputs as a JSON object, usually written with
+        `jsonencode`. A key set to `null` counts as left out.
+      x-speakeasy-terraform-custom-type:
+        imports:
+          - github.com/teamlumos/terraform-provider-lumos/internal/customtypes
+        schemaType: customtypes.StepInputsType{}
+        valueType: customtypes.StepInputs
