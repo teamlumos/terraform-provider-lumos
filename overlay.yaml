@@ -822,6 +822,31 @@ actions:
   - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["access_condition"]
     update:
       x-speakeasy-type-override: any
+  # The spec's descriptions tell API callers what to send; these say what a
+  # config sets.
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]
+    update:
+      is_everyone_condition:
+        description: >-
+          Whether the policy applies to everyone in the organization. Set it to
+          `true` instead of setting `access_condition`.
+      access_condition:
+        description: >-
+          The condition an identity must match for the policy to apply, as a
+          Lumos condition written with `jsonencode`. Give every attribute and
+          value as `{ label, value }`, the form Lumos reads back. Leave it out
+          when `is_everyone_condition` is `true`. See [building conditions in
+          Lumos](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+      status:
+        description: >-
+          `draft` or `published`. A new policy is a draft unless this says
+          otherwise, and a published policy can't go back to `draft`. Left
+          out, it keeps its current value.
+      is_enabled:
+        description: >-
+          Whether the policy is in effect. Only a published policy can be
+          enabled. A new policy is disabled unless this says otherwise. Left
+          out, it keeps its current value.
   # status and is_enabled keep their current values when the config leaves
   # them out, as PUT does.
   - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["status","is_enabled"]
