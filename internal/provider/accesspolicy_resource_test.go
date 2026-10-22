@@ -13,14 +13,17 @@ import (
 )
 
 // fakeAccessPolicyAPI serves access policy "policy1" in the API's shapes:
-// apps come back in reverse order with labels, a missing is_preapproved or
-// entitlements reads back as false or [], and an everyone policy reads back
-// with the condition Lumos uses to match everyone.
+// apps and each app's entitlements come back in reverse order with labels,
+// a missing is_preapproved or entitlements reads back as false or [], and
+// an everyone policy reads back with the condition Lumos uses to match
+// everyone. Once deleted is set, the policy is gone: reads return the API's
+// 404 until a write creates it again.
 type fakeAccessPolicyAPI struct {
-	t      *testing.T
-	mu     sync.Mutex
-	writes []map[string]any
-	policy map[string]any
+	t       *testing.T
+	mu      sync.Mutex
+	writes  []map[string]any
+	policy  map[string]any
+	deleted bool
 }
 
 func (f *fakeAccessPolicyAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -39,10 +42,14 @@ func (f *fakeAccessPolicyAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 		f.writes = append(f.writes, input)
 		f.policy = f.stored(input)
+		f.deleted = false
 		if r.Method == http.MethodPost {
 			w.WriteHeader(http.StatusCreated)
 		}
 		json.NewEncoder(w).Encode(f.policy)
+	case r.URL.Path == "/v1/access-policies/policy1" && r.Method == http.MethodGet && f.deleted:
+		w.WriteHeader(http.StatusNotFound)
+		io.WriteString(w, `{"error":{"type":"not_found","code":"access_policy_not_found","detail":"Access policy not found."}}`)
 	case r.URL.Path == "/v1/access-policies/policy1" && r.Method == http.MethodGet:
 		json.NewEncoder(w).Encode(f.policy)
 	case r.URL.Path == "/v1/access-policies/policy1" && r.Method == http.MethodDelete:
@@ -61,8 +68,8 @@ func (f *fakeAccessPolicyAPI) stored(input map[string]any) map[string]any {
 		preapproved, _ := app["is_preapproved"].(bool)
 		entitlements := []any{}
 		refs, _ := app["entitlements"].([]any)
-		for _, ref := range refs {
-			id := ref.(map[string]any)["id"]
+		for j := len(refs) - 1; j >= 0; j-- {
+			id := refs[j].(map[string]any)["id"]
 			entitlements = append(entitlements, map[string]any{"id": id, "label": "Label of " + id.(string)})
 		}
 		apps = append(apps, map[string]any{
@@ -84,12 +91,14 @@ func (f *fakeAccessPolicyAPI) stored(input map[string]any) map[string]any {
 	}
 }
 
-// TestAccessPolicyAppLevelGrant checks that an app grant written without
-// entitlements is sent as [] and plans no change once it reads back as [],
-// and that removing an app's entitlements from the config plans and sends
-// the change to an app-level grant. It uses a fake API because only the
-// provider's planning is under test.
-func TestAccessPolicyAppLevelGrant(t *testing.T) {
+// TestAccessPolicyGrants checks that grants read back in a different order
+// plan no change, that an app grant written without entitlements is sent as
+// [] and plans no change once it reads back as [], and that removing an
+// app's entitlements from the config plans and sends the change to an
+// app-level grant. It uses a fake API because the real API orders apps and
+// entitlements by internal ids, so a test can't make them come back in an
+// order other than the config's on demand.
+func TestAccessPolicyGrants(t *testing.T) {
 	api := &fakeAccessPolicyAPI{t: t}
 	server := httptest.NewServer(api)
 	defer server.Close()
@@ -115,7 +124,7 @@ resource "lumos_access_policy" "test" {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config(`entitlements = [{ id = "ent1" }]`),
+				Config: config(`entitlements = [{ id = "ent1" }, { id = "ent2" }]`),
 			},
 			{
 				Config: config(""),
@@ -143,11 +152,53 @@ resource "lumos_access_policy" "test" {
 			}
 			want := 0
 			if i == 0 && app["id"] == "app2" {
-				want = 1
+				want = 2
 			}
 			if len(entitlements) != want {
 				t.Errorf("write %d sent app %v %d entitlements, want %d", i, app["id"], len(entitlements), want)
 			}
 		}
 	}
+}
+
+// TestAccessPolicyDeletedOutsideTerraform checks that a policy whose read
+// returns 404 is dropped from state on refresh and planned for creation,
+// rather than failing the plan. It uses a fake API so the policy can
+// disappear between steps without the test deleting it through the API
+// outside Terraform.
+func TestAccessPolicyDeletedOutsideTerraform(t *testing.T) {
+	api := &fakeAccessPolicyAPI{t: t}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := fakeProviderConfig(server.URL) + `
+resource "lumos_access_policy" "test" {
+  name                   = "Engineering tools"
+  business_justification = "Engineers need these"
+  is_everyone_condition  = true
+  apps                   = [{ id = "app1" }]
+}
+`
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+			{
+				PreConfig: func() {
+					api.mu.Lock()
+					defer api.mu.Unlock()
+					api.deleted = true
+				},
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("lumos_access_policy.test", plancheck.ResourceActionCreate),
+					},
+				},
+			},
+		},
+	})
 }
