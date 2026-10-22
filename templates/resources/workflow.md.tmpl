@@ -24,7 +24,8 @@ For approval templates and chains, see the [approvals guide](../guides/approvals
   * durations in ISO 8601, for example `"P1D"` or `"PT12H"`;
   * numbers, such as `stage_number`, as numbers;
   * assignees as `{ uuid = "<id>", type = "<user | group>" }`, or `{ label = "<attribute>", type = "custom_attribute_definition" }` for a custom attribute;
-  * other workflows, groups and users by their IDs.
+  * other workflows, groups and users by their IDs;
+  * branch conditions with every attribute and value as a `{ label, value }` object (see the [approvals guide](../guides/approvals.md#branch-conditions)).
 * **Changing `type`**, or a configured `app_id`, replaces the workflow. Left out, `app_id` keeps the app Lumos assigns when the workflow is bound.
 * **`description`** can be left out, but can't be `""`.
 * **A workflow runs only once it's bound** to an app or an entitlement. An approval chain runs through the approval template that references it.
