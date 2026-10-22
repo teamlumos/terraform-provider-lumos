@@ -11,8 +11,8 @@ import (
 type Status string
 
 const (
-	StatusDraft     Status = "DRAFT"
-	StatusPublished Status = "PUBLISHED"
+	StatusDraft     Status = "draft"
+	StatusPublished Status = "published"
 )
 
 func (e Status) ToPointer() *Status {
@@ -24,9 +24,9 @@ func (e *Status) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "DRAFT":
+	case "draft":
 		fallthrough
-	case "PUBLISHED":
+	case "published":
 		*e = Status(v)
 		return nil
 	default:
@@ -39,13 +39,13 @@ type AccessPolicyInput struct {
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
-	// The status of the access policy. Defaults to DRAFT when supported.
+	// The status of the access policy, `draft` or `published`. Defaults to `draft`.
 	Status *Status `json:"status,omitempty"`
 	// Whether the access policy is enabled. Defaults to false when supported.
 	IsEnabled *bool `json:"is_enabled,omitempty"`
-	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
+	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 	AccessCondition map[string]any `json:"access_condition,omitempty"`
-	// Whether the access policy applies to everyone. If true, `access_condition` is ignored. Otherwise, `access_condition` must be provided.
+	// Whether the access policy applies to everyone. Send `true` without `access_condition`, or `false` (the default) with one; sending both returns 400, unless `access_condition` is the everyone condition a read returns.
 	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
 	// The apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`

@@ -3,10 +3,49 @@
 package shared
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type AppResponseStatus string
+
+const (
+	AppResponseStatusDiscovered  AppResponseStatus = "discovered"
+	AppResponseStatusInReview    AppResponseStatus = "in-review"
+	AppResponseStatusNeedsReview AppResponseStatus = "needs-review"
+	AppResponseStatusApproved    AppResponseStatus = "approved"
+	AppResponseStatusBlocklisted AppResponseStatus = "blocklisted"
+	AppResponseStatusDeprecated  AppResponseStatus = "deprecated"
+)
+
+func (e AppResponseStatus) ToPointer() *AppResponseStatus {
+	return &e
+}
+func (e *AppResponseStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "in-review":
+		fallthrough
+	case "needs-review":
+		fallthrough
+	case "approved":
+		fallthrough
+	case "blocklisted":
+		fallthrough
+	case "deprecated":
+		*e = AppResponseStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AppResponseStatus: %v", v)
+	}
+}
 
 type ApprovalWorkflowType string
 
@@ -112,7 +151,7 @@ const (
 	DefaultProvisioningWorkflowTypeWorkflowRef DefaultProvisioningWorkflowType = "WorkflowRef"
 )
 
-// DefaultProvisioningWorkflow - The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+// DefaultProvisioningWorkflow - The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
 type DefaultProvisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -209,7 +248,7 @@ const (
 	DefaultDeprovisioningWorkflowTypeWorkflowRef DefaultDeprovisioningWorkflowType = "WorkflowRef"
 )
 
-// DefaultDeprovisioningWorkflow - The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+// DefaultDeprovisioningWorkflow - The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
 type DefaultDeprovisioningWorkflow struct {
 	Workflow    *Workflow    `queryParam:"inline" union:"member"`
 	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
@@ -306,7 +345,7 @@ const (
 	AppstoreSettingsTypeAppStoreSettingsResponse AppstoreSettingsType = "AppStoreSettingsResponse"
 )
 
-// AppstoreSettings - App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
+// AppstoreSettings - AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
 type AppstoreSettings struct {
 	AppStoreSettingsCompact  *AppStoreSettingsCompact  `queryParam:"inline" union:"member"`
 	AppStoreSettingsResponse *AppStoreSettingsResponse `queryParam:"inline" union:"member"`
@@ -396,6 +435,35 @@ func (u AppstoreSettings) MarshalJSON() ([]byte, error) {
 	return nil, errors.New("could not marshal union type AppstoreSettings: all fields are null")
 }
 
+type SyncStatus string
+
+const (
+	SyncStatusSyncing SyncStatus = "syncing"
+	SyncStatusSuccess SyncStatus = "success"
+	SyncStatusFailed  SyncStatus = "failed"
+)
+
+func (e SyncStatus) ToPointer() *SyncStatus {
+	return &e
+}
+func (e *SyncStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "syncing":
+		fallthrough
+	case "success":
+		fallthrough
+	case "failed":
+		*e = SyncStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncStatus: %v", v)
+	}
+}
+
 type AppResponse struct {
 	// The unique identifier of the app.
 	ID string `json:"id"`
@@ -413,8 +481,8 @@ type AppResponse struct {
 	Category *string `json:"category,omitempty"`
 	// A description of the app.
 	Description *string `json:"description,omitempty"`
-	// The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
-	Status *string `json:"status,omitempty"`
+	// The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
+	Status *AppResponseStatus `json:"status,omitempty"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `default:"false" json:"disconnected"`
 	// Custom message shown to the requester after their access request is approved.
@@ -423,15 +491,15 @@ type AppResponse struct {
 	Admins []AdminAssignee `json:"admins,omitempty"`
 	// The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
 	ApprovalWorkflow *ApprovalWorkflow `json:"approval_workflow,omitempty"`
-	// The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+	// The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
 	DefaultProvisioningWorkflow *DefaultProvisioningWorkflow `json:"default_provisioning_workflow,omitempty"`
-	// The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to App Store item workflows.
+	// The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
 	DefaultDeprovisioningWorkflow *DefaultDeprovisioningWorkflow `json:"default_deprovisioning_workflow,omitempty"`
-	// App Store membership and settings. Present when the caller has read access to App Store items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
+	// AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
 	AppstoreSettings *AppstoreSettings `json:"appstore_settings,omitempty"`
 	// Custom attributes configured on this app. Only present when expand=custom_attributes is requested.
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
-	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
+	// The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
 	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
 }
 
@@ -502,7 +570,7 @@ func (a *AppResponse) GetDescription() *string {
 	return a.Description
 }
 
-func (a *AppResponse) GetStatus() *string {
+func (a *AppResponse) GetStatus() *AppResponseStatus {
 	if a == nil {
 		return nil
 	}

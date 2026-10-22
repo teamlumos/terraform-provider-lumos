@@ -27,12 +27,12 @@ import (
 //     keys the integration expects.
 //  2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect, and
 //     their first sync waits for an admin to review match rules. It starts from the Lumos UI, or from
-//     `POST /v1/apps/{app_uuid}/sync` with `skip_first_sync_review: true`. Apps that need browser
+//     `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Apps that need browser
 //     consent are finished in the Lumos UI.
 //  3. `GET /v1/apps/{app_uuid}` to follow the first sync. `sync_status` shows the state of the
-//     app's most recent sync. A sync started with `POST /v1/apps/{app_uuid}/sync` also returns an
+//     app's most recent sync. A sync started with `POST /v1/apps/{app_uuid}:sync` also returns an
 //     operation, which you poll with `GET /v1/operations/{operation_id}`.
-//  4. `POST /v1/apps/{app_uuid}/sync` to resync later. Only one sync runs per app at a time, so a
+//  4. `POST /v1/apps/{app_uuid}:sync` to resync later. Only one sync runs per app at a time, so a
 //     second request while one is in flight returns 409.
 //
 // Rotate credentials with `PATCH /v1/apps/{app_uuid}`, which also updates an app's metadata.
@@ -42,17 +42,17 @@ import (
 // ### Reading apps
 //
 // `expand` is opt-in and evaluated per field: ask for `admins`, `custom_attributes`,
-// `appstore_settings`, or any of the three workflow slots. A field you lack permission to read is
+// `appstore_settings`, or any of the three workflow fields. A field you lack permission to read is
 // left out of the response instead of failing the whole request, so a 200 does not prove every field
 // you asked for came back.
 //
-// To reconcile the apps you manage from automation such as Terraform, combine
-// `connection_source=API` with `disconnected=false`.
+// To list only the connected apps you manage through the API, combine `connection_source=api` with
+// `disconnected=false`.
 //
-// ### Workflow slots
+// ### Bound workflows
 //
 // Each app carries three bindings: an approval workflow, a default provisioning workflow, and a
-// default deprovisioning workflow. The two `default_` slots supply the workflow that entitlements on
+// default deprovisioning workflow. The two `default_` workflows are the ones that entitlements on
 // the app fall back to. To bind a workflow to one entitlement instead, use the Entitlements
 // endpoints.
 type Apps struct {
@@ -74,7 +74,7 @@ func newApps(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Hoo
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// Filter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`) in place of the deprecated `GET /appstore/apps`. This is the admin-management flag (mirrors the AppStore admin table) rather than end-user catalog visibility — see `GET /v1/apps/appstore_catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.
+// Filter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`) in place of the deprecated `GET /appstore/apps`. This is the admin-management flag (mirrors the AppStore admin table) rather than end-user catalog visibility — see `GET /v1/apps/appstore-catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.
 func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequest, opts ...operations.Option) (*operations.V1ListAppsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -334,7 +334,7 @@ func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequ
 //
 // A body with `label`, `category` and `description` creates a custom app — one Lumos has no connector for, whose accounts you maintain yourself. A body with `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. The two halves are mutually exclusive.
 //
-// Credentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}/sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=API`, so `GET /v1/apps?connection_source=API&disconnected=false` lists everything you registered here.
+// Credentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.
 func (s *Apps) V1CreateApp(ctx context.Context, request shared.AppCreateInput, opts ...operations.Option) (*operations.V1CreateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -538,6 +538,8 @@ func (s *Apps) V1CreateApp(ctx context.Context, request shared.AppCreateInput, o
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -596,12 +598,14 @@ func (s *Apps) V1CreateApp(ctx context.Context, request shared.AppCreateInput, o
 
 }
 
-// V1GetAppStoreCatalog - Get App Store Catalog
-// List the App Store catalog as one user sees it, applying that user's group-based visibility. A plain listing returns apps whose `catalog_visibility` is `visible`; a `search` also returns matching apps whose `catalog_visibility` is `search_only`. Apps whose `catalog_visibility` is `hidden` never appear.
+// V1GetAppStoreCatalog - Get AppStore Catalog
+// List the AppStore catalog as one user sees it. As in the AppStore itself, an app restricted to "Who Can Request" groups (`allowed_requester_group_uuids`) appears only for members of one of those groups. To list every AppStore app by visibility instead, use `GET /v1/apps?in_app_store=true&catalog_visibility=visible`.
+//
+// A plain listing returns apps whose `catalog_visibility` is `visible`; a `search` also returns matching apps whose `catalog_visibility` is `search-only`. Apps whose `catalog_visibility` is `hidden` never appear.
 //
 // Items carry the same fields as `GET /v1/apps` minus the admin-only ones (workflow bindings, `post_approval_message`, `admins`, `custom_attributes`). `appstore_settings` is always included here rather than requiring `expand`.
 //
-// `target_user_uuid` defaults to the caller. Viewing another user's catalog requires permission to read App Store items.
+// `target_user_uuid` defaults to the caller. Viewing another user's catalog requires permission to read AppStore items.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 func (s *Apps) V1GetAppStoreCatalog(ctx context.Context, request operations.V1GetAppStoreCatalogRequest, opts ...operations.Option) (*operations.V1GetAppStoreCatalogResponse, error) {
@@ -623,7 +627,7 @@ func (s *Apps) V1GetAppStoreCatalog(ctx context.Context, request operations.V1Ge
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := url.JoinPath(baseURL, "/v1/apps/appstore_catalog")
+	opURL, err := url.JoinPath(baseURL, "/v1/apps/appstore-catalog")
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -861,7 +865,7 @@ func (s *Apps) V1GetAppStoreCatalog(ctx context.Context, request operations.V1Ge
 // V1GetApp - Get App
 // Get one app by its UUID.
 //
-// The three workflow slots are always present, either as an `{ "id": ... }` reference or as `null` when nothing is bound. Name a slot in `expand` to get its full definition inline instead. Fields you lack permission to read are left out of the response rather than returned as `null`, so absence and `null` carry different meanings here.
+// The three workflow fields are always present, either as an `{ "id": ... }` reference or as `null` when nothing is bound. Name one in `expand` to get its full definition inline instead. Fields you lack permission to read are left out of the response rather than returned as `null`, so absence and `null` carry different meanings here.
 func (s *Apps) V1GetApp(ctx context.Context, request operations.V1GetAppRequest, opts ...operations.Option) (*operations.V1GetAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1123,7 +1127,7 @@ func (s *Apps) V1GetApp(ctx context.Context, request operations.V1GetAppRequest,
 //
 // The **credential** fields — `auth`, `settings` and `version` — are one group that is *replaced*, not merge-patched, because Lumos cannot read your stored credentials back to merge against. Sending any of the three reconnects the integration with exactly what you send and discards the rest of the stored set, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A body with none of the three never touches credentials.
 //
-// On a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. `app_class_id` is optional and only checked for agreement with the app's own integration.
+// On a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.
 func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRequest, opts ...operations.Option) (*operations.V1UpdateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1327,6 +1331,8 @@ func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRe
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1386,9 +1392,13 @@ func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRe
 }
 
 // V1DeleteApp - Delete App
-// Delete an app — a custom app or a connected integration. An integration is disconnected first, removing its stored credentials, and the record is then deleted.
+// Delete an app — a custom app or a connected integration.
 //
-// If accounts or other Lumos data still reference the app, its record is kept, disconnected, and the call returns 409. Returns 404 if `app_uuid` is unknown in the caller's organization.
+// A custom app is deleted in the request and the call returns 204. If accounts or other Lumos data still reference it, its record is kept, disconnected, and the call returns 409.
+//
+// An integration is disconnected in the request, removing its stored credentials, and the call returns `202 Accepted` with an operation. Its accounts are removed and its record deleted in the background; poll `GET /v1/operations/{id}` until `done` is true. The operation fails with `app_delete.record_retained` if other Lumos data still references the record.
+//
+// Returns 404 if `app_uuid` is unknown in the caller's organization.
 func (s *Apps) V1DeleteApp(ctx context.Context, request operations.V1DeleteAppRequest, opts ...operations.Option) (*operations.V1DeleteAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1554,6 +1564,27 @@ func (s *Apps) V1DeleteApp(ctx context.Context, request operations.V1DeleteAppRe
 	}
 
 	switch {
+	case httpRes.StatusCode == 202:
+		switch {
+		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+
+			var out shared.OperationEnvelope
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
+				return nil, err
+			}
+
+			res.OperationEnvelope = &out
+		default:
+			rawBody, err := utils.ConsumeRawBody(httpRes)
+			if err != nil {
+				return nil, err
+			}
+			return nil, errors.NewSDKError(fmt.Sprintf("unknown content-type received: %s", httpRes.Header.Get("Content-Type")), httpRes.StatusCode, string(rawBody), httpRes)
+		}
 	case httpRes.StatusCode == 204:
 		utils.DrainBody(httpRes)
 	case httpRes.StatusCode == 400:
@@ -1622,8 +1653,8 @@ func (s *Apps) V1DeleteApp(ctx context.Context, request operations.V1DeleteAppRe
 
 }
 
-// V1GetAppStoreSettings - Get App Store Settings
-// Get an app's App Store configuration: whether it appears in the catalog, who is allowed to request it, which time-based access durations are offered, and any custom intake fields shown on the request form.
+// V1GetAppStoreSettings - Get AppStore Settings
+// Get an app's AppStore configuration: whether it appears in the catalog, who is allowed to request it, which time-based access durations are offered, and any custom intake fields shown on the request form.
 //
 // If you are already fetching the app, `GET /v1/apps/{app_uuid}?expand=appstore_settings` returns the same object inline.
 func (s *Apps) V1GetAppStoreSettings(ctx context.Context, request operations.V1GetAppStoreSettingsRequest, opts ...operations.Option) (*operations.V1GetAppStoreSettingsResponse, error) {
@@ -1876,10 +1907,10 @@ func (s *Apps) V1GetAppStoreSettings(ctx context.Context, request operations.V1G
 
 }
 
-// V1PatchAppStoreSettings - Update App Store Settings
-// Update an app's App Store configuration.
+// V1PatchAppStoreSettings - Update AppStore Settings
+// Update an app's AppStore configuration.
 //
-// This is a merge patch: a field you omit keeps its current value, and a field you send as `null` is cleared. List fields such as `allowed_requester_group_uuids` and `custom_intake_fields` replace their contents rather than merging into them.
+// This is a merge patch: a field you omit keeps its current value, and a field you send as `null` is cleared. `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always hold a value, so sending `null` for one of them returns 400. List fields such as `allowed_requester_group_uuids` and `custom_intake_fields` replace their contents rather than merging into them.
 func (s *Apps) V1PatchAppStoreSettings(ctx context.Context, request operations.V1PatchAppStoreSettingsRequest, opts ...operations.Option) (*operations.V1PatchAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2083,6 +2114,8 @@ func (s *Apps) V1PatchAppStoreSettings(ctx context.Context, request operations.V
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -2144,7 +2177,7 @@ func (s *Apps) V1PatchAppStoreSettings(ctx context.Context, request operations.V
 //
 // Returns 404 if `app_uuid` is unknown in your organization.
 //
-// `visible_in_appstore` is the entitlement's own catalog visibility, separate from the app-level `in_app_store` on `GET /v1/apps`: the filter ignores the app's setting, but `expand=appstore_settings` returns no settings while the app is not in the App Store.
+// `visible_in_appstore` is the entitlement's own catalog visibility, separate from the app-level `in_app_store` on `GET /v1/apps`: the filter ignores the app's setting, but `expand=appstore_settings` returns no settings while the app is not in the AppStore.
 func (s *Apps) ListAppEntitlements(ctx context.Context, request operations.ListAppEntitlementsRequest, opts ...operations.Option) (*operations.ListAppEntitlementsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2399,8 +2432,8 @@ func (s *Apps) ListAppEntitlements(ctx context.Context, request operations.ListA
 
 }
 
-// V1GetAppEntitlementAppStoreCatalog - Get App Entitlement Appstore Catalog
-// List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore_catalog`, scoped to one app_uuid instead of the tenant-wide catalog.
+// V1GetAppEntitlementAppStoreCatalog - Get App Entitlement AppStore Catalog
+// List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore-catalog`, scoped to one app_uuid instead of the tenant-wide catalog.
 //
 // Filters: an entitlement's own `visible_in_appstore` setting, and GBAC (its own allowed requester groups if overridden, otherwise the app's). The parent app's own AppStore enrollment is checked too -- an empty page (not 404) is returned when the app isn't in the AppStore or has no AppStore presence.
 //
@@ -2424,7 +2457,7 @@ func (s *Apps) V1GetAppEntitlementAppStoreCatalog(ctx context.Context, request o
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/apps/{app_uuid}/entitlements/appstore_catalog", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/apps/{app_uuid}/entitlements/appstore-catalog", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -4481,7 +4514,7 @@ func (s *Apps) TriggerAppSyncV1(ctx context.Context, request operations.TriggerA
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/apps/{app_uuid}/sync", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/apps/{app_uuid}:sync", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}

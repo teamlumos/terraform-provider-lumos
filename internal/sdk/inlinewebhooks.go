@@ -37,7 +37,7 @@ func newInlineWebhooks(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks 
 }
 
 // ListInlineWebhooks - List Inline Webhooks
-// List the inline webhooks configured for your organization. These are the webhooks an app's App Store settings reference by `request_validation_webhook_uuid`.
+// List the inline webhooks configured for your organization. These are the webhooks an app's AppStore settings reference by `request_validation_webhook_uuid`.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 func (s *InlineWebhooks) ListInlineWebhooks(ctx context.Context, request operations.ListInlineWebhooksRequest, opts ...operations.Option) (*operations.ListInlineWebhooksResponse, error) {

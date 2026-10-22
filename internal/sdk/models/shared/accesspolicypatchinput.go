@@ -7,12 +7,12 @@ import (
 	"fmt"
 )
 
-// AccessPolicyPatchInputStatus - The status of the access policy.
+// AccessPolicyPatchInputStatus - The status of the access policy, `draft` or `published`.
 type AccessPolicyPatchInputStatus string
 
 const (
-	AccessPolicyPatchInputStatusDraft     AccessPolicyPatchInputStatus = "DRAFT"
-	AccessPolicyPatchInputStatusPublished AccessPolicyPatchInputStatus = "PUBLISHED"
+	AccessPolicyPatchInputStatusDraft     AccessPolicyPatchInputStatus = "draft"
+	AccessPolicyPatchInputStatusPublished AccessPolicyPatchInputStatus = "published"
 )
 
 func (e AccessPolicyPatchInputStatus) ToPointer() *AccessPolicyPatchInputStatus {
@@ -24,9 +24,9 @@ func (e *AccessPolicyPatchInputStatus) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "DRAFT":
+	case "draft":
 		fallthrough
-	case "PUBLISHED":
+	case "published":
 		*e = AccessPolicyPatchInputStatus(v)
 		return nil
 	default:
@@ -34,7 +34,7 @@ func (e *AccessPolicyPatchInputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AccessPolicyPatchInputAccessCondition - The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
+// AccessPolicyPatchInputAccessCondition - The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 type AccessPolicyPatchInputAccessCondition struct {
 }
 
@@ -44,13 +44,13 @@ type AccessPolicyPatchInput struct {
 	Name *string `json:"name,omitempty"`
 	// Explanation for why this policy exists.
 	BusinessJustification *string `json:"business_justification,omitempty"`
-	// The status of the access policy.
+	// The status of the access policy, `draft` or `published`.
 	Status *AccessPolicyPatchInputStatus `json:"status,omitempty"`
 	// Whether the access policy is enabled.
 	IsEnabled *bool `json:"is_enabled,omitempty"`
-	// The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
+	// The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 	AccessCondition *AccessPolicyPatchInputAccessCondition `json:"access_condition,omitempty"`
-	// Send `true` to make the access policy apply to everyone, replacing its `access_condition`. `false` changes nothing.
+	// Send `true` to make the access policy apply to everyone, replacing its `access_condition`. `false` changes nothing. The everyone condition a read returns in `access_condition` counts as `true`.
 	IsEveryoneCondition *bool `json:"is_everyone_condition,omitempty"`
 	// The apps granted by this access policy. Replaces the current apps wholesale.
 	Apps []AccessPolicyAppInput `json:"apps,omitempty"`

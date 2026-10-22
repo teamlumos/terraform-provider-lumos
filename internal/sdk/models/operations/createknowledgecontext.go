@@ -16,7 +16,7 @@ type CreateKnowledgeContextResponse struct {
 	RawResponse *http.Response
 	// Successful Response
 	KnowledgeContextOutput *shared.KnowledgeContextOutput
-	// Bad Request
+	// Invalid input — `knowledge.invalid_input`.
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 

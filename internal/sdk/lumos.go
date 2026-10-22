@@ -71,7 +71,7 @@ type Lumos struct {
 	//
 	// Of the built-in roles, Admin, Read Only Admin, AppStore Read Only Admin, and App Admin can read
 	// every access request in your organization. Anyone else sees only the requests they made and the
-	// ones made for them. A request they can't see returns 404, the same as one that doesn't exist.
+	// ones made for them.
 	//
 	AccessRequests *AccessRequests
 	// An access review is a campaign that reviews who has access to what across your connected apps.
@@ -122,12 +122,12 @@ type Lumos struct {
 	//    keys the integration expects.
 	// 2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect, and
 	//    their first sync waits for an admin to review match rules. It starts from the Lumos UI, or from
-	//    `POST /v1/apps/{app_uuid}/sync` with `skip_first_sync_review: true`. Apps that need browser
+	//    `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Apps that need browser
 	//    consent are finished in the Lumos UI.
 	// 3. `GET /v1/apps/{app_uuid}` to follow the first sync. `sync_status` shows the state of the
-	//    app's most recent sync. A sync started with `POST /v1/apps/{app_uuid}/sync` also returns an
+	//    app's most recent sync. A sync started with `POST /v1/apps/{app_uuid}:sync` also returns an
 	//    operation, which you poll with `GET /v1/operations/{operation_id}`.
-	// 4. `POST /v1/apps/{app_uuid}/sync` to resync later. Only one sync runs per app at a time, so a
+	// 4. `POST /v1/apps/{app_uuid}:sync` to resync later. Only one sync runs per app at a time, so a
 	//    second request while one is in flight returns 409.
 	//
 	// Rotate credentials with `PATCH /v1/apps/{app_uuid}`, which also updates an app's metadata.
@@ -137,17 +137,17 @@ type Lumos struct {
 	// ### Reading apps
 	//
 	// `expand` is opt-in and evaluated per field: ask for `admins`, `custom_attributes`,
-	// `appstore_settings`, or any of the three workflow slots. A field you lack permission to read is
+	// `appstore_settings`, or any of the three workflow fields. A field you lack permission to read is
 	// left out of the response instead of failing the whole request, so a 200 does not prove every field
 	// you asked for came back.
 	//
-	// To reconcile the apps you manage from automation such as Terraform, combine
-	// `connection_source=API` with `disconnected=false`.
+	// To list only the connected apps you manage through the API, combine `connection_source=api` with
+	// `disconnected=false`.
 	//
-	// ### Workflow slots
+	// ### Bound workflows
 	//
 	// Each app carries three bindings: an approval workflow, a default provisioning workflow, and a
-	// default deprovisioning workflow. The two `default_` slots supply the workflow that entitlements on
+	// default deprovisioning workflow. The two `default_` workflows are the ones that entitlements on
 	// the app fall back to. To bind a workflow to one entitlement instead, use the Entitlements
 	// endpoints.
 	//
@@ -165,8 +165,8 @@ type Lumos struct {
 	//
 	// ### Per-entitlement workflows
 	//
-	// Three slots bind a workflow to a single entitlement rather than to the whole app: an approval
-	// override, a provisioning workflow, and a deprovisioning workflow. Each has a GET and a PUT.
+	// An entitlement can have its own approval override, provisioning workflow, and deprovisioning
+	// workflow, bound to it rather than to the whole app. Each has a GET and a PUT.
 	//
 	// Not every entitlement supports them. An entitlement with no request configuration behind it
 	// returns 404 with `Workflows are not available for this entitlement.` on all six.
@@ -180,8 +180,7 @@ type Lumos struct {
 	// - `GET /v1/groups/{group_id}` reads one group, and `GET /v1/groups/{group_id}/users` lists its
 	//   members.
 	//
-	// An `app_id` that matches no app in your organization returns an empty page rather than an error,
-	// so an empty filtered list can mean a wrong ID.
+	// An `app_id` that matches no app in your organization returns 404.
 	//
 	Groups *Groups
 	// Identity events are the changes Lumos detects on your organization's identities, such as a change
@@ -219,29 +218,29 @@ type Lumos struct {
 	//
 	// ### Building one
 	//
-	// 1. `GET /v1/workflow-steps?app_id={app_uuid}` to discover the steps available for that app, each
-	//    with the input schema it accepts.
+	// 1. `GET /v1/workflow-steps?app_id={app_uuid}&type={workflow type}` to discover the steps available
+	//    for that app in the type of workflow you will create, each with the input schema it accepts.
+	//    Without `type`, it lists only the steps every workflow type accepts.
 	// 2. `POST /v1/workflows` with the steps you want.
 	// 3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.
 	//
-	// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` rejects changes to
-	// either.
+	// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` returns 400 for a
+	// change to either.
 	//
 	// ### Workflows this API cannot describe
 	//
 	// Some workflows Lumos builds for you, including the out-of-the-box provisioning defaults, contain
 	// steps with no public representation. `GET /v1/workflows` skips them, so a page can hold fewer items
 	// than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as
-	// the end of the list. Binding one of these to a slot returns 400.
+	// the end of the list. Binding one of these to an app or entitlement returns 400.
 	//
 	Workflows *Workflows
-	// Custom attributes are the extra fields your organization keeps on users and accounts. These
-	// endpoints read their *definitions*, not the values stored against any particular user.
+	// Custom attributes are the extra fields your organization keeps on users. These endpoints read
+	// their *definitions*, not the values stored against any particular user.
 	//
 	// `GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that
-	// supplies it. Narrow the list with `config_type` to separate user attributes from account
-	// attributes, with `source_type` to tell attributes synced from an app apart from ones your team
-	// created, or with `app_id` to see only what a single app supplies.
+	// supplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from
+	// ones your team created, or with `app_id` to see only what a single app supplies.
 	//
 	CustomAttributeDefinitions *CustomAttributeDefinitions
 	// An integration is a service Lumos knows how to connect to, identified by an `app_class_id` such as
@@ -260,9 +259,12 @@ type Lumos struct {
 	//    `settings` fields it expects.
 	// 3. `POST /v1/apps` with those values.
 	//
-	// Step 2 is the point of this group: it lets you build a connect form, or generate a Terraform
-	// resource, without hardcoding one credential shape per integration. Integrations whose connection
-	// schema Lumos cannot describe yet return 404.
+	// Step 2 is the point of this group: it lets you build a connect form without hardcoding one
+	// credential shape per integration.
+	//
+	// `GET /v1/integrations/{app_class_id}` and the connection schema return 404 for any integration the
+	// list leaves out. The connection schema also returns 404 for an integration whose schema Lumos
+	// cannot describe yet.
 	//
 	Integrations *Integrations
 	// `GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.
@@ -275,7 +277,7 @@ type Lumos struct {
 	// An operation tracks work that continues after the request that started it has returned. These
 	// endpoints start such work and respond with 202 and an operation:
 	//
-	// - `POST /v1/apps/{app_uuid}/sync`
+	// - `POST /v1/apps/{app_uuid}:sync`
 	// - `POST /v1/accounts:upload`
 	// - `POST /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}:sync`
 	//
@@ -307,12 +309,13 @@ type Lumos struct {
 	// ### Finding tasks
 	//
 	// `GET /v1/tasks` lists the tasks visible to you. `show_all_tasks=true` lists every task in your
-	// organization instead. Of the built-in roles, Admin, Read Only Admin, and AppStore Read Only Admin
-	// can use it, and anyone else gets a 403.
+	// organization instead. It needs permission to view every task, which the built-in Admin, Read Only
+	// Admin, and AppStore Read Only Admin roles have, and which a custom role can also grant. Anyone
+	// else gets a 403.
 	//
 	// Filter with `type`, `category`, `status`, and `product_area`, whose values are lowercase and
 	// kebab-case. For example,
-	// `GET /v1/tasks?category=approval&product_area=appstore&status=pending` lists pending App Store
+	// `GET /v1/tasks?category=approval&product_area=appstore&status=pending` lists pending AppStore
 	// approvals.
 	//
 	// A task names the entitlement it grants or removes in `entitlement_id`, an Entitlement UUID.
@@ -352,7 +355,7 @@ type Lumos struct {
 	// Users are the people in your organization. These endpoints read them, and the only thing they
 	// change is a user's Lumos roles.
 	//
-	// - `GET /v1/users` lists users. `search_term` matches names and emails, and `exact_match=true`
+	// - `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`
 	//   requires an exact match.
 	// - `GET /v1/users/current` returns the user who owns your API token.
 	// - `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the

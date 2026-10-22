@@ -3,10 +3,69 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
+
+// CatalogVisibility - Filter by the app's `appstore_settings.catalog_visibility` (`visible`, `search-only` or `hidden`). Pair it with `in_app_store=true` to list the AppStore by visibility; "Who Can Request" groups don't narrow this list.
+type CatalogVisibility string
+
+const (
+	CatalogVisibilityVisible    CatalogVisibility = "visible"
+	CatalogVisibilitySearchOnly CatalogVisibility = "search-only"
+	CatalogVisibilityHidden     CatalogVisibility = "hidden"
+)
+
+func (e CatalogVisibility) ToPointer() *CatalogVisibility {
+	return &e
+}
+func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "visible":
+		fallthrough
+	case "search-only":
+		fallthrough
+	case "hidden":
+		*e = CatalogVisibility(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for CatalogVisibility: %v", v)
+	}
+}
+
+// ConnectionSource - Filter to integrations connected via this source (`api` or `ui`).
+type ConnectionSource string
+
+const (
+	ConnectionSourceAPI ConnectionSource = "api"
+	ConnectionSourceUI  ConnectionSource = "ui"
+)
+
+func (e ConnectionSource) ToPointer() *ConnectionSource {
+	return &e
+}
+func (e *ConnectionSource) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "api":
+		fallthrough
+	case "ui":
+		*e = ConnectionSource(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ConnectionSource: %v", v)
+	}
+}
 
 type V1ListAppsRequest struct {
 	// Fields to expand. Supported fields: admins, approval_workflow, default_provisioning_workflow, default_deprovisioning_workflow, custom_attributes, appstore_settings.
@@ -15,9 +74,11 @@ type V1ListAppsRequest struct {
 	PageToken *string `queryParam:"style=form,explode=true,name=page_token"`
 	// Maximum number of items to return per page. Values above 250 are clamped to 250 rather than rejected.
 	PageSize *int64 `default:"100" queryParam:"style=form,explode=true,name=page_size"`
-	// Filter to integrations connected via this source (`API` or `UI`).
-	ConnectionSource *shared.ConnectionSource `queryParam:"style=form,explode=true,name=connection_source"`
-	// Filter on whether the app has been disconnected. `false` excludes disconnected apps, `true` returns only disconnected apps whose record Lumos still holds, and omitting it lists every app. Pair `false` with `connection_source=API` to reconcile the integrations you manage from automation such as Terraform.
+	// Filter by the app's `appstore_settings.catalog_visibility` (`visible`, `search-only` or `hidden`). Pair it with `in_app_store=true` to list the AppStore by visibility; "Who Can Request" groups don't narrow this list.
+	CatalogVisibility *CatalogVisibility `queryParam:"style=form,explode=true,name=catalog_visibility"`
+	// Filter to integrations connected via this source (`api` or `ui`).
+	ConnectionSource *ConnectionSource `queryParam:"style=form,explode=true,name=connection_source"`
+	// Filter on whether the app has been disconnected. `false` excludes disconnected apps, `true` returns only disconnected apps whose record Lumos still holds, and omitting it lists every app. Pair `false` with `connection_source=api` to list only the connected apps you manage through the API.
 	Disconnected *bool `queryParam:"style=form,explode=true,name=disconnected"`
 	// Filter by AppStore membership. `true` returns only apps in the AppStore; `false` returns only apps not in the AppStore; omit for all apps.
 	InAppStore *bool `queryParam:"style=form,explode=true,name=in_app_store"`
@@ -57,7 +118,14 @@ func (v *V1ListAppsRequest) GetPageSize() *int64 {
 	return v.PageSize
 }
 
-func (v *V1ListAppsRequest) GetConnectionSource() *shared.ConnectionSource {
+func (v *V1ListAppsRequest) GetCatalogVisibility() *CatalogVisibility {
+	if v == nil {
+		return nil
+	}
+	return v.CatalogVisibility
+}
+
+func (v *V1ListAppsRequest) GetConnectionSource() *ConnectionSource {
 	if v == nil {
 		return nil
 	}

@@ -28,7 +28,7 @@ import (
 //
 // Of the built-in roles, Admin, Read Only Admin, AppStore Read Only Admin, and App Admin can read
 // every access request in your organization. Anyone else sees only the requests they made and the
-// ones made for them. A request they can't see returns 404, the same as one that doesn't exist.
+// ones made for them.
 type AccessRequests struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -44,9 +44,9 @@ func newAccessRequests(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks 
 }
 
 // V1ListAccessRequests - List Access Requests
-// List the access requests in your organization.
+// List the access requests in your organization. A `user_id`, `target_user_id`, or `requester_user_id` that matches no user in your organization returns 404.
 //
-// Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one. A `page_token` is only valid with the same filters and `sort` as the request that returned it.
+// Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one. A `page_token` is only valid with the same filters and `order_by` as the request that returned it.
 func (s *AccessRequests) V1ListAccessRequests(ctx context.Context, request operations.V1ListAccessRequestsRequest, opts ...operations.Option) (*operations.V1ListAccessRequestsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -302,7 +302,9 @@ func (s *AccessRequests) V1ListAccessRequests(ctx context.Context, request opera
 }
 
 // V1CreateAccessRequest - Create Access Request
-// Create a request to access an app or one of its entitlements.
+// Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.
+//
+// Name entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement that can't be requested through `app_id`, or through an app merged with it, returns `400 access_request.entitlement_not_requestable`.
 func (s *AccessRequests) V1CreateAccessRequest(ctx context.Context, request shared.AccessRequestCreateInput, opts ...operations.Option) (*operations.V1CreateAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -561,7 +563,9 @@ func (s *AccessRequests) V1CreateAccessRequest(ctx context.Context, request shar
 }
 
 // V1GetAccessRequest - Get Access Request
-// Get an access request by ID.
+// Get an access request by ID. Add `expand=tasks` for the tasks on it that you can see, or `expand=custom_fields` for the requester's answers to the app's intake fields.
+//
+// Unless you can read every access request in your organization, you can read only the requests you made, the ones made for you, and the ones waiting on your approval. Once a request no longer waits on you, you can't read it. Any other ID returns 404, the same as one that doesn't exist.
 func (s *AccessRequests) V1GetAccessRequest(ctx context.Context, request operations.V1GetAccessRequestRequest, opts ...operations.Option) (*operations.V1GetAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -817,7 +821,9 @@ func (s *AccessRequests) V1GetAccessRequest(ctx context.Context, request operati
 }
 
 // V1CancelAccessRequest - Cancel Access Request
-// Cancel a pending access request.
+// Cancel a pending access request. The JSON body is optional and takes a `reason`. Returns 204.
+//
+// A request you can't read returns 404, the same as `GET /v1/access-requests/{id}`. A request you can read but aren't allowed to cancel returns 403, and one that is no longer pending returns 409. They are checked in that order.
 func (s *AccessRequests) V1CancelAccessRequest(ctx context.Context, request operations.V1CancelAccessRequestRequest, opts ...operations.Option) (*operations.V1CancelAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -546,7 +546,7 @@ func (u ScopeFilters) MarshalJSON() ([]byte, error) {
 type SyncAppReviewInput struct {
 	// Replaces the app review's scope filters wholesale — this is a PUT, not a merge, so send the full set you want and omit the field entirely to sync against the filters already set. An empty list clears them. Each filter's `value` must be one that `GET /access_reviews/scope_options` advertises for this app.
 	ScopeFilters []ScopeFilters `json:"scope_filters,omitempty"`
-	// When true, rebuilds the subject set from data already imported instead of pulling fresh data from the integration — the fast path when only the filters changed.
+	// When true, rebuilds the subject set from data already synced instead of pulling fresh data from the integration — the fast path when only the filters changed.
 	SkipNewData *bool `default:"false" json:"skip_new_data"`
 }
 

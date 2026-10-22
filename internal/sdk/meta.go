@@ -38,7 +38,7 @@ func newMeta(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Hoo
 }
 
 // V1GetArt - Get Art
-// Return Lumos ASCII art. Can be used to verify the API is working.
+// Return Lumos ASCII art as plain text. Use it to check that the API is reachable and that your token works.
 func (s *Meta) V1GetArt(ctx context.Context, opts ...operations.Option) (*operations.V1GetArtResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -292,7 +292,7 @@ func (s *Meta) V1GetArt(ctx context.Context, opts ...operations.Option) (*operat
 }
 
 // V1GetInfo - Get Info
-// Returns current git revision.
+// Return a liveness report that includes the running API's `git_revision`.
 func (s *Meta) V1GetInfo(ctx context.Context, opts ...operations.Option) (*operations.V1GetInfoResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

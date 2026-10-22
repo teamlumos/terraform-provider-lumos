@@ -85,11 +85,11 @@ func (r *UsersDataSourceModel) RefreshFromSharedUserListOutput(ctx context.Conte
 func (r *UsersDataSourceModel) ToOperationsV1ListUsersRequest(ctx context.Context) (*operations.V1ListUsersRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	searchTerm := new(string)
-	if !r.SearchTerm.IsUnknown() && !r.SearchTerm.IsNull() {
-		*searchTerm = r.SearchTerm.ValueString()
+	search := new(string)
+	if !r.Search.IsUnknown() && !r.Search.IsNull() {
+		*search = r.Search.ValueString()
 	} else {
-		searchTerm = nil
+		search = nil
 	}
 	exactMatch := new(bool)
 	if !r.ExactMatch.IsUnknown() && !r.ExactMatch.IsNull() {
@@ -105,7 +105,7 @@ func (r *UsersDataSourceModel) ToOperationsV1ListUsersRequest(ctx context.Contex
 		}
 	}
 	out := operations.V1ListUsersRequest{
-		SearchTerm: searchTerm,
+		Search:     search,
 		ExactMatch: exactMatch,
 		Expand:     expand,
 	}

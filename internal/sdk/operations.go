@@ -20,7 +20,7 @@ import (
 // An operation tracks work that continues after the request that started it has returned. These
 // endpoints start such work and respond with 202 and an operation:
 //
-// - `POST /v1/apps/{app_uuid}/sync`
+// - `POST /v1/apps/{app_uuid}:sync`
 // - `POST /v1/accounts:upload`
 // - `POST /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}:sync`
 //
@@ -44,7 +44,7 @@ func newOperations(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hoo
 }
 
 // GetOperation - Get Operation
-// Poll a long-running operation by the id returned from the launching endpoint (e.g. `POST /v1/apps/{app_uuid}/sync`). While `done` is false the work is still running; poll again later. When `done` is true, exactly one of `result` and `error` is set. An app-sync operation reflects the app's latest sync: its id is a per-app view, not a per-run record. Unknown, malformed, and out-of-tenant ids are indistinguishable: all return 404.
+// Poll a long-running operation by the id returned from the launching endpoint (e.g. `POST /v1/apps/{app_uuid}:sync`). While `done` is false the work is still running; poll again later. When `done` is true, exactly one of `result` and `error` is set. An app-sync operation reflects the app's latest sync: its id is a per-app view, not a per-run record. Unknown, malformed, and out-of-tenant ids are indistinguishable: all return 404.
 func (s *Operations) GetOperation(ctx context.Context, request operations.GetOperationRequest, opts ...operations.Option) (*operations.GetOperationResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

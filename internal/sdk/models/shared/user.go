@@ -3,8 +3,42 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type UserStatus string
+
+const (
+	UserStatusStaged    UserStatus = "staged"
+	UserStatusActive    UserStatus = "active"
+	UserStatusSuspended UserStatus = "suspended"
+	UserStatusInactive  UserStatus = "inactive"
+)
+
+func (e UserStatus) ToPointer() *UserStatus {
+	return &e
+}
+func (e *UserStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "staged":
+		fallthrough
+	case "active":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "inactive":
+		*e = UserStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UserStatus: %v", v)
+	}
+}
 
 type User struct {
 	// The ID of this user.
@@ -16,7 +50,7 @@ type User struct {
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
 	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
+	Status *UserStatus `json:"status,omitempty"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
@@ -58,7 +92,7 @@ func (u *User) GetFamilyName() *string {
 	return u.FamilyName
 }
 
-func (u *User) GetStatus() *UserLifecycleStatus {
+func (u *User) GetStatus() *UserStatus {
 	if u == nil {
 		return nil
 	}

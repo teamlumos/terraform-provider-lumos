@@ -4,11 +4,11 @@ package shared
 
 // IntegrationCatalogOutput - A connectable integration from the app catalog (not a connected instance).
 //
-// Read via `GET /integrations` and `GET /integrations/{app_class_id}`. Carries
-// catalog metadata only — no connection status. To read the state of an
-// integration you have connected, use the Apps API (`GET /apps`).
+// Read via the integration catalog endpoints. Carries catalog metadata only —
+// no connection status. To read the state of an integration you have
+// connected, use the Apps API.
 type IntegrationCatalogOutput struct {
-	// Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting via `POST /apps`.
+	// Canonical identifier of the integration (e.g. `okta.com`). Pass it as `app_class_id` when connecting it with the Apps API's create endpoint.
 	AppClassID string `json:"app_class_id"`
 	// Display name of the integration.
 	Name string `json:"name"`

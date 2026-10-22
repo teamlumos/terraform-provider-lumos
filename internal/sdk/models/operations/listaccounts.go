@@ -3,11 +3,134 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 	"time"
 )
+
+type Sources string
+
+const (
+	SourcesGoogleWorkspaceQuickInbox Sources = "google-workspace-quick-inbox"
+	SourcesGoogleWorkspaceDeepInbox  Sources = "google-workspace-deep-inbox"
+	SourcesMicrosoftDeepInbox        Sources = "microsoft-deep-inbox"
+	SourcesMicrosoftOauth            Sources = "microsoft-oauth"
+	SourcesMicrosoftGcc              Sources = "microsoft-gcc"
+	SourcesGoogleWorkspaceOauth      Sources = "google-workspace-oauth"
+	SourcesOkta                      Sources = "okta"
+	SourcesManual                    Sources = "manual"
+	SourcesOnelogin                  Sources = "onelogin"
+	SourcesAtlassian                 Sources = "atlassian"
+	SourcesGoogleCloud               Sources = "google-cloud"
+	SourcesIntegration               Sources = "integration"
+	SourcesJumpcloud                 Sources = "jumpcloud"
+	SourcesCustom                    Sources = "custom"
+	SourcesMcp                       Sources = "mcp"
+	SourcesNative                    Sources = "native"
+)
+
+func (e Sources) ToPointer() *Sources {
+	return &e
+}
+func (e *Sources) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "google-workspace-quick-inbox":
+		fallthrough
+	case "google-workspace-deep-inbox":
+		fallthrough
+	case "microsoft-deep-inbox":
+		fallthrough
+	case "microsoft-oauth":
+		fallthrough
+	case "microsoft-gcc":
+		fallthrough
+	case "google-workspace-oauth":
+		fallthrough
+	case "okta":
+		fallthrough
+	case "manual":
+		fallthrough
+	case "onelogin":
+		fallthrough
+	case "atlassian":
+		fallthrough
+	case "google-cloud":
+		fallthrough
+	case "integration":
+		fallthrough
+	case "jumpcloud":
+		fallthrough
+	case "custom":
+		fallthrough
+	case "mcp":
+		fallthrough
+	case "native":
+		*e = Sources(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Sources: %v", v)
+	}
+}
+
+type Status string
+
+const (
+	StatusDiscovered           Status = "discovered"
+	StatusStaged               Status = "staged"
+	StatusAccessCreated        Status = "access-created"
+	StatusActive               Status = "active"
+	StatusArchived             Status = "archived"
+	StatusSuspended            Status = "suspended"
+	StatusDeprovisioned        Status = "deprovisioned"
+	StatusManuallyRemoved      Status = "manually-removed"
+	StatusAccessRemoved        Status = "access-removed"
+	StatusNonCorporate         Status = "non-corporate"
+	StatusWaitingManualRemoval Status = "waiting-manual-removal"
+)
+
+func (e Status) ToPointer() *Status {
+	return &e
+}
+func (e *Status) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "staged":
+		fallthrough
+	case "access-created":
+		fallthrough
+	case "active":
+		fallthrough
+	case "archived":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "deprovisioned":
+		fallthrough
+	case "manually-removed":
+		fallthrough
+	case "access-removed":
+		fallthrough
+	case "non-corporate":
+		fallthrough
+	case "waiting-manual-removal":
+		*e = Status(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Status: %v", v)
+	}
+}
 
 type ListAccountsRequest struct {
 	// Filter to accounts on this app.
@@ -17,11 +140,11 @@ type ListAccountsRequest struct {
 	// Filter to accounts whose `discovered_at` is at or after this time.
 	DiscoveredAfter *time.Time `queryParam:"style=form,explode=true,name=discovered_after"`
 	// Filter to accounts discovered by these sources.
-	Sources []shared.DiscoverySource `queryParam:"style=form,explode=true,name=sources"`
+	Sources []Sources `queryParam:"style=form,explode=true,name=sources"`
 	// Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it.
 	Email *string `queryParam:"style=form,explode=true,name=email"`
 	// Filter to accounts in these lifecycle statuses.
-	Status []shared.AccountLifecycleStatus `queryParam:"style=form,explode=true,name=status"`
+	Status []Status `queryParam:"style=form,explode=true,name=status"`
 	// Fields to expand. Supported fields: app.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
@@ -62,7 +185,7 @@ func (l *ListAccountsRequest) GetDiscoveredAfter() *time.Time {
 	return l.DiscoveredAfter
 }
 
-func (l *ListAccountsRequest) GetSources() []shared.DiscoverySource {
+func (l *ListAccountsRequest) GetSources() []Sources {
 	if l == nil {
 		return nil
 	}
@@ -76,7 +199,7 @@ func (l *ListAccountsRequest) GetEmail() *string {
 	return l.Email
 }
 
-func (l *ListAccountsRequest) GetStatus() []shared.AccountLifecycleStatus {
+func (l *ListAccountsRequest) GetStatus() []Status {
 	if l == nil {
 		return nil
 	}

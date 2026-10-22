@@ -18,13 +18,12 @@ import (
 )
 
 // CustomAttributeDefinitions -
-// Custom attributes are the extra fields your organization keeps on users and accounts. These
-// endpoints read their *definitions*, not the values stored against any particular user.
+// Custom attributes are the extra fields your organization keeps on users. These endpoints read
+// their *definitions*, not the values stored against any particular user.
 //
 // `GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that
-// supplies it. Narrow the list with `config_type` to separate user attributes from account
-// attributes, with `source_type` to tell attributes synced from an app apart from ones your team
-// created, or with `app_id` to see only what a single app supplies.
+// supplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from
+// ones your team created, or with `app_id` to see only what a single app supplies.
 type CustomAttributeDefinitions struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration

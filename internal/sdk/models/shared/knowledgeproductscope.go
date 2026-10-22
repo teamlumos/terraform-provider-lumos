@@ -10,13 +10,13 @@ import (
 type KnowledgeProductScope string
 
 const (
-	KnowledgeProductScopeAppstore             KnowledgeProductScope = "APPSTORE"
-	KnowledgeProductScopeAccessReviews        KnowledgeProductScope = "ACCESS_REVIEWS"
-	KnowledgeProductScopeAlbus                KnowledgeProductScope = "ALBUS"
-	KnowledgeProductScopeGlobal               KnowledgeProductScope = "GLOBAL"
-	KnowledgeProductScopeAlbusDeepResearch    KnowledgeProductScope = "ALBUS_DEEP_RESEARCH"
-	KnowledgeProductScopeIdentityIntelligence KnowledgeProductScope = "IDENTITY_INTELLIGENCE"
-	KnowledgeProductScopeRoleMining           KnowledgeProductScope = "ROLE_MINING"
+	KnowledgeProductScopeAppstore             KnowledgeProductScope = "appstore"
+	KnowledgeProductScopeAccessReviews        KnowledgeProductScope = "access-reviews"
+	KnowledgeProductScopeAlbusChat            KnowledgeProductScope = "albus-chat"
+	KnowledgeProductScopeGlobal               KnowledgeProductScope = "global"
+	KnowledgeProductScopeAlbusDeepResearch    KnowledgeProductScope = "albus-deep-research"
+	KnowledgeProductScopeIdentityIntelligence KnowledgeProductScope = "identity-intelligence"
+	KnowledgeProductScopeRoleMining           KnowledgeProductScope = "role-mining"
 )
 
 func (e KnowledgeProductScope) ToPointer() *KnowledgeProductScope {
@@ -28,19 +28,19 @@ func (e *KnowledgeProductScope) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "APPSTORE":
+	case "appstore":
 		fallthrough
-	case "ACCESS_REVIEWS":
+	case "access-reviews":
 		fallthrough
-	case "ALBUS":
+	case "albus-chat":
 		fallthrough
-	case "GLOBAL":
+	case "global":
 		fallthrough
-	case "ALBUS_DEEP_RESEARCH":
+	case "albus-deep-research":
 		fallthrough
-	case "IDENTITY_INTELLIGENCE":
+	case "identity-intelligence":
 		fallthrough
-	case "ROLE_MINING":
+	case "role-mining":
 		*e = KnowledgeProductScope(v)
 		return nil
 	default:

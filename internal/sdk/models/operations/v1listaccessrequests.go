@@ -10,36 +10,119 @@ import (
 	"net/http"
 )
 
-// Sort access requests ascending (ASC) or descending (DESC) by created date.
-type Sort string
+// OrderBy - Sort by when the request was made: `created_at` for oldest first (the default), `created_at desc` for newest first.
+type OrderBy string
 
 const (
-	SortAsc  Sort = "ASC"
-	SortDesc Sort = "DESC"
+	OrderByCreatedAt     OrderBy = "created_at"
+	OrderByCreatedAtDesc OrderBy = "created_at desc"
 )
 
-func (e Sort) ToPointer() *Sort {
+func (e OrderBy) ToPointer() *OrderBy {
 	return &e
 }
-func (e *Sort) UnmarshalJSON(data []byte) error {
+func (e *OrderBy) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
 	switch v {
-	case "ASC":
+	case "created_at":
 		fallthrough
-	case "DESC":
-		*e = Sort(v)
+	case "created_at desc":
+		*e = OrderBy(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Sort: %v", v)
+		return fmt.Errorf("invalid value for OrderBy: %v", v)
+	}
+}
+
+type Statuses string
+
+const (
+	StatusesPending                     Statuses = "pending"
+	StatusesPendingManagerApproval      Statuses = "pending-manager-approval"
+	StatusesManagerApproved             Statuses = "manager-approved"
+	StatusesManagerDenied               Statuses = "manager-denied"
+	StatusesPendingApproval             Statuses = "pending-approval"
+	StatusesApproved                    Statuses = "approved"
+	StatusesDenied                      Statuses = "denied"
+	StatusesExpired                     Statuses = "expired"
+	StatusesCancelled                   Statuses = "cancelled"
+	StatusesPendingProvisioning         Statuses = "pending-provisioning"
+	StatusesPendingManualProvisioning   Statuses = "pending-manual-provisioning"
+	StatusesDeniedProvisioning          Statuses = "denied-provisioning"
+	StatusesProvisioned                 Statuses = "provisioned"
+	StatusesPendingDeprovisioning       Statuses = "pending-deprovisioning"
+	StatusesPendingManualDeprovisioning Statuses = "pending-manual-deprovisioning"
+	StatusesTimeBasedExpired            Statuses = "time-based-expired"
+	StatusesCompleted                   Statuses = "completed"
+	StatusesReverting                   Statuses = "reverting"
+	StatusesReverted                    Statuses = "reverted"
+	StatusesTimeBasedExpiredFailed      Statuses = "time-based-expired-failed"
+	StatusesTimeBasedExpiredCancelled   Statuses = "time-based-expired-cancelled"
+)
+
+func (e Statuses) ToPointer() *Statuses {
+	return &e
+}
+func (e *Statuses) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "pending":
+		fallthrough
+	case "pending-manager-approval":
+		fallthrough
+	case "manager-approved":
+		fallthrough
+	case "manager-denied":
+		fallthrough
+	case "pending-approval":
+		fallthrough
+	case "approved":
+		fallthrough
+	case "denied":
+		fallthrough
+	case "expired":
+		fallthrough
+	case "cancelled":
+		fallthrough
+	case "pending-provisioning":
+		fallthrough
+	case "pending-manual-provisioning":
+		fallthrough
+	case "denied-provisioning":
+		fallthrough
+	case "provisioned":
+		fallthrough
+	case "pending-deprovisioning":
+		fallthrough
+	case "pending-manual-deprovisioning":
+		fallthrough
+	case "time-based-expired":
+		fallthrough
+	case "completed":
+		fallthrough
+	case "reverting":
+		fallthrough
+	case "reverted":
+		fallthrough
+	case "time-based-expired-failed":
+		fallthrough
+	case "time-based-expired-cancelled":
+		*e = Statuses(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Statuses: %v", v)
 	}
 }
 
 type V1ListAccessRequestsRequest struct {
-	// Sort access requests ascending (ASC) or descending (DESC) by created date.
-	Sort *Sort `default:"ASC" queryParam:"style=form,explode=true,name=sort"`
+	// Sort by when the request was made: `created_at` for oldest first (the default), `created_at desc` for newest first.
+	OrderBy *OrderBy `queryParam:"style=form,explode=true,name=order_by"`
 	// Fields to expand. Supported values: tasks, custom_fields.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
@@ -52,8 +135,8 @@ type V1ListAccessRequestsRequest struct {
 	RequesterUserID *string `queryParam:"style=form,explode=true,name=requester_user_id"`
 	// Filters requests by the ID of the user.
 	UserID *string `queryParam:"style=form,explode=true,name=user_id"`
-	// Filters requests by their status. Possible values: 'PENDING', 'PENDING_MANAGER_APPROVAL', 'MANAGER_APPROVED', 'MANAGER_DENIED', 'PENDING_APPROVAL', 'APPROVED', 'DENIED', 'EXPIRED', 'CANCELLED', 'PENDING_PROVISIONING', 'PENDING_MANUAL_PROVISIONING', 'DENIED_PROVISIONING', 'PROVISIONED', 'PENDING_DEPROVISIONING', 'PENDING_MANUAL_DEPROVISIONING', 'TIME_BASED_EXPIRED', 'COMPLETED', 'REVERTING', 'REVERTED', 'TIME_BASED_EXPIRED_FAILED', 'TIME_BASED_EXPIRED_CANCELLED'
-	Statuses []shared.SupportRequestStatus `queryParam:"style=form,explode=true,name=statuses"`
+	// Filters requests by their status. Possible values: 'pending', 'pending-manager-approval', 'manager-approved', 'manager-denied', 'pending-approval', 'approved', 'denied', 'expired', 'cancelled', 'pending-provisioning', 'pending-manual-provisioning', 'denied-provisioning', 'provisioned', 'pending-deprovisioning', 'pending-manual-deprovisioning', 'time-based-expired', 'completed', 'reverting', 'reverted', 'time-based-expired-failed', 'time-based-expired-cancelled'
+	Statuses []Statuses `queryParam:"style=form,explode=true,name=statuses"`
 }
 
 func (v V1ListAccessRequestsRequest) MarshalJSON() ([]byte, error) {
@@ -67,11 +150,11 @@ func (v *V1ListAccessRequestsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *V1ListAccessRequestsRequest) GetSort() *Sort {
+func (v *V1ListAccessRequestsRequest) GetOrderBy() *OrderBy {
 	if v == nil {
 		return nil
 	}
-	return v.Sort
+	return v.OrderBy
 }
 
 func (v *V1ListAccessRequestsRequest) GetExpand() []string {
@@ -116,7 +199,7 @@ func (v *V1ListAccessRequestsRequest) GetUserID() *string {
 	return v.UserID
 }
 
-func (v *V1ListAccessRequestsRequest) GetStatuses() []shared.SupportRequestStatus {
+func (v *V1ListAccessRequestsRequest) GetStatuses() []Statuses {
 	if v == nil {
 		return nil
 	}

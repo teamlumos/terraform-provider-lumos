@@ -10,8 +10,8 @@ import (
 
 type V1ListUsersRequest struct {
 	// Search for users by name or email.
-	SearchTerm *string `queryParam:"style=form,explode=true,name=search_term"`
-	// If a search_term is provided, only accept exact matches.
+	Search *string `queryParam:"style=form,explode=true,name=search"`
+	// Only return users whose name or email equals `search` exactly.
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
@@ -32,11 +32,11 @@ func (v *V1ListUsersRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *V1ListUsersRequest) GetSearchTerm() *string {
+func (v *V1ListUsersRequest) GetSearch() *string {
 	if v == nil {
 		return nil
 	}
-	return v.SearchTerm
+	return v.Search
 }
 
 func (v *V1ListUsersRequest) GetExactMatch() *bool {

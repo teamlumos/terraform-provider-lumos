@@ -11,8 +11,8 @@ import (
 type AccessPolicyOutputStatus string
 
 const (
-	AccessPolicyOutputStatusDraft     AccessPolicyOutputStatus = "DRAFT"
-	AccessPolicyOutputStatusPublished AccessPolicyOutputStatus = "PUBLISHED"
+	AccessPolicyOutputStatusDraft     AccessPolicyOutputStatus = "draft"
+	AccessPolicyOutputStatusPublished AccessPolicyOutputStatus = "published"
 )
 
 func (e AccessPolicyOutputStatus) ToPointer() *AccessPolicyOutputStatus {
@@ -24,9 +24,9 @@ func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "DRAFT":
+	case "draft":
 		fallthrough
-	case "PUBLISHED":
+	case "published":
 		*e = AccessPolicyOutputStatus(v)
 		return nil
 	default:
@@ -34,7 +34,7 @@ func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AccessCondition - The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
+// AccessCondition - The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 type AccessCondition struct {
 }
 
@@ -52,8 +52,10 @@ type AccessPolicyOutput struct {
 	IsEnabled bool `json:"is_enabled"`
 	// The apps and entitlements granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
-	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
+	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 	AccessCondition AccessCondition `json:"access_condition"`
+	// True when the policy applies to everyone in your organization. In that case, `access_condition` holds the condition Lumos uses to match everyone.
+	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -103,4 +105,11 @@ func (a *AccessPolicyOutput) GetAccessCondition() AccessCondition {
 		return AccessCondition{}
 	}
 	return a.AccessCondition
+}
+
+func (a *AccessPolicyOutput) GetIsEveryoneCondition() bool {
+	if a == nil {
+		return false
+	}
+	return a.IsEveryoneCondition
 }

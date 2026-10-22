@@ -2,6 +2,64 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type AccountV1InputStatus string
+
+const (
+	AccountV1InputStatusDiscovered           AccountV1InputStatus = "discovered"
+	AccountV1InputStatusStaged               AccountV1InputStatus = "staged"
+	AccountV1InputStatusAccessCreated        AccountV1InputStatus = "access-created"
+	AccountV1InputStatusActive               AccountV1InputStatus = "active"
+	AccountV1InputStatusArchived             AccountV1InputStatus = "archived"
+	AccountV1InputStatusSuspended            AccountV1InputStatus = "suspended"
+	AccountV1InputStatusDeprovisioned        AccountV1InputStatus = "deprovisioned"
+	AccountV1InputStatusManuallyRemoved      AccountV1InputStatus = "manually-removed"
+	AccountV1InputStatusAccessRemoved        AccountV1InputStatus = "access-removed"
+	AccountV1InputStatusNonCorporate         AccountV1InputStatus = "non-corporate"
+	AccountV1InputStatusWaitingManualRemoval AccountV1InputStatus = "waiting-manual-removal"
+)
+
+func (e AccountV1InputStatus) ToPointer() *AccountV1InputStatus {
+	return &e
+}
+func (e *AccountV1InputStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "staged":
+		fallthrough
+	case "access-created":
+		fallthrough
+	case "active":
+		fallthrough
+	case "archived":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "deprovisioned":
+		fallthrough
+	case "manually-removed":
+		fallthrough
+	case "access-removed":
+		fallthrough
+	case "non-corporate":
+		fallthrough
+	case "waiting-manual-removal":
+		*e = AccountV1InputStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccountV1InputStatus: %v", v)
+	}
+}
+
 // AccountV1Input - One uploaded account row, with unknown fields rejected instead of ignored.
 //
 // `extra="forbid"` is not recursive, so every nested row model is overridden
@@ -21,9 +79,9 @@ type AccountV1Input struct {
 	// The datetime of last login of the user.
 	LastLogin *string `json:"last_login,omitempty"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
-	// The permissions of the account.
-	Permissions []PermissionV1Input `json:"permissions,omitempty"`
+	Status *AccountV1InputStatus `json:"status,omitempty"`
+	// The entitlements the account holds.
+	Entitlements []EntitlementV1Input `json:"entitlements,omitempty"`
 	// The attributes of the account.
 	Attributes []AttributeV1Input `json:"attributes,omitempty"`
 }
@@ -70,18 +128,18 @@ func (a *AccountV1Input) GetLastLogin() *string {
 	return a.LastLogin
 }
 
-func (a *AccountV1Input) GetStatus() *AccountLifecycleStatus {
+func (a *AccountV1Input) GetStatus() *AccountV1InputStatus {
 	if a == nil {
 		return nil
 	}
 	return a.Status
 }
 
-func (a *AccountV1Input) GetPermissions() []PermissionV1Input {
+func (a *AccountV1Input) GetEntitlements() []EntitlementV1Input {
 	if a == nil {
 		return nil
 	}
-	return a.Permissions
+	return a.Entitlements
 }
 
 func (a *AccountV1Input) GetAttributes() []AttributeV1Input {

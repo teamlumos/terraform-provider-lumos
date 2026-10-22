@@ -24,20 +24,21 @@ import (
 //
 // ### Building one
 //
-//  1. `GET /v1/workflow-steps?app_id={app_uuid}` to discover the steps available for that app, each
-//     with the input schema it accepts.
+//  1. `GET /v1/workflow-steps?app_id={app_uuid}&type={workflow type}` to discover the steps available
+//     for that app in the type of workflow you will create, each with the input schema it accepts.
+//     Without `type`, it lists only the steps every workflow type accepts.
 //  2. `POST /v1/workflows` with the steps you want.
 //  3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.
 //
-// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` rejects changes to
-// either.
+// `type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` returns 400 for a
+// change to either.
 //
 // ### Workflows this API cannot describe
 //
 // Some workflows Lumos builds for you, including the out-of-the-box provisioning defaults, contain
 // steps with no public representation. `GET /v1/workflows` skips them, so a page can hold fewer items
 // than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as
-// the end of the list. Binding one of these to a slot returns 400.
+// the end of the list. Binding one of these to an app or entitlement returns 400.
 type Workflows struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -55,7 +56,7 @@ func newWorkflows(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hook
 // CreateWorkflow - Create Workflow
 // Create a workflow definition.
 //
-// Build the `steps` from `GET /v1/workflow-steps?app_id={app_uuid}`, which lists the steps available for an app together with the input schema each one accepts.
+// Build the `steps` from `GET /v1/workflow-steps?app_id={app_uuid}&type={workflow type}`, which lists the steps available for an app together with the input schema each one accepts. Pass the `type` you are creating here; without it, only the steps every workflow type accepts are listed.
 //
 // Creating a workflow does not put it to work. Bind it to an app or an entitlement through their workflow endpoints, for example `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`. `type` and `app_id` are fixed once set.
 func (s *Workflows) CreateWorkflow(ctx context.Context, request shared.WorkflowInput, opts ...operations.Option) (*operations.CreateWorkflowResponse, error) {
@@ -830,7 +831,7 @@ func (s *Workflows) GetWorkflow(ctx context.Context, request operations.GetWorkf
 }
 
 // UpdateWorkflow - Update Workflow
-// Update a workflow definition by ID. Updates to `type` and `app_id` will be rejected.
+// Update a workflow definition by ID. `type` and `app_id` are fixed at creation, so a change to `type` returns 400 `workflow.type_change_not_allowed` and a change to `app_id` returns 400 `workflow.app_reassignment_not_allowed`.
 func (s *Workflows) UpdateWorkflow(ctx context.Context, request operations.UpdateWorkflowRequest, opts ...operations.Option) (*operations.UpdateWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1091,7 +1092,7 @@ func (s *Workflows) UpdateWorkflow(ctx context.Context, request operations.Updat
 // DeleteWorkflow - Delete Workflow
 // Delete a workflow definition by ID.
 //
-// Unbind the workflow from any app or entitlement slot first. Deleting one that is still bound leaves that slot without a workflow.
+// Unbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.
 func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.DeleteWorkflowRequest, opts ...operations.Option) (*operations.DeleteWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1324,7 +1325,7 @@ func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.Delet
 }
 
 // ListWorkflowSteps - List Workflow Steps
-// List the workflow steps available for one app, each with the input schema it accepts. Read this before `POST /v1/workflows` to learn which steps you can assemble and what inputs each one needs.
+// List the workflow steps you can assemble into a workflow, each with the input schema it accepts. With `app_id`, the list adds that app's integration steps; without it, the list holds only the steps that need no app. Read this before `POST /v1/workflows` to learn which steps you can assemble and what inputs each one needs.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.
 //

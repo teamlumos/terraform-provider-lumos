@@ -25,12 +25,13 @@ import (
 // ### Finding tasks
 //
 // `GET /v1/tasks` lists the tasks visible to you. `show_all_tasks=true` lists every task in your
-// organization instead. Of the built-in roles, Admin, Read Only Admin, and AppStore Read Only Admin
-// can use it, and anyone else gets a 403.
+// organization instead. It needs permission to view every task, which the built-in Admin, Read Only
+// Admin, and AppStore Read Only Admin roles have, and which a custom role can also grant. Anyone
+// else gets a 403.
 //
 // Filter with `type`, `category`, `status`, and `product_area`, whose values are lowercase and
 // kebab-case. For example,
-// `GET /v1/tasks?category=approval&product_area=appstore&status=pending` lists pending App Store
+// `GET /v1/tasks?category=approval&product_area=appstore&status=pending` lists pending AppStore
 // approvals.
 //
 // A task names the entitlement it grants or removes in `entitlement_id`, an Entitlement UUID.
@@ -64,8 +65,9 @@ func newTasks(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 //
 // Combine `category`, `product_area`, and `status` to scope results, e.g.
 // `GET /v1/tasks?category=approval&product_area=appstore&status=pending`. Pass
-// `expand=actions` or `expand=assignees` to hydrate those fields. Admins may pass
-// `show_all_tasks=true` to see the whole domain.
+// `expand=actions` or `expand=assignees` to hydrate those fields. Pass `show_all_tasks=true` to
+// see every task in your organization. It needs permission to view every task, such as the Admin
+// role or a custom role that grants it.
 //
 // Cursor-paginated: pass the previous `next_page_token` back as `page_token`. Rely on
 // `next_page_token` being `null` for the last page — not on getting back a short page.
@@ -325,6 +327,8 @@ func (s *Tasks) ListTasks(ctx context.Context, request operations.ListTasksReque
 
 // GetTask - Get Task
 // Get a task by ID.
+//
+// Returns 404 if the ID is unknown in your organization or the task's type isn't available in v1. You can read a task assigned to you directly, through a group you belong to, or through a custom attribute whose value is you. A task you delegated still counts as assigned to you. Of the built-in roles, Admin, Read Only Admin, and AppStore Read Only Admin can read every task. Anyone else gets 403 for a task that isn't assigned to them.
 func (s *Tasks) GetTask(ctx context.Context, request operations.GetTaskRequest, opts ...operations.Option) (*operations.GetTaskResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -833,11 +837,13 @@ func (s *Tasks) ListTaskActions(ctx context.Context, request operations.ListTask
 
 // CompleteTask - Complete Task
 // **Complete a task** — transition it to `completed` via its unique completion action. For
-// approval tasks that action is "approve". The caller must be an assignee or a domain
-// admin, and there is no request body. When more than one action could complete the task
-// this returns `400 task.action_ambiguous` — use
-// `POST /v1/tasks/{task_id}:perform-action` to pick one. To deny instead, use
-// `POST /v1/tasks/{task_id}:dismiss`.
+// approval tasks that action is "approve". There is no request body.
+//
+// A task with no action that completes it returns `400 task.no_action_for_status`. If it has
+// one but you can't take it, the request returns 403. `GET /v1/tasks/{task_id}/actions`
+// lists the actions you can take. When more than one action could complete the task this
+// returns `400 task.action_ambiguous` — use `POST /v1/tasks/{task_id}:perform-action` to
+// pick one. To deny instead, use `POST /v1/tasks/{task_id}:dismiss`.
 func (s *Tasks) CompleteTask(ctx context.Context, request operations.CompleteTaskRequest, opts ...operations.Option) (*operations.CompleteTaskResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1072,10 +1078,13 @@ func (s *Tasks) CompleteTask(ctx context.Context, request operations.CompleteTas
 // DismissTask - Dismiss Task
 // **Dismiss a task** — transition it to `dismissed` via its unique dismissal action. For
 // approval tasks that action is "deny/reject". For other tasks it cancels the task without
-// doing its work. The caller must be an assignee or a domain admin, and there is no request
-// body. When more than one action could dismiss the task this returns
-// `400 task.action_ambiguous` — use `POST /v1/tasks/{task_id}:perform-action` to pick one.
-// To approve instead, use `POST /v1/tasks/{task_id}:complete`.
+// doing its work. There is no request body.
+//
+// A task with no action that dismisses it returns `400 task.no_action_for_status`. If it has
+// one but you can't take it, the request returns 403. `GET /v1/tasks/{task_id}/actions`
+// lists the actions you can take. When more than one action could dismiss the task this
+// returns `400 task.action_ambiguous` — use `POST /v1/tasks/{task_id}:perform-action` to
+// pick one. To approve instead, use `POST /v1/tasks/{task_id}:complete`.
 func (s *Tasks) DismissTask(ctx context.Context, request operations.DismissTaskRequest, opts ...operations.Option) (*operations.DismissTaskResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1793,7 +1802,7 @@ func (s *Tasks) ReassignTask(ctx context.Context, request operations.ReassignTas
 }
 
 // CreateTaskComment - Create Task Comment
-// Add a comment to a task. Returns the created comment.
+// Add a comment to a task. Returns 201 with the created comment. The comment must be 1 to 4,000 characters, or the request returns 400. A caller who isn't allowed to comment on the task gets 403.
 func (s *Tasks) CreateTaskComment(ctx context.Context, request operations.CreateTaskCommentRequest, opts ...operations.Option) (*operations.CreateTaskCommentResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

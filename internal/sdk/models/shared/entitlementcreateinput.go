@@ -2,7 +2,7 @@
 
 package shared
 
-// EntitlementCreateInput - Request body for `POST /entitlements`.
+// EntitlementCreateInput - Request body for `POST /v1/entitlements`.
 type EntitlementCreateInput struct {
 	// The ID of the app that will own this entitlement.
 	AppID string `json:"app_id"`

@@ -10,22 +10,31 @@ import (
 type Targets struct {
 }
 
+// Actor - Who performed the action. `actor_type` says what kind of actor it is, such as `Lumos user` or `Lumos System`, and the other keys hold the actor's fields.
 type Actor struct {
 }
 
+// EventMetadata - Extra details about the event. Which keys appear depends on the event type, and empty ones are left out. Examples include `business_justification`, `access_length`, `permissions`, and `error_message`.
 type EventMetadata struct {
 }
 
-// ActivityLog - API version of SIEMEvent
 type ActivityLog struct {
-	EventHash             string        `json:"event_hash"`
-	EventType             string        `json:"event_type"`
-	EventTypeUserFriendly string        `json:"event_type_user_friendly"`
-	Outcome               string        `json:"outcome"`
-	Targets               []Targets     `json:"targets"`
-	Actor                 Actor         `json:"actor"`
-	EventBeganAt          *time.Time    `json:"event_began_at,omitempty"`
-	EventMetadata         EventMetadata `json:"event_metadata"`
+	// Unique hash of this event. Use it to skip events you've processed.
+	EventHash string `json:"event_hash"`
+	// The machine-readable name of the action, such as `ACCESS_POLICY_DELETED`.
+	EventType string `json:"event_type"`
+	// A human-readable description of the action. It can be empty.
+	EventTypeUserFriendly string `json:"event_type_user_friendly"`
+	// Result: `Succeeded`, `Failed`, or `Invalid or Misconfigured Action`.
+	Outcome string `json:"outcome"`
+	// The objects the action was performed on. In each entry, `target_type` says what kind of object it is, such as `App`, `User`, or `Access Request`, and the other keys hold that object's fields.
+	Targets []Targets `json:"targets"`
+	// Who performed the action. `actor_type` says what kind of actor it is, such as `Lumos user` or `Lumos System`, and the other keys hold the actor's fields.
+	Actor Actor `json:"actor"`
+	// When Lumos learned the action began, as an ISO 8601 timestamp.
+	EventBeganAt *time.Time `json:"event_began_at,omitempty"`
+	// Extra details about the event. Which keys appear depends on the event type, and empty ones are left out. Examples include `business_justification`, `access_length`, `permissions`, and `error_message`.
+	EventMetadata EventMetadata `json:"event_metadata"`
 }
 
 func (a ActivityLog) MarshalJSON() ([]byte, error) {

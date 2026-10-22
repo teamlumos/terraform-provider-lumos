@@ -3,5 +3,5 @@ data "lumos_users" "my_users" {
   expand = [
     "..."
   ]
-  search_term = "...my_search_term..."
+  search = "...my_search..."
 }

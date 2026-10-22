@@ -5,7 +5,7 @@ package shared
 type UserRolesOutput struct {
 	// The UUID of the user whose roles are listed.
 	UserID string `json:"user_id"`
-	// Names of the roles currently assigned to the user.
+	// The roles currently assigned to the user: a built-in role's label, such as `app-admin`, or a custom role's name.
 	Roles []string `json:"roles"`
 }
 

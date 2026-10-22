@@ -24,7 +24,7 @@ import (
 // Users are the people in your organization. These endpoints read them, and the only thing they
 // change is a user's Lumos roles.
 //
-//   - `GET /v1/users` lists users. `search_term` matches names and emails, and `exact_match=true`
+//   - `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`
 //     requires an exact match.
 //   - `GET /v1/users/current` returns the user who owns your API token.
 //   - `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the
@@ -355,7 +355,7 @@ func (s *Users) V1ListUsers(ctx context.Context, request operations.V1ListUsersR
 }
 
 // V1GetCurrentUser - Get Current User
-// Get the user who owns the calling credential.
+// Get the user your API token belongs to. The response has the same fields as `GET /v1/users/{user_id}`, but custom attributes can't be expanded here.
 func (s *Users) V1GetCurrentUser(ctx context.Context, opts ...operations.Option) (*operations.V1GetCurrentUserResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

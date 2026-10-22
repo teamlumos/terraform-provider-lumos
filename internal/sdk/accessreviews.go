@@ -46,13 +46,13 @@ func newAccessReviews(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *
 }
 
 // SyncAppReview - Sync App Review
-// Run the data import for one app review, optionally replacing its scope filters in the same call.
+// Run the sync for one app review, optionally replacing its scope filters in the same call.
 //
-// The import runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true.
+// The sync runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true.
 //
 // Rebuilding the subject set is what re-scoping means. Reviewer assignments survive for subjects that survive; subjects that fall out of scope take their assignments with them. A caller that re-scopes after assigning should re-check how many subjects are still unassigned before launching.
 //
-// Only an app review at or before `assigning-reviewers` can be synced — once the review has launched, reviewers hold decisions the import would invalidate.
+// Only an app review at or before `assigning-reviewers` can be synced — once the review has launched, reviewers hold decisions a sync would invalidate.
 func (s *AccessReviews) SyncAppReview(ctx context.Context, request operations.SyncAppReviewRequest, opts ...operations.Option) (*operations.SyncAppReviewResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

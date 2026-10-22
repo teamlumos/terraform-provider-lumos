@@ -7,7 +7,7 @@ import (
 )
 
 type AppStoreSettingsCompact struct {
-	// Whether this app is visible in App Store for config/management.
+	// Whether this app is visible in AppStore for config/management.
 	InAppStore bool `json:"in_app_store"`
 }
 

@@ -3,11 +3,42 @@
 package shared
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"time"
 )
+
+// CustomAttributeType - The type of custom attribute. Only text and user options are available today
+type CustomAttributeType string
+
+const (
+	CustomAttributeTypeText         CustomAttributeType = "text"
+	CustomAttributeTypeUser         CustomAttributeType = "user"
+	CustomAttributeTypeSingleSelect CustomAttributeType = "single-select"
+)
+
+func (e CustomAttributeType) ToPointer() *CustomAttributeType {
+	return &e
+}
+func (e *CustomAttributeType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "text":
+		fallthrough
+	case "user":
+		fallthrough
+	case "single-select":
+		*e = CustomAttributeType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for CustomAttributeType: %v", v)
+	}
+}
 
 type ValueType string
 
@@ -159,6 +190,7 @@ func (u Value) MarshalJSON() ([]byte, error) {
 }
 
 type CustomAttribute struct {
+	// The type of custom attribute. Only text and user options are available today
 	Type CustomAttributeType `json:"type"`
 	// The value of the attribute for an individual Order
 	Value *Value `json:"value,omitempty"`

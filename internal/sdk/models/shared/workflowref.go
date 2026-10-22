@@ -7,7 +7,7 @@ import (
 )
 
 // WorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
-// `<slot>.id` is stable whether or not the slot is expanded.
+// `<field>.id` is stable whether or not the field is expanded.
 type WorkflowRef struct {
 	// UUID of the bound workflow.
 	ID string `json:"id"`

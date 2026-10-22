@@ -3,8 +3,48 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type AppStoreCatalogAppResponseStatus string
+
+const (
+	AppStoreCatalogAppResponseStatusDiscovered  AppStoreCatalogAppResponseStatus = "discovered"
+	AppStoreCatalogAppResponseStatusInReview    AppStoreCatalogAppResponseStatus = "in-review"
+	AppStoreCatalogAppResponseStatusNeedsReview AppStoreCatalogAppResponseStatus = "needs-review"
+	AppStoreCatalogAppResponseStatusApproved    AppStoreCatalogAppResponseStatus = "approved"
+	AppStoreCatalogAppResponseStatusBlocklisted AppStoreCatalogAppResponseStatus = "blocklisted"
+	AppStoreCatalogAppResponseStatusDeprecated  AppStoreCatalogAppResponseStatus = "deprecated"
+)
+
+func (e AppStoreCatalogAppResponseStatus) ToPointer() *AppStoreCatalogAppResponseStatus {
+	return &e
+}
+func (e *AppStoreCatalogAppResponseStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "in-review":
+		fallthrough
+	case "needs-review":
+		fallthrough
+	case "approved":
+		fallthrough
+	case "blocklisted":
+		fallthrough
+	case "deprecated":
+		*e = AppStoreCatalogAppResponseStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AppStoreCatalogAppResponseStatus: %v", v)
+	}
+}
 
 // AppStoreCatalogAppResponse - `AppBase` plus catalog-scoped `appstore_settings` — no admin-only workflow,
 // approval-message, `admins`, or `custom_attributes` fields.
@@ -29,11 +69,11 @@ type AppStoreCatalogAppResponse struct {
 	Category *string `json:"category,omitempty"`
 	// A description of the app.
 	Description *string `json:"description,omitempty"`
-	// The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
-	Status *string `json:"status,omitempty"`
+	// The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
+	Status *AppStoreCatalogAppResponseStatus `json:"status,omitempty"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `default:"false" json:"disconnected"`
-	// App Store request settings. Present when the caller has read access to App Store items.
+	// How to request this app: its AppStore request settings.
 	AppstoreSettings *AppStoreCatalogSettingsResponse `json:"appstore_settings,omitempty"`
 }
 
@@ -104,7 +144,7 @@ func (a *AppStoreCatalogAppResponse) GetDescription() *string {
 	return a.Description
 }
 
-func (a *AppStoreCatalogAppResponse) GetStatus() *string {
+func (a *AppStoreCatalogAppResponse) GetStatus() *AppStoreCatalogAppResponseStatus {
 	if a == nil {
 		return nil
 	}

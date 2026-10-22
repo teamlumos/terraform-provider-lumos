@@ -2,9 +2,42 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// AdminAssigneeType - Whether this admin is a `user` or a `group`.
+type AdminAssigneeType string
+
+const (
+	AdminAssigneeTypeUser  AdminAssigneeType = "user"
+	AdminAssigneeTypeGroup AdminAssigneeType = "group"
+)
+
+func (e AdminAssigneeType) ToPointer() *AdminAssigneeType {
+	return &e
+}
+func (e *AdminAssigneeType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "user":
+		fallthrough
+	case "group":
+		*e = AdminAssigneeType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AdminAssigneeType: %v", v)
+	}
+}
+
 type AdminAssignee struct {
 	// The UUID of the admin user or group.
-	ID   string            `json:"id"`
+	ID string `json:"id"`
+	// Whether this admin is a `user` or a `group`.
 	Type AdminAssigneeType `json:"type"`
 }
 

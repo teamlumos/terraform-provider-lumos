@@ -2,15 +2,104 @@
 
 package shared
 
-// AccountBase - Lean account shape shared across public-API responses.
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// AccountBaseAccountType - The type of this account: `user`, `role` (e.g. AWS), or `service` (e.g. GCP).
+type AccountBaseAccountType string
+
+const (
+	AccountBaseAccountTypeUser    AccountBaseAccountType = "user"
+	AccountBaseAccountTypeRole    AccountBaseAccountType = "role"
+	AccountBaseAccountTypeService AccountBaseAccountType = "service"
+)
+
+func (e AccountBaseAccountType) ToPointer() *AccountBaseAccountType {
+	return &e
+}
+func (e *AccountBaseAccountType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "user":
+		fallthrough
+	case "role":
+		fallthrough
+	case "service":
+		*e = AccountBaseAccountType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccountBaseAccountType: %v", v)
+	}
+}
+
+type AccountBaseStatus string
+
+const (
+	AccountBaseStatusDiscovered           AccountBaseStatus = "discovered"
+	AccountBaseStatusStaged               AccountBaseStatus = "staged"
+	AccountBaseStatusAccessCreated        AccountBaseStatus = "access-created"
+	AccountBaseStatusActive               AccountBaseStatus = "active"
+	AccountBaseStatusArchived             AccountBaseStatus = "archived"
+	AccountBaseStatusSuspended            AccountBaseStatus = "suspended"
+	AccountBaseStatusDeprovisioned        AccountBaseStatus = "deprovisioned"
+	AccountBaseStatusManuallyRemoved      AccountBaseStatus = "manually-removed"
+	AccountBaseStatusAccessRemoved        AccountBaseStatus = "access-removed"
+	AccountBaseStatusNonCorporate         AccountBaseStatus = "non-corporate"
+	AccountBaseStatusWaitingManualRemoval AccountBaseStatus = "waiting-manual-removal"
+)
+
+func (e AccountBaseStatus) ToPointer() *AccountBaseStatus {
+	return &e
+}
+func (e *AccountBaseStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "staged":
+		fallthrough
+	case "access-created":
+		fallthrough
+	case "active":
+		fallthrough
+	case "archived":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "deprovisioned":
+		fallthrough
+	case "manually-removed":
+		fallthrough
+	case "access-removed":
+		fallthrough
+	case "non-corporate":
+		fallthrough
+	case "waiting-manual-removal":
+		*e = AccountBaseStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccountBaseStatus: %v", v)
+	}
+}
+
+// AccountBase - Lean account shape shared across v1 responses.
 type AccountBase struct {
 	// The ID of this account.
 	ID string `json:"id"`
 	// The ID of the app that owns this account.
-	AppID       string      `json:"app_id"`
-	AccountType AccountType `json:"account_type"`
+	AppID string `json:"app_id"`
+	// The type of this account: `user`, `role` (e.g. AWS), or `service` (e.g. GCP).
+	AccountType AccountBaseAccountType `json:"account_type"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	Status *AccountBaseStatus `json:"status,omitempty"`
 }
 
 func (a *AccountBase) GetID() string {
@@ -27,14 +116,14 @@ func (a *AccountBase) GetAppID() string {
 	return a.AppID
 }
 
-func (a *AccountBase) GetAccountType() AccountType {
+func (a *AccountBase) GetAccountType() AccountBaseAccountType {
 	if a == nil {
-		return AccountType("")
+		return AccountBaseAccountType("")
 	}
 	return a.AccountType
 }
 
-func (a *AccountBase) GetStatus() *AccountLifecycleStatus {
+func (a *AccountBase) GetStatus() *AccountBaseStatus {
 	if a == nil {
 		return nil
 	}

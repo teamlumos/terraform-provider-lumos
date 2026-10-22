@@ -10,7 +10,7 @@ import (
 type AddUserRoleRequest struct {
 	// The user's ID, which `GET /v1/users` returns as `id`.
 	UserID string `pathParam:"style=simple,explode=false,name=user_id"`
-	// The role to assign or remove. It is either a built-in role name, matched case-insensitively, or the name of a custom role in your organization. The built-in names are `ORGANIZATION_ADMIN` (Admin), `READ_ONLY_ORGANIZATION_ADMIN` (Read Only Admin), `AUDITOR` (Auditor), `APP_STORE_READ_ONLY_ADMIN` (AppStore Read Only Admin), `APP_ADMIN` (App Admin), `VENDOR_OWNER` (Vendor Owner), `VENDOR_AGREEMENT_OWNER` (Vendor Agreement Owner), `MCP_GOVERNANCE` (MCP Governance), and `USER` (User). An unknown name returns 400.
+	// The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400.
 	RoleName string `pathParam:"style=simple,explode=false,name=role_name"`
 }
 

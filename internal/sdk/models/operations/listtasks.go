@@ -33,7 +33,7 @@ type ListTasksRequest struct {
 	AssignedGroupIds []string `queryParam:"style=form,explode=true,name=assigned_group_ids"`
 	// Filter by access request ID.
 	AccessRequestID *string `queryParam:"style=form,explode=true,name=access_request_id"`
-	// Show all tasks in the domain (admin only).
+	// Show every task in your organization, not only the tasks assigned to you. Needs permission to view every task, such as the Admin role or a custom role that grants it.
 	ShowAllTasks *bool `default:"false" queryParam:"style=form,explode=true,name=show_all_tasks"`
 }
 

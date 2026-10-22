@@ -18,7 +18,7 @@ data "lumos_users" "my_users" {
   expand = [
     "..."
   ]
-  search_term = "...my_search_term..."
+  search = "...my_search..."
 }
 ```
 
@@ -27,9 +27,9 @@ data "lumos_users" "my_users" {
 
 ### Optional
 
-- `exact_match` (Boolean) If a search_term is provided, only accept exact matches.
+- `exact_match` (Boolean) Only return users whose name or email equals `search` exactly.
 - `expand` (List of String) Fields to expand. Supported fields: custom_attributes.
-- `search_term` (String) Search for users by name or email.
+- `search` (String) Search for users by name or email.
 
 ### Read-Only
 
@@ -52,7 +52,7 @@ Read-Only:
 
 Read-Only:
 
-- `type` (String)
+- `type` (String) The type of custom attribute. Only text and user options are available today
 - `value` (Attributes) The value of the attribute for an individual Order (see [below for nested schema](#nestedatt--users--custom_attributes--value))
 
 <a id="nestedatt--users--custom_attributes--value"></a>

@@ -2,7 +2,7 @@
 
 package shared
 
-// AccountsUploadV1Input - The v0 upload body, with unknown fields rejected instead of ignored.
+// AccountsUploadV1Input - The accounts to upload to an app. Lumos rejects unknown fields.
 type AccountsUploadV1Input struct {
 	// Accounts to upload.
 	Accounts []AccountV1Input `json:"accounts"`
