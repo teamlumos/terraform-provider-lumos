@@ -29,6 +29,12 @@ check-overlay:
 	@echo "✓ every overlay target matches the spec"
 
 
+# Go version written to go.mod's go directive, which the release builds with.
+# Speakeasy writes its own version there on every run; Go releases before
+# 1.26.10 still trust the compromised eMudhra intermediate certificates
+# (CVE-2026-111943).
+GO_VERSION := 1.26.10
+
 .PHONY: provider
 provider: check-overlay
 	@echo "Syncing gen.yaml version from latest v1.* git tag..."
@@ -39,6 +45,8 @@ provider: check-overlay
 	fi
 	@echo "Running Speakeasy to generate the provider..."
 	speakeasy run --skip-compile --skip-versioning --skip-upload-spec
+	@echo "Setting the go directive to $(GO_VERSION)..."
+	@go mod edit -go=$(GO_VERSION)
 	@echo "Running go mod tidy..."
 	@go mod tidy
 	@echo "Compiling provider..."
