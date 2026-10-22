@@ -19,6 +19,7 @@ internal/planmodifiers/boolplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/listplanmodifier/empty_when_null.go
 internal/planmodifiers/objectplanmodifier/empty_when_null.go
 internal/planmodifiers/setplanmodifier/empty_when_null.go
+internal/planmodifiers/boolplanmodifier/false_if_no_entitlements.go
 examples/resources/lumos_app/
 examples/resources/lumos_app_appstore_settings/
 examples/resources/lumos_entitlement/
