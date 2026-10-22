@@ -6,6 +6,9 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
+type JSONSchema struct {
+}
+
 // InputParameterSchema - Schema describing a single input parameter for a workflow step.
 type InputParameterSchema struct {
 	// The type of the parameter.
@@ -18,6 +21,8 @@ type InputParameterSchema struct {
 	Hidden *bool `default:"false" json:"hidden"`
 	// Available options for the value of this field.
 	Options []string `json:"options,omitempty"`
+	// The JSON Schema for the expected structure of an object or array parameter. It comes from the underlying OpenAPI operation, as close to verbatim as possible.
+	JSONSchema *JSONSchema `json:"json_schema,omitempty"`
 }
 
 func (i InputParameterSchema) MarshalJSON() ([]byte, error) {
@@ -64,4 +69,11 @@ func (i *InputParameterSchema) GetOptions() []string {
 		return nil
 	}
 	return i.Options
+}
+
+func (i *InputParameterSchema) GetJSONSchema() *JSONSchema {
+	if i == nil {
+		return nil
+	}
+	return i.JSONSchema
 }

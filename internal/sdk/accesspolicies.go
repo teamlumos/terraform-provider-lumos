@@ -300,7 +300,13 @@ func (s *AccessPolicies) V1ListAccessPolicies(ctx context.Context, request opera
 }
 
 // V1CreateAccessPolicy - Create Access Policy
-// Create a new access policy.
+// Create an access policy. Returns 201 with the created policy. Grant entitlements by Entitlement UUID under `apps[].entitlements`, or leave them out to grant access to the app itself. Send `is_everyone_condition: true` for a policy that applies to everyone, or an `access_condition` for one that doesn't; sending both returns 400. The everyone condition a read returns in `access_condition` counts as `is_everyone_condition: true`, so a body built from a read can be sent back as is.
+//
+// An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
+//
+// A policy is created as a draft unless `status` is `published`. A draft can't be enabled, so sending `is_enabled: true` without `status: published` returns 400. Creating a published policy whose condition matches another published policy also returns 400. A draft with the same condition is allowed.
+//
+// Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
 func (s *AccessPolicies) V1CreateAccessPolicy(ctx context.Context, request shared.AccessPolicyInput, opts ...operations.Option) (*operations.V1CreateAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -559,7 +565,7 @@ func (s *AccessPolicies) V1CreateAccessPolicy(ctx context.Context, request share
 }
 
 // V1GetAccessPolicy - Get Access Policy
-// Get an access policy by ID.
+// Get an access policy by ID. A policy with a published version returns that version. A policy that has only a draft returns the draft. Returns 404 if the ID is unknown in your organization.
 func (s *AccessPolicies) V1GetAccessPolicy(ctx context.Context, request operations.V1GetAccessPolicyRequest, opts ...operations.Option) (*operations.V1GetAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -811,7 +817,9 @@ func (s *AccessPolicies) V1GetAccessPolicy(ctx context.Context, request operatio
 }
 
 // V1DeleteAccessPolicy - Delete Access Policy
-// Delete an access policy by ID.
+// Delete an access policy. Returns 204, or 404 if the ID is unknown in your organization.
+//
+// Deleting also removes the policy's pre-approval rules. It doesn't revoke access that users already received through the policy.
 func (s *AccessPolicies) V1DeleteAccessPolicy(ctx context.Context, request operations.V1DeleteAccessPolicyRequest, opts ...operations.Option) (*operations.V1DeleteAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1045,6 +1053,8 @@ func (s *AccessPolicies) V1DeleteAccessPolicy(ctx context.Context, request opera
 
 // V1UpdateAccessPolicy - Update Access Policy
 // Replace an access policy. The `apps` you send become the policy's complete set of grants; anything omitted is removed, including grants that `GET` leaves out or collapses (see `apps[].entitlements`). Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
+//
+// An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
 func (s *AccessPolicies) V1UpdateAccessPolicy(ctx context.Context, request operations.V1UpdateAccessPolicyRequest, opts ...operations.Option) (*operations.V1UpdateAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1303,7 +1313,9 @@ func (s *AccessPolicies) V1UpdateAccessPolicy(ctx context.Context, request opera
 }
 
 // V1PatchAccessPolicy - Patch Access Policy
-// Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant, including grants that `GET` omits or collapses (see `apps[].entitlements`). No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
+// Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant, including grants that `GET` omits or collapses (see `apps[].entitlements`). No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with a different `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
+//
+// An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
 func (s *AccessPolicies) V1PatchAccessPolicy(ctx context.Context, request operations.V1PatchAccessPolicyRequest, opts ...operations.Option) (*operations.V1PatchAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -9,8 +9,8 @@ import (
 )
 
 type ListWorkflowStepsRequest struct {
-	// The app to list steps for.
-	AppID string `queryParam:"style=form,explode=true,name=app_id"`
+	// The app to list steps for. Omit to list only app-independent steps.
+	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
 	// The type of workflow the steps are for. Some steps work in only one type: `manual_provisioning_task` in `account-provisioning` and `manual_deprovisioning_task` in `account-deprovisioning`. Without `type`, only the steps every type accepts are listed.
 	Type *string `queryParam:"style=form,explode=true,name=type"`
 	// Case-insensitive substring filter over step names.
@@ -32,9 +32,9 @@ func (l *ListWorkflowStepsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (l *ListWorkflowStepsRequest) GetAppID() string {
+func (l *ListWorkflowStepsRequest) GetAppID() *string {
 	if l == nil {
-		return ""
+		return nil
 	}
 	return l.AppID
 }

@@ -34,9 +34,12 @@ import (
 //     `settings` fields it expects.
 //  3. `POST /v1/apps` with those values.
 //
-// Step 2 is the point of this group: it lets you build a connect form, or generate a Terraform
-// resource, without hardcoding one credential shape per integration. Integrations whose connection
-// schema Lumos cannot describe yet return 404.
+// Step 2 is the point of this group: it lets you build a connect form without hardcoding one
+// credential shape per integration.
+//
+// `GET /v1/integrations/{app_class_id}` and the connection schema return 404 for any integration the
+// list leaves out. The connection schema also returns 404 for an integration whose schema Lumos
+// cannot describe yet.
 type Integrations struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -52,7 +55,7 @@ func newIntegrations(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 }
 
 // ListIntegrationsV1 - List Integrations
-// List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned — catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only — name, category, and logo. Integrations you have connected are read via the Apps API (`GET /apps`).
+// List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned — catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only — name, category, and logo. Integrations you have connected are read via the Apps API.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.
 func (s *Integrations) ListIntegrationsV1(ctx context.Context, request operations.ListIntegrationsV1Request, opts ...operations.Option) (*operations.ListIntegrationsV1Response, error) {
@@ -310,7 +313,7 @@ func (s *Integrations) ListIntegrationsV1(ctx context.Context, request operation
 }
 
 // GetIntegrationV1 - Get Integration
-// Get a connectable integration (app) by its `app_class_id` (e.g. `okta.com`). Returns catalog metadata only; integrations you have connected are read via the Apps API (`GET /apps`).
+// Get a connectable integration (app) by its `app_class_id` (e.g. `okta.com`). Returns catalog metadata only; integrations you have connected are read via the Apps API. An integration the catalog list leaves out returns 404.
 func (s *Integrations) GetIntegrationV1(ctx context.Context, request operations.GetIntegrationV1Request, opts ...operations.Option) (*operations.GetIntegrationV1Response, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -562,7 +565,7 @@ func (s *Integrations) GetIntegrationV1(ctx context.Context, request operations.
 }
 
 // GetIntegrationConnectionSchemaV1 - Get Integration Connection Schema
-// Get the connection schema for an integration — the JSON schema of the `auth` and `settings` fields needed to connect it via `POST /apps`. Use it to discover how to connect an integration *before* connecting it (e.g. to populate a Terraform resource). `app_class_id` is the canonical identifier (e.g. `okta.com`, `slack_ics`) — the same value the connect body uses. Integrations whose connection schema Lumos cannot describe yet return 404.
+// Get the connection schema for an integration — the JSON schema of the `auth` and `settings` fields needed to connect it with the Apps API's create endpoint. Use it to discover how to connect an integration *before* connecting it. `app_class_id` is the canonical identifier (e.g. `okta.com`, `slack_ics`) — the same value the connect body uses. An integration the catalog list leaves out, or whose connection schema Lumos cannot describe yet, returns 404.
 func (s *Integrations) GetIntegrationConnectionSchemaV1(ctx context.Context, request operations.GetIntegrationConnectionSchemaV1Request, opts ...operations.Option) (*operations.GetIntegrationConnectionSchemaV1Response, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -29,6 +29,8 @@ type V1DeleteAppResponse struct {
 	StatusCode int
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
+	// Accepted — the integration was disconnected and its record is being deleted; poll the operation.
+	OperationEnvelope *shared.OperationEnvelope
 	// Bad request — the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason.
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -52,6 +54,13 @@ func (v *V1DeleteAppResponse) GetRawResponse() *http.Response {
 		return nil
 	}
 	return v.RawResponse
+}
+
+func (v *V1DeleteAppResponse) GetOperationEnvelope() *shared.OperationEnvelope {
+	if v == nil {
+		return nil
+	}
+	return v.OperationEnvelope
 }
 
 func (v *V1DeleteAppResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

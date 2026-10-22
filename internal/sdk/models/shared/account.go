@@ -3,19 +3,173 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"time"
 )
+
+// AccountType - The type of this account: `user`, `role` (e.g. AWS), or `service` (e.g. GCP).
+type AccountType string
+
+const (
+	AccountTypeUser    AccountType = "user"
+	AccountTypeRole    AccountType = "role"
+	AccountTypeService AccountType = "service"
+)
+
+func (e AccountType) ToPointer() *AccountType {
+	return &e
+}
+func (e *AccountType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "user":
+		fallthrough
+	case "role":
+		fallthrough
+	case "service":
+		*e = AccountType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccountType: %v", v)
+	}
+}
+
+type AccountStatus string
+
+const (
+	AccountStatusDiscovered           AccountStatus = "discovered"
+	AccountStatusStaged               AccountStatus = "staged"
+	AccountStatusAccessCreated        AccountStatus = "access-created"
+	AccountStatusActive               AccountStatus = "active"
+	AccountStatusArchived             AccountStatus = "archived"
+	AccountStatusSuspended            AccountStatus = "suspended"
+	AccountStatusDeprovisioned        AccountStatus = "deprovisioned"
+	AccountStatusManuallyRemoved      AccountStatus = "manually-removed"
+	AccountStatusAccessRemoved        AccountStatus = "access-removed"
+	AccountStatusNonCorporate         AccountStatus = "non-corporate"
+	AccountStatusWaitingManualRemoval AccountStatus = "waiting-manual-removal"
+)
+
+func (e AccountStatus) ToPointer() *AccountStatus {
+	return &e
+}
+func (e *AccountStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "staged":
+		fallthrough
+	case "access-created":
+		fallthrough
+	case "active":
+		fallthrough
+	case "archived":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "deprovisioned":
+		fallthrough
+	case "manually-removed":
+		fallthrough
+	case "access-removed":
+		fallthrough
+	case "non-corporate":
+		fallthrough
+	case "waiting-manual-removal":
+		*e = AccountStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccountStatus: %v", v)
+	}
+}
+
+type Sources string
+
+const (
+	SourcesGoogleWorkspaceQuickInbox Sources = "google-workspace-quick-inbox"
+	SourcesGoogleWorkspaceDeepInbox  Sources = "google-workspace-deep-inbox"
+	SourcesMicrosoftDeepInbox        Sources = "microsoft-deep-inbox"
+	SourcesMicrosoftOauth            Sources = "microsoft-oauth"
+	SourcesMicrosoftGcc              Sources = "microsoft-gcc"
+	SourcesGoogleWorkspaceOauth      Sources = "google-workspace-oauth"
+	SourcesOkta                      Sources = "okta"
+	SourcesManual                    Sources = "manual"
+	SourcesOnelogin                  Sources = "onelogin"
+	SourcesAtlassian                 Sources = "atlassian"
+	SourcesGoogleCloud               Sources = "google-cloud"
+	SourcesIntegration               Sources = "integration"
+	SourcesJumpcloud                 Sources = "jumpcloud"
+	SourcesCustom                    Sources = "custom"
+	SourcesMcp                       Sources = "mcp"
+	SourcesNative                    Sources = "native"
+)
+
+func (e Sources) ToPointer() *Sources {
+	return &e
+}
+func (e *Sources) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "google-workspace-quick-inbox":
+		fallthrough
+	case "google-workspace-deep-inbox":
+		fallthrough
+	case "microsoft-deep-inbox":
+		fallthrough
+	case "microsoft-oauth":
+		fallthrough
+	case "microsoft-gcc":
+		fallthrough
+	case "google-workspace-oauth":
+		fallthrough
+	case "okta":
+		fallthrough
+	case "manual":
+		fallthrough
+	case "onelogin":
+		fallthrough
+	case "atlassian":
+		fallthrough
+	case "google-cloud":
+		fallthrough
+	case "integration":
+		fallthrough
+	case "jumpcloud":
+		fallthrough
+	case "custom":
+		fallthrough
+	case "mcp":
+		fallthrough
+	case "native":
+		*e = Sources(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Sources: %v", v)
+	}
+}
 
 // Account - One item in a v1 accounts list.
 type Account struct {
 	// The ID of this account.
 	ID string `json:"id"`
 	// The ID of the app that owns this account.
-	AppID       string      `json:"app_id"`
+	AppID string `json:"app_id"`
+	// The type of this account: `user`, `role` (e.g. AWS), or `service` (e.g. GCP).
 	AccountType AccountType `json:"account_type"`
 	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	Status *AccountStatus `json:"status,omitempty"`
 	// The stable identifier of this account from the associated service.
 	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
@@ -29,7 +183,7 @@ type Account struct {
 	// The last time a user completed an action tracked by Lumos, in ISO 8601 format.
 	LastActivity *time.Time `json:"last_activity,omitempty"`
 	// The discovery methods through which Lumos identified this account.
-	Sources []DiscoverySource `json:"sources"`
+	Sources []Sources `json:"sources"`
 	// The account's app. Present only with `expand=app`.
 	App *AppBase `json:"app,omitempty"`
 }
@@ -66,7 +220,7 @@ func (a *Account) GetAccountType() AccountType {
 	return a.AccountType
 }
 
-func (a *Account) GetStatus() *AccountLifecycleStatus {
+func (a *Account) GetStatus() *AccountStatus {
 	if a == nil {
 		return nil
 	}
@@ -115,9 +269,9 @@ func (a *Account) GetLastActivity() *time.Time {
 	return a.LastActivity
 }
 
-func (a *Account) GetSources() []DiscoverySource {
+func (a *Account) GetSources() []Sources {
 	if a == nil {
-		return []DiscoverySource{}
+		return []Sources{}
 	}
 	return a.Sources
 }

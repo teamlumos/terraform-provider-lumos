@@ -3,8 +3,48 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type AppBaseStatus string
+
+const (
+	AppBaseStatusDiscovered  AppBaseStatus = "discovered"
+	AppBaseStatusInReview    AppBaseStatus = "in-review"
+	AppBaseStatusNeedsReview AppBaseStatus = "needs-review"
+	AppBaseStatusApproved    AppBaseStatus = "approved"
+	AppBaseStatusBlocklisted AppBaseStatus = "blocklisted"
+	AppBaseStatusDeprecated  AppBaseStatus = "deprecated"
+)
+
+func (e AppBaseStatus) ToPointer() *AppBaseStatus {
+	return &e
+}
+func (e *AppBaseStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "discovered":
+		fallthrough
+	case "in-review":
+		fallthrough
+	case "needs-review":
+		fallthrough
+	case "approved":
+		fallthrough
+	case "blocklisted":
+		fallthrough
+	case "deprecated":
+		*e = AppBaseStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AppBaseStatus: %v", v)
+	}
+}
 
 // AppBase - Fields shared by the admin-facing and end-user-facing app views.
 type AppBase struct {
@@ -24,8 +64,8 @@ type AppBase struct {
 	Category *string `json:"category,omitempty"`
 	// A description of the app.
 	Description *string `json:"description,omitempty"`
-	// The lifecycle status of this app. One of DISCOVERED, IN_REVIEW, NEEDS_REVIEW, APPROVED, BLOCKLISTED, DEPRECATED.
-	Status *string `json:"status,omitempty"`
+	// The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
+	Status *AppBaseStatus `json:"status,omitempty"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `default:"false" json:"disconnected"`
 }
@@ -97,7 +137,7 @@ func (a *AppBase) GetDescription() *string {
 	return a.Description
 }
 
-func (a *AppBase) GetStatus() *string {
+func (a *AppBase) GetStatus() *AppBaseStatus {
 	if a == nil {
 		return nil
 	}

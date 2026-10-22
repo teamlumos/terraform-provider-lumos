@@ -3,16 +3,61 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"time"
 )
+
+// UserOffboardingOutputStatus - The status of the offboarding.
+type UserOffboardingOutputStatus string
+
+const (
+	UserOffboardingOutputStatusScheduled  UserOffboardingOutputStatus = "scheduled"
+	UserOffboardingOutputStatusInProgress UserOffboardingOutputStatus = "in-progress"
+	UserOffboardingOutputStatusDiverted   UserOffboardingOutputStatus = "diverted"
+	UserOffboardingOutputStatusCancelled  UserOffboardingOutputStatus = "cancelled"
+	UserOffboardingOutputStatusFailed     UserOffboardingOutputStatus = "failed"
+	UserOffboardingOutputStatusExpired    UserOffboardingOutputStatus = "expired"
+	UserOffboardingOutputStatusCompleted  UserOffboardingOutputStatus = "completed"
+)
+
+func (e UserOffboardingOutputStatus) ToPointer() *UserOffboardingOutputStatus {
+	return &e
+}
+func (e *UserOffboardingOutputStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "scheduled":
+		fallthrough
+	case "in-progress":
+		fallthrough
+	case "diverted":
+		fallthrough
+	case "cancelled":
+		fallthrough
+	case "failed":
+		fallthrough
+	case "expired":
+		fallthrough
+	case "completed":
+		*e = UserOffboardingOutputStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UserOffboardingOutputStatus: %v", v)
+	}
+}
 
 type UserOffboardingOutput struct {
 	// The unique UUID of the user offboarding.
 	ID string `json:"id"`
 	// The UUID of the offboarded identity.
-	UserID string                         `json:"user_id"`
-	Status FlowsV2NormalizedDisplayStatus `json:"status"`
+	UserID string `json:"user_id"`
+	// The status of the offboarding.
+	Status UserOffboardingOutputStatus `json:"status"`
 	// When the offboarding is scheduled to run, if scheduled.
 	ScheduledAt *time.Time `json:"scheduled_at"`
 	// When the offboarding was created.
@@ -50,9 +95,9 @@ func (u *UserOffboardingOutput) GetUserID() string {
 	return u.UserID
 }
 
-func (u *UserOffboardingOutput) GetStatus() FlowsV2NormalizedDisplayStatus {
+func (u *UserOffboardingOutput) GetStatus() UserOffboardingOutputStatus {
 	if u == nil {
-		return FlowsV2NormalizedDisplayStatus("")
+		return UserOffboardingOutputStatus("")
 	}
 	return u.Status
 }

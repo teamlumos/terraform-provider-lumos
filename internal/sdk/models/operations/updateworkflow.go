@@ -8,7 +8,7 @@ import (
 )
 
 type UpdateWorkflowRequest struct {
-	// The workflow's ID, which `GET /v1/workflows` returns as `id`. A workflow slot carries the same `id`.
+	// The workflow's ID, which `GET /v1/workflows` returns as `id`. The workflow fields on an app or entitlement carry the same `id`.
 	WorkflowID    string               `pathParam:"style=simple,explode=false,name=workflow_id"`
 	WorkflowInput shared.WorkflowInput `request:"mediaType=application/json"`
 }

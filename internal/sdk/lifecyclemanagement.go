@@ -310,7 +310,9 @@ func (s *LifecycleManagement) V1CreateUserOffboarding(ctx context.Context, reque
 }
 
 // V1GetUserOffboarding - Get User Offboarding
-// Get a user offboarding by ID.
+// Get a user offboarding by ID. `status` is `scheduled` before it starts and `in-progress` while it runs. It ends as `completed`, `failed`, or `cancelled`, and can also be `diverted` or `expired`.
+//
+// Reading offboardings needs permission to view them. Of the built-in roles, Admin and Read Only Admin have it. Anyone else gets 403. An unknown ID returns 404.
 func (s *LifecycleManagement) V1GetUserOffboarding(ctx context.Context, request operations.V1GetUserOffboardingRequest, opts ...operations.Option) (*operations.V1GetUserOffboardingResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -562,7 +564,7 @@ func (s *LifecycleManagement) V1GetUserOffboarding(ctx context.Context, request 
 }
 
 // V1CancelUserOffboarding - Cancel User Offboarding
-// Cancel a scheduled or in-progress user offboarding.
+// Cancel a user offboarding that is `scheduled` or `in-progress`. Returns 204. An offboarding in any other status, or one an admin has marked complete, can't be cancelled and returns 409. Of the built-in roles, only Admin can cancel one. Anyone else gets 403.
 func (s *LifecycleManagement) V1CancelUserOffboarding(ctx context.Context, request operations.V1CancelUserOffboardingRequest, opts ...operations.Option) (*operations.V1CancelUserOffboardingResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -8,19 +8,19 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// AppStoreSettingsResponseCatalogVisibility - Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
-type AppStoreSettingsResponseCatalogVisibility string
+// CatalogVisibility - Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
+type CatalogVisibility string
 
 const (
-	AppStoreSettingsResponseCatalogVisibilityVisible    AppStoreSettingsResponseCatalogVisibility = "visible"
-	AppStoreSettingsResponseCatalogVisibilitySearchOnly AppStoreSettingsResponseCatalogVisibility = "search_only"
-	AppStoreSettingsResponseCatalogVisibilityHidden     AppStoreSettingsResponseCatalogVisibility = "hidden"
+	CatalogVisibilityVisible    CatalogVisibility = "visible"
+	CatalogVisibilitySearchOnly CatalogVisibility = "search-only"
+	CatalogVisibilityHidden     CatalogVisibility = "hidden"
 )
 
-func (e AppStoreSettingsResponseCatalogVisibility) ToPointer() *AppStoreSettingsResponseCatalogVisibility {
+func (e CatalogVisibility) ToPointer() *CatalogVisibility {
 	return &e
 }
-func (e *AppStoreSettingsResponseCatalogVisibility) UnmarshalJSON(data []byte) error {
+func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -28,13 +28,13 @@ func (e *AppStoreSettingsResponseCatalogVisibility) UnmarshalJSON(data []byte) e
 	switch v {
 	case "visible":
 		fallthrough
-	case "search_only":
+	case "search-only":
 		fallthrough
 	case "hidden":
-		*e = AppStoreSettingsResponseCatalogVisibility(v)
+		*e = CatalogVisibility(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for AppStoreSettingsResponseCatalogVisibility: %v", v)
+		return fmt.Errorf("invalid value for CatalogVisibility: %v", v)
 	}
 }
 
@@ -56,10 +56,10 @@ type AppStoreSettingsResponse struct {
 	DefaultEntitlement *EntitlementRef `json:"default_entitlement,omitempty"`
 	// Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured.
 	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitempty"`
-	// Whether this app is listed in the App Store catalog.
+	// Whether this app is listed in the AppStore catalog.
 	InAppStore bool `json:"in_app_store"`
-	// Visibility of the app within the catalog. "visible" — shown in browse and search; "search_only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
-	CatalogVisibility AppStoreSettingsResponseCatalogVisibility `json:"catalog_visibility"`
+	// Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
+	CatalogVisibility CatalogVisibility `json:"catalog_visibility"`
 }
 
 func (a AppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
@@ -143,9 +143,9 @@ func (a *AppStoreSettingsResponse) GetInAppStore() bool {
 	return a.InAppStore
 }
 
-func (a *AppStoreSettingsResponse) GetCatalogVisibility() AppStoreSettingsResponseCatalogVisibility {
+func (a *AppStoreSettingsResponse) GetCatalogVisibility() CatalogVisibility {
 	if a == nil {
-		return AppStoreSettingsResponseCatalogVisibility("")
+		return CatalogVisibility("")
 	}
 	return a.CatalogVisibility
 }

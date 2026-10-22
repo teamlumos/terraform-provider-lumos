@@ -2,7 +2,7 @@
 
 package shared
 
-// WorkflowAssociationInput - Request body to bind a workflow to a resource slot.
+// WorkflowAssociationInput - Request body to bind a workflow to an app or entitlement.
 type WorkflowAssociationInput struct {
 	// UUID of the workflow to associate.
 	WorkflowID string `json:"workflow_id"`

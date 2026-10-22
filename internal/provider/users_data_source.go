@@ -31,7 +31,7 @@ type UsersDataSource struct {
 type UsersDataSourceModel struct {
 	ExactMatch types.Bool                         `queryParam:"style=form,explode=true,name=exact_match" tfsdk:"exact_match"`
 	Expand     []types.String                     `queryParam:"style=form,explode=true,name=expand" tfsdk:"expand"`
-	SearchTerm types.String                       `queryParam:"style=form,explode=true,name=search_term" tfsdk:"search_term"`
+	Search     types.String                       `queryParam:"style=form,explode=true,name=search" tfsdk:"search"`
 	Users      []tfTypes.UserWithCustomAttributes `tfsdk:"users"`
 }
 
@@ -48,14 +48,14 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{
 				Optional:    true,
-				Description: `If a search_term is provided, only accept exact matches.`,
+				Description: `Only return users whose name or email equals ` + "`" + `search` + "`" + ` exactly.`,
 			},
 			"expand": schema.ListAttribute{
 				Optional:    true,
 				ElementType: types.StringType,
 				Description: `Fields to expand. Supported fields: custom_attributes.`,
 			},
-			"search_term": schema.StringAttribute{
+			"search": schema.StringAttribute{
 				Optional:    true,
 				Description: `Search for users by name or email.`,
 			},
@@ -68,7 +68,8 @@ func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaReque
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"type": schema.StringAttribute{
-										Computed: true,
+										Computed:    true,
+										Description: `The type of custom attribute. Only text and user options are available today`,
 									},
 									"value": schema.SingleNestedAttribute{
 										Computed: true,

@@ -46,7 +46,7 @@ func newPreApprovalRules(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hook
 // GetPreApprovalRule - Get Pre Approval Rule
 // Get a pre-approval rule by ID.
 //
-// `condition` is `null` when the rule is limited by a webhook, an on-call schedule, or an access policy, because this API can't show those limits. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none.
+// `condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none.
 //
 // Returns 409 if the rule covers access that has no entitlement ID, because this API can't describe that access.
 //
@@ -308,7 +308,7 @@ func (s *PreApprovalRules) GetPreApprovalRule(ctx context.Context, request opera
 //
 // Returns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.
 //
-// Returns 409 if the rule is limited by a webhook, an on-call schedule, or an access policy. Also returns 409 if the rule covers access that has no entitlement ID, unless the request replaces the rule's entitlements fields.
+// Returns 409 if the rule is limited by an access policy. Also returns 409 if the rule covers access that has no entitlement ID, unless the request replaces the rule's entitlements fields.
 //
 // Returns 404 if condition-based pre-approval rules are not turned on for your organization.
 func (s *PreApprovalRules) UpdatePreApprovalRule(ctx context.Context, request operations.UpdatePreApprovalRuleRequest, opts ...operations.Option) (*operations.UpdatePreApprovalRuleResponse, error) {
@@ -810,7 +810,7 @@ func (s *PreApprovalRules) DeletePreApprovalRule(ctx context.Context, request op
 //
 // Results come in pages. To get the next page, pass the `next_page_token` from the previous response as the `page_token` query parameter. When `next_page_token` is `null`, there are no more pages.
 //
-// `condition` is `null` when the rule is limited by a webhook, an on-call schedule, or an access policy, because this API can't show those limits. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules that cover access with no entitlement ID are left out of the page.
+// `condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules that cover access with no entitlement ID are left out of the page.
 //
 // Returns 404 if condition-based pre-approval rules are not turned on for your organization.
 func (s *PreApprovalRules) ListPreApprovalRules(ctx context.Context, request operations.ListPreApprovalRulesRequest, opts ...operations.Option) (*operations.ListPreApprovalRulesResponse, error) {

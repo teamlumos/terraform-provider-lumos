@@ -2,6 +2,80 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// EntitlementAppStoreCatalogOutputSource - How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
+type EntitlementAppStoreCatalogOutputSource string
+
+const (
+	EntitlementAppStoreCatalogOutputSourceGoogleWorkspaceQuickInbox EntitlementAppStoreCatalogOutputSource = "google-workspace-quick-inbox"
+	EntitlementAppStoreCatalogOutputSourceGoogleWorkspaceDeepInbox  EntitlementAppStoreCatalogOutputSource = "google-workspace-deep-inbox"
+	EntitlementAppStoreCatalogOutputSourceMicrosoftDeepInbox        EntitlementAppStoreCatalogOutputSource = "microsoft-deep-inbox"
+	EntitlementAppStoreCatalogOutputSourceMicrosoftOauth            EntitlementAppStoreCatalogOutputSource = "microsoft-oauth"
+	EntitlementAppStoreCatalogOutputSourceMicrosoftGcc              EntitlementAppStoreCatalogOutputSource = "microsoft-gcc"
+	EntitlementAppStoreCatalogOutputSourceGoogleWorkspaceOauth      EntitlementAppStoreCatalogOutputSource = "google-workspace-oauth"
+	EntitlementAppStoreCatalogOutputSourceOkta                      EntitlementAppStoreCatalogOutputSource = "okta"
+	EntitlementAppStoreCatalogOutputSourceManual                    EntitlementAppStoreCatalogOutputSource = "manual"
+	EntitlementAppStoreCatalogOutputSourceOnelogin                  EntitlementAppStoreCatalogOutputSource = "onelogin"
+	EntitlementAppStoreCatalogOutputSourceAtlassian                 EntitlementAppStoreCatalogOutputSource = "atlassian"
+	EntitlementAppStoreCatalogOutputSourceGoogleCloud               EntitlementAppStoreCatalogOutputSource = "google-cloud"
+	EntitlementAppStoreCatalogOutputSourceIntegration               EntitlementAppStoreCatalogOutputSource = "integration"
+	EntitlementAppStoreCatalogOutputSourceJumpcloud                 EntitlementAppStoreCatalogOutputSource = "jumpcloud"
+	EntitlementAppStoreCatalogOutputSourceCustom                    EntitlementAppStoreCatalogOutputSource = "custom"
+	EntitlementAppStoreCatalogOutputSourceMcp                       EntitlementAppStoreCatalogOutputSource = "mcp"
+	EntitlementAppStoreCatalogOutputSourceNative                    EntitlementAppStoreCatalogOutputSource = "native"
+)
+
+func (e EntitlementAppStoreCatalogOutputSource) ToPointer() *EntitlementAppStoreCatalogOutputSource {
+	return &e
+}
+func (e *EntitlementAppStoreCatalogOutputSource) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "google-workspace-quick-inbox":
+		fallthrough
+	case "google-workspace-deep-inbox":
+		fallthrough
+	case "microsoft-deep-inbox":
+		fallthrough
+	case "microsoft-oauth":
+		fallthrough
+	case "microsoft-gcc":
+		fallthrough
+	case "google-workspace-oauth":
+		fallthrough
+	case "okta":
+		fallthrough
+	case "manual":
+		fallthrough
+	case "onelogin":
+		fallthrough
+	case "atlassian":
+		fallthrough
+	case "google-cloud":
+		fallthrough
+	case "integration":
+		fallthrough
+	case "jumpcloud":
+		fallthrough
+	case "custom":
+		fallthrough
+	case "mcp":
+		fallthrough
+	case "native":
+		*e = EntitlementAppStoreCatalogOutputSource(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for EntitlementAppStoreCatalogOutputSource: %v", v)
+	}
+}
+
 // EntitlementAppStoreCatalogOutput - An entitlement as it appears in a single app's AppStore entitlement catalog.
 //
 // A trimmed subset of `EntitlementOutput`, mirroring how `AppStoreCatalogAppResponse`
@@ -12,8 +86,9 @@ type EntitlementAppStoreCatalogOutput struct {
 	// The ID of this entitlement.
 	ID string `json:"id"`
 	// Human-readable label for the entitlement (e.g. a role or permission name).
-	Label  string          `json:"label"`
-	Source DiscoverySource `json:"source"`
+	Label string `json:"label"`
+	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
+	Source EntitlementAppStoreCatalogOutputSource `json:"source"`
 	// Optional long-form description of the entitlement.
 	Description *string `json:"description,omitempty"`
 	// This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or domain.
@@ -34,9 +109,9 @@ func (e *EntitlementAppStoreCatalogOutput) GetLabel() string {
 	return e.Label
 }
 
-func (e *EntitlementAppStoreCatalogOutput) GetSource() DiscoverySource {
+func (e *EntitlementAppStoreCatalogOutput) GetSource() EntitlementAppStoreCatalogOutputSource {
 	if e == nil {
-		return DiscoverySource("")
+		return EntitlementAppStoreCatalogOutputSource("")
 	}
 	return e.Source
 }

@@ -3,9 +3,9 @@
 package shared
 
 type EntitlementAppStoreSettings struct {
-	// Whether this entitlement is visible in the App Store catalog.
+	// Whether this entitlement is visible in the AppStore catalog.
 	VisibleInAppstore bool `json:"visible_in_appstore"`
-	// Groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means this entitlement inherits the app's allowed requester groups.
+	// Groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means this entitlement inherits the app's allowed requester groups. An empty list means the override is on with no group restriction: anyone can request this entitlement, even if the app restricts requesters.
 	AllowedRequesterGroupsOverride []GroupRef `json:"allowed_requester_groups_override,omitempty"`
 	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
 	TimeBasedAccessOverride *TimeBasedAccessOverride `json:"time_based_access_override,omitempty"`

@@ -9,7 +9,7 @@ import (
 )
 
 type V1GetAppStoreCatalogRequest struct {
-	// The user to return the catalog for. Defaults to the caller. Viewing anyone else's catalog requires permission to read App Store items.
+	// The user to return the catalog for. Defaults to the caller. Viewing anyone else's catalog requires permission to read AppStore items.
 	TargetUserUUID *string `queryParam:"style=form,explode=true,name=target_user_uuid"`
 	// Case-insensitive substring match against the app's label and description. Resend it with each `page_token`.
 	Search *string `queryParam:"style=form,explode=true,name=search"`

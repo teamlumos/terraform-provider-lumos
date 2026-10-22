@@ -6,7 +6,7 @@ type EntitlementAppStoreCatalogListOutput struct {
 	// Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.
 	NextPageToken *string `json:"next_page_token,omitempty"`
 	// Entitlements returned in this page.
-	Items []EntitlementAppStoreCatalogOutput `json:"items"`
+	Entitlements []EntitlementAppStoreCatalogOutput `json:"entitlements"`
 }
 
 func (e *EntitlementAppStoreCatalogListOutput) GetNextPageToken() *string {
@@ -16,9 +16,9 @@ func (e *EntitlementAppStoreCatalogListOutput) GetNextPageToken() *string {
 	return e.NextPageToken
 }
 
-func (e *EntitlementAppStoreCatalogListOutput) GetItems() []EntitlementAppStoreCatalogOutput {
+func (e *EntitlementAppStoreCatalogListOutput) GetEntitlements() []EntitlementAppStoreCatalogOutput {
 	if e == nil {
 		return []EntitlementAppStoreCatalogOutput{}
 	}
-	return e.Items
+	return e.Entitlements
 }

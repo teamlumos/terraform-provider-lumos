@@ -2,7 +2,7 @@
 
 package shared
 
-// UserRoleAddOutput - Exactly one of the two fields is present, mirroring the v0 contract.
+// UserRoleAddOutput - Exactly one of the two fields is present.
 type UserRoleAddOutput struct {
 	// The role that was assigned. Absent when it was already assigned.
 	RoleAdded *string `json:"role_added,omitempty"`

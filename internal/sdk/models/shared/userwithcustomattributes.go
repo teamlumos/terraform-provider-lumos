@@ -2,6 +2,43 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type UserWithCustomAttributesStatus string
+
+const (
+	UserWithCustomAttributesStatusStaged    UserWithCustomAttributesStatus = "staged"
+	UserWithCustomAttributesStatusActive    UserWithCustomAttributesStatus = "active"
+	UserWithCustomAttributesStatusSuspended UserWithCustomAttributesStatus = "suspended"
+	UserWithCustomAttributesStatusInactive  UserWithCustomAttributesStatus = "inactive"
+)
+
+func (e UserWithCustomAttributesStatus) ToPointer() *UserWithCustomAttributesStatus {
+	return &e
+}
+func (e *UserWithCustomAttributesStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "staged":
+		fallthrough
+	case "active":
+		fallthrough
+	case "suspended":
+		fallthrough
+	case "inactive":
+		*e = UserWithCustomAttributesStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for UserWithCustomAttributesStatus: %v", v)
+	}
+}
+
 type UserWithCustomAttributes struct {
 	// The ID of this user.
 	ID string `json:"id"`
@@ -12,7 +49,7 @@ type UserWithCustomAttributes struct {
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
 	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
+	Status *UserWithCustomAttributesStatus `json:"status,omitempty"`
 	// Custom attributes configured on the user
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
 }
@@ -45,7 +82,7 @@ func (u *UserWithCustomAttributes) GetFamilyName() *string {
 	return u.FamilyName
 }
 
-func (u *UserWithCustomAttributes) GetStatus() *UserLifecycleStatus {
+func (u *UserWithCustomAttributes) GetStatus() *UserWithCustomAttributesStatus {
 	if u == nil {
 		return nil
 	}

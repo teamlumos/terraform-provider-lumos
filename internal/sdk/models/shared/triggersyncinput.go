@@ -3,19 +3,40 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// TriggerSyncInput - Body of `POST /v1/apps/{app_uuid}/sync`.
+// SyncType - Which sync to run. Required. Today only `full-sync` (a full integration sync that re-pulls accounts, groups, and entitlements) is supported; any other value is rejected with 400. The field is required even with one value so the contract stays stable as more sync kinds are added.
+type SyncType string
+
+const (
+	SyncTypeFullSync SyncType = "full-sync"
+)
+
+func (e SyncType) ToPointer() *SyncType {
+	return &e
+}
+func (e *SyncType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "full-sync":
+		*e = SyncType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncType: %v", v)
+	}
+}
+
+// TriggerSyncInput - Body of `POST /v1/apps/{app_uuid}:sync`.
 type TriggerSyncInput struct {
-	// The kind of sync to trigger. MVP supports full integration sync only.
-	//
-	// The enum is the forward-compatible seam: new sync kinds (incremental,
-	// groups-only, …) are added as additional members without changing the
-	// request/response contract.
-	//lint:ignore U1000 accessed via reflection for JSON marshaling
-	syncType SyncType `const:"full_sync" json:"sync_type"`
-	// Set to `true` to start the app's first sync without waiting for an admin to review its match rules. A newly connected app's first sync waits for that review, so without this flag the request returns 409. It has no effect on an app that has finished a sync.
+	// Which sync to run. Required. Today only `full-sync` (a full integration sync that re-pulls accounts, groups, and entitlements) is supported; any other value is rejected with 400. The field is required even with one value so the contract stays stable as more sync kinds are added.
+	SyncType SyncType `json:"sync_type"`
+	// Set to `true` to start the app's first sync without an admin reviewing its match rules. A newly connected app's first sync is held for that review and stays deferred until it's started from the Lumos UI or with this flag, so without the flag the request returns 409. It has no effect once the app has completed a sync successfully; a retry after a failed first sync is held for review again and needs the flag once more.
 	SkipFirstSyncReview *bool `default:"false" json:"skip_first_sync_review"`
 }
 
@@ -31,7 +52,10 @@ func (t *TriggerSyncInput) UnmarshalJSON(data []byte) error {
 }
 
 func (t *TriggerSyncInput) GetSyncType() SyncType {
-	return SyncTypeFullSync
+	if t == nil {
+		return SyncType("")
+	}
+	return t.SyncType
 }
 
 func (t *TriggerSyncInput) GetSkipFirstSyncReview() *bool {

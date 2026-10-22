@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: c59d43a670d7fcc0d951809e51caa002
+  docChecksum: d7f61885f31773ad8ab89f293e7d1cbb
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -383,14 +383,8 @@ trackedFiles:
     id: 9a214a8640b4
     pristine_git_object: 84ecef11edfdefceaa7f43b6d435887cc9c5024f
   internal/sdk/models/shared/accountbase.go: {}
-  internal/sdk/models/shared/accountlifecyclestatus.go:
-    id: 4bdc70654322
-    pristine_git_object: 1d11bc741c6e33ea84ac0c24e236449fee23c6a0
   internal/sdk/models/shared/accountlistoutput.go: {}
   internal/sdk/models/shared/accountsuploadv1input.go: {}
-  internal/sdk/models/shared/accounttype.go:
-    id: 87f2766b40c1
-    pristine_git_object: e958eda7b4673aeda5355426c243654f95d4e186
   internal/sdk/models/shared/accountv1input.go: {}
   internal/sdk/models/shared/activitylog.go:
     id: 148a52da2ba4
@@ -399,7 +393,6 @@ trackedFiles:
   internal/sdk/models/shared/activitylogrollupproductarea.go: {}
   internal/sdk/models/shared/addcommentinput.go: {}
   internal/sdk/models/shared/adminassignee.go: {}
-  internal/sdk/models/shared/adminassigneetype.go: {}
   internal/sdk/models/shared/airecommendation.go: {}
   internal/sdk/models/shared/apierror.go: {}
   internal/sdk/models/shared/apierrorenvelope.go: {}
@@ -418,22 +411,16 @@ trackedFiles:
   internal/sdk/models/shared/appstoresettingspatchinput.go: {}
   internal/sdk/models/shared/appstoresettingsresponse.go: {}
   internal/sdk/models/shared/appupdateinput.go: {}
-  internal/sdk/models/shared/attributetype.go: {}
   internal/sdk/models/shared/attributev1input.go: {}
   internal/sdk/models/shared/baseapp.go: {}
   internal/sdk/models/shared/bodycreateknowledgecontext.go: {}
   internal/sdk/models/shared/bodyupdateknowledgecontext.go: {}
-  internal/sdk/models/shared/configtype.go: {}
-  internal/sdk/models/shared/connectionsource.go: {}
   internal/sdk/models/shared/customattribute.go:
     id: 9dad24736676
     pristine_git_object: 2ed1d6ed3cf49c4faa1308f827a6680992b8e036
   internal/sdk/models/shared/customattributedefinition.go: {}
   internal/sdk/models/shared/customattributedefinitionlistoutput.go: {}
   internal/sdk/models/shared/customattributescopefilterinput.go: {}
-  internal/sdk/models/shared/customattributetype.go:
-    id: 38c38d180d1d
-    pristine_git_object: 64288687640a9ca0e8e93460463d52c2b165d773
   internal/sdk/models/shared/customintakefield.go: {}
   internal/sdk/models/shared/customintakefieldpatchinput.go: {}
   internal/sdk/models/shared/customintakefieldresponseoutput.go:
@@ -444,9 +431,6 @@ trackedFiles:
   internal/sdk/models/shared/disconnectintegrationoutput.go:
     id: e580bf2279a5
     pristine_git_object: e383771108e62df88c7f59b6af773db8d77505e0
-  internal/sdk/models/shared/discoverysource.go:
-    id: 90581ff41f18
-    pristine_git_object: 9e2a2139cec37795cc5304988b9d9268ad754db9
   internal/sdk/models/shared/domainaccountlistoutput.go: {}
   internal/sdk/models/shared/entitlementappstorecataloglistoutput.go: {}
   internal/sdk/models/shared/entitlementappstorecatalogoutput.go: {}
@@ -459,12 +443,12 @@ trackedFiles:
   internal/sdk/models/shared/entitlementrefinput.go: {}
   internal/sdk/models/shared/entitlementtimebasedaccessoverridepatchinput.go: {}
   internal/sdk/models/shared/entitlementupdateinput.go: {}
+  internal/sdk/models/shared/entitlementv1input.go: {}
   internal/sdk/models/shared/errortype.go: {}
   internal/sdk/models/shared/filterdatatype.go: {}
   internal/sdk/models/shared/filteroperator.go: {}
   internal/sdk/models/shared/filteroption.go: {}
   internal/sdk/models/shared/filtervalue.go: {}
-  internal/sdk/models/shared/flowsv2normalizeddisplaystatus.go: {}
   internal/sdk/models/shared/group.go:
     id: 941f75eafff0
     pristine_git_object: 7fbdc7a26f3cd2c84910cb579bfce76db22da3ba
@@ -485,15 +469,12 @@ trackedFiles:
   internal/sdk/models/shared/integrationconnectionschemaoutput.go: {}
   internal/sdk/models/shared/knowledgecontextoutput.go: {}
   internal/sdk/models/shared/knowledgeproductscope.go: {}
-  internal/sdk/models/shared/lifecycle.go:
-    id: 90ebd9cea397
-    pristine_git_object: 31817f2a9adc429511d1a75b51988aebe2f1dcd3
   internal/sdk/models/shared/listknowledgecontextoutput.go: {}
   internal/sdk/models/shared/operationenvelope.go: {}
   internal/sdk/models/shared/operationerror.go: {}
   internal/sdk/models/shared/operationoutput.go: {}
+  internal/sdk/models/shared/outputparameterschema.go: {}
   internal/sdk/models/shared/performtaskactioninput.go: {}
-  internal/sdk/models/shared/permissionv1input.go: {}
   internal/sdk/models/shared/preapprovalrule.go: {}
   internal/sdk/models/shared/preapprovalruleinput.go:
     id: dbba198cd025
@@ -511,21 +492,13 @@ trackedFiles:
   internal/sdk/models/shared/security.go:
     id: 9098af98367e
     pristine_git_object: 21cdf3447a1ccee37928345efcd480f861d07514
-  internal/sdk/models/shared/sourcetype.go: {}
   internal/sdk/models/shared/subject.go: {}
   internal/sdk/models/shared/subjectassignee.go: {}
   internal/sdk/models/shared/subjectentitlement.go: {}
   internal/sdk/models/shared/subjectfiltersresponse.go: {}
   internal/sdk/models/shared/subjectremoval.go: {}
   internal/sdk/models/shared/subjecttype.go: {}
-  internal/sdk/models/shared/supportrequeststatus.go:
-    id: c839ff0aaa6d
-    pristine_git_object: ed340727ba78d5706d670350d9e6dd9fe03438b9
   internal/sdk/models/shared/syncappreviewinput.go: {}
-  internal/sdk/models/shared/syncstatus.go:
-    id: 2a46610ac042
-    pristine_git_object: 2416c7b2d0a5a6bbe93d1c4918fb566cdc554461
-  internal/sdk/models/shared/synctype.go: {}
   internal/sdk/models/shared/task.go: {}
   internal/sdk/models/shared/taskaction.go: {}
   internal/sdk/models/shared/taskactiontransition.go: {}
@@ -543,9 +516,6 @@ trackedFiles:
     id: 9a5b526115dc
     pristine_git_object: 4ceb64e1c4da8c73dbe974296350fab996deee8d
   internal/sdk/models/shared/useraccountlistoutput.go: {}
-  internal/sdk/models/shared/userlifecyclestatus.go:
-    id: 07a48343f7db
-    pristine_git_object: 9575ec6034a261a42616cfaecd5c0bf0ab08d06f
   internal/sdk/models/shared/userlistoutput.go: {}
   internal/sdk/models/shared/useroffboardinginput.go: {}
   internal/sdk/models/shared/useroffboardingoutput.go: {}
@@ -1397,7 +1367,7 @@ examples:
           page_size: 10
       responses:
         "200":
-          application/json: {"knowledge_context": [{"id": "<id>", "title": "<value>", "generic_tags": ["<value 1>", "<value 2>", "<value 3>"], "application_tags": [{"id": "<id>", "name": "<value>"}], "product_scopes": ["ALBUS_DEEP_RESEARCH"]}]}
+          application/json: {"knowledge_context": [{"id": "<id>", "title": "<value>", "generic_tags": ["<value 1>", "<value 2>", "<value 3>"], "application_tags": [{"id": "<id>", "name": "<value>"}], "product_scopes": ["role-mining"]}]}
         "422":
           application/json: {}
         "400":
@@ -1410,7 +1380,7 @@ examples:
         multipart/form-data: {"title": "<value>", "generic_tags": [], "product_scopes": []}
       responses:
         "201":
-          application/json: {"id": "<id>", "title": "<value>", "generic_tags": [], "application_tags": [], "product_scopes": ["IDENTITY_INTELLIGENCE"]}
+          application/json: {"id": "<id>", "title": "<value>", "generic_tags": [], "application_tags": [], "product_scopes": ["appstore"]}
         "422":
           application/json: {}
         "400":
@@ -1438,7 +1408,7 @@ examples:
           knowledge_context_id: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "title": "<value>", "generic_tags": ["<value 1>", "<value 2>", "<value 3>"], "application_tags": [], "product_scopes": ["APPSTORE"]}
+          application/json: {"id": "<id>", "title": "<value>", "generic_tags": ["<value 1>", "<value 2>", "<value 3>"], "application_tags": [], "product_scopes": ["role-mining"]}
         "422":
           application/json: {}
         "400":
@@ -1505,7 +1475,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"access_policies": [{"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "DRAFT", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}}]}
+          application/json: {"access_policies": [{"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}, "is_everyone_condition": true}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -1513,10 +1483,10 @@ examples:
   v1CreateAccessPolicy:
     speakeasy-default-v1-create-access-policy:
       requestBody:
-        application/json: {"name": "<value>", "business_justification": "<value>", "is_everyone_condition": false, "apps": [{"id": "<id>"}]}
+        application/json: {"name": "Company-wide Slack access", "business_justification": "Everyone at the company uses Slack.", "status": "published", "is_enabled": true, "is_everyone_condition": true, "apps": [{"id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "is_preapproved": true}]}
       responses:
         "201":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "PUBLISHED", "is_enabled": true, "apps": [], "access_condition": {}}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": false}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
         "500":
@@ -1528,7 +1498,7 @@ examples:
           access_policy_id: "<id>"
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "DRAFT", "is_enabled": true, "apps": [], "access_condition": {}}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": true}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1549,10 +1519,10 @@ examples:
         path:
           access_policy_id: "<id>"
       requestBody:
-        application/json: {"name": "<value>", "business_justification": "<value>", "is_everyone_condition": false, "apps": [{"id": "<id>"}]}
+        application/json: {"name": "Company-wide Slack access", "business_justification": "Everyone at the company uses Slack.", "status": "published", "is_enabled": true, "is_everyone_condition": true, "apps": [{"id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "is_preapproved": true}]}
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "DRAFT", "is_enabled": true, "apps": [], "access_condition": {}}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": true}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
@@ -1563,10 +1533,10 @@ examples:
         path:
           access_policy_id: "<id>"
       requestBody:
-        application/json: {}
+        application/json: {"name": "Company-wide Slack access"}
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "DRAFT", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}, "is_everyone_condition": false}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
@@ -1579,7 +1549,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"access_requests": [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "PENDING_APPROVAL"}]}
+          application/json: {"access_requests": [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "pending-manual-provisioning"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -1587,10 +1557,10 @@ examples:
   v1CreateAccessRequest:
     speakeasy-default-v1-create-access-request:
       requestBody:
-        application/json: {"app_id": "<id>"}
+        application/json: {"app_id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "business_justification": "I review pull requests for the payments service.", "access_length": "7 days", "entitlement_ids": ["2b3c4d5e-6f70-8901-bcde-f12345678901"]}
       responses:
         "201":
-          application/json: {"access_requests": [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "MANAGER_DENIED"}]}
+          application/json: {"access_requests": [{"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "pending-manual-deprovisioning"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":
@@ -1602,7 +1572,7 @@ examples:
           id: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "PROVISIONED"}
+          application/json: {"id": "<id>", "app_id": "<id>", "app_name": "<value>", "target_user": {"id": "<id>"}, "status": "provisioned"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1612,6 +1582,8 @@ examples:
       parameters:
         path:
           id: "<id>"
+      requestBody:
+        application/json: {"reason": "Requested by mistake."}
       responses:
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
@@ -1624,7 +1596,7 @@ examples:
           review_uuid: "<id>"
           app_review_uuid: "<id>"
       requestBody:
-        application/json: {"skip_new_data": false}
+        application/json: {"scope_filters": [{"group": "EMPLOYMENT_STATUS", "name": "Employment Status", "label": "Inactive", "value": "INACTIVE"}], "skip_new_data": true}
       responses:
         "202":
           application/json: {"operation": {"id": "<id>", "done": false}}
@@ -1688,7 +1660,7 @@ examples:
   v1UploadAccounts:
     speakeasy-default-v1-upload-accounts:
       requestBody:
-        application/json: {"accounts": [], "app_id": "<id>"}
+        application/json: {"accounts": [{"unique_identifier": "jane.doe@example.com", "email": "jane.doe@example.com", "first_name": "Jane", "last_name": "Doe", "status": "active", "entitlements": [{"unique_identifier": "role-admin", "type": "Role", "name": "Admin"}], "attributes": []}], "app_id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890"}
       responses:
         "202":
           application/json: {"operation": {"id": "<id>", "done": false}}
@@ -1791,6 +1763,8 @@ examples:
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
         "500":
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+        "202":
+          application/json: {"operation": {"id": "<id>", "done": true}}
   v1GetAppStoreSettings:
     speakeasy-default-v1-get-app-store-settings:
       parameters:
@@ -1809,7 +1783,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {}
+        application/json: {"in_app_store": true, "catalog_visibility": "visible", "request_instructions": "Pick the role you need and say what it's for.", "allowed_requester_group_uuids": ["4d5e6f70-8192-0123-def0-234567890123"], "time_based_access": {"options": ["7 days", "30 days"], "default": "7 days"}}
       responses:
         "200":
           application/json: {"allow_permission_selection": true, "allow_multiple_permission_selection": true, "time_based_access": {}, "in_app_store": true, "catalog_visibility": "hidden"}
@@ -1840,7 +1814,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"items": []}
+          application/json: {"entitlements": []}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -1863,7 +1837,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": {}}]}
@@ -1889,7 +1863,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "approval-chain", "steps": []}
@@ -1915,7 +1889,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "account-deprovisioning", "steps": [{"step": "<value>", "inputs": {}}]}
@@ -1941,7 +1915,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"sync_type": "full_sync", "skip_first_sync_review": false}
+        application/json: {"sync_type": "full-sync", "skip_first_sync_review": false}
       responses:
         "202":
           application/json: {"operation": {"id": "<id>", "done": false}}
@@ -1964,10 +1938,10 @@ examples:
   createEntitlement:
     speakeasy-default-create-entitlement:
       requestBody:
-        application/json: {"app_id": "<id>", "label": "<value>"}
+        application/json: {"app_id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "label": "Editor"}
       responses:
         "201":
-          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "GSUITE_QUICK_INBOX"}
+          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "google-workspace-quick-inbox"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
@@ -1979,7 +1953,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "MICROSOFT_GCC"}
+          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "microsoft-gcc"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1990,10 +1964,10 @@ examples:
         path:
           entitlement_uuid: "<id>"
       requestBody:
-        application/json: {"label": "<value>"}
+        application/json: {"label": "Viewer"}
       responses:
         "200":
-          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "JUMPCLOUD"}
+          application/json: {"id": "<id>", "app_id": "<id>", "label": "<value>", "entitlement_type_label": "<value>", "source": "jumpcloud"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -2017,7 +1991,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"accounts": [{"id": "<id>", "app_id": "<id>", "account_type": "ROLE"}]}
+          application/json: {"accounts": [{"id": "<id>", "app_id": "<id>", "account_type": "role"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -2040,7 +2014,7 @@ examples:
         path:
           entitlement_uuid: "<id>"
       requestBody:
-        application/json: {}
+        application/json: {"visible_in_appstore": true, "allowed_requester_group_uuids_override": ["4d5e6f70-8192-0123-def0-234567890123"], "time_based_access_override": {"options": ["7 days", "30 days"]}}
       responses:
         "200":
           application/json: {"visible_in_appstore": true}
@@ -2066,7 +2040,7 @@ examples:
         path:
           entitlement_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "approval-chain", "steps": []}
@@ -2092,7 +2066,7 @@ examples:
         path:
           entitlement_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": [{"step": "<value>", "inputs": {}}]}
@@ -2118,7 +2092,7 @@ examples:
         path:
           entitlement_uuid: "<id>"
       requestBody:
-        application/json: {"workflow_id": "<id>"}
+        application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
           application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": []}
@@ -2457,7 +2431,7 @@ examples:
         path:
           task_id: "<id>"
       requestBody:
-        application/json: {"action_type": "<value>"}
+        application/json: {"action_type": "confirm-manual-provisioning", "transition_to": "completed"}
       responses:
         "400":
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
@@ -2469,7 +2443,7 @@ examples:
         path:
           task_id: "<id>"
       requestBody:
-        application/json: {"replace": true}
+        application/json: {"user_ids": ["3c4d5e6f-7081-9012-cdef-123456789012"], "replace": true}
       responses:
         "400":
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
@@ -2481,7 +2455,7 @@ examples:
         path:
           task_id: "<id>"
       requestBody:
-        application/json: {"comment": "Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles"}
+        application/json: {"comment": "Granted the Editor role in the admin console."}
       responses:
         "201":
           application/json: {"body": "<value>", "created_at": "2024-05-09T02:56:24.172Z"}
@@ -2492,10 +2466,10 @@ examples:
   v1CreateUserOffboarding:
     speakeasy-default-v1-create-user-offboarding:
       requestBody:
-        application/json: {"user_id": "<id>"}
+        application/json: {"user_id": "3c4d5e6f-7081-9012-cdef-123456789012"}
       responses:
         "201":
-          application/json: {"id": "<id>", "user_id": "<id>", "status": "FAILED", "scheduled_at": "2026-06-20T11:43:08.883Z", "created_at": "2025-11-03T10:41:46.149Z", "cancelled_at": "2026-10-21T04:24:07.760Z", "completed_at": "2025-01-10T02:58:13.333Z"}
+          application/json: {"id": "<id>", "user_id": "<id>", "status": "failed", "scheduled_at": "2026-06-20T11:43:08.883Z", "created_at": "2025-11-03T10:41:46.149Z", "cancelled_at": "2026-10-21T04:24:07.760Z", "completed_at": "2025-01-10T02:58:13.333Z"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
@@ -2507,7 +2481,7 @@ examples:
           user_offboarding_id: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "user_id": "<id>", "status": "COMPLETED", "scheduled_at": "2025-06-21T10:47:59.478Z", "created_at": null, "cancelled_at": "2025-03-25T08:55:40.004Z", "completed_at": "2025-11-07T18:53:58.358Z"}
+          application/json: {"id": "<id>", "user_id": "<id>", "status": "completed", "scheduled_at": "2025-06-21T10:47:59.478Z", "created_at": null, "cancelled_at": "2025-03-25T08:55:40.004Z", "completed_at": "2025-11-07T18:53:58.358Z"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":

@@ -39,7 +39,7 @@ type TriggerAppSyncV1Response struct {
 	RawResponse *http.Response
 	// Successful Response
 	OperationEnvelope *shared.OperationEnvelope
-	// Bad request — the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason.
+	// Bad request — the request body is malformed, or `sync_type` is set to a value other than `full-sync`. See the `detail` field for the specific reason.
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 

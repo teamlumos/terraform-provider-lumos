@@ -2,22 +2,22 @@
 
 package shared
 
-// EntitlementAppStoreSettingsPatchInput - Request body for `PATCH .../appstore_settings`.
+// EntitlementAppStoreSettingsPatchInput - Request body for `PATCH /v1/entitlements/{entitlement_uuid}/appstore-settings`.
 //
 // Merge-patch semantics: a field omitted from the request body is left
 // unchanged. For the override fields (`allowed_requester_group_uuids_override`,
-// `time_based_access_override`, `request_validation_webhook_uuid`), an explicit
-// `null` turns the override off so the entitlement inherits the app's setting.
+// `time_based_access_override`), an explicit `null` turns the override off so
+// the entitlement inherits the app's setting.
 // `visible_in_appstore` has no such "unset" state -- it's always a concrete
 // bool on the entitlement, so `null` there is equivalent to omitting the field.
 type EntitlementAppStoreSettingsPatchInput struct {
-	// Whether this entitlement is visible in the App Store catalog.
+	// Whether this entitlement is visible in the AppStore catalog.
 	VisibleInAppstore *bool `json:"visible_in_appstore,omitempty"`
-	// UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. Null or an empty list clears the override so this entitlement inherits the app's allowed requester groups.
+	// UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. `null` clears the override so this entitlement inherits the app's allowed requester groups. An empty list turns the override on with no group restriction: anyone can request this entitlement, even if the app restricts requesters.
 	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitempty"`
 	// This entitlement's own time-based access options, overriding the app's. Null clears the override so this entitlement inherits the app's time-based access options.
 	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitempty"`
-	// UUID of the inline webhook to call to validate access requests for this entitlement, overriding the app's. Null clears the override so this entitlement inherits the app's webhook.
+	// UUID of the inline webhook to call to validate access requests for this entitlement. Null removes this entitlement's webhook. Nothing is inherited from the app. When a request names entitlements, only the webhooks set on those entitlements run.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitempty"`
 }
 

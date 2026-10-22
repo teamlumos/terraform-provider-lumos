@@ -11,7 +11,7 @@ import (
 type ListEntitlementsRequest struct {
 	// Fields to expand. Supported fields: approval_workflow_override, provisioning_workflow, deprovisioning_workflow, appstore_settings.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
-	// Filter by App Store catalog visibility. When present, only entitlements configured in the App Store catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the App Store catalog at all are excluded either way. Omit this filter to return every entitlement regardless of App Store configuration. Requires the App Store item settings read permission, domain-wide.
+	// Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission, domain-wide.
 	VisibleInAppstore *bool `queryParam:"style=form,explode=true,name=visible_in_appstore"`
 	// Case-insensitive substring match against the entitlement's label. Resend it with each `page_token`.
 	Search *string `queryParam:"style=form,explode=true,name=search"`

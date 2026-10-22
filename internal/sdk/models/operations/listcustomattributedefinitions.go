@@ -3,20 +3,124 @@
 package operations
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
 
+// ConfigType - Filter by the entity type the attribute attaches to. Only `user` definitions are listed.
+type ConfigType string
+
+const (
+	ConfigTypeUser ConfigType = "user"
+)
+
+func (e ConfigType) ToPointer() *ConfigType {
+	return &e
+}
+func (e *ConfigType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "user":
+		*e = ConfigType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ConfigType: %v", v)
+	}
+}
+
+// SourceType - Filter by where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
+type SourceType string
+
+const (
+	SourceTypeSynced      SourceType = "synced"
+	SourceTypeNative      SourceType = "native"
+	SourceTypeAiGenerated SourceType = "ai-generated"
+)
+
+func (e SourceType) ToPointer() *SourceType {
+	return &e
+}
+func (e *SourceType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "synced":
+		fallthrough
+	case "native":
+		fallthrough
+	case "ai-generated":
+		*e = SourceType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SourceType: %v", v)
+	}
+}
+
+// AttributeType - Filter by the type of value the attribute holds.
+type AttributeType string
+
+const (
+	AttributeTypeString       AttributeType = "string"
+	AttributeTypeBoolean      AttributeType = "boolean"
+	AttributeTypeInteger      AttributeType = "integer"
+	AttributeTypeDatetime     AttributeType = "datetime"
+	AttributeTypeJSON         AttributeType = "json"
+	AttributeTypeUser         AttributeType = "user"
+	AttributeTypeGroup        AttributeType = "group"
+	AttributeTypeMultiSelect  AttributeType = "multi-select"
+	AttributeTypeSingleSelect AttributeType = "single-select"
+)
+
+func (e AttributeType) ToPointer() *AttributeType {
+	return &e
+}
+func (e *AttributeType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "string":
+		fallthrough
+	case "boolean":
+		fallthrough
+	case "integer":
+		fallthrough
+	case "datetime":
+		fallthrough
+	case "json":
+		fallthrough
+	case "user":
+		fallthrough
+	case "group":
+		fallthrough
+	case "multi-select":
+		fallthrough
+	case "single-select":
+		*e = AttributeType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AttributeType: %v", v)
+	}
+}
+
 type ListCustomAttributeDefinitionsRequest struct {
 	// Return the single unified definition for this exact label.
 	Label *string `queryParam:"style=form,explode=true,name=label"`
-	// Filter by the entity type the attribute attaches to (USER or ACCOUNT).
-	ConfigType *shared.ConfigType `queryParam:"style=form,explode=true,name=config_type"`
-	// Filter by where the attribute comes from: `SYNCED` from a connected app, `NATIVE` defined by your team in Lumos, or `AI_GENERATED` inferred by Lumos.
-	SourceType *shared.SourceType `queryParam:"style=form,explode=true,name=source_type"`
+	// Filter by the entity type the attribute attaches to. Only `user` definitions are listed.
+	ConfigType *ConfigType `queryParam:"style=form,explode=true,name=config_type"`
+	// Filter by where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
+	SourceType *SourceType `queryParam:"style=form,explode=true,name=source_type"`
 	// Filter by the type of value the attribute holds.
-	AttributeType *shared.AttributeType `queryParam:"style=form,explode=true,name=attribute_type"`
+	AttributeType *AttributeType `queryParam:"style=form,explode=true,name=attribute_type"`
 	// UUID of an app. Returns only the definitions that app supplies.
 	AppID *string `queryParam:"style=form,explode=true,name=app_id"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
@@ -43,21 +147,21 @@ func (l *ListCustomAttributeDefinitionsRequest) GetLabel() *string {
 	return l.Label
 }
 
-func (l *ListCustomAttributeDefinitionsRequest) GetConfigType() *shared.ConfigType {
+func (l *ListCustomAttributeDefinitionsRequest) GetConfigType() *ConfigType {
 	if l == nil {
 		return nil
 	}
 	return l.ConfigType
 }
 
-func (l *ListCustomAttributeDefinitionsRequest) GetSourceType() *shared.SourceType {
+func (l *ListCustomAttributeDefinitionsRequest) GetSourceType() *SourceType {
 	if l == nil {
 		return nil
 	}
 	return l.SourceType
 }
 
-func (l *ListCustomAttributeDefinitionsRequest) GetAttributeType() *shared.AttributeType {
+func (l *ListCustomAttributeDefinitionsRequest) GetAttributeType() *AttributeType {
 	if l == nil {
 		return nil
 	}

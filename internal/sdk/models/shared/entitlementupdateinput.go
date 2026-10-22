@@ -2,15 +2,33 @@
 
 package shared
 
-// EntitlementUpdateInput - Request body for `PATCH /entitlements/{entitlement_uuid}`.
+// EntitlementUpdateInput - Request body for `PATCH /v1/entitlements/{entitlement_uuid}`.
 type EntitlementUpdateInput struct {
-	// New human-readable label for the entitlement.
-	Label string `json:"label"`
+	// New human-readable label for the entitlement. Only entitlements created in Lumos (`source` is `manual`) can be renamed; the integration owns a synced entitlement's label.
+	Label *string `json:"label,omitempty"`
+	// Shown to requesters. `null` removes the description you set; the integration's own description returns on its next sync.
+	Description *string `json:"description,omitempty"`
+	// Message sent when a request is approved. `null` inherits the app's message.
+	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitempty"`
 }
 
-func (e *EntitlementUpdateInput) GetLabel() string {
+func (e *EntitlementUpdateInput) GetLabel() *string {
 	if e == nil {
-		return ""
+		return nil
 	}
 	return e.Label
+}
+
+func (e *EntitlementUpdateInput) GetDescription() *string {
+	if e == nil {
+		return nil
+	}
+	return e.Description
+}
+
+func (e *EntitlementUpdateInput) GetCustomApprovalMessageOverride() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CustomApprovalMessageOverride
 }

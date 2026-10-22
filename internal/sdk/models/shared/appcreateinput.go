@@ -12,7 +12,7 @@ type Settings struct {
 type AppCreateInput struct {
 	// Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`. On update it is optional and, when supplied, must match the app's own integration — a mismatch is rejected with 400.
 	AppClassID *string `json:"app_class_id,omitempty"`
-	// Credentials for the integration, as a JSON object — **all secrets go here**. The accepted keys depend on the integration; read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. Some integrations connect in-band from these credentials; others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Only applies to integrations. On update this field is required whenever `settings` or `version` is sent, because the credential group is replaced rather than merged.
+	// Credentials for the integration, as a JSON object — **all secrets go here**. The accepted keys depend on the integration; read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. Some integrations connect in-band from these credentials; others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400, and so are credentials the third party rejects. Only applies to integrations. On update this field is required whenever `settings` or `version` is sent, because the credential group is replaced rather than merged.
 	Auth *Auth `json:"auth,omitempty"`
 	// Non-secret configuration for the integration, as a JSON object — e.g. host, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only applies to integrations.
 	Settings *Settings `json:"settings,omitempty"`
@@ -22,7 +22,7 @@ type AppCreateInput struct {
 	Label *string `json:"label,omitempty"`
 	// The app's category. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
 	Category *string `json:"category,omitempty"`
-	// The app's description. Required when creating a custom app. On update this sets a domain-specific override, which is capped at 1,000 characters; send `null` to reset it to the app's default description.
+	// The app's description. Required when creating a custom app. On update, a custom app's own description is replaced; for any other app this sets a domain-specific override, which is capped at 1,000 characters. Send `null` to reset the override to the app's default description.
 	Description *string `json:"description,omitempty"`
 	// URL of the app's logo. On update, send `null` to reset it to the app's default logo.
 	LogoURL *string `json:"logo_url,omitempty"`

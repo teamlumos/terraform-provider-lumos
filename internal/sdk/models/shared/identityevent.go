@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-// IdentityEvent - API representation of a identity event.
 type IdentityEvent struct {
 	// Unique identifier for this identity event.
 	ID string `json:"id"`

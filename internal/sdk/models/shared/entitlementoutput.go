@@ -3,10 +3,80 @@
 package shared
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+// Source - How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
+type Source string
+
+const (
+	SourceGoogleWorkspaceQuickInbox Source = "google-workspace-quick-inbox"
+	SourceGoogleWorkspaceDeepInbox  Source = "google-workspace-deep-inbox"
+	SourceMicrosoftDeepInbox        Source = "microsoft-deep-inbox"
+	SourceMicrosoftOauth            Source = "microsoft-oauth"
+	SourceMicrosoftGcc              Source = "microsoft-gcc"
+	SourceGoogleWorkspaceOauth      Source = "google-workspace-oauth"
+	SourceOkta                      Source = "okta"
+	SourceManual                    Source = "manual"
+	SourceOnelogin                  Source = "onelogin"
+	SourceAtlassian                 Source = "atlassian"
+	SourceGoogleCloud               Source = "google-cloud"
+	SourceIntegration               Source = "integration"
+	SourceJumpcloud                 Source = "jumpcloud"
+	SourceCustom                    Source = "custom"
+	SourceMcp                       Source = "mcp"
+	SourceNative                    Source = "native"
+)
+
+func (e Source) ToPointer() *Source {
+	return &e
+}
+func (e *Source) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "google-workspace-quick-inbox":
+		fallthrough
+	case "google-workspace-deep-inbox":
+		fallthrough
+	case "microsoft-deep-inbox":
+		fallthrough
+	case "microsoft-oauth":
+		fallthrough
+	case "microsoft-gcc":
+		fallthrough
+	case "google-workspace-oauth":
+		fallthrough
+	case "okta":
+		fallthrough
+	case "manual":
+		fallthrough
+	case "onelogin":
+		fallthrough
+	case "atlassian":
+		fallthrough
+	case "google-cloud":
+		fallthrough
+	case "integration":
+		fallthrough
+	case "jumpcloud":
+		fallthrough
+	case "custom":
+		fallthrough
+	case "mcp":
+		fallthrough
+	case "native":
+		*e = Source(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for Source: %v", v)
+	}
+}
 
 type ApprovalWorkflowOverrideType string
 
@@ -308,8 +378,9 @@ type EntitlementOutput struct {
 	// Human-readable label for the entitlement (e.g. a role or permission name).
 	Label string `json:"label"`
 	// Human-readable label for the entitlement's type (e.g. 'Role', 'License', 'Group').
-	EntitlementTypeLabel string          `json:"entitlement_type_label"`
-	Source               DiscoverySource `json:"source"`
+	EntitlementTypeLabel string `json:"entitlement_type_label"`
+	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
+	Source Source `json:"source"`
 	// Optional long-form description of the entitlement.
 	Description *string `json:"description,omitempty"`
 	// The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
@@ -320,7 +391,7 @@ type EntitlementOutput struct {
 	DeprovisioningWorkflow *DeprovisioningWorkflow `json:"deprovisioning_workflow,omitempty"`
 	// This entitlement's own custom approval message, shown to requesters when the entitlement is approved, overriding the app's. Null means this entitlement inherits the app's approval message.
 	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitempty"`
-	// The entitlement's App Store-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the App Store.
+	// The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore.
 	AppstoreSettings *EntitlementAppStoreSettings `json:"appstore_settings,omitempty"`
 }
 
@@ -352,9 +423,9 @@ func (e *EntitlementOutput) GetEntitlementTypeLabel() string {
 	return e.EntitlementTypeLabel
 }
 
-func (e *EntitlementOutput) GetSource() DiscoverySource {
+func (e *EntitlementOutput) GetSource() Source {
 	if e == nil {
-		return DiscoverySource("")
+		return Source("")
 	}
 	return e.Source
 }

@@ -564,7 +564,7 @@ func (s *Knowledge) CreateKnowledgeContext(ctx context.Context, request shared.B
 }
 
 // GetKnowledgeContext - Get Knowledge Context
-// Get a single knowledge entry by ID.
+// Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. An archived (deleted) entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.
 func (s *Knowledge) GetKnowledgeContext(ctx context.Context, request operations.GetKnowledgeContextRequest, opts ...operations.Option) (*operations.GetKnowledgeContextResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

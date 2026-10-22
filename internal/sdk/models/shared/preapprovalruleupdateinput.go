@@ -23,6 +23,8 @@ type PreApprovalRuleUpdateInput struct {
 	// - `identity.start_date` and `identity.end_date` accept `equals`, `!=`, `>`, `>=`, `<`, `<=`, `in`, and `exists`.
 	// - `identity.source_app.id` accepts `equals`, `!=`, `in`, and `exists`.
 	// - `identity.custom_attributes["<Key>"]` checks a custom attribute your organization has defined. For an attribute whose value is a person, use `identity.custom_attributes["<Key>"].id`. For an attribute whose value is a group, use `identity.custom_attributes["<Key>"].external_id`. It accepts the same operators as the attributes above that have the same value type. To match any of several values, use `in` with a list of `{"label": "<display name>", "value": "<value>"}`.
+	// - `webhook.responses["<webhook ID>"]` checks the response of one of your organization's pre-approval webhooks, which is called when the request is evaluated. It accepts only `equals` with the value `"PREAPPROVED"`, and can't be inside a `not`. The check matches when the webhook pre-approves the request.
+	// - `identity.oncall["<schedule ID>"].on_call` checks whether the person is on call for an on-call schedule when the request is evaluated. The schedule ID is the schedule's entitlement ID. It accepts only `equals` with the value `true`, and can't be inside a `not`.
 	// - `access_request.access_length` accepts `equals`, `!=`, `>`, `>=`, `<`, `<=`, and `in`. Values are in seconds, for example `{"label": "<display name>", "value": <seconds>}`. To match unlimited access, use the value `2147483647` (2**31 - 1). Leaving this attribute out allows any duration, unlimited included.
 	//
 	// Leave it out to keep the current value. It cannot be `null`, because every rule must limit who it applies to.

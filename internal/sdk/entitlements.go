@@ -31,8 +31,8 @@ import (
 //
 // ### Per-entitlement workflows
 //
-// Three slots bind a workflow to a single entitlement rather than to the whole app: an approval
-// override, a provisioning workflow, and a deprovisioning workflow. Each has a GET and a PUT.
+// An entitlement can have its own approval override, provisioning workflow, and deprovisioning
+// workflow, bound to it rather than to the whole app. Each has a GET and a PUT.
 //
 // Not every entitlement supports them. An entitlement with no request configuration behind it
 // returns 404 with `Workflows are not available for this entitlement.` on all six.
@@ -57,7 +57,7 @@ func newEntitlements(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 //
 // A page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.
 //
-// A request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 400 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.
+// A request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.
 func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.ListEntitlementsRequest, opts ...operations.Option) (*operations.ListEntitlementsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -258,6 +258,8 @@ func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -313,7 +315,7 @@ func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.
 }
 
 // CreateEntitlement - Create Entitlement
-// Create a requestable entitlement on the named app, so employees can request it from the App Store.
+// Create a requestable entitlement on the named app, so employees can request it from the AppStore.
 //
 // Returns 404 if `app_id` is unknown in your organization.
 func (s *Entitlements) CreateEntitlement(ctx context.Context, request shared.EntitlementCreateInput, opts ...operations.Option) (*operations.CreateEntitlementResponse, error) {
@@ -830,7 +832,11 @@ func (s *Entitlements) GetEntitlement(ctx context.Context, request operations.Ge
 }
 
 // UpdateEntitlement - Update Entitlement
-// Update an entitlement's label. Only `label` is mutable today. Passing any other field returns 400. Returns 404 if the entitlement is unknown in the caller's organization.
+// Update an entitlement's `label`, `description` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field returns 400.
+//
+// Only entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending `label` for a synced one returns 400 and changes nothing. A `description` you set is kept across syncs, on synced entitlements too. `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`.
+//
+// Returns 404 if the entitlement is unknown in the caller's organization.
 func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations.UpdateEntitlementRequest, opts ...operations.Option) (*operations.UpdateEntitlementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1034,6 +1040,8 @@ func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -1089,7 +1097,7 @@ func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations
 }
 
 // DeleteEntitlement - Delete Entitlement
-// Delete an entitlement, along with the request configuration that made it requestable in the App Store.
+// Delete an entitlement, along with the request configuration that made it requestable in the AppStore.
 //
 // Refuses while anyone still holds the entitlement: that returns 409, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.
 func (s *Entitlements) DeleteEntitlement(ctx context.Context, request operations.DeleteEntitlementRequest, opts ...operations.Option) (*operations.DeleteEntitlementResponse, error) {
@@ -1268,6 +1276,8 @@ func (s *Entitlements) DeleteEntitlement(ctx context.Context, request operations
 	case httpRes.StatusCode == 404:
 		fallthrough
 	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 422:
 		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
@@ -1581,8 +1591,8 @@ func (s *Entitlements) ListEntitlementAccounts(ctx context.Context, request oper
 
 }
 
-// GetEntitlementAppStoreSettings - Get Entitlement Appstore Settings
-// Get an entitlement's App Store-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if App Store settings aren't available for it (parent app not enrolled in the App Store, or no App Store request config exists for this entitlement).
+// GetEntitlementAppStoreSettings - Get Entitlement AppStore Settings
+// Get an entitlement's AppStore-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).
 func (s *Entitlements) GetEntitlementAppStoreSettings(ctx context.Context, request operations.GetEntitlementAppStoreSettingsRequest, opts ...operations.Option) (*operations.GetEntitlementAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1833,8 +1843,8 @@ func (s *Entitlements) GetEntitlementAppStoreSettings(ctx context.Context, reque
 
 }
 
-// UpdateEntitlementAppStoreSettings - Update Entitlement Appstore Settings
-// Update an entitlement's App Store-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if App Store settings aren't available for it (parent app not enrolled in the App Store, or no App Store request config exists for this entitlement).
+// UpdateEntitlementAppStoreSettings - Update Entitlement AppStore Settings
+// Update an entitlement's AppStore-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).
 func (s *Entitlements) UpdateEntitlementAppStoreSettings(ctx context.Context, request operations.UpdateEntitlementAppStoreSettingsRequest, opts ...operations.Option) (*operations.UpdateEntitlementAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2037,6 +2047,8 @@ func (s *Entitlements) UpdateEntitlementAppStoreSettings(ctx context.Context, re
 	case httpRes.StatusCode == 404:
 		fallthrough
 	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 422:
 		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {

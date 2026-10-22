@@ -7,18 +7,19 @@ import (
 	"fmt"
 )
 
-type CatalogVisibility string
+// AppStoreSettingsPatchInputCatalogVisibility - Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged.
+type AppStoreSettingsPatchInputCatalogVisibility string
 
 const (
-	CatalogVisibilityVisible    CatalogVisibility = "visible"
-	CatalogVisibilitySearchOnly CatalogVisibility = "search_only"
-	CatalogVisibilityHidden     CatalogVisibility = "hidden"
+	AppStoreSettingsPatchInputCatalogVisibilityVisible    AppStoreSettingsPatchInputCatalogVisibility = "visible"
+	AppStoreSettingsPatchInputCatalogVisibilitySearchOnly AppStoreSettingsPatchInputCatalogVisibility = "search-only"
+	AppStoreSettingsPatchInputCatalogVisibilityHidden     AppStoreSettingsPatchInputCatalogVisibility = "hidden"
 )
 
-func (e CatalogVisibility) ToPointer() *CatalogVisibility {
+func (e AppStoreSettingsPatchInputCatalogVisibility) ToPointer() *AppStoreSettingsPatchInputCatalogVisibility {
 	return &e
 }
-func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
+func (e *AppStoreSettingsPatchInputCatalogVisibility) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -26,21 +27,21 @@ func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
 	switch v {
 	case "visible":
 		fallthrough
-	case "search_only":
+	case "search-only":
 		fallthrough
 	case "hidden":
-		*e = CatalogVisibility(v)
+		*e = AppStoreSettingsPatchInputCatalogVisibility(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for CatalogVisibility: %v", v)
+		return fmt.Errorf("invalid value for AppStoreSettingsPatchInputCatalogVisibility: %v", v)
 	}
 }
 
 type AppStoreSettingsPatchInput struct {
-	// Set to true to list this app in the App Store catalog.
+	// Set to true to list this app in the AppStore catalog.
 	InAppStore *bool `json:"in_app_store,omitempty"`
-	// Visibility within the catalog. "visible", "search_only", or "hidden". Omit to leave unchanged.
-	CatalogVisibility *CatalogVisibility `json:"catalog_visibility,omitempty"`
+	// Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged.
+	CatalogVisibility *AppStoreSettingsPatchInputCatalogVisibility `json:"catalog_visibility,omitempty"`
 	// Custom instructions shown on the access-request form. Null clears any existing instructions.
 	RequestInstructions *string `json:"request_instructions,omitempty"`
 	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.
@@ -68,7 +69,7 @@ func (a *AppStoreSettingsPatchInput) GetInAppStore() *bool {
 	return a.InAppStore
 }
 
-func (a *AppStoreSettingsPatchInput) GetCatalogVisibility() *CatalogVisibility {
+func (a *AppStoreSettingsPatchInput) GetCatalogVisibility() *AppStoreSettingsPatchInputCatalogVisibility {
 	if a == nil {
 		return nil
 	}

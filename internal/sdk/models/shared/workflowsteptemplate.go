@@ -10,6 +10,8 @@ type WorkflowStepTemplate struct {
 	InputSchema map[string]InputParameterSchema `json:"input_schema"`
 	// A human-readable name for this step.
 	Name *string `json:"name,omitempty"`
+	// The outputs this step produces, keyed by namespaced reference (for example 'createApp.id'). Downstream steps can reference these outputs. Absent for steps that have no outputs.
+	OutputSchema map[string]OutputParameterSchema `json:"output_schema,omitempty"`
 }
 
 func (w *WorkflowStepTemplate) GetStep() string {
@@ -31,4 +33,11 @@ func (w *WorkflowStepTemplate) GetName() *string {
 		return nil
 	}
 	return w.Name
+}
+
+func (w *WorkflowStepTemplate) GetOutputSchema() map[string]OutputParameterSchema {
+	if w == nil {
+		return nil
+	}
+	return w.OutputSchema
 }

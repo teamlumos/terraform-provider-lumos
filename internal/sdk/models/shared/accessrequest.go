@@ -3,9 +3,95 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"time"
 )
+
+// AccessRequestStatus - The current status of the request.
+type AccessRequestStatus string
+
+const (
+	AccessRequestStatusPending                     AccessRequestStatus = "pending"
+	AccessRequestStatusPendingManagerApproval      AccessRequestStatus = "pending-manager-approval"
+	AccessRequestStatusManagerApproved             AccessRequestStatus = "manager-approved"
+	AccessRequestStatusManagerDenied               AccessRequestStatus = "manager-denied"
+	AccessRequestStatusPendingApproval             AccessRequestStatus = "pending-approval"
+	AccessRequestStatusApproved                    AccessRequestStatus = "approved"
+	AccessRequestStatusDenied                      AccessRequestStatus = "denied"
+	AccessRequestStatusExpired                     AccessRequestStatus = "expired"
+	AccessRequestStatusCancelled                   AccessRequestStatus = "cancelled"
+	AccessRequestStatusPendingProvisioning         AccessRequestStatus = "pending-provisioning"
+	AccessRequestStatusPendingManualProvisioning   AccessRequestStatus = "pending-manual-provisioning"
+	AccessRequestStatusDeniedProvisioning          AccessRequestStatus = "denied-provisioning"
+	AccessRequestStatusProvisioned                 AccessRequestStatus = "provisioned"
+	AccessRequestStatusPendingDeprovisioning       AccessRequestStatus = "pending-deprovisioning"
+	AccessRequestStatusPendingManualDeprovisioning AccessRequestStatus = "pending-manual-deprovisioning"
+	AccessRequestStatusTimeBasedExpired            AccessRequestStatus = "time-based-expired"
+	AccessRequestStatusCompleted                   AccessRequestStatus = "completed"
+	AccessRequestStatusReverting                   AccessRequestStatus = "reverting"
+	AccessRequestStatusReverted                    AccessRequestStatus = "reverted"
+	AccessRequestStatusTimeBasedExpiredFailed      AccessRequestStatus = "time-based-expired-failed"
+	AccessRequestStatusTimeBasedExpiredCancelled   AccessRequestStatus = "time-based-expired-cancelled"
+)
+
+func (e AccessRequestStatus) ToPointer() *AccessRequestStatus {
+	return &e
+}
+func (e *AccessRequestStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "pending":
+		fallthrough
+	case "pending-manager-approval":
+		fallthrough
+	case "manager-approved":
+		fallthrough
+	case "manager-denied":
+		fallthrough
+	case "pending-approval":
+		fallthrough
+	case "approved":
+		fallthrough
+	case "denied":
+		fallthrough
+	case "expired":
+		fallthrough
+	case "cancelled":
+		fallthrough
+	case "pending-provisioning":
+		fallthrough
+	case "pending-manual-provisioning":
+		fallthrough
+	case "denied-provisioning":
+		fallthrough
+	case "provisioned":
+		fallthrough
+	case "pending-deprovisioning":
+		fallthrough
+	case "pending-manual-deprovisioning":
+		fallthrough
+	case "time-based-expired":
+		fallthrough
+	case "completed":
+		fallthrough
+	case "reverting":
+		fallthrough
+	case "reverted":
+		fallthrough
+	case "time-based-expired-failed":
+		fallthrough
+	case "time-based-expired-cancelled":
+		*e = AccessRequestStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AccessRequestStatus: %v", v)
+	}
+}
 
 type AccessRequest struct {
 	// The ID of the access request.
@@ -17,10 +103,11 @@ type AccessRequest struct {
 	// The user who requested access. It's possible for one user to request access on another's behalf. None for system-initiated requests, such as automated onboarding policies, that have no human requester.
 	RequesterUser *User `json:"requester_user,omitempty"`
 	TargetUser    User  `json:"target_user"`
-	// The user supporting this request, if any. None if no supporter has been assigned.
-	SupporterUser *User                `json:"supporter_user,omitempty"`
-	Status        SupportRequestStatus `json:"status"`
-	// The reason the user wrote for putting the access request into the given state.
+	// The last approver, other than a manager, who approved or denied this request. None until such an approver acts.
+	SupporterUser *User `json:"supporter_user,omitempty"`
+	// The current status of the request.
+	Status AccessRequestStatus `json:"status"`
+	// The reason the user wrote for putting the access request into the given state, keyed by that status.
 	Notes map[string]*string `json:"notes,omitempty"`
 	// For time-based access, when the granted access is removed. None for permanent requests.
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
@@ -89,9 +176,9 @@ func (a *AccessRequest) GetSupporterUser() *User {
 	return a.SupporterUser
 }
 
-func (a *AccessRequest) GetStatus() SupportRequestStatus {
+func (a *AccessRequest) GetStatus() AccessRequestStatus {
 	if a == nil {
-		return SupportRequestStatus("")
+		return AccessRequestStatus("")
 	}
 	return a.Status
 }

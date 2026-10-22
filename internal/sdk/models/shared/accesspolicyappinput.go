@@ -5,7 +5,7 @@ package shared
 type AccessPolicyAppInput struct {
 	// The ID of this app.
 	ID string `json:"id"`
-	// Whether approval is required for this app grant.
+	// Whether requests created through this policy for this app are pre-approved.
 	IsPreapproved *bool `json:"is_preapproved,omitempty"`
 	// The entitlements granted for this app. Omit, or send an empty list, to grant access to the app itself rather than to specific entitlements.
 	Entitlements []EntitlementRefInput `json:"entitlements,omitempty"`

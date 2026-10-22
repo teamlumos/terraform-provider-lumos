@@ -26,8 +26,7 @@ import (
 //   - `GET /v1/groups/{group_id}` reads one group, and `GET /v1/groups/{group_id}/users` lists its
 //     members.
 //
-// An `app_id` that matches no app in your organization returns an empty page rather than an error,
-// so an empty filtered list can mean a wrong ID.
+// An `app_id` that matches no app in your organization returns 404.
 type Groups struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -302,6 +301,8 @@ func (s *Groups) ListGroups(ctx context.Context, request operations.ListGroupsRe
 
 // GetGroup - Get Group
 // Get a group by ID. Returns 404 if the group is unknown in your organization.
+//
+// Reading a group needs permission to read groups. Of the built-in roles, Admin, Read Only Admin, AppStore Read Only Admin, and App Admin have it. Anyone else gets 403.
 func (s *Groups) GetGroup(ctx context.Context, request operations.GetGroupRequest, opts ...operations.Option) (*operations.GetGroupResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

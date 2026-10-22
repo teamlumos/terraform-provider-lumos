@@ -2,6 +2,113 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// AttributeType - The type of value the attribute holds.
+type AttributeType string
+
+const (
+	AttributeTypeString       AttributeType = "string"
+	AttributeTypeBoolean      AttributeType = "boolean"
+	AttributeTypeInteger      AttributeType = "integer"
+	AttributeTypeDatetime     AttributeType = "datetime"
+	AttributeTypeJSON         AttributeType = "json"
+	AttributeTypeUser         AttributeType = "user"
+	AttributeTypeGroup        AttributeType = "group"
+	AttributeTypeMultiSelect  AttributeType = "multi-select"
+	AttributeTypeSingleSelect AttributeType = "single-select"
+)
+
+func (e AttributeType) ToPointer() *AttributeType {
+	return &e
+}
+func (e *AttributeType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "string":
+		fallthrough
+	case "boolean":
+		fallthrough
+	case "integer":
+		fallthrough
+	case "datetime":
+		fallthrough
+	case "json":
+		fallthrough
+	case "user":
+		fallthrough
+	case "group":
+		fallthrough
+	case "multi-select":
+		fallthrough
+	case "single-select":
+		*e = AttributeType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for AttributeType: %v", v)
+	}
+}
+
+// ConfigType - Entity type this attribute attaches to. Always `user`.
+type ConfigType string
+
+const (
+	ConfigTypeUser ConfigType = "user"
+)
+
+func (e ConfigType) ToPointer() *ConfigType {
+	return &e
+}
+func (e *ConfigType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "user":
+		*e = ConfigType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for ConfigType: %v", v)
+	}
+}
+
+// SourceType - Where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
+type SourceType string
+
+const (
+	SourceTypeSynced      SourceType = "synced"
+	SourceTypeNative      SourceType = "native"
+	SourceTypeAiGenerated SourceType = "ai-generated"
+)
+
+func (e SourceType) ToPointer() *SourceType {
+	return &e
+}
+func (e *SourceType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "synced":
+		fallthrough
+	case "native":
+		fallthrough
+	case "ai-generated":
+		*e = SourceType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SourceType: %v", v)
+	}
+}
+
 // CustomAttributeDefinition - A custom-attribute definition (the schema behind custom-attribute values).
 //
 // Unified by “label“: one record per logical attribute (the N per-integration
@@ -12,12 +119,12 @@ type CustomAttributeDefinition struct {
 	Label string `json:"label"`
 	// Representative machine/synced attribute name.
 	Name *string `json:"name,omitempty"`
-	// Value type: STRING/USER/GROUP/SINGLESELECT/MULTISELECT/…
-	AttributeType string `json:"attribute_type"`
-	// Entity type this attribute attaches to: USER or ACCOUNT.
-	ConfigType string `json:"config_type"`
-	// SYNCED / NATIVE / AI_GENERATED.
-	SourceType string `json:"source_type"`
+	// The type of value the attribute holds.
+	AttributeType AttributeType `json:"attribute_type"`
+	// Entity type this attribute attaches to. Always `user`.
+	ConfigType ConfigType `json:"config_type"`
+	// Where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
+	SourceType SourceType `json:"source_type"`
 }
 
 func (c *CustomAttributeDefinition) GetLabel() string {
@@ -34,23 +141,23 @@ func (c *CustomAttributeDefinition) GetName() *string {
 	return c.Name
 }
 
-func (c *CustomAttributeDefinition) GetAttributeType() string {
+func (c *CustomAttributeDefinition) GetAttributeType() AttributeType {
 	if c == nil {
-		return ""
+		return AttributeType("")
 	}
 	return c.AttributeType
 }
 
-func (c *CustomAttributeDefinition) GetConfigType() string {
+func (c *CustomAttributeDefinition) GetConfigType() ConfigType {
 	if c == nil {
-		return ""
+		return ConfigType("")
 	}
 	return c.ConfigType
 }
 
-func (c *CustomAttributeDefinition) GetSourceType() string {
+func (c *CustomAttributeDefinition) GetSourceType() SourceType {
 	if c == nil {
-		return ""
+		return SourceType("")
 	}
 	return c.SourceType
 }

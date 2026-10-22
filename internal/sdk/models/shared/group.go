@@ -2,10 +2,42 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type GroupLifecycle string
+
+const (
+	GroupLifecycleSynced GroupLifecycle = "synced"
+	GroupLifecycleNative GroupLifecycle = "native"
+)
+
+func (e GroupLifecycle) ToPointer() *GroupLifecycle {
+	return &e
+}
+func (e *GroupLifecycle) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "synced":
+		fallthrough
+	case "native":
+		*e = GroupLifecycle(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for GroupLifecycle: %v", v)
+	}
+}
+
+// Group - A v1 group, unprefixed on purpose (see `codegen_openapi_v1.py`).
 type Group struct {
 	// The ID of this group.
 	ID *string `json:"id,omitempty"`
-	// The ID of the app that sources this group.
+	// The ID of the app this group is synced from.
 	AppID *string `json:"app_id,omitempty"`
 	// The ID of this group, specific to the integration.
 	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
@@ -14,8 +46,8 @@ type Group struct {
 	// The description of this group.
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
-	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitempty"`
-	// The ID of the app that sources this group.
+	GroupLifecycle *GroupLifecycle `json:"group_lifecycle,omitempty"`
+	// The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 	SourceAppID *string `json:"source_app_id,omitempty"`
 }
 
@@ -54,7 +86,7 @@ func (g *Group) GetDescription() *string {
 	return g.Description
 }
 
-func (g *Group) GetGroupLifecycle() *Lifecycle {
+func (g *Group) GetGroupLifecycle() *GroupLifecycle {
 	if g == nil {
 		return nil
 	}
