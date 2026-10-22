@@ -126,10 +126,12 @@ resource "lumos_workflow" "test" {
 }
 
 // TestAccWorkflowApproval creates an approval chain with one stage assigned
-// to GROUP_ID and an approval template whose branch step falls back to that
-// chain, all on a custom app the test creates. It renames the chain, which
-// must plan only the name, then imports both. Neither workflow is bound, and
-// the template is never updated.
+// to GROUP_ID and an approval template whose branch step sends the Eng and
+// IT teams to that chain, with the same chain as the fallback, all on a
+// custom app the test creates. The condition is written in the expanded
+// { label, value } form, which reads back unchanged. It renames the chain,
+// which must plan only the name, then imports both. Neither workflow is
+// bound, and the template is never updated.
 func TestAccWorkflowApproval(t *testing.T) {
 	groupID := testAccOptionalEnv(t, "GROUP_ID")
 	prefix := "tf-acc-" + acctest.RandString(8)
@@ -152,11 +154,19 @@ resource "lumos_workflow" "template" {
   app_id      = lumos_app.app.id
   type        = "approval"
   name        = "%s-template"
-  description = "Falls back to the chain"
+  description = "Routes the Eng and IT teams to the chain"
   steps = [{
     step = "branch"
     inputs = jsonencode({
-      branches             = []
+      branches = [{
+        condition = {
+          and = [{
+            attribute = { label = "Team", value = "identity.team" }
+            in        = [{ label = "Engineering", value = "Eng" }, { label = "IT", value = "IT" }]
+          }]
+        }
+        workflow_id = lumos_workflow.chain.id
+      }]
       fallback_workflow_id = lumos_workflow.chain.id
     })
   }]
