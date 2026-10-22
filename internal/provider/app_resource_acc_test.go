@@ -120,13 +120,13 @@ resource "lumos_app_appstore_settings" "test" {
 			),
 		},
 		{
-			Config: providerConfig() + apps + settings("lumos_app.first", "search_only", groups, true),
+			Config: providerConfig() + apps + settings("lumos_app.first", "search-only", groups, true),
 			ConfigPlanChecks: resource.ConfigPlanChecks{
 				PreApply: []plancheck.PlanCheck{
 					expectOnlyAttributesChange("lumos_app_appstore_settings.test", "catalog_visibility"),
 				},
 			},
-			Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "catalog_visibility", "search_only"),
+			Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "catalog_visibility", "search-only"),
 		},
 	}
 	// Empty lists are sent, so they clear the intake field and, when set, the
@@ -143,13 +143,13 @@ resource "lumos_app_appstore_settings" "test" {
 		clearedChecks = append(clearedChecks, resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "allowed_requester_group_uuids.#", "0"))
 	}
 	steps = append(steps, resource.TestStep{
-		Config: providerConfig() + apps + settings("lumos_app.first", "search_only", noGroups, false),
+		Config: providerConfig() + apps + settings("lumos_app.first", "search-only", noGroups, false),
 		Check:  resource.ComposeAggregateTestCheckFunc(clearedChecks...),
 	})
 	steps = append(steps, resource.TestStep{
 		// Settings belong to one app: pointing the resource at another app is
 		// a replace, not an update.
-		Config: providerConfig() + apps + settings("lumos_app.second", "search_only", noGroups, false),
+		Config: providerConfig() + apps + settings("lumos_app.second", "search-only", noGroups, false),
 		ConfigPlanChecks: resource.ConfigPlanChecks{
 			PreApply: []plancheck.PlanCheck{
 				plancheck.ExpectResourceAction("lumos_app_appstore_settings.test", plancheck.ResourceActionReplace),

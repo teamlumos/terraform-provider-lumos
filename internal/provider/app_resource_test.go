@@ -82,9 +82,9 @@ func newFakeAPI(t *testing.T) *fakeAPI {
 			"instance_id":                     "acme.slack.com",
 			"category":                        "Communication",
 			"description":                     "Team chat",
-			"status":                          "APPROVED",
+			"status":                          "approved",
 			"disconnected":                    false,
-			"sync_status":                     "SUCCESS",
+			"sync_status":                     "success",
 			"approval_workflow":               nil,
 			"default_provisioning_workflow":   nil,
 			"default_deprovisioning_workflow": nil,
@@ -203,13 +203,13 @@ import {
 				},
 			},
 			{
-				Config: settings("search_only"),
+				Config: settings("search-only"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_app_appstore_settings.slack", plancheck.ResourceActionUpdate),
 					},
 				},
-				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search_only"),
+				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search-only"),
 			},
 		},
 	})
@@ -219,8 +219,8 @@ import {
 	if len(api.patches) != 2 {
 		t.Fatalf("got %d PATCHes, want the update and the destroy: %v", len(api.patches), api.patches)
 	}
-	if got := api.patches[0]["catalog_visibility"]; got != "search_only" {
-		t.Errorf("update sent catalog_visibility %v, want search_only", got)
+	if got := api.patches[0]["catalog_visibility"]; got != "search-only" {
+		t.Errorf("update sent catalog_visibility %v, want search-only", got)
 	}
 	if _, sent := api.patches[0]["allowed_requester_group_uuids"]; sent {
 		t.Errorf("update sent allowed_requester_group_uuids, which the config leaves alone")
