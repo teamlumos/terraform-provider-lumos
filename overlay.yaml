@@ -790,7 +790,7 @@ actions:
   # Set elements are matched on their whole value, so each app's fields need
   # one value whether or not the config sets them. The API stores a missing
   # is_preapproved as false. A grant on the app itself reads back as an empty
-  # entitlements set, so the config writes it that way too.
+  # entitlements set, so leaving entitlements out plans an empty set.
   - target: $["components"]["schemas"]["AccessPolicyAppInput"]["properties"]["is_preapproved","entitlements"]["anyOf"]
     remove: true
   - target: $["components"]["schemas"]["AccessPolicyAppInput"]["properties"]["is_preapproved"]
@@ -802,15 +802,17 @@ actions:
       type: array
       items: {"$ref": "#/components/schemas/EntitlementRefInput"}
       format: set
-      x-speakeasy-param-computed: false
+      x-speakeasy-plan-modifiers: EmptyWhenNull
       description: >-
-        The entitlements granted for this app. An empty set grants access to
-        the app itself rather than to specific entitlements.
-  - target: $["components"]["schemas"]["AccessPolicyAppInput"]["required"]
-    remove: true
-  - target: $["components"]["schemas"]["AccessPolicyAppInput"]
+        The entitlements granted for this app. Leave it out, or set it to an
+        empty set, to grant access to the app itself rather than to specific
+        entitlements.
+  # The framework marks computed values unknown when a config value differs
+  # from state, before plan modifiers run, so an omitted entitlements set
+  # would otherwise plan the id as unknown on every run. The id never changes.
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["id"]
     update:
-      required: ["id", "entitlements"]
+      x-speakeasy-param-suppress-computed-diff: true
   # Set in the config or not at all: an everyone policy has none, and
   # removing it from the config must not send the previous one.
   - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["access_condition"]
