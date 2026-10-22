@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 3f6cd0e46006e57f322c22077ca5cb27
+  docChecksum: 77b471f538971973f4b04048b9a42c03
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -126,6 +126,10 @@ trackedFiles:
   internal/provider/appappstoresettings_resource_sdk.go: {}
   internal/provider/currentuser_data_source.go: {}
   internal/provider/currentuser_data_source_sdk.go: {}
+  internal/provider/entitlement_resource.go: {}
+  internal/provider/entitlement_resource_sdk.go: {}
+  internal/provider/entitlementappstoresettings_resource.go: {}
+  internal/provider/entitlementappstoresettings_resource_sdk.go: {}
   internal/provider/provider.go:
     id: 1e7e86841cf3
     pristine_git_object: cade954268074f6d8e2576394aa268a3da31bec5
@@ -183,9 +187,12 @@ trackedFiles:
     pristine_git_object: 85e79406782c5e6fb67d15b25784be652dc08478
   internal/provider/types/approval_workflow_workflow_ref.go: {}
   internal/provider/types/appstore_settings_app_store_settings_response.go: {}
+  internal/provider/types/appstore_settings_entitlement_app_store_settings.go: {}
   internal/provider/types/appstore_settings_time_based_access.go: {}
   internal/provider/types/custom_attribute.go: {}
   internal/provider/types/custom_intake_field.go: {}
+  ? internal/provider/types/entitlement_time_based_access_override_patch_input_time_based_access_override_entitlement_time_based_access_override_patch_input.go
+  : {}
   internal/provider/types/user.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
@@ -367,6 +374,7 @@ trackedFiles:
   internal/sdk/models/operations/v1patchaccesspolicy.go: {}
   internal/sdk/models/operations/v1patchappstoresettings.go: {}
   internal/sdk/models/operations/v1removeappfromappstore.go: {}
+  internal/sdk/models/operations/v1removeentitlementfromappstore.go: {}
   internal/sdk/models/operations/v1updateaccesspolicy.go: {}
   internal/sdk/models/operations/v1updateapp.go: {}
   internal/sdk/models/operations/v1uploadaccounts.go: {}
@@ -467,7 +475,6 @@ trackedFiles:
     pristine_git_object: 7fbdc7a26f3cd2c84910cb579bfce76db22da3ba
   internal/sdk/models/shared/grouplistoutput.go: {}
   internal/sdk/models/shared/groupmemberlistoutput.go: {}
-  internal/sdk/models/shared/groupref.go: {}
   internal/sdk/models/shared/identityevent.go:
     id: eb9ea3c5af12
     pristine_git_object: 364bc5c447943de8d8452fbc162ba89ffa9ff8bc
@@ -521,7 +528,6 @@ trackedFiles:
   internal/sdk/models/shared/tasklistoutput.go: {}
   internal/sdk/models/shared/timebasedaccess.go: {}
   internal/sdk/models/shared/timebasedaccessoption.go: {}
-  internal/sdk/models/shared/timebasedaccessoverride.go: {}
   internal/sdk/models/shared/timebasedaccessoverrideoption.go: {}
   internal/sdk/models/shared/timebasedaccesspatchinput.go: {}
   internal/sdk/models/shared/triggersyncinput.go: {}
@@ -537,12 +543,10 @@ trackedFiles:
   internal/sdk/models/shared/userwithcustomattributes.go:
     id: 26468d8bdf78
     pristine_git_object: 3ed8dc1e4645f168451b57dc672cb73d0c32a05f
-  internal/sdk/models/shared/webhookref.go: {}
   internal/sdk/models/shared/workflow.go: {}
   internal/sdk/models/shared/workflowassociationinput.go: {}
   internal/sdk/models/shared/workflowinput.go: {}
   internal/sdk/models/shared/workflowlistoutput.go: {}
-  internal/sdk/models/shared/workflowref.go: {}
   internal/sdk/models/shared/workflowstepinput.go: {}
   internal/sdk/models/shared/workflowstepoutput.go: {}
   internal/sdk/models/shared/workflowsteptemplate.go: {}
@@ -2598,6 +2602,11 @@ examples:
       parameters:
         path:
           app_uuid: "<id>"
+  v1RemoveEntitlementFromAppStore:
+    speakeasy-default-v1-remove-entitlement-from-app-store:
+      parameters:
+        path:
+          entitlement_uuid: "<id>"
 examplesVersion: 1.0.2
 generatedTests: {}
 generatedFiles:

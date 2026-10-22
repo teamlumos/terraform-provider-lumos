@@ -4,7 +4,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
@@ -78,295 +77,113 @@ func (e *Source) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type ApprovalWorkflowOverrideType string
-
-const (
-	ApprovalWorkflowOverrideTypeWorkflow    ApprovalWorkflowOverrideType = "Workflow"
-	ApprovalWorkflowOverrideTypeWorkflowRef ApprovalWorkflowOverrideType = "WorkflowRef"
-)
-
-// ApprovalWorkflowOverride - The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
-type ApprovalWorkflowOverride struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type ApprovalWorkflowOverrideType
+// WorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type WorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
 }
 
-func CreateApprovalWorkflowOverrideWorkflow(workflow Workflow) ApprovalWorkflowOverride {
-	typ := ApprovalWorkflowOverrideTypeWorkflow
-
-	return ApprovalWorkflowOverride{
-		Workflow: &workflow,
-		Type:     typ,
+func (w *WorkflowRef) GetID() string {
+	if w == nil {
+		return ""
 	}
+	return w.ID
 }
 
-func CreateApprovalWorkflowOverrideWorkflowRef(workflowRef WorkflowRef) ApprovalWorkflowOverride {
-	typ := ApprovalWorkflowOverrideTypeWorkflowRef
-
-	return ApprovalWorkflowOverride{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
-	}
+// ProvisioningWorkflowWorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type ProvisioningWorkflowWorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
 }
 
-func (u *ApprovalWorkflowOverride) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = ApprovalWorkflowOverride{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ApprovalWorkflowOverrideTypeWorkflow,
-			Value: &workflow,
-		})
+func (p *ProvisioningWorkflowWorkflowRef) GetID() string {
+	if p == nil {
+		return ""
 	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ApprovalWorkflowOverrideTypeWorkflowRef,
-			Value: &workflowRef,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflowOverride", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflowOverride", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ApprovalWorkflowOverrideType)
-	switch best.Type {
-	case ApprovalWorkflowOverrideTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
-		return nil
-	case ApprovalWorkflowOverrideTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
-		return nil
-	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflowOverride", string(data))
+	return p.ID
 }
 
-func (u ApprovalWorkflowOverride) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
-	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type ApprovalWorkflowOverride: all fields are null")
+// DeprovisioningWorkflowWorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type DeprovisioningWorkflowWorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
 }
 
-type ProvisioningWorkflowType string
-
-const (
-	ProvisioningWorkflowTypeWorkflow    ProvisioningWorkflowType = "Workflow"
-	ProvisioningWorkflowTypeWorkflowRef ProvisioningWorkflowType = "WorkflowRef"
-)
-
-// ProvisioningWorkflow - The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
-type ProvisioningWorkflow struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type ProvisioningWorkflowType
+func (d *DeprovisioningWorkflowWorkflowRef) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
 }
 
-func CreateProvisioningWorkflowWorkflow(workflow Workflow) ProvisioningWorkflow {
-	typ := ProvisioningWorkflowTypeWorkflow
-
-	return ProvisioningWorkflow{
-		Workflow: &workflow,
-		Type:     typ,
-	}
+type EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput struct {
+	// Labels of the time-based access options for this entitlement's override, referencing options already defined for the organization. Must contain at least one label. To inherit the app's options instead, omit `time_based_access_override` or set it to `null`.
+	Options []string `json:"options"`
 }
 
-func CreateProvisioningWorkflowWorkflowRef(workflowRef WorkflowRef) ProvisioningWorkflow {
-	typ := ProvisioningWorkflowTypeWorkflowRef
-
-	return ProvisioningWorkflow{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
+func (e *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput) GetOptions() []string {
+	if e == nil {
+		return []string{}
 	}
+	return e.Options
 }
 
-func (u *ProvisioningWorkflow) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = ProvisioningWorkflow{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
+type AppstoreSettingsEntitlementAppStoreSettings struct {
+	// Whether this entitlement is visible in the AppStore catalog.
+	VisibleInAppstore bool `json:"visible_in_appstore"`
+	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
+	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
+	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
+	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
+	// UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
+}
 
-	var candidates []utils.UnionCandidate
+func (a AppstoreSettingsEntitlementAppStoreSettings) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
 
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ProvisioningWorkflowTypeWorkflow,
-			Value: &workflow,
-		})
+func (a *AppstoreSettingsEntitlementAppStoreSettings) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, "if . == null then . else .allowed_requester_group_uuids_override = (.allowed_requester_groups_override | if . == null then null else map(.id) end) | .request_validation_webhook_uuid = .request_validation_webhook.id | .time_based_access_override |= (if . == null then null else { options: (.options | map(.label)) } end) | del(.allowed_requester_groups_override, .request_validation_webhook) end"); err != nil {
+		return err
+	} else {
+		data = out
 	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ProvisioningWorkflowTypeWorkflowRef,
-			Value: &workflowRef,
-		})
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
 	}
+	return nil
+}
 
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProvisioningWorkflow", string(data))
+func (a *AppstoreSettingsEntitlementAppStoreSettings) GetVisibleInAppstore() bool {
+	if a == nil {
+		return false
 	}
+	return a.VisibleInAppstore
+}
 
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProvisioningWorkflow", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ProvisioningWorkflowType)
-	switch best.Type {
-	case ProvisioningWorkflowTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
-		return nil
-	case ProvisioningWorkflowTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
+func (a *AppstoreSettingsEntitlementAppStoreSettings) GetTimeBasedAccessOverride() *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ProvisioningWorkflow", string(data))
+	return a.TimeBasedAccessOverride
 }
 
-func (u ProvisioningWorkflow) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
-	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type ProvisioningWorkflow: all fields are null")
-}
-
-type DeprovisioningWorkflowType string
-
-const (
-	DeprovisioningWorkflowTypeWorkflow    DeprovisioningWorkflowType = "Workflow"
-	DeprovisioningWorkflowTypeWorkflowRef DeprovisioningWorkflowType = "WorkflowRef"
-)
-
-// DeprovisioningWorkflow - The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.
-type DeprovisioningWorkflow struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type DeprovisioningWorkflowType
-}
-
-func CreateDeprovisioningWorkflowWorkflow(workflow Workflow) DeprovisioningWorkflow {
-	typ := DeprovisioningWorkflowTypeWorkflow
-
-	return DeprovisioningWorkflow{
-		Workflow: &workflow,
-		Type:     typ,
-	}
-}
-
-func CreateDeprovisioningWorkflowWorkflowRef(workflowRef WorkflowRef) DeprovisioningWorkflow {
-	typ := DeprovisioningWorkflowTypeWorkflowRef
-
-	return DeprovisioningWorkflow{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
-	}
-}
-
-func (u *DeprovisioningWorkflow) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = DeprovisioningWorkflow{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DeprovisioningWorkflowTypeWorkflow,
-			Value: &workflow,
-		})
-	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DeprovisioningWorkflowTypeWorkflowRef,
-			Value: &workflowRef,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DeprovisioningWorkflow", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DeprovisioningWorkflow", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(DeprovisioningWorkflowType)
-	switch best.Type {
-	case DeprovisioningWorkflowTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
-		return nil
-	case DeprovisioningWorkflowTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
+func (a *AppstoreSettingsEntitlementAppStoreSettings) GetAllowedRequesterGroupUuidsOverride() []string {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for DeprovisioningWorkflow", string(data))
+	return a.AllowedRequesterGroupUuidsOverride
 }
 
-func (u DeprovisioningWorkflow) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
+func (a *AppstoreSettingsEntitlementAppStoreSettings) GetRequestValidationWebhookUUID() *string {
+	if a == nil {
+		return nil
 	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type DeprovisioningWorkflow: all fields are null")
+	return a.RequestValidationWebhookUUID
 }
 
 // EntitlementOutput - Public-API representation of an Entitlement.
@@ -384,15 +201,15 @@ type EntitlementOutput struct {
 	// Optional long-form description of the entitlement.
 	Description *string `json:"description,omitzero"`
 	// The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
-	ApprovalWorkflowOverride *ApprovalWorkflowOverride `json:"approval_workflow_override,omitzero"`
+	ApprovalWorkflowOverride *WorkflowRef `json:"approval_workflow_override,omitzero"`
 	// The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
-	ProvisioningWorkflow *ProvisioningWorkflow `json:"provisioning_workflow,omitzero"`
+	ProvisioningWorkflow *ProvisioningWorkflowWorkflowRef `json:"provisioning_workflow,omitzero"`
 	// The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.
-	DeprovisioningWorkflow *DeprovisioningWorkflow `json:"deprovisioning_workflow,omitzero"`
+	DeprovisioningWorkflow *DeprovisioningWorkflowWorkflowRef `json:"deprovisioning_workflow,omitzero"`
 	// This entitlement's own custom approval message, shown to requesters when the entitlement is approved, overriding the app's. Null means this entitlement inherits the app's approval message.
 	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitzero"`
 	// The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore.
-	AppstoreSettings *EntitlementAppStoreSettings `json:"appstore_settings,omitzero"`
+	AppstoreSettings *AppstoreSettingsEntitlementAppStoreSettings `json:"appstore_settings,omitzero"`
 }
 
 func (e EntitlementOutput) MarshalJSON() ([]byte, error) {
@@ -448,21 +265,21 @@ func (e *EntitlementOutput) GetDescription() *string {
 	return e.Description
 }
 
-func (e *EntitlementOutput) GetApprovalWorkflowOverride() *ApprovalWorkflowOverride {
+func (e *EntitlementOutput) GetApprovalWorkflowOverride() *WorkflowRef {
 	if e == nil {
 		return nil
 	}
 	return e.ApprovalWorkflowOverride
 }
 
-func (e *EntitlementOutput) GetProvisioningWorkflow() *ProvisioningWorkflow {
+func (e *EntitlementOutput) GetProvisioningWorkflow() *ProvisioningWorkflowWorkflowRef {
 	if e == nil {
 		return nil
 	}
 	return e.ProvisioningWorkflow
 }
 
-func (e *EntitlementOutput) GetDeprovisioningWorkflow() *DeprovisioningWorkflow {
+func (e *EntitlementOutput) GetDeprovisioningWorkflow() *DeprovisioningWorkflowWorkflowRef {
 	if e == nil {
 		return nil
 	}
@@ -476,7 +293,7 @@ func (e *EntitlementOutput) GetCustomApprovalMessageOverride() *string {
 	return e.CustomApprovalMessageOverride
 }
 
-func (e *EntitlementOutput) GetAppstoreSettings() *EntitlementAppStoreSettings {
+func (e *EntitlementOutput) GetAppstoreSettings() *AppstoreSettingsEntitlementAppStoreSettings {
 	if e == nil {
 		return nil
 	}

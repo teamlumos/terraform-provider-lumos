@@ -17,11 +17,11 @@ import (
 type EntitlementAppStoreSettingsPatchInput struct {
 	// Whether this entitlement is visible in the AppStore catalog.
 	VisibleInAppstore *bool `json:"visible_in_appstore,omitzero"`
-	// UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. `null` clears the override so this entitlement inherits the app's allowed requester groups. An empty list turns the override on with no group restriction: anyone can request this entitlement, even if the app restricts requesters.
+	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. An empty list lets anyone in the organization request it. Omitted or set to `null`, the entitlement inherits the app's groups.
 	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
-	// This entitlement's own time-based access options, overriding the app's. Null clears the override so this entitlement inherits the app's time-based access options.
+	// This entitlement's own time-based access options, overriding the app's. Omitted or set to `null`, the entitlement inherits the app's options.
 	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
-	// UUID of the inline webhook to call to validate access requests for this entitlement. Null removes this entitlement's webhook. Nothing is inherited from the app. When a request names entitlements, only the webhooks set on those entitlements run.
+	// UUID of the inline webhook called to validate access requests for this entitlement. Omitted or set to `null`, the entitlement has no webhook of its own.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 }
 

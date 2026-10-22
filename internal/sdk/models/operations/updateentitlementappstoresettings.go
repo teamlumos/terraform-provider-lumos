@@ -10,15 +10,15 @@ import (
 
 type UpdateEntitlementAppStoreSettingsRequest struct {
 	// The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.
-	EntitlementUUID                       string                                       `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementID                         string                                       `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
 	EntitlementAppStoreSettingsPatchInput shared.EntitlementAppStoreSettingsPatchInput `request:"mediaType=application/json"`
 }
 
-func (u *UpdateEntitlementAppStoreSettingsRequest) GetEntitlementUUID() string {
+func (u *UpdateEntitlementAppStoreSettingsRequest) GetEntitlementID() string {
 	if u == nil {
 		return ""
 	}
-	return u.EntitlementUUID
+	return u.EntitlementID
 }
 
 func (u *UpdateEntitlementAppStoreSettingsRequest) GetEntitlementAppStoreSettingsPatchInput() shared.EntitlementAppStoreSettingsPatchInput {
