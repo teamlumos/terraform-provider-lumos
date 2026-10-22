@@ -999,3 +999,218 @@ actions:
           - github.com/teamlumos/terraform-provider-lumos/internal/customtypes
         schemaType: customtypes.StepInputsType{}
         valueType: customtypes.StepInputs
+
+  # Workflow bindings: one resource per app or entitlement workflow slot.
+  # A slot's response is a full Workflow, which can map to only one entity,
+  # so each binding gets its own copy narrowed to workflow_id, read from the
+  # workflow's id. With no delete mapping, destroy leaves the slot as it is;
+  # only the entitlement approval override has a DELETE, which turns the
+  # override off.
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: AppApprovalWorkflow#read
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["put"]
+    update:
+      x-speakeasy-entity-operation: AppApprovalWorkflow#create,update
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/AppApprovalWorkflowBinding"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: AppProvisioningWorkflow#read
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"]["put"]
+    update:
+      x-speakeasy-entity-operation: AppProvisioningWorkflow#create,update
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-provisioning-workflow"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/AppProvisioningWorkflowBinding"
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: AppDeprovisioningWorkflow#read
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"]["put"]
+    update:
+      x-speakeasy-entity-operation: AppDeprovisioningWorkflow#create,update
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/apps/{app_uuid}/default-deprovisioning-workflow"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/AppDeprovisioningWorkflowBinding"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: EntitlementApprovalWorkflow#read
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["put"]
+    update:
+      x-speakeasy-entity-operation: EntitlementApprovalWorkflow#create,update
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"]["delete"]
+    update:
+      x-speakeasy-entity-operation: EntitlementApprovalWorkflow#delete
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"][*]["parameters"][?@.name=="entitlement_uuid"]
+    update:
+      x-speakeasy-name-override: entitlement_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/approval-workflow-override"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/EntitlementApprovalWorkflowBinding"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: EntitlementProvisioningWorkflow#read
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"]["put"]
+    update:
+      x-speakeasy-entity-operation: EntitlementProvisioningWorkflow#create,update
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"][*]["parameters"][?@.name=="entitlement_uuid"]
+    update:
+      x-speakeasy-name-override: entitlement_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/provisioning-workflow"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/EntitlementProvisioningWorkflowBinding"
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: EntitlementDeprovisioningWorkflow#read
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"]["put"]
+    update:
+      x-speakeasy-entity-operation: EntitlementDeprovisioningWorkflow#create,update
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"][*]["parameters"][?@.name=="entitlement_uuid"]
+    update:
+      x-speakeasy-name-override: entitlement_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/entitlements/{entitlement_uuid}/deprovisioning-workflow"][*]["responses"]["200"]["content"]["application/json"]["schema"]
+    update:
+      $ref: "#/components/schemas/EntitlementDeprovisioningWorkflowBinding"
+  - target: $["components"]["schemas"]
+    update:
+      AppApprovalWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `approval` workflow to bind. Changing it
+              binds a different workflow in place.
+        x-speakeasy-entity: AppApprovalWorkflow
+        x-speakeasy-entity-description: >-
+          Binds an approval template (a `lumos_workflow` of type
+          `approval`) to an app, as the approval process for
+          requests to the app. Destroying this resource doesn't
+          unbind or delete the workflow: the app keeps it as its
+          approval workflow until a different one is bound. To
+          change it, bind a different workflow.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
+      AppProvisioningWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `account-provisioning` workflow to bind.
+              Changing it binds a different workflow in place.
+        x-speakeasy-entity: AppProvisioningWorkflow
+        x-speakeasy-entity-description: >-
+          Binds an `account-provisioning` workflow to an app, as the
+          account workflow that creates accounts in the app.
+          Destroying this resource doesn't unbind or delete the
+          workflow: the app keeps it until a different one is bound.
+          To change it, bind a different workflow.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
+      AppDeprovisioningWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `account-deprovisioning` workflow to
+              bind. Changing it binds a different workflow in
+              place.
+        x-speakeasy-entity: AppDeprovisioningWorkflow
+        x-speakeasy-entity-description: >-
+          Binds an `account-deprovisioning` workflow to an app, as
+          the account workflow that removes accounts from the app.
+          Destroying this resource doesn't unbind or delete the
+          workflow: the app keeps it until a different one is bound.
+          To change it, bind a different workflow.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
+      EntitlementApprovalWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `approval` workflow to bind. Changing it
+              binds a different workflow in place.
+        x-speakeasy-entity: EntitlementApprovalWorkflow
+        x-speakeasy-entity-description: >-
+          Turns on an entitlement's approval workflow override,
+          binding an approval template (a `lumos_workflow` of type
+          `approval`) in place of the app's. Destroying this
+          resource turns the override off, so the entitlement uses
+          its app's approval workflow again. It doesn't delete the
+          template.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
+      EntitlementProvisioningWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `entitlement-provisioning` workflow to
+              bind. Changing it binds a different workflow in
+              place.
+        x-speakeasy-entity: EntitlementProvisioningWorkflow
+        x-speakeasy-entity-description: >-
+          Binds an `entitlement-provisioning` workflow to an
+          entitlement, as the workflow that grants it. Destroying
+          this resource doesn't unbind or delete the workflow: the
+          entitlement keeps it until a different one is bound. To
+          change it, bind a different workflow.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
+      EntitlementDeprovisioningWorkflowBinding:
+        type: object
+        required: [workflow_id]
+        properties:
+          workflow_id:
+            type: string
+            description: >-
+              ID of the `entitlement-deprovisioning` workflow to
+              bind. Changing it binds a different workflow in
+              place.
+        x-speakeasy-entity: EntitlementDeprovisioningWorkflow
+        x-speakeasy-entity-description: >-
+          Binds an `entitlement-deprovisioning` workflow to an
+          entitlement, as the workflow that revokes it. Destroying
+          this resource doesn't unbind or delete the workflow: the
+          entitlement keeps it until a different one is bound. To
+          change it, bind a different workflow.
+        x-speakeasy-transform-from-api:
+          jq: '{workflow_id: .id}'
