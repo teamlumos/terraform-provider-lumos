@@ -26,7 +26,7 @@ func TestUnknownOnReconnect(t *testing.T) {
 	none := tftypes.NewValue(tftypes.String, nil)
 	unknown := tftypes.NewValue(tftypes.String, tftypes.UnknownValue)
 	creds := tftypes.NewValue(tftypes.String, `{"api_key":"x"}`)
-	success := tftypes.NewValue(tftypes.String, "SUCCESS")
+	success := tftypes.NewValue(tftypes.String, "success")
 
 	tests := []struct {
 		name      string
@@ -37,15 +37,15 @@ func TestUnknownOnReconnect(t *testing.T) {
 	}{
 		{name: "connected app update stays unknown", config: app(creds, none, none), state: app(creds, none, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
 		{name: "settings alone count as credentials", config: app(none, creds, none), state: app(none, creds, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
-		{name: "custom app update keeps the current value", config: app(none, none, none), state: app(none, none, success), planValue: types.StringUnknown(), want: types.StringValue("SUCCESS")},
+		{name: "custom app update keeps the current value", config: app(none, none, none), state: app(none, none, success), planValue: types.StringUnknown(), want: types.StringValue("success")},
 		{name: "create stays unknown", config: app(none, none, none), state: tftypes.NewValue(objectType, nil), planValue: types.StringUnknown(), want: types.StringUnknown()},
-		{name: "a known plan value is left alone", config: app(none, none, none), state: app(none, none, success), planValue: types.StringValue("FAILED"), want: types.StringValue("FAILED")},
+		{name: "a known plan value is left alone", config: app(none, none, none), state: app(none, none, success), planValue: types.StringValue("failed"), want: types.StringValue("failed")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			stateValue := types.StringNull()
 			if !tt.state.IsNull() {
-				stateValue = types.StringValue("SUCCESS")
+				stateValue = types.StringValue("success")
 			}
 			req := planmodifier.StringRequest{
 				Config:     tfsdk.Config{Schema: s, Raw: tt.config},
