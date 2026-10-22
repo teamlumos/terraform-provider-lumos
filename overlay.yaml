@@ -889,3 +889,156 @@ actions:
   - target: $["components"]["schemas"]["AccessPolicyListOutput"]["properties"]["next_page_token"]
     update:
       x-speakeasy-terraform-ignore: true
+
+  # resource and data "lumos_pre_approval_rule". A rule lives under its app,
+  # so it's addressed by app_id and id.
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules"]["post"]
+    update:
+      x-speakeasy-entity-operation: PreApprovalRule#create
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}"]["get"]
+    update:
+      x-speakeasy-entity-operation: PreApprovalRule#read
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}"]["patch"]
+    update:
+      x-speakeasy-entity-operation: PreApprovalRule#update
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: PreApprovalRule#delete
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules","/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}"][*]["parameters"][?@.name=="app_uuid"]
+    update:
+      x-speakeasy-name-override: app_id
+      x-speakeasy-param-force-new: true
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}"][*]["parameters"][?@.name=="pre_approval_rule_id"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["PreApprovalRule"]
+    update:
+      x-speakeasy-entity: PreApprovalRule
+      x-speakeasy-entity-description: >-
+        A pre-approval rule: access requests for an app that Lumos approves
+        without a reviewer when the requester matches the rule's condition.
+  # Null operators are dropped because a config never has them.
+  - target: $["components"]["schemas"]["PreApprovalRule"]
+    update:
+      x-speakeasy-transform-from-api:
+        jq: |
+          if . == null then . else
+            .condition |= (if . == null then . else walk(if type == "object" then with_entries(select(.value != null)) else . end) end)
+          end
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]["app_id"]
+    update:
+      description: >-
+        The ID of the app the rule applies to. For an app merged into another
+        app, use the ID of the app it was merged into.
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]["condition"]
+    update:
+      x-speakeasy-type-override: any
+      description: >-
+        Who the rule pre-approves, and for how long they can have access, as a
+        Lumos condition read back in the expanded `{ label, value }` form.
+  # Every rule must have a condition: create returns 400 without one, and
+  # update can't clear it.
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]["required"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRuleInput"]
+    update:
+      required: ["justification", "condition"]
+  - target: $["components"]["schemas"]["PreApprovalRuleUpdateInput"]["properties"]["justification"]["anyOf"]
+    remove: true
+  # The API lowercases and de-duplicates entitlement IDs and doesn't keep
+  # their order.
+  - target: $["components"]["schemas"]["PreApprovalRule","PreApprovalRuleInput","PreApprovalRuleUpdateInput"]["properties"]["request_includes_entitlements","request_does_not_include_entitlements","request_has_entitlements"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]["request_includes_entitlements","request_does_not_include_entitlements"]
+    update:
+      type: array
+      items: {type: string}
+      format: set
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]["request_has_entitlements"]
+    update:
+      type: boolean
+  # The id never changes, so a plan keeps it rather than marking it unknown
+  # whenever the config changes.
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]["id"]
+    update:
+      x-speakeasy-param-suppress-computed-diff: true
+  # An omitted entitlement list is planned and read back as an empty set,
+  # which the generated client sends as []. The API needs at least one ID in
+  # a list, so an empty one is left out of the body instead.
+  - target: $["components"]["schemas"]["PreApprovalRuleInput","PreApprovalRuleUpdateInput"]
+    update:
+      x-speakeasy-transform-to-api:
+        jq: |
+          if . == null then . else with_entries(select(.value != [])) end
+  # The spec's descriptions tell API callers what to send; these say what a
+  # config sets. The condition is set in the config or not at all. A rule
+  # with no entitlements field set covers only the app itself and reads back
+  # as request_has_entitlements = false, so that's what the plan holds; every
+  # update then sends one of the three fields, which replaces the rule's
+  # entitlements.
+  - target: $["components"]["schemas"]["PreApprovalRuleInput","PreApprovalRuleUpdateInput"]["properties"]
+    update:
+      justification:
+        type: string
+        maxLength: 500
+        description: Why the rule exists, shown to requesters and reviewers.
+      condition:
+        x-speakeasy-type-override: any
+        x-speakeasy-param-computed: false
+        description: >-
+          Who the rule pre-approves, and for how long they can have access, as
+          a Lumos condition written with `jsonencode`. Give every attribute and
+          value as `{ label, value }`, the form Lumos reads back.
+      request_includes_entitlements:
+        type: array
+        items: {type: string}
+        format: set
+        x-speakeasy-plan-modifiers: EmptyWhenNull
+        description: >-
+          IDs of the entitlements the rule covers, in lowercase. The rule
+          covers no other entitlement, and not a request for the app itself.
+          Set at most one of `request_includes_entitlements`,
+          `request_does_not_include_entitlements` and
+          `request_has_entitlements`.
+      request_does_not_include_entitlements:
+        type: array
+        items: {type: string}
+        format: set
+        x-speakeasy-plan-modifiers: EmptyWhenNull
+        description: >-
+          IDs of the entitlements the rule doesn't cover, in lowercase. The
+          rule covers every other entitlement and a request for the app
+          itself.
+      request_has_entitlements:
+        type: boolean
+        x-speakeasy-plan-modifiers: FalseIfNoEntitlements
+        description: >-
+          `true` covers a request for any of the app's entitlements. `false`
+          covers only a request for the app itself, and is what a rule with
+          none of the three entitlements fields set gets.
+
+  # data "lumos_pre_approval_rules": an app's rules.
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules"]["get"]
+    update:
+      x-speakeasy-entity-operation: PreApprovalRules#read
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: page_token
+            in: parameters
+            type: cursor
+        # No `results`: only a null next_page_token ends the list.
+        outputs:
+          nextCursor: $.next_page_token
+  - target: $["components"]["schemas"]["PreApprovalRuleListOutput"]
+    update:
+      x-speakeasy-entity: PreApprovalRules
+  - target: $["components"]["schemas"]["PreApprovalRuleListOutput"]["properties"]["pre_approval_rules"]
+    update:
+      description: The app's pre-approval rules.
+  - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules"]["get"]["parameters"][?@.name=="page_token" || @.name=="page_size"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["components"]["schemas"]["PreApprovalRuleListOutput"]["properties"]["next_page_token"]
+    update:
+      x-speakeasy-terraform-ignore: true
