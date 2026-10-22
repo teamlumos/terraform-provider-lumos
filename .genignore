@@ -27,6 +27,9 @@ examples/resources/lumos_entitlement_appstore_settings/
 examples/resources/lumos_access_policy/
 examples/data-sources/lumos_access_policy/
 examples/data-sources/lumos_access_policies/
+examples/resources/lumos_pre_approval_rule/
+examples/data-sources/lumos_pre_approval_rule/
+examples/data-sources/lumos_pre_approval_rules/
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go
