@@ -2,24 +2,16 @@
 
 package shared
 
-// AuthSchema - JSON Schema (draft-07 style) describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods — mirror that nesting in the connect request. An empty object (`{"type":"object","properties":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`.
-type AuthSchema struct {
-}
-
-// SettingsSchema - JSON Schema of the non-secret `settings` object for the Apps API's create endpoint. Carries tenant URLs, routing configuration, and other non-secret values the integration needs beyond credentials. Some integrations require a manually-set instance id as `app_instance_identifier` (e.g. an Okta domain); others derive it from the credentials during connect. Integrations that run through an on-prem agent take `on_prem_agent_cluster_id` here. Integrations that need no non-secret configuration return an empty object.
-type SettingsSchema struct {
-}
-
 // IntegrationConnectionSchemaOutput - An integration's *connection schema* — the `auth` and `settings` a caller
 // must supply to connect it. Read it to discover how to connect an integration
 // before connecting it.
 type IntegrationConnectionSchemaOutput struct {
 	// Canonical identifier of the integration the schema is for (echoes the request).
 	AppClassID string `json:"app_class_id"`
-	// JSON Schema (draft-07 style) describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods — mirror that nesting in the connect request. An empty object (`{"type":"object","properties":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`.
-	AuthSchema AuthSchema `json:"auth_schema"`
+	// JSON Schema describing the auth object lumos_app takes for this integration. Its properties are the credential keys the integration accepts; secret fields are marked writeOnly, and fixed-choice fields carry an enum. Some integrations nest credentials under named groups when they support several authentication methods. An object schema with no properties means no credentials are supplied up front: the connection is completed through browser consent in the Lumos UI.
+	AuthSchema any `json:"auth_schema"`
 	// JSON Schema of the non-secret `settings` object for the Apps API's create endpoint. Carries tenant URLs, routing configuration, and other non-secret values the integration needs beyond credentials. Some integrations require a manually-set instance id as `app_instance_identifier` (e.g. an Okta domain); others derive it from the credentials during connect. Integrations that run through an on-prem agent take `on_prem_agent_cluster_id` here. Integrations that need no non-secret configuration return an empty object.
-	SettingsSchema SettingsSchema `json:"settings_schema"`
+	SettingsSchema any `json:"settings_schema"`
 }
 
 func (i *IntegrationConnectionSchemaOutput) GetAppClassID() string {
@@ -29,16 +21,16 @@ func (i *IntegrationConnectionSchemaOutput) GetAppClassID() string {
 	return i.AppClassID
 }
 
-func (i *IntegrationConnectionSchemaOutput) GetAuthSchema() AuthSchema {
+func (i *IntegrationConnectionSchemaOutput) GetAuthSchema() any {
 	if i == nil {
-		return AuthSchema{}
+		return nil
 	}
 	return i.AuthSchema
 }
 
-func (i *IntegrationConnectionSchemaOutput) GetSettingsSchema() SettingsSchema {
+func (i *IntegrationConnectionSchemaOutput) GetSettingsSchema() any {
 	if i == nil {
-		return SettingsSchema{}
+		return nil
 	}
 	return i.SettingsSchema
 }

@@ -3,12 +3,12 @@
 page_title: "lumos_users Data Source - terraform-provider-lumos"
 subcategory: ""
 description: |-
-  Users DataSource
+  Users in the organization that match search, which is required.
 ---
 
 # lumos_users (Data Source)
 
-Users DataSource
+Users in the organization that match `search`, which is required.
 
 ## Example Usage
 

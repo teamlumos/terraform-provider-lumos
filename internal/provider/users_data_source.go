@@ -43,7 +43,7 @@ func (r *UsersDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 // Schema defines the schema for the data source.
 func (r *UsersDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Users DataSource",
+		MarkdownDescription: "Users in the organization that match `search`, which is required.",
 
 		Attributes: map[string]schema.Attribute{
 			"exact_match": schema.BoolAttribute{

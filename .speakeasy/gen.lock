@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 77b471f538971973f4b04048b9a42c03
+  docChecksum: 3ff1796faa6b0ca0bfa1373e4ae46ef6
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -120,16 +120,36 @@ trackedFiles:
   internal/planmodifiers/utils/state_check.go:
     id: ead742412d0f
     pristine_git_object: cd0dbf813362d30f2c7b2f489f99a65ea2d528e0
+  internal/provider/accounts_data_source.go: {}
+  internal/provider/accounts_data_source_sdk.go: {}
   internal/provider/app_resource.go: {}
   internal/provider/app_resource_sdk.go: {}
   internal/provider/appappstoresettings_resource.go: {}
   internal/provider/appappstoresettings_resource_sdk.go: {}
+  internal/provider/appcategories_data_source.go: {}
+  internal/provider/appcategories_data_source_sdk.go: {}
+  internal/provider/appentitlements_data_source.go: {}
+  internal/provider/appentitlements_data_source_sdk.go: {}
+  internal/provider/apps_data_source.go: {}
+  internal/provider/apps_data_source_sdk.go: {}
   internal/provider/currentuser_data_source.go: {}
   internal/provider/currentuser_data_source_sdk.go: {}
+  internal/provider/customattributedefinitions_data_source.go: {}
+  internal/provider/customattributedefinitions_data_source_sdk.go: {}
   internal/provider/entitlement_resource.go: {}
   internal/provider/entitlement_resource_sdk.go: {}
   internal/provider/entitlementappstoresettings_resource.go: {}
   internal/provider/entitlementappstoresettings_resource_sdk.go: {}
+  internal/provider/entitlements_data_source.go: {}
+  internal/provider/entitlements_data_source_sdk.go: {}
+  internal/provider/groups_data_source.go: {}
+  internal/provider/groups_data_source_sdk.go: {}
+  internal/provider/inlinewebhooks_data_source.go: {}
+  internal/provider/inlinewebhooks_data_source_sdk.go: {}
+  internal/provider/integrationconnectionschema_data_source.go: {}
+  internal/provider/integrationconnectionschema_data_source_sdk.go: {}
+  internal/provider/integrations_data_source.go: {}
+  internal/provider/integrations_data_source_sdk.go: {}
   internal/provider/provider.go:
     id: 1e7e86841cf3
     pristine_git_object: cade954268074f6d8e2576394aa268a3da31bec5
@@ -185,22 +205,39 @@ trackedFiles:
   internal/provider/typeconvert/int.go:
     id: c44fcd78fccc
     pristine_git_object: 85e79406782c5e6fb67d15b25784be652dc08478
+  internal/provider/types/account.go: {}
+  internal/provider/types/app_base.go: {}
+  internal/provider/types/app_category.go: {}
+  internal/provider/types/app_response.go: {}
   internal/provider/types/approval_workflow_workflow_ref.go: {}
   internal/provider/types/appstore_settings_app_store_settings_response.go: {}
   internal/provider/types/appstore_settings_entitlement_app_store_settings.go: {}
   internal/provider/types/appstore_settings_time_based_access.go: {}
   internal/provider/types/custom_attribute.go: {}
+  internal/provider/types/custom_attribute_definition.go: {}
   internal/provider/types/custom_intake_field.go: {}
+  internal/provider/types/entitlement_output.go: {}
   ? internal/provider/types/entitlement_time_based_access_override_patch_input_time_based_access_override_entitlement_time_based_access_override_patch_input.go
   : {}
+  internal/provider/types/group.go: {}
+  internal/provider/types/inline_webhook.go: {}
+  internal/provider/types/input_parameter_schema.go: {}
+  internal/provider/types/integration_catalog_output.go: {}
+  internal/provider/types/json_schema.go: {}
+  internal/provider/types/output_parameter_schema.go: {}
   internal/provider/types/user.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
+  internal/provider/types/workflow_step_template.go: {}
+  internal/provider/userroles_data_source.go: {}
+  internal/provider/userroles_data_source_sdk.go: {}
   internal/provider/users_data_source.go: {}
   internal/provider/users_data_source_sdk.go: {}
   internal/provider/utils.go:
     id: 312d50f148af
     pristine_git_object: d2cc34dd0d2340d2ee5ad7c7e0211481dc1badbb
+  internal/provider/workflowsteps_data_source.go: {}
+  internal/provider/workflowsteps_data_source_sdk.go: {}
   internal/sdk/accesspolicies.go: {}
   internal/sdk/accessrequests.go: {}
   internal/sdk/accessreviews.go: {}
@@ -423,6 +460,7 @@ trackedFiles:
   internal/sdk/models/shared/appcategory.go: {}
   internal/sdk/models/shared/appcategorylistoutput.go: {}
   internal/sdk/models/shared/appcreateinput.go: {}
+  internal/sdk/models/shared/appentitlementlistoutput.go: {}
   internal/sdk/models/shared/applicationtagoutput.go: {}
   internal/sdk/models/shared/applistoutput.go: {}
   internal/sdk/models/shared/appresponse.go: {}
@@ -1652,7 +1690,7 @@ examples:
     speakeasy-default-list-accounts:
       parameters:
         query:
-          page_size: 50
+          page_size: 100
       responses:
         "200":
           application/json: {"accounts": []}
@@ -1944,7 +1982,7 @@ examples:
     speakeasy-default-list-entitlements:
       parameters:
         query:
-          page_size: 50
+          page_size: 100
       responses:
         "200":
           application/json: {"entitlements": []}

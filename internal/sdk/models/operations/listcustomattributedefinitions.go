@@ -200,6 +200,8 @@ type ListCustomAttributeDefinitionsResponse struct {
 	CustomAttributeDefinitionListOutput *shared.CustomAttributeDefinitionListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListCustomAttributeDefinitionsResponse, error)
 }
 
 func (l ListCustomAttributeDefinitionsResponse) MarshalJSON() ([]byte, error) {
