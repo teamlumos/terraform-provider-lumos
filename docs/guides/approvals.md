@@ -110,5 +110,5 @@ The template does nothing until it's bound to the app or to one of its entitleme
 
 ## Limitations
 
-* A chain can't move between approval templates.
-* A chain removed from its template but kept in the configuration is recreated on the next apply.
+* A chain can be used by only one workflow. Lumos refuses a template that references a chain another workflow already uses.
+* A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
