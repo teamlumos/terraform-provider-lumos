@@ -189,7 +189,7 @@ func TestAccUsersDataSource(t *testing.T) {
 data "lumos_current_user" "me" {}
 
 data "lumos_users" "me_by_email" {
-  search_term = data.lumos_current_user.me.email
+  search = data.lumos_current_user.me.email
   exact_match = true
 }
 `,
