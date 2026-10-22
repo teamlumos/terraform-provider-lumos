@@ -13,9 +13,9 @@ func TestRequireListFilter(t *testing.T) {
 		rawQuery    string
 		wantErr     string
 	}{
-		{name: "fails a user list without a search", operationID: "v1ListUsers", rawQuery: "page_size=100", wantErr: "lumos_users requires search_term"},
-		{name: "fails an empty search", operationID: "v1ListUsers", rawQuery: "search_term=", wantErr: "lumos_users requires search_term"},
-		{name: "passes a user search", operationID: "v1ListUsers", rawQuery: "search_term=alice"},
+		{name: "fails a user list without a search", operationID: "v1ListUsers", rawQuery: "page_size=100", wantErr: "lumos_users requires search"},
+		{name: "fails an empty search", operationID: "v1ListUsers", rawQuery: "search=", wantErr: "lumos_users requires search"},
+		{name: "passes a user search", operationID: "v1ListUsers", rawQuery: "search=alice"},
 		{name: "fails an entitlement list filtered only by visibility", operationID: "listEntitlements", rawQuery: "visible_in_appstore=true", wantErr: "lumos_entitlements requires search"},
 		{name: "passes an entitlement search", operationID: "listEntitlements", rawQuery: "search=Admin"},
 		{name: "fails an account list without an app or email", operationID: "listAccounts", rawQuery: "status=ACTIVE", wantErr: "lumos_accounts requires app_id or email"},

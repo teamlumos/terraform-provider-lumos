@@ -57,7 +57,7 @@ actions:
     update:
       x-speakeasy-entity: Users
       x-speakeasy-entity-description: >-
-        Users in the organization that match `search_term`, which is required.
+        Users in the organization that match `search`, which is required.
   # Paging is the provider's job, so its parameters stay out of the
   # Terraform schema. Ask for the largest page to cut calls per read.
   - target: $["paths"]["/v1/users"]["get"]["parameters"][?@.name=="page_token"]

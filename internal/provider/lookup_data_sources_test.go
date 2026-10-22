@@ -19,9 +19,9 @@ func TestLookupDataSourcesRequireFilter(t *testing.T) {
 		config     string
 		wantErr    string
 	}{
-		{dataSource: "lumos_users", config: `exact_match = true`, wantErr: "lumos_users requires search_term"},
+		{dataSource: "lumos_users", config: `exact_match = true`, wantErr: "lumos_users requires search"},
 		{dataSource: "lumos_entitlements", config: `visible_in_appstore = true`, wantErr: "lumos_entitlements requires search"},
-		{dataSource: "lumos_accounts", config: `status = ["ACTIVE"]`, wantErr: "lumos_accounts requires app_id or email"},
+		{dataSource: "lumos_accounts", config: `status = ["active"]`, wantErr: "lumos_accounts requires app_id or email"},
 		{dataSource: "lumos_groups", config: `exact_match = true`, wantErr: "lumos_groups requires name, integration_specific_id or app_id"},
 	}
 	for _, tt := range tests {
