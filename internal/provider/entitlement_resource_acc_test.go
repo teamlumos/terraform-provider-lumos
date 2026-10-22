@@ -33,7 +33,7 @@ resource "lumos_entitlement" "test" {
 				Config: config(prefix + "-admin"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_entitlement.test", "label", prefix+"-admin"),
-					resource.TestCheckResourceAttr("lumos_entitlement.test", "source", "MANUAL"),
+					resource.TestCheckResourceAttr("lumos_entitlement.test", "source", "manual"),
 					resource.TestCheckResourceAttrPair("lumos_entitlement.test", "app_id", "lumos_app.app", "id"),
 					resource.TestCheckResourceAttrSet("lumos_entitlement.test", "id"),
 				),
