@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/spyzhov/ajson"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/config"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/hooks"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
@@ -15,6 +16,8 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/retry"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 )
 
 // CustomAttributeDefinitions -
@@ -80,6 +83,7 @@ func (s *CustomAttributeDefinitions) ListCustomAttributeDefinitions(ctx context.
 	if timeout == nil {
 		timeout = s.sdkConfiguration.Timeout
 	}
+	paginationCtx := ctx
 
 	if timeout != nil {
 		var cancel context.CancelFunc
@@ -208,6 +212,50 @@ func (s *CustomAttributeDefinitions) ListCustomAttributeDefinitions(ctx context.
 		StatusCode:  httpRes.StatusCode,
 		ContentType: httpRes.Header.Get("Content-Type"),
 		RawResponse: httpRes,
+	}
+	res.Next = func() (*operations.ListCustomAttributeDefinitionsResponse, error) {
+		rawBody, err := utils.ConsumeRawBody(httpRes)
+		if err != nil {
+			return nil, err
+		}
+
+		b, err := ajson.Unmarshal(rawBody)
+		if err != nil {
+			return nil, err
+		}
+		nC, err := ajson.Eval(b, "$.next_page_token")
+		if err != nil {
+			return nil, err
+		}
+		var nCVal string
+
+		if nC.IsNumeric() {
+			numVal, err := nC.GetNumeric()
+			if err != nil {
+				return nil, err
+			}
+			// GetNumeric returns as float64 so convert to the appropriate type.
+			nCVal = strconv.FormatFloat(numVal, 'f', 0, 64)
+		} else {
+			val, err := nC.Value()
+			if err != nil {
+				return nil, err
+			}
+			if val == nil {
+				return nil, nil
+			}
+			nCVal = val.(string)
+			if strings.TrimSpace(nCVal) == "" {
+				return nil, nil
+			}
+		}
+		request.PageToken = &nCVal
+
+		return s.ListCustomAttributeDefinitions(
+			paginationCtx,
+			request,
+			opts...,
+		)
 	}
 
 	switch {

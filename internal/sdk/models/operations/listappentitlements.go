@@ -10,7 +10,7 @@ import (
 
 type ListAppEntitlementsRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 	// Fields to expand. Supported fields: approval_workflow_override, provisioning_workflow, deprovisioning_workflow, appstore_settings.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.
@@ -34,11 +34,11 @@ func (l *ListAppEntitlementsRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (l *ListAppEntitlementsRequest) GetAppUUID() string {
+func (l *ListAppEntitlementsRequest) GetAppID() string {
 	if l == nil {
 		return ""
 	}
-	return l.AppUUID
+	return l.AppID
 }
 
 func (l *ListAppEntitlementsRequest) GetExpand() []string {
@@ -84,9 +84,11 @@ type ListAppEntitlementsResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	EntitlementListOutput *shared.EntitlementListOutput
+	AppEntitlementListOutput *shared.AppEntitlementListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListAppEntitlementsResponse, error)
 }
 
 func (l ListAppEntitlementsResponse) MarshalJSON() ([]byte, error) {
@@ -121,11 +123,11 @@ func (l *ListAppEntitlementsResponse) GetRawResponse() *http.Response {
 	return l.RawResponse
 }
 
-func (l *ListAppEntitlementsResponse) GetEntitlementListOutput() *shared.EntitlementListOutput {
+func (l *ListAppEntitlementsResponse) GetAppEntitlementListOutput() *shared.AppEntitlementListOutput {
 	if l == nil {
 		return nil
 	}
-	return l.EntitlementListOutput
+	return l.AppEntitlementListOutput
 }
 
 func (l *ListAppEntitlementsResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

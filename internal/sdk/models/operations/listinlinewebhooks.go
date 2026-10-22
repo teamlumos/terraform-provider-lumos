@@ -51,6 +51,8 @@ type ListInlineWebhooksResponse struct {
 	InlineWebhookListOutput *shared.InlineWebhookListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListInlineWebhooksResponse, error)
 }
 
 func (l ListInlineWebhooksResponse) MarshalJSON() ([]byte, error) {

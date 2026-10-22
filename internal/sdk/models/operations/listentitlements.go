@@ -18,7 +18,7 @@ type ListEntitlementsRequest struct {
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
 	PageToken *string `queryParam:"style=form,explode=true,name=page_token"`
 	// Maximum number of items to return per page. Values above 100 are clamped to 100 rather than rejected.
-	PageSize *int64 `default:"50" queryParam:"style=form,explode=true,name=page_size"`
+	PageSize *int64 `default:"100" queryParam:"style=form,explode=true,name=page_size"`
 }
 
 func (l ListEntitlementsRequest) MarshalJSON() ([]byte, error) {
@@ -78,6 +78,8 @@ type ListEntitlementsResponse struct {
 	EntitlementListOutput *shared.EntitlementListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListEntitlementsResponse, error)
 }
 
 func (l ListEntitlementsResponse) MarshalJSON() ([]byte, error) {

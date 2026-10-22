@@ -133,8 +133,20 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 
 func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewAccountsDataSource,
+		NewAppCategoriesDataSource,
+		NewAppEntitlementsDataSource,
+		NewAppsDataSource,
 		NewCurrentUserDataSource,
+		NewCustomAttributeDefinitionsDataSource,
+		NewEntitlementsDataSource,
+		NewGroupsDataSource,
+		NewInlineWebhooksDataSource,
+		NewIntegrationConnectionSchemaDataSource,
+		NewIntegrationsDataSource,
+		NewUserRolesDataSource,
 		NewUsersDataSource,
+		NewWorkflowStepsDataSource,
 	}
 }
 

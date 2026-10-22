@@ -87,6 +87,8 @@ type ListGroupsResponse struct {
 	GroupListOutput *shared.GroupListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListGroupsResponse, error)
 }
 
 func (l ListGroupsResponse) MarshalJSON() ([]byte, error) {

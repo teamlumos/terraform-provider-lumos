@@ -365,8 +365,20 @@ Available configuration:
 
 ### Data Sources
 
+* [lumos_accounts](docs/data-sources/accounts.md)
+* [lumos_app_categories](docs/data-sources/app_categories.md)
+* [lumos_app_entitlements](docs/data-sources/app_entitlements.md)
+* [lumos_apps](docs/data-sources/apps.md)
 * [lumos_current_user](docs/data-sources/current_user.md)
+* [lumos_custom_attribute_definitions](docs/data-sources/custom_attribute_definitions.md)
+* [lumos_entitlements](docs/data-sources/entitlements.md)
+* [lumos_groups](docs/data-sources/groups.md)
+* [lumos_inline_webhooks](docs/data-sources/inline_webhooks.md)
+* [lumos_integration_connection_schema](docs/data-sources/integration_connection_schema.md)
+* [lumos_integrations](docs/data-sources/integrations.md)
+* [lumos_user_roles](docs/data-sources/user_roles.md)
 * [lumos_users](docs/data-sources/users.md)
+* [lumos_workflow_steps](docs/data-sources/workflow_steps.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->
