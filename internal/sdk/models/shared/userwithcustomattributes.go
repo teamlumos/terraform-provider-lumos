@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 type UserWithCustomAttributesStatus string
@@ -43,15 +44,26 @@ type UserWithCustomAttributes struct {
 	// The ID of this user.
 	ID string `json:"id"`
 	// The email of this user.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
+	GivenName *string `json:"given_name,omitzero"`
 	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
+	FamilyName *string `json:"family_name,omitzero"`
 	// The status of this user.
-	Status *UserWithCustomAttributesStatus `json:"status,omitempty"`
+	Status *UserWithCustomAttributesStatus `json:"status,omitzero"`
 	// Custom attributes configured on the user
-	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
+	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitzero"`
+}
+
+func (u UserWithCustomAttributes) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UserWithCustomAttributes) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (u *UserWithCustomAttributes) GetID() string {

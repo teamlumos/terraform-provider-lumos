@@ -40,11 +40,11 @@ type AccessPolicyInput struct {
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
 	// The status of the access policy, `draft` or `published`. Defaults to `draft`.
-	Status *Status `json:"status,omitempty"`
+	Status *Status `json:"status,omitzero"`
 	// Whether the access policy is enabled. Defaults to false when supported.
-	IsEnabled *bool `json:"is_enabled,omitempty"`
+	IsEnabled *bool `json:"is_enabled,omitzero"`
 	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-	AccessCondition map[string]any `json:"access_condition,omitempty"`
+	AccessCondition map[string]any `json:"access_condition,omitzero"`
 	// Whether the access policy applies to everyone. Send `true` without `access_condition`, or `false` (the default) with one; sending both returns 400, unless `access_condition` is the everyone condition a read returns.
 	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
 	// The apps granted by this access policy.

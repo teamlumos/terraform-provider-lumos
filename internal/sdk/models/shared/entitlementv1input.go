@@ -5,11 +5,11 @@ package shared
 // EntitlementV1Input - One uploaded entitlement row, with unknown fields rejected instead of ignored.
 type EntitlementV1Input struct {
 	// The unique identifier of the entitlement.
-	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
+	UniqueIdentifier *string `json:"unique_identifier,omitzero"`
 	// The type of the entitlement.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 	// The name of the entitlement.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 }
 
 func (e *EntitlementV1Input) GetUniqueIdentifier() *string {

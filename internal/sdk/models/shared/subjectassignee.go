@@ -4,17 +4,17 @@ package shared
 
 type SubjectAssignee struct {
 	// The assigned user's ID. Null when a group holds the assignment rather than a user — see `group_id`.
-	ID *string `json:"id,omitempty"`
+	ID *string `json:"id,omitzero"`
 	// The assigned group's ID, when a group holds the assignment.
-	GroupID *string `json:"group_id,omitempty"`
+	GroupID *string `json:"group_id,omitzero"`
 	// The assigned group's name, when a group holds the assignment.
-	GroupName *string `json:"group_name,omitempty"`
+	GroupName *string `json:"group_name,omitzero"`
 	// The assigned user's email address.
-	Email *string `json:"email,omitempty"`
+	Email *string `json:"email,omitzero"`
 	// The assigned user's given name.
-	GivenName *string `json:"given_name,omitempty"`
+	GivenName *string `json:"given_name,omitzero"`
 	// The assigned user's family name.
-	FamilyName *string `json:"family_name,omitempty"`
+	FamilyName *string `json:"family_name,omitzero"`
 }
 
 func (s *SubjectAssignee) GetID() *string {

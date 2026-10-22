@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: d7f61885f31773ad8ab89f293e7d1cbb
+  docChecksum: 3f6cd0e46006e57f322c22077ca5cb27
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
   releaseVersion: 1.0.0-alpha.1
-  configChecksum: 01b4087ef463b27eddd50abd86ca37bc
+  configChecksum: b56f687f107e4c658c1f5391c2c0c4cd
 persistentEdits:
   generation_id: 9e9c7775-27d2-4db1-8dfe-bf8627f74482
   pristine_commit_hash: e8e8a9d0e34c0c0e114532211563fa3e4a455925
@@ -19,9 +19,13 @@ features:
     formatBinary: 0.2.0
     globalSecurity: 2.82.3
     globalServerURLs: 2.83.2
+    nameOverrides: 2.81.7
     nullables: 0.0.0
     pagination: 2.83.7
     retries: 2.81.6
+    sets: 0.1.3
+    transformJq: 0.0.1
+    typeOverrides: 2.81.2
     unions: 2.82.20
 trackedFiles:
   USAGE.md:
@@ -116,6 +120,10 @@ trackedFiles:
   internal/planmodifiers/utils/state_check.go:
     id: ead742412d0f
     pristine_git_object: cd0dbf813362d30f2c7b2f489f99a65ea2d528e0
+  internal/provider/app_resource.go: {}
+  internal/provider/app_resource_sdk.go: {}
+  internal/provider/appappstoresettings_resource.go: {}
+  internal/provider/appappstoresettings_resource_sdk.go: {}
   internal/provider/currentuser_data_source.go: {}
   internal/provider/currentuser_data_source_sdk.go: {}
   internal/provider/provider.go:
@@ -173,7 +181,11 @@ trackedFiles:
   internal/provider/typeconvert/int.go:
     id: c44fcd78fccc
     pristine_git_object: 85e79406782c5e6fb67d15b25784be652dc08478
+  internal/provider/types/approval_workflow_workflow_ref.go: {}
+  internal/provider/types/appstore_settings_app_store_settings_response.go: {}
+  internal/provider/types/appstore_settings_time_based_access.go: {}
   internal/provider/types/custom_attribute.go: {}
+  internal/provider/types/custom_intake_field.go: {}
   internal/provider/types/user.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
@@ -216,6 +228,7 @@ trackedFiles:
   internal/sdk/internal/utils/headers.go:
     id: f035883ac0ff
     pristine_git_object: 931c29f725ede98d16b760eb707499af8e3914b5
+  internal/sdk/internal/utils/jq.go: {}
   internal/sdk/internal/utils/json.go:
     id: 2231afac3add
     pristine_git_object: f1c755090e8d73825154afe62e00c04814abfdd5
@@ -353,6 +366,7 @@ trackedFiles:
   internal/sdk/models/operations/v1listusers.go: {}
   internal/sdk/models/operations/v1patchaccesspolicy.go: {}
   internal/sdk/models/operations/v1patchappstoresettings.go: {}
+  internal/sdk/models/operations/v1removeappfromappstore.go: {}
   internal/sdk/models/operations/v1updateaccesspolicy.go: {}
   internal/sdk/models/operations/v1updateapp.go: {}
   internal/sdk/models/operations/v1uploadaccounts.go: {}
@@ -407,7 +421,6 @@ trackedFiles:
   internal/sdk/models/shared/appstorecatalogappresponse.go: {}
   internal/sdk/models/shared/appstorecataloglistoutput.go: {}
   internal/sdk/models/shared/appstorecatalogsettingsresponse.go: {}
-  internal/sdk/models/shared/appstoresettingscompact.go: {}
   internal/sdk/models/shared/appstoresettingspatchinput.go: {}
   internal/sdk/models/shared/appstoresettingsresponse.go: {}
   internal/sdk/models/shared/appupdateinput.go: {}
@@ -1710,7 +1723,7 @@ examples:
         application/json: {"label": "My internal tool", "category": "Developers", "description": "Hand-rolled deploy dashboard."}
       responses:
         "201":
-          application/json: {"id": "<id>", "disconnected": false}
+          application/json: {"id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
         "500":
@@ -1734,7 +1747,7 @@ examples:
           app_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "disconnected": false}
+          application/json: {"id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
         "500":
@@ -1748,7 +1761,7 @@ examples:
         application/json: {"label": "My internal tool", "description": "Hand-rolled deploy dashboard."}
       responses:
         "200":
-          application/json: {"id": "<id>", "disconnected": false}
+          application/json: {"id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":
@@ -2580,6 +2593,11 @@ examples:
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
+  v1RemoveAppFromAppStore:
+    speakeasy-default-v1-remove-app-from-app-store:
+      parameters:
+        path:
+          app_uuid: "<id>"
 examplesVersion: 1.0.2
 generatedTests: {}
 generatedFiles:

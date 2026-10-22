@@ -36,19 +36,19 @@ func (e *GroupLifecycle) UnmarshalJSON(data []byte) error {
 // Group - A v1 group, unprefixed on purpose (see `codegen_openapi_v1.py`).
 type Group struct {
 	// The ID of this group.
-	ID *string `json:"id,omitempty"`
+	ID *string `json:"id,omitzero"`
 	// The ID of the app this group is synced from.
-	AppID *string `json:"app_id,omitempty"`
+	AppID *string `json:"app_id,omitzero"`
 	// The ID of this group, specific to the integration.
-	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
+	IntegrationSpecificID *string `json:"integration_specific_id,omitzero"`
 	// The name of this group.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The description of this group.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The lifecycle of this group.
-	GroupLifecycle *GroupLifecycle `json:"group_lifecycle,omitempty"`
+	GroupLifecycle *GroupLifecycle `json:"group_lifecycle,omitzero"`
 	// The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
-	SourceAppID *string `json:"source_app_id,omitempty"`
+	SourceAppID *string `json:"source_app_id,omitzero"`
 }
 
 func (g *Group) GetID() *string {

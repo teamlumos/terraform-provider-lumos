@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // WorkflowStepTemplate - A catalogue entry describing an available step and its input schema.
 type WorkflowStepTemplate struct {
 	// Identifier (catalogue slug) for the step.
@@ -9,9 +13,20 @@ type WorkflowStepTemplate struct {
 	// The input schema for the step, describing available inputs.
 	InputSchema map[string]InputParameterSchema `json:"input_schema"`
 	// A human-readable name for this step.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The outputs this step produces, keyed by namespaced reference (for example 'createApp.id'). Downstream steps can reference these outputs. Absent for steps that have no outputs.
-	OutputSchema map[string]OutputParameterSchema `json:"output_schema,omitempty"`
+	OutputSchema map[string]OutputParameterSchema `json:"output_schema,omitzero"`
+}
+
+func (w WorkflowStepTemplate) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
+}
+
+func (w *WorkflowStepTemplate) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (w *WorkflowStepTemplate) GetStep() string {

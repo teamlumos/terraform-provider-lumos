@@ -118,7 +118,7 @@ type CustomAttributeDefinition struct {
 	// Stable public reference (unique per domain after unification).
 	Label string `json:"label"`
 	// Representative machine/synced attribute name.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// The type of value the attribute holds.
 	AttributeType AttributeType `json:"attribute_type"`
 	// Entity type this attribute attaches to. Always `user`.

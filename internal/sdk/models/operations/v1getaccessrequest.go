@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -12,6 +13,17 @@ type V1GetAccessRequestRequest struct {
 	ID string `pathParam:"style=simple,explode=false,name=id"`
 	// Fields to expand. Supported values: tasks, custom_fields.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (v V1GetAccessRequestRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAccessRequestRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAccessRequestRequest) GetID() string {
@@ -42,6 +54,17 @@ type V1GetAccessRequestResponse struct {
 	AccessRequest *shared.AccessRequest
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1GetAccessRequestResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAccessRequestResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAccessRequestResponse) GetContentType() string {

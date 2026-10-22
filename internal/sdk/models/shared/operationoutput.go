@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type Result struct {
 }
 
@@ -11,11 +15,22 @@ type OperationOutput struct {
 	// Whether the operation reached a terminal state. While false, neither `result` nor `error` is set; when true, exactly one of them is.
 	Done bool `json:"done"`
 	// Operation output on success. Shape depends on the operation kind.
-	Result *Result `json:"result,omitempty"`
+	Result *Result `json:"result,omitzero"`
 	// Terminal failure details. Set only when `done` and the operation failed.
-	Error *OperationError `json:"error,omitempty"`
+	Error *OperationError `json:"error,omitzero"`
 	// Operation kind and launch context (e.g. type, the resource it runs against). Informational; keys may be added over time.
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Metadata map[string]string `json:"metadata,omitzero"`
+}
+
+func (o OperationOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *OperationOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *OperationOutput) GetID() string {

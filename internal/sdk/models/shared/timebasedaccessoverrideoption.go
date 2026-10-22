@@ -6,7 +6,7 @@ type TimeBasedAccessOverrideOption struct {
 	// Display label for this time-based access option.
 	Label string `json:"label"`
 	// Duration in seconds. Null indicates a permanent (unlimited) access option.
-	ValueSeconds *int64 `json:"value_seconds,omitempty"`
+	ValueSeconds *int64 `json:"value_seconds,omitzero"`
 }
 
 func (t *TimeBasedAccessOverrideOption) GetLabel() string {

@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -41,6 +42,17 @@ type TriggerAppSyncV1Response struct {
 	OperationEnvelope *shared.OperationEnvelope
 	// Bad request — the request body is malformed, or `sync_type` is set to a value other than `full-sync`. See the `detail` field for the specific reason.
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (t TriggerAppSyncV1Response) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *TriggerAppSyncV1Response) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *TriggerAppSyncV1Response) GetContentType() string {

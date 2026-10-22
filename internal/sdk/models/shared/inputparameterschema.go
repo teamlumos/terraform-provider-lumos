@@ -14,15 +14,15 @@ type InputParameterSchema struct {
 	// The type of the parameter.
 	Type string `json:"type"`
 	// A human-readable label for the parameter.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 	// Whether the parameter is required.
 	Required *bool `default:"false" json:"required"`
 	// Whether the parameter should be hidden.
 	Hidden *bool `default:"false" json:"hidden"`
 	// Available options for the value of this field.
-	Options []string `json:"options,omitempty"`
+	Options []string `json:"options,omitzero"`
 	// The JSON Schema for the expected structure of an object or array parameter. It comes from the underlying OpenAPI operation, as close to verbatim as possible.
-	JSONSchema *JSONSchema `json:"json_schema,omitempty"`
+	JSONSchema *JSONSchema `json:"json_schema,omitzero"`
 }
 
 func (i InputParameterSchema) MarshalJSON() ([]byte, error) {

@@ -51,7 +51,7 @@ type InlineWebhook struct {
 	// The name of this inline webhook.
 	Name string `json:"name"`
 	// The description of this inline webhook.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 }
 
 func (i *InlineWebhook) GetID() string {

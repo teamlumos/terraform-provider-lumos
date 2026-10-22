@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type CustomIntakeFieldPatchInput struct {
 	// Stable identifier for this field. Required when creating a field and immutable after creation.
 	ReferenceKey string                `json:"reference_key"`
@@ -9,11 +13,22 @@ type CustomIntakeFieldPatchInput struct {
 	// The question shown to the requester.
 	Prompt string `json:"prompt"`
 	// Additional guidance shown alongside the prompt.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// Whether the requester must answer this field to submit a request.
 	IsRequired bool `json:"is_required"`
 	// The selectable values for a 'dropdown' field. Dropdown fields require at least one option; 'text' fields cannot have options.
-	DropdownOptions []string `json:"dropdown_options,omitempty"`
+	DropdownOptions []string `json:"dropdown_options,omitzero"`
+}
+
+func (c CustomIntakeFieldPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(c, "", false)
+}
+
+func (c *CustomIntakeFieldPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &c, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *CustomIntakeFieldPatchInput) GetReferenceKey() string {

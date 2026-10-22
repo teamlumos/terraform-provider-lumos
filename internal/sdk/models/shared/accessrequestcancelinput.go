@@ -4,7 +4,7 @@ package shared
 
 type AccessRequestCancelInput struct {
 	// Reason for cancellation.
-	Reason *string `json:"reason,omitempty"`
+	Reason *string `json:"reason,omitzero"`
 }
 
 func (a *AccessRequestCancelInput) GetReason() *string {

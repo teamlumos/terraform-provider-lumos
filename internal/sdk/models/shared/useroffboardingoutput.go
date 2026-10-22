@@ -67,7 +67,7 @@ type UserOffboardingOutput struct {
 	// When the offboarding completed, if it has completed.
 	CompletedAt *time.Time `json:"completed_at"`
 	// The UUID of the offboarding workflow configuration this offboarding runs under, or null when none can be named for it. This field is only returned for organizations with the multiple offboarding workflows feature.
-	WorkflowConfigID *string `json:"workflow_config_id,omitempty"`
+	WorkflowConfigID *string `json:"workflow_config_id,omitzero"`
 }
 
 func (u UserOffboardingOutput) MarshalJSON() ([]byte, error) {

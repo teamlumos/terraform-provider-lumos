@@ -2,11 +2,26 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type TimeBasedAccessPatchInput struct {
 	// Labels of domain-level time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to the domain defaults.
-	Options []string `json:"options,omitempty"`
+	Options []string `json:"options,omitzero"`
 	// Label of the option to pre-select on the request form. Null clears the pre-selection.
-	Default *string `json:"default,omitempty"`
+	Default *string `json:"default,omitzero"`
+}
+
+func (t TimeBasedAccessPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *TimeBasedAccessPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *TimeBasedAccessPatchInput) GetOptions() []string {

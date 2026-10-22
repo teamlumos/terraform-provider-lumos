@@ -15,9 +15,9 @@ type FilterOption struct {
 	// Value types a filterable field may hold.
 	Datatype FilterDataType `json:"datatype"`
 	// Operators this field accepts.
-	Operators []FilterOperator `json:"operators,omitempty"`
+	Operators []FilterOperator `json:"operators,omitzero"`
 	// Values this field accepts, for a field drawn from a fixed set. Empty when the field accepts free-form values.
-	Values []FilterValue `json:"values,omitempty"`
+	Values []FilterValue `json:"values,omitzero"`
 	// Table field this option filters on. Never serialized.
 	InternalField *string `default:"" json:"internal_field"`
 }

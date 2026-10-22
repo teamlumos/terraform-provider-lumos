@@ -85,6 +85,17 @@ type V1ListUsersResponse struct {
 	Next func() (*V1ListUsersResponse, error)
 }
 
+func (v V1ListUsersResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1ListUsersResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *V1ListUsersResponse) GetContentType() string {
 	if v == nil {
 		return ""

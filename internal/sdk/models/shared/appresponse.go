@@ -4,7 +4,6 @@ package shared
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
@@ -47,392 +46,240 @@ func (e *AppResponseStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-type ApprovalWorkflowType string
+// ApprovalWorkflowWorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type ApprovalWorkflowWorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
+}
+
+func (a *ApprovalWorkflowWorkflowRef) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
+}
+
+// DefaultProvisioningWorkflowWorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type DefaultProvisioningWorkflowWorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
+}
+
+func (d *DefaultProvisioningWorkflowWorkflowRef) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
+}
+
+// DefaultDeprovisioningWorkflowWorkflowRef - A reference to a bound workflow — shaped `{ "id": "..." }` so the path
+// `<field>.id` is stable whether or not the field is expanded.
+type DefaultDeprovisioningWorkflowWorkflowRef struct {
+	// UUID of the bound workflow.
+	ID string `json:"id"`
+}
+
+func (d *DefaultDeprovisioningWorkflowWorkflowRef) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
+}
+
+// AppstoreSettingsTimeBasedAccess - Time-based access configuration for this app.
+type AppstoreSettingsTimeBasedAccess struct {
+	// Labels of the time-based access options offered for this app. An empty list means the app uses the domain-level defaults.
+	Options []string `json:"options,omitzero"`
+	// Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
+	Default *string `json:"default,omitzero"`
+}
+
+func (a AppstoreSettingsTimeBasedAccess) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppstoreSettingsTimeBasedAccess) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AppstoreSettingsTimeBasedAccess) GetOptions() []string {
+	if a == nil {
+		return nil
+	}
+	return a.Options
+}
+
+func (a *AppstoreSettingsTimeBasedAccess) GetDefault() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Default
+}
+
+// EntitlementRefDefaultEntitlementEntitlementRef - Reference to an Entitlement embedded in another resource (e.g. AppStoreSettingsResponse).
+type EntitlementRefDefaultEntitlementEntitlementRef struct {
+	// The UUID of the entitlement.
+	ID string `json:"id"`
+}
+
+func (e *EntitlementRefDefaultEntitlementEntitlementRef) GetID() string {
+	if e == nil {
+		return ""
+	}
+	return e.ID
+}
+
+// AppstoreSettingsCatalogVisibility - Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
+type AppstoreSettingsCatalogVisibility string
 
 const (
-	ApprovalWorkflowTypeWorkflow    ApprovalWorkflowType = "Workflow"
-	ApprovalWorkflowTypeWorkflowRef ApprovalWorkflowType = "WorkflowRef"
+	AppstoreSettingsCatalogVisibilityVisible    AppstoreSettingsCatalogVisibility = "visible"
+	AppstoreSettingsCatalogVisibilitySearchOnly AppstoreSettingsCatalogVisibility = "search-only"
+	AppstoreSettingsCatalogVisibilityHidden     AppstoreSettingsCatalogVisibility = "hidden"
 )
 
-// ApprovalWorkflow - The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
-type ApprovalWorkflow struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type ApprovalWorkflowType
+func (e AppstoreSettingsCatalogVisibility) ToPointer() *AppstoreSettingsCatalogVisibility {
+	return &e
 }
-
-func CreateApprovalWorkflowWorkflow(workflow Workflow) ApprovalWorkflow {
-	typ := ApprovalWorkflowTypeWorkflow
-
-	return ApprovalWorkflow{
-		Workflow: &workflow,
-		Type:     typ,
+func (e *AppstoreSettingsCatalogVisibility) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
 	}
-}
-
-func CreateApprovalWorkflowWorkflowRef(workflowRef WorkflowRef) ApprovalWorkflow {
-	typ := ApprovalWorkflowTypeWorkflowRef
-
-	return ApprovalWorkflow{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
-	}
-}
-
-func (u *ApprovalWorkflow) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = ApprovalWorkflow{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ApprovalWorkflowTypeWorkflow,
-			Value: &workflow,
-		})
-	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ApprovalWorkflowTypeWorkflowRef,
-			Value: &workflowRef,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflow", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflow", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ApprovalWorkflowType)
-	switch best.Type {
-	case ApprovalWorkflowTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
+	switch v {
+	case "visible":
+		fallthrough
+	case "search-only":
+		fallthrough
+	case "hidden":
+		*e = AppstoreSettingsCatalogVisibility(v)
 		return nil
-	case ApprovalWorkflowTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
+	default:
+		return fmt.Errorf("invalid value for AppstoreSettingsCatalogVisibility: %v", v)
+	}
+}
+
+type AppstoreSettingsAppStoreSettingsResponse struct {
+	// Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
+	RequestInstructions *string `json:"request_instructions,omitzero"`
+	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
+	AllowPermissionSelection bool `json:"allow_permission_selection"`
+	// When true, requesters may select more than one permission in a single request.
+	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
+	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
+	// Time-based access configuration for this app.
+	TimeBasedAccess AppstoreSettingsTimeBasedAccess `json:"time_based_access"`
+	// UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
+	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.
+	RedirectURL *string `json:"redirect_url,omitzero"`
+	// The entitlement pre-selected by default when a user opens the request form. Null means no default is set.
+	DefaultEntitlement *EntitlementRefDefaultEntitlementEntitlementRef `json:"default_entitlement,omitzero"`
+	// Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured.
+	CustomIntakeFields []CustomIntakeField `json:"custom_intake_fields,omitzero"`
+	// Whether this app is listed in the AppStore catalog.
+	InAppStore bool `json:"in_app_store"`
+	// Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
+	CatalogVisibility AppstoreSettingsCatalogVisibility `json:"catalog_visibility"`
+}
+
+func (a AppstoreSettingsAppStoreSettingsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppstoreSettingsAppStoreSettingsResponse) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, ".allowed_requester_group_uuids |= (. // []) | .custom_intake_fields |= (. // []) | .time_based_access.options |= (if . == null then [] else map(.label) end)"); err != nil {
+		return err
+	} else {
+		data = out
+	}
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetRequestInstructions() *string {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for ApprovalWorkflow", string(data))
+	return a.RequestInstructions
 }
 
-func (u ApprovalWorkflow) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetAllowPermissionSelection() bool {
+	if a == nil {
+		return false
 	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type ApprovalWorkflow: all fields are null")
+	return a.AllowPermissionSelection
 }
 
-type DefaultProvisioningWorkflowType string
-
-const (
-	DefaultProvisioningWorkflowTypeWorkflow    DefaultProvisioningWorkflowType = "Workflow"
-	DefaultProvisioningWorkflowTypeWorkflowRef DefaultProvisioningWorkflowType = "WorkflowRef"
-)
-
-// DefaultProvisioningWorkflow - The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
-type DefaultProvisioningWorkflow struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type DefaultProvisioningWorkflowType
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetAllowMultiplePermissionSelection() bool {
+	if a == nil {
+		return false
+	}
+	return a.AllowMultiplePermissionSelection
 }
 
-func CreateDefaultProvisioningWorkflowWorkflow(workflow Workflow) DefaultProvisioningWorkflow {
-	typ := DefaultProvisioningWorkflowTypeWorkflow
-
-	return DefaultProvisioningWorkflow{
-		Workflow: &workflow,
-		Type:     typ,
-	}
-}
-
-func CreateDefaultProvisioningWorkflowWorkflowRef(workflowRef WorkflowRef) DefaultProvisioningWorkflow {
-	typ := DefaultProvisioningWorkflowTypeWorkflowRef
-
-	return DefaultProvisioningWorkflow{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
-	}
-}
-
-func (u *DefaultProvisioningWorkflow) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = DefaultProvisioningWorkflow{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DefaultProvisioningWorkflowTypeWorkflow,
-			Value: &workflow,
-		})
-	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DefaultProvisioningWorkflowTypeWorkflowRef,
-			Value: &workflowRef,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultProvisioningWorkflow", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultProvisioningWorkflow", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(DefaultProvisioningWorkflowType)
-	switch best.Type {
-	case DefaultProvisioningWorkflowTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
-		return nil
-	case DefaultProvisioningWorkflowTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetAllowedRequesterGroupUuids() []string {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultProvisioningWorkflow", string(data))
+	return a.AllowedRequesterGroupUuids
 }
 
-func (u DefaultProvisioningWorkflow) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetTimeBasedAccess() AppstoreSettingsTimeBasedAccess {
+	if a == nil {
+		return AppstoreSettingsTimeBasedAccess{}
 	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type DefaultProvisioningWorkflow: all fields are null")
+	return a.TimeBasedAccess
 }
 
-type DefaultDeprovisioningWorkflowType string
-
-const (
-	DefaultDeprovisioningWorkflowTypeWorkflow    DefaultDeprovisioningWorkflowType = "Workflow"
-	DefaultDeprovisioningWorkflowTypeWorkflowRef DefaultDeprovisioningWorkflowType = "WorkflowRef"
-)
-
-// DefaultDeprovisioningWorkflow - The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
-type DefaultDeprovisioningWorkflow struct {
-	Workflow    *Workflow    `queryParam:"inline" union:"member"`
-	WorkflowRef *WorkflowRef `queryParam:"inline" union:"member"`
-
-	Type DefaultDeprovisioningWorkflowType
-}
-
-func CreateDefaultDeprovisioningWorkflowWorkflow(workflow Workflow) DefaultDeprovisioningWorkflow {
-	typ := DefaultDeprovisioningWorkflowTypeWorkflow
-
-	return DefaultDeprovisioningWorkflow{
-		Workflow: &workflow,
-		Type:     typ,
-	}
-}
-
-func CreateDefaultDeprovisioningWorkflowWorkflowRef(workflowRef WorkflowRef) DefaultDeprovisioningWorkflow {
-	typ := DefaultDeprovisioningWorkflowTypeWorkflowRef
-
-	return DefaultDeprovisioningWorkflow{
-		WorkflowRef: &workflowRef,
-		Type:        typ,
-	}
-}
-
-func (u *DefaultDeprovisioningWorkflow) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = DefaultDeprovisioningWorkflow{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var workflow Workflow = Workflow{}
-	if err := utils.UnmarshalJSON(data, &workflow, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DefaultDeprovisioningWorkflowTypeWorkflow,
-			Value: &workflow,
-		})
-	}
-
-	var workflowRef WorkflowRef = WorkflowRef{}
-	if err := utils.UnmarshalJSON(data, &workflowRef, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  DefaultDeprovisioningWorkflowTypeWorkflowRef,
-			Value: &workflowRef,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultDeprovisioningWorkflow", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultDeprovisioningWorkflow", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(DefaultDeprovisioningWorkflowType)
-	switch best.Type {
-	case DefaultDeprovisioningWorkflowTypeWorkflow:
-		u.Workflow = best.Value.(*Workflow)
-		return nil
-	case DefaultDeprovisioningWorkflowTypeWorkflowRef:
-		u.WorkflowRef = best.Value.(*WorkflowRef)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetRequestValidationWebhookUUID() *string {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for DefaultDeprovisioningWorkflow", string(data))
+	return a.RequestValidationWebhookUUID
 }
 
-func (u DefaultDeprovisioningWorkflow) MarshalJSON() ([]byte, error) {
-	if u.Workflow != nil {
-		return utils.MarshalJSON(u.Workflow, "", true)
-	}
-
-	if u.WorkflowRef != nil {
-		return utils.MarshalJSON(u.WorkflowRef, "", true)
-	}
-
-	return nil, errors.New("could not marshal union type DefaultDeprovisioningWorkflow: all fields are null")
-}
-
-type AppstoreSettingsType string
-
-const (
-	AppstoreSettingsTypeAppStoreSettingsCompact  AppstoreSettingsType = "AppStoreSettingsCompact"
-	AppstoreSettingsTypeAppStoreSettingsResponse AppstoreSettingsType = "AppStoreSettingsResponse"
-)
-
-// AppstoreSettings - AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
-type AppstoreSettings struct {
-	AppStoreSettingsCompact  *AppStoreSettingsCompact  `queryParam:"inline" union:"member"`
-	AppStoreSettingsResponse *AppStoreSettingsResponse `queryParam:"inline" union:"member"`
-
-	Type AppstoreSettingsType
-}
-
-func CreateAppstoreSettingsAppStoreSettingsCompact(appStoreSettingsCompact AppStoreSettingsCompact) AppstoreSettings {
-	typ := AppstoreSettingsTypeAppStoreSettingsCompact
-
-	return AppstoreSettings{
-		AppStoreSettingsCompact: &appStoreSettingsCompact,
-		Type:                    typ,
-	}
-}
-
-func CreateAppstoreSettingsAppStoreSettingsResponse(appStoreSettingsResponse AppStoreSettingsResponse) AppstoreSettings {
-	typ := AppstoreSettingsTypeAppStoreSettingsResponse
-
-	return AppstoreSettings{
-		AppStoreSettingsResponse: &appStoreSettingsResponse,
-		Type:                     typ,
-	}
-}
-
-func (u *AppstoreSettings) UnmarshalJSON(data []byte) (err error) {
-	previous := *u
-	*u = AppstoreSettings{}
-	defer func() {
-		if err != nil {
-			*u = previous
-		}
-	}()
-
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
-	var appStoreSettingsCompact AppStoreSettingsCompact = AppStoreSettingsCompact{}
-	if err := utils.UnmarshalJSON(data, &appStoreSettingsCompact, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AppstoreSettingsTypeAppStoreSettingsCompact,
-			Value: &appStoreSettingsCompact,
-		})
-	}
-
-	var appStoreSettingsResponse AppStoreSettingsResponse = AppStoreSettingsResponse{}
-	if err := utils.UnmarshalJSON(data, &appStoreSettingsResponse, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  AppstoreSettingsTypeAppStoreSettingsResponse,
-			Value: &appStoreSettingsResponse,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AppstoreSettings", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestUnionCandidate(candidates, data)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for AppstoreSettings", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(AppstoreSettingsType)
-	switch best.Type {
-	case AppstoreSettingsTypeAppStoreSettingsCompact:
-		u.AppStoreSettingsCompact = best.Value.(*AppStoreSettingsCompact)
-		return nil
-	case AppstoreSettingsTypeAppStoreSettingsResponse:
-		u.AppStoreSettingsResponse = best.Value.(*AppStoreSettingsResponse)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetRedirectURL() *string {
+	if a == nil {
 		return nil
 	}
-
-	return fmt.Errorf("could not unmarshal `%s` into any supported union types for AppstoreSettings", string(data))
+	return a.RedirectURL
 }
 
-func (u AppstoreSettings) MarshalJSON() ([]byte, error) {
-	if u.AppStoreSettingsCompact != nil {
-		return utils.MarshalJSON(u.AppStoreSettingsCompact, "", true)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetDefaultEntitlement() *EntitlementRefDefaultEntitlementEntitlementRef {
+	if a == nil {
+		return nil
 	}
+	return a.DefaultEntitlement
+}
 
-	if u.AppStoreSettingsResponse != nil {
-		return utils.MarshalJSON(u.AppStoreSettingsResponse, "", true)
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetCustomIntakeFields() []CustomIntakeField {
+	if a == nil {
+		return nil
 	}
+	return a.CustomIntakeFields
+}
 
-	return nil, errors.New("could not marshal union type AppstoreSettings: all fields are null")
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetInAppStore() bool {
+	if a == nil {
+		return false
+	}
+	return a.InAppStore
+}
+
+func (a *AppstoreSettingsAppStoreSettingsResponse) GetCatalogVisibility() AppstoreSettingsCatalogVisibility {
+	if a == nil {
+		return AppstoreSettingsCatalogVisibility("")
+	}
+	return a.CatalogVisibility
 }
 
 type SyncStatus string
@@ -468,39 +315,39 @@ type AppResponse struct {
 	// The unique identifier of the app.
 	ID string `json:"id"`
 	// The display name of the app.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 	// The catalog identifier of the underlying app (e.g. "github.com"). Custom apps return "custom".
-	AppClassID *string `json:"app_class_id,omitempty"`
+	AppClassID *string `json:"app_class_id,omitzero"`
 	// The app-instance identifier distinguishing multiple instances of the same app.
-	InstanceID *string `json:"instance_id,omitempty"`
+	InstanceID *string `json:"instance_id,omitzero"`
 	// URL of the app logo image.
-	LogoURL *string `json:"logo_url,omitempty"`
+	LogoURL *string `json:"logo_url,omitzero"`
 	// URL of the app's official website.
-	WebsiteURL *string `json:"website_url,omitempty"`
+	WebsiteURL *string `json:"website_url,omitzero"`
 	// The category this app belongs to.
-	Category *string `json:"category,omitempty"`
+	Category *string `json:"category,omitzero"`
 	// A description of the app.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
-	Status *AppResponseStatus `json:"status,omitempty"`
+	Status *AppResponseStatus `json:"status,omitzero"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
-	Disconnected *bool `default:"false" json:"disconnected"`
+	Disconnected *bool `json:"disconnected,omitzero"`
 	// Custom message shown to the requester after their access request is approved.
-	PostApprovalMessage *string `json:"post_approval_message,omitempty"`
+	PostApprovalMessage *string `json:"post_approval_message,omitzero"`
 	// Users and groups that administer this app. Only present when expand=admins is requested.
-	Admins []AdminAssignee `json:"admins,omitempty"`
+	Admins []AdminAssignee `json:"admins,omitzero"`
 	// The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates.
-	ApprovalWorkflow *ApprovalWorkflow `json:"approval_workflow,omitempty"`
+	ApprovalWorkflow *ApprovalWorkflowWorkflowRef `json:"approval_workflow,omitzero"`
 	// The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
-	DefaultProvisioningWorkflow *DefaultProvisioningWorkflow `json:"default_provisioning_workflow,omitempty"`
+	DefaultProvisioningWorkflow *DefaultProvisioningWorkflowWorkflowRef `json:"default_provisioning_workflow,omitzero"`
 	// The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows.
-	DefaultDeprovisioningWorkflow *DefaultDeprovisioningWorkflow `json:"default_deprovisioning_workflow,omitempty"`
+	DefaultDeprovisioningWorkflow *DefaultDeprovisioningWorkflowWorkflowRef `json:"default_deprovisioning_workflow,omitzero"`
 	// AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
-	AppstoreSettings *AppstoreSettings `json:"appstore_settings,omitempty"`
+	AppstoreSettings *AppstoreSettingsAppStoreSettingsResponse `json:"appstore_settings,omitzero"`
 	// Custom attributes configured on this app. Only present when expand=custom_attributes is requested.
-	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
+	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitzero"`
 	// The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
-	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
+	SyncStatus *SyncStatus `json:"sync_status,omitzero"`
 }
 
 func (a AppResponse) MarshalJSON() ([]byte, error) {
@@ -598,28 +445,28 @@ func (a *AppResponse) GetAdmins() []AdminAssignee {
 	return a.Admins
 }
 
-func (a *AppResponse) GetApprovalWorkflow() *ApprovalWorkflow {
+func (a *AppResponse) GetApprovalWorkflow() *ApprovalWorkflowWorkflowRef {
 	if a == nil {
 		return nil
 	}
 	return a.ApprovalWorkflow
 }
 
-func (a *AppResponse) GetDefaultProvisioningWorkflow() *DefaultProvisioningWorkflow {
+func (a *AppResponse) GetDefaultProvisioningWorkflow() *DefaultProvisioningWorkflowWorkflowRef {
 	if a == nil {
 		return nil
 	}
 	return a.DefaultProvisioningWorkflow
 }
 
-func (a *AppResponse) GetDefaultDeprovisioningWorkflow() *DefaultDeprovisioningWorkflow {
+func (a *AppResponse) GetDefaultDeprovisioningWorkflow() *DefaultDeprovisioningWorkflowWorkflowRef {
 	if a == nil {
 		return nil
 	}
 	return a.DefaultDeprovisioningWorkflow
 }
 
-func (a *AppResponse) GetAppstoreSettings() *AppstoreSettings {
+func (a *AppResponse) GetAppstoreSettings() *AppstoreSettingsAppStoreSettingsResponse {
 	if a == nil {
 		return nil
 	}

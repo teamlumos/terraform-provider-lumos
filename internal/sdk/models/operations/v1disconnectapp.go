@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -33,6 +34,17 @@ type V1DisconnectAppResponse struct {
 	DisconnectIntegrationOutput *shared.DisconnectIntegrationOutput
 	// Bad request — the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason.
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1DisconnectAppResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1DisconnectAppResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1DisconnectAppResponse) GetContentType() string {

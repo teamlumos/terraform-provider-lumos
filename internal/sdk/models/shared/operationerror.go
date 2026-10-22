@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // OperationError - Terminal failure of an operation, in the standard error model.
 type OperationError struct {
 	// Stable machine-readable failure code.
@@ -9,7 +13,18 @@ type OperationError struct {
 	// Human-readable failure description.
 	Message string `json:"message"`
 	// Item-level failures for bulk operations (e.g. per-row upload errors). Empty when the failure is not itemized.
-	Errors []APIErrorField `json:"errors,omitempty"`
+	Errors []APIErrorField `json:"errors,omitzero"`
+}
+
+func (o OperationError) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(o, "", false)
+}
+
+func (o *OperationError) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &o, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (o *OperationError) GetCode() string {

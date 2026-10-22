@@ -7,7 +7,7 @@ type PreApprovalRuleListOutput struct {
 	// Pre-approval rules in this page.
 	PreApprovalRules []PreApprovalRule `json:"pre_approval_rules"`
 	// Opaque cursor for the next page. Pass back as `page_token` to continue; `null` means this is the last page.
-	NextPageToken *string `json:"next_page_token,omitempty"`
+	NextPageToken *string `json:"next_page_token,omitzero"`
 }
 
 func (p *PreApprovalRuleListOutput) GetPreApprovalRules() []PreApprovalRule {

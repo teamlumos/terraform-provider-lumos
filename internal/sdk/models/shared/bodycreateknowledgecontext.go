@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type File struct {
 	FileName string `multipartForm:"name=fileName"`
 	Content  []byte `multipartForm:"content"`
@@ -32,6 +36,17 @@ type BodyCreateKnowledgeContext struct {
 	ProductScopes []KnowledgeProductScope `multipartForm:"name=product_scopes"`
 	// Optional file attachment.
 	File *File `multipartForm:"file,name=file"`
+}
+
+func (b BodyCreateKnowledgeContext) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(b, "", false)
+}
+
+func (b *BodyCreateKnowledgeContext) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (b *BodyCreateKnowledgeContext) GetTitle() string {
