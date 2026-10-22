@@ -48,3 +48,4 @@ internal/sdk/internal/hooks/require_list_filter_test.go
 internal/customtypes/
 internal/sdk/internal/hooks/rate_limited.go
 internal/sdk/internal/hooks/rate_limited_test.go
+internal/provider/workflow_binding_destroy.go
