@@ -16,7 +16,7 @@ var requireListFilterOperations = map[string]struct {
 	dataSource string
 	filters    []string
 }{
-	"v1ListUsers":      {"lumos_users", []string{"search_term"}},
+	"v1ListUsers":      {"lumos_users", []string{"search"}},
 	"listEntitlements": {"lumos_entitlements", []string{"search"}},
 	"listAccounts":     {"lumos_accounts", []string{"app_id", "email"}},
 	"listGroups":       {"lumos_groups", []string{"name", "integration_specific_id", "app_id"}},

@@ -145,7 +145,7 @@ provider "lumos" {
 }
 
 data "lumos_users" "all" {
-  search_term = "example"
+  search = "example"
 }
 `, server.URL),
 				Check: resource.ComposeAggregateTestCheckFunc(checks...),
