@@ -33,8 +33,8 @@ For approval templates and chains, see the [approvals guide](../guides/approvals
 ## Limitations
 
 * Placeholder steps can't be imported and applied.
-* A chain can't move between approval templates.
-* A chain removed from its template but kept in the configuration is recreated on the next apply.
+* A chain can be used by only one workflow. Lumos refuses a template that references a chain another workflow already uses.
+* A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
 
 ## Import
 
