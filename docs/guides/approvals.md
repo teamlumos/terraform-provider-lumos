@@ -106,7 +106,20 @@ resource "lumos_workflow" "manager_then_it" {
 }
 ```
 
-The template does nothing until it's bound to the app or to one of its entitlements.
+## Binding the template
+
+The template does nothing until it's bound. Bind it to the app to make it the approval process for requests to the app:
+
+```terraform
+resource "lumos_app_approval_workflow" "deploy_dashboard" {
+  app_id      = lumos_app.deploy_dashboard.id
+  workflow_id = lumos_workflow.deploy_dashboard_approvals.id
+}
+```
+
+* An app always has an approval workflow. To change it, set `workflow_id` to a different template; removing the binding from the configuration fails the plan rather than leaving the template bound while Terraform reports it gone. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`.
+* To give one entitlement a different approval process, bind another template with `lumos_entitlement_approval_workflow`. That turns the entitlement's override on; destroying the binding turns it off again, so the entitlement goes back to the app's template.
+* A template can be bound to only one app or entitlement.
 
 ## Limitations
 
