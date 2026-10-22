@@ -49,6 +49,35 @@ resource "lumos_workflow" "deploy_dashboard_approvals" {
 * A template with branches must also have a fallback.
 * When no approval is required, leave out both: `branches = []` and no `fallback_workflow_id`.
 
+### Branch conditions
+
+Write every attribute and value in a condition as a `{ label, value }` object. Lumos matches on `value`; `label` is the text shown in Lumos, and it's kept as written. A condition written with plain strings, such as `attribute = "identity.team"`, is accepted, but Lumos reads it back in the `{ label, value }` form, so every plan shows a change.
+
+This template sends requests from the Eng and IT teams through an IT-only chain, and every other request through the fallback:
+
+```terraform
+resource "lumos_workflow" "deploy_dashboard_approvals" {
+  app_id = lumos_app.deploy_dashboard.id
+  type   = "approval"
+  name   = "Deploy Dashboard approvals"
+  steps = [{
+    step = "branch"
+    inputs = jsonencode({
+      branches = [{
+        condition = {
+          and = [{
+            attribute = { label = "Team", value = "identity.team" }
+            in        = [{ label = "Engineering", value = "Eng" }, { label = "IT", value = "IT" }]
+          }]
+        }
+        workflow_id = lumos_workflow.it_only.id
+      }]
+      fallback_workflow_id = lumos_workflow.manager_then_it.id
+    })
+  }]
+}
+```
+
 ## Approval chains
 
 Each chain lists its approval stages as `approval_task` steps. `stage_number` starts at 1 and counts up with no gaps; Lumos checks this when the template is bound. `assignees` lists who approves that stage:
