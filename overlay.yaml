@@ -302,13 +302,6 @@ actions:
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]
     update:
       anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
-  # Speakeasy drops extensions written next to a $ref, so source is wrapped
-  # in allOf for the suppress-computed-diff below to reach it.
-  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["source"]["$ref"]
-    remove: true
-  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["source"]
-    update:
-      allOf: [{"$ref": "#/components/schemas/DiscoverySource"}]
   # An update only renames, so a plan keeps the current value of everything
   # else instead of showing it as known after apply.
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["id","app_id","entitlement_type_label","source","description","approval_workflow_override","provisioning_workflow","deprovisioning_workflow","custom_approval_message_override","appstore_settings"]

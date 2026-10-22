@@ -120,7 +120,7 @@ func (f *fakeEntitlementAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // entitlement in an App Store app can't be set up on demand in a shared test
 // domain.
 func TestEntitlementAppStoreSettingsOnSyncedEntitlement(t *testing.T) {
-	api := newFakeEntitlementAPI(t, "OKTA")
+	api := newFakeEntitlementAPI(t, "okta")
 	server := httptest.NewServer(api)
 	defer server.Close()
 
@@ -230,14 +230,14 @@ func TestEntitlementDestroyRefused(t *testing.T) {
 	}{
 		{
 			name:       "held by an account",
-			source:     "MANUAL",
+			source:     "manual",
 			status:     http.StatusConflict,
 			body:       `{"detail":"Entitlement is still held by 2 active account(s); deletion would orphan their access.","code":"entitlement_in_use"}`,
 			wantErrMsg: `still held by 2 active account`,
 		},
 		{
 			name:       "synced from an integration",
-			source:     "OKTA",
+			source:     "okta",
 			status:     http.StatusUnprocessableEntity,
 			body:       `{"detail":"Only entitlements from a manual source can be deleted."}`,
 			wantErrMsg: `Only entitlements from a manual source can be deleted`,
