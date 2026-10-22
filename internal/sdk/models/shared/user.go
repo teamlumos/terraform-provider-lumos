@@ -4,8 +4,42 @@
 package shared
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
+
+type StatusUserLifecycleStatus string
+
+const (
+	StatusUserLifecycleStatusStaged    StatusUserLifecycleStatus = "STAGED"
+	StatusUserLifecycleStatusActive    StatusUserLifecycleStatus = "ACTIVE"
+	StatusUserLifecycleStatusSuspended StatusUserLifecycleStatus = "SUSPENDED"
+	StatusUserLifecycleStatusInactive  StatusUserLifecycleStatus = "INACTIVE"
+)
+
+func (e StatusUserLifecycleStatus) ToPointer() *StatusUserLifecycleStatus {
+	return &e
+}
+func (e *StatusUserLifecycleStatus) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "STAGED":
+		fallthrough
+	case "ACTIVE":
+		fallthrough
+	case "SUSPENDED":
+		fallthrough
+	case "INACTIVE":
+		*e = StatusUserLifecycleStatus(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for StatusUserLifecycleStatus: %v", v)
+	}
+}
 
 type User struct {
 	// The ID of this user.
@@ -17,7 +51,7 @@ type User struct {
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
 	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
+	Status *StatusUserLifecycleStatus `json:"status,omitempty"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
@@ -59,7 +93,7 @@ func (u *User) GetFamilyName() *string {
 	return u.FamilyName
 }
 
-func (u *User) GetStatus() *UserLifecycleStatus {
+func (u *User) GetStatus() *StatusUserLifecycleStatus {
 	if u == nil {
 		return nil
 	}
