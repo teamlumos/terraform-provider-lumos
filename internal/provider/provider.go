@@ -123,7 +123,10 @@ func (p *LumosProvider) Actions(_ context.Context) []func() action.Action {
 }
 
 func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		NewAppResource,
+		NewAppAppstoreSettingsResource,
+	}
 }
 
 func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.DataSource {

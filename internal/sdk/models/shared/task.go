@@ -210,31 +210,31 @@ type Task struct {
 	// The current status of this task.
 	Status TaskStatus `json:"status"`
 	// A description of this task.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// Instructions for completing this task.
-	Instructions *string `json:"instructions,omitempty"`
+	Instructions *string `json:"instructions,omitzero"`
 	// The product area this task is related to.
-	ProductArea *ProductArea `json:"product_area,omitempty"`
+	ProductArea *ProductArea `json:"product_area,omitzero"`
 	// The app this task is related to.
-	App *BaseApp `json:"app,omitempty"`
+	App *BaseApp `json:"app,omitzero"`
 	// The user this task is about.
-	TargetUser *User `json:"target_user,omitempty"`
+	TargetUser *User `json:"target_user,omitzero"`
 	// The user who resolved this task.
-	ResolvedBy *User `json:"resolved_by,omitempty"`
+	ResolvedBy *User `json:"resolved_by,omitzero"`
 	// When this task was created.
 	CreatedAt time.Time `json:"created_at"`
 	// When this task was last updated.
 	UpdatedAt time.Time `json:"updated_at"`
 	// The assignees of this task. Requires expand=assignees.
-	Assignees []TaskAssignee `json:"assignees,omitempty"`
+	Assignees []TaskAssignee `json:"assignees,omitzero"`
 	// Available actions for this task. Requires expand=actions.
-	Actions []TaskAction `json:"actions,omitempty"`
+	Actions []TaskAction `json:"actions,omitzero"`
 	// Comments on this task. Requires expand=comments.
-	Comments []TaskComment `json:"comments,omitempty"`
+	Comments []TaskComment `json:"comments,omitzero"`
 	// The access request this task is associated with, if applicable.
-	AccessRequestID *string `json:"access_request_id,omitempty"`
+	AccessRequestID *string `json:"access_request_id,omitzero"`
 	// The entitlement this task grants or removes, if any.
-	EntitlementID *string `json:"entitlement_id,omitempty"`
+	EntitlementID *string `json:"entitlement_id,omitzero"`
 }
 
 func (t Task) MarshalJSON() ([]byte, error) {

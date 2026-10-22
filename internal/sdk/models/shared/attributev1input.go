@@ -5,11 +5,11 @@ package shared
 // AttributeV1Input - One uploaded attribute row, with unknown fields rejected instead of ignored.
 type AttributeV1Input struct {
 	// The unique identifier of the custom attribute
-	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
+	UniqueIdentifier *string `json:"unique_identifier,omitzero"`
 	// The type of the attribute.
-	Type *string `json:"type,omitempty"`
+	Type *string `json:"type,omitzero"`
 	// The name of the attribute.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 }
 
 func (a *AttributeV1Input) GetUniqueIdentifier() *string {

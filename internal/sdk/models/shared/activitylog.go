@@ -32,7 +32,7 @@ type ActivityLog struct {
 	// Who performed the action. `actor_type` says what kind of actor it is, such as `Lumos user` or `Lumos System`, and the other keys hold the actor's fields.
 	Actor Actor `json:"actor"`
 	// When Lumos learned the action began, as an ISO 8601 timestamp.
-	EventBeganAt *time.Time `json:"event_began_at,omitempty"`
+	EventBeganAt *time.Time `json:"event_began_at,omitzero"`
 	// Extra details about the event. Which keys appear depends on the event type, and empty ones are left out. Examples include `business_justification`, `access_length`, `permissions`, and `error_message`.
 	EventMetadata EventMetadata `json:"event_metadata"`
 }

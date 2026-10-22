@@ -17,9 +17,9 @@ type IdentityEvent struct {
 	// The field that changed.
 	ChangedField string `json:"changed_field"`
 	// Previous value of the changed field.
-	OldFieldValue *string `json:"old_field_value,omitempty"`
+	OldFieldValue *string `json:"old_field_value,omitzero"`
 	// New value of the changed field.
-	NewFieldValue *string `json:"new_field_value,omitempty"`
+	NewFieldValue *string `json:"new_field_value,omitzero"`
 }
 
 func (i IdentityEvent) MarshalJSON() ([]byte, error) {

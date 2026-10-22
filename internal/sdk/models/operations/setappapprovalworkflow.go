@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -38,6 +39,17 @@ type SetAppApprovalWorkflowResponse struct {
 	Workflow *shared.Workflow
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (s SetAppApprovalWorkflowResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *SetAppApprovalWorkflowResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *SetAppApprovalWorkflowResponse) GetContentType() string {

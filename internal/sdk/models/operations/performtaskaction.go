@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -36,6 +37,17 @@ type PerformTaskActionResponse struct {
 	RawResponse *http.Response
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (p PerformTaskActionResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(p, "", false)
+}
+
+func (p *PerformTaskActionResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &p, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PerformTaskActionResponse) GetContentType() string {

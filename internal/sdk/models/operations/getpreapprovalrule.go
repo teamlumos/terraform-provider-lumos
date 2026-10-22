@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -37,6 +38,17 @@ type GetPreApprovalRuleResponse struct {
 	PreApprovalRule *shared.PreApprovalRule
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (g GetPreApprovalRuleResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetPreApprovalRuleResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetPreApprovalRuleResponse) GetContentType() string {

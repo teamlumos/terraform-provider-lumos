@@ -93,6 +93,17 @@ type V1ListIdentityEventsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (v V1ListIdentityEventsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1ListIdentityEventsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *V1ListIdentityEventsResponse) GetContentType() string {
 	if v == nil {
 		return ""

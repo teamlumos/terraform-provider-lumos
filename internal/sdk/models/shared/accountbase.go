@@ -99,7 +99,7 @@ type AccountBase struct {
 	// The type of this account: `user`, `role` (e.g. AWS), or `service` (e.g. GCP).
 	AccountType AccountBaseAccountType `json:"account_type"`
 	// The status of the account.
-	Status *AccountBaseStatus `json:"status,omitempty"`
+	Status *AccountBaseStatus `json:"status,omitzero"`
 }
 
 func (a *AccountBase) GetID() string {

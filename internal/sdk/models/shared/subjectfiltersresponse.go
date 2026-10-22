@@ -2,10 +2,25 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // SubjectFiltersResponse - The filterable fields for one app review's subjects.
 type SubjectFiltersResponse struct {
 	// Fields this app review's subjects can be filtered on. Use a field's `field` and one of its `operators` to build a `filters` entry, and an option's `value` — never its `label` — inside `values`.
-	Fields []FilterOption `json:"fields,omitempty"`
+	Fields []FilterOption `json:"fields,omitzero"`
+}
+
+func (s SubjectFiltersResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(s, "", false)
+}
+
+func (s *SubjectFiltersResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &s, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *SubjectFiltersResponse) GetFields() []FilterOption {

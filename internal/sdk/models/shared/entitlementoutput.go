@@ -382,17 +382,28 @@ type EntitlementOutput struct {
 	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
 	Source Source `json:"source"`
 	// Optional long-form description of the entitlement.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
-	ApprovalWorkflowOverride *ApprovalWorkflowOverride `json:"approval_workflow_override,omitempty"`
+	ApprovalWorkflowOverride *ApprovalWorkflowOverride `json:"approval_workflow_override,omitzero"`
 	// The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
-	ProvisioningWorkflow *ProvisioningWorkflow `json:"provisioning_workflow,omitempty"`
+	ProvisioningWorkflow *ProvisioningWorkflow `json:"provisioning_workflow,omitzero"`
 	// The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow.
-	DeprovisioningWorkflow *DeprovisioningWorkflow `json:"deprovisioning_workflow,omitempty"`
+	DeprovisioningWorkflow *DeprovisioningWorkflow `json:"deprovisioning_workflow,omitzero"`
 	// This entitlement's own custom approval message, shown to requesters when the entitlement is approved, overriding the app's. Null means this entitlement inherits the app's approval message.
-	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitempty"`
+	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitzero"`
 	// The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore.
-	AppstoreSettings *EntitlementAppStoreSettings `json:"appstore_settings,omitempty"`
+	AppstoreSettings *EntitlementAppStoreSettings `json:"appstore_settings,omitzero"`
+}
+
+func (e EntitlementOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *EntitlementOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (e *EntitlementOutput) GetID() string {

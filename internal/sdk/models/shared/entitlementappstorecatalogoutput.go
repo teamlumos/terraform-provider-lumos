@@ -90,7 +90,7 @@ type EntitlementAppStoreCatalogOutput struct {
 	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
 	Source EntitlementAppStoreCatalogOutputSource `json:"source"`
 	// Optional long-form description of the entitlement.
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description,omitzero"`
 	// This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or domain.
 	TimeBasedAccess []TimeBasedAccessOverrideOption `json:"time_based_access"`
 }

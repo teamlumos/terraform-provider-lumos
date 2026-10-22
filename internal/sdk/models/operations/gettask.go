@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -12,6 +13,17 @@ type GetTaskRequest struct {
 	TaskID string `pathParam:"style=simple,explode=false,name=task_id"`
 	// Fields to expand: actions, assignees, comments.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (g GetTaskRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetTaskRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetTaskRequest) GetTaskID() string {
@@ -39,6 +51,17 @@ type GetTaskResponse struct {
 	Task *shared.Task
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (g GetTaskResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetTaskResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetTaskResponse) GetContentType() string {

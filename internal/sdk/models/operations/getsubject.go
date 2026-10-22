@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -16,6 +17,17 @@ type GetSubjectRequest struct {
 	SubjectUUID string `pathParam:"style=simple,explode=false,name=subject_uuid"`
 	// Comma-separated related data to load: `ai_recommendation`, `removal.evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (g GetSubjectRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetSubjectRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetSubjectRequest) GetReviewUUID() string {
@@ -57,6 +69,17 @@ type GetSubjectResponse struct {
 	Subject *shared.Subject
 	// Validation error — an unsupported `expand` field, or `expand=ai_recommendation` on an app review with AI Assist turned off (`app_review.ai_disabled`).
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (g GetSubjectResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetSubjectResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetSubjectResponse) GetContentType() string {

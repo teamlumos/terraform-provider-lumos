@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -11,6 +12,17 @@ type V1CancelAccessRequestRequest struct {
 	// The access request's ID, which `GET /v1/access-requests` returns as `id`.
 	ID                       string                           `pathParam:"style=simple,explode=false,name=id"`
 	AccessRequestCancelInput *shared.AccessRequestCancelInput `request:"mediaType=application/json"`
+}
+
+func (v V1CancelAccessRequestRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1CancelAccessRequestRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1CancelAccessRequestRequest) GetID() string {
@@ -39,6 +51,17 @@ type V1CancelAccessRequestResponse struct {
 	RawResponse *http.Response
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (v V1CancelAccessRequestResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1CancelAccessRequestResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1CancelAccessRequestResponse) GetContentType() string {

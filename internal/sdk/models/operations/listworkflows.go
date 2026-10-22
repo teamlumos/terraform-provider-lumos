@@ -71,6 +71,17 @@ type ListWorkflowsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListWorkflowsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListWorkflowsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListWorkflowsResponse) GetContentType() string {
 	if l == nil {
 		return ""

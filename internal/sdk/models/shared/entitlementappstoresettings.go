@@ -2,15 +2,30 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type EntitlementAppStoreSettings struct {
 	// Whether this entitlement is visible in the AppStore catalog.
 	VisibleInAppstore bool `json:"visible_in_appstore"`
 	// Groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means this entitlement inherits the app's allowed requester groups. An empty list means the override is on with no group restriction: anyone can request this entitlement, even if the app restricts requesters.
-	AllowedRequesterGroupsOverride []GroupRef `json:"allowed_requester_groups_override,omitempty"`
+	AllowedRequesterGroupsOverride []GroupRef `json:"allowed_requester_groups_override,omitzero"`
 	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
-	TimeBasedAccessOverride *TimeBasedAccessOverride `json:"time_based_access_override,omitempty"`
+	TimeBasedAccessOverride *TimeBasedAccessOverride `json:"time_based_access_override,omitzero"`
 	// The inline webhook called to validate access requests for this entitlement. This is configured directly on the entitlement; null means no webhook is configured (there is no inheritance from the app).
-	RequestValidationWebhook *WebhookRef `json:"request_validation_webhook,omitempty"`
+	RequestValidationWebhook *WebhookRef `json:"request_validation_webhook,omitzero"`
+}
+
+func (e EntitlementAppStoreSettings) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *EntitlementAppStoreSettings) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (e *EntitlementAppStoreSettings) GetVisibleInAppstore() bool {

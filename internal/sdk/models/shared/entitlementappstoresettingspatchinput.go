@@ -2,6 +2,10 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // EntitlementAppStoreSettingsPatchInput - Request body for `PATCH /v1/entitlements/{entitlement_uuid}/appstore-settings`.
 //
 // Merge-patch semantics: a field omitted from the request body is left
@@ -12,13 +16,24 @@ package shared
 // bool on the entitlement, so `null` there is equivalent to omitting the field.
 type EntitlementAppStoreSettingsPatchInput struct {
 	// Whether this entitlement is visible in the AppStore catalog.
-	VisibleInAppstore *bool `json:"visible_in_appstore,omitempty"`
+	VisibleInAppstore *bool `json:"visible_in_appstore,omitzero"`
 	// UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. `null` clears the override so this entitlement inherits the app's allowed requester groups. An empty list turns the override on with no group restriction: anyone can request this entitlement, even if the app restricts requesters.
-	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitempty"`
+	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
 	// This entitlement's own time-based access options, overriding the app's. Null clears the override so this entitlement inherits the app's time-based access options.
-	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitempty"`
+	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
 	// UUID of the inline webhook to call to validate access requests for this entitlement. Null removes this entitlement's webhook. Nothing is inherited from the app. When a request names entitlements, only the webhooks set on those entitlements run.
-	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitempty"`
+	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
+}
+
+func (e EntitlementAppStoreSettingsPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(e, "", false)
+}
+
+func (e *EntitlementAppStoreSettingsPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &e, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (e *EntitlementAppStoreSettingsPatchInput) GetVisibleInAppstore() *bool {

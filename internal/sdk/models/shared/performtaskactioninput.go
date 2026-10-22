@@ -55,7 +55,7 @@ type PerformTaskActionInput struct {
 	// The action to perform, as returned by `GET /v1/tasks/{task_id}/actions`.
 	ActionType string `json:"action_type"`
 	// Status to transition to; inferred if omitted and the action has one target.
-	TransitionTo *PerformTaskActionInputTransitionTo `json:"transition_to,omitempty"`
+	TransitionTo *PerformTaskActionInputTransitionTo `json:"transition_to,omitzero"`
 }
 
 func (p *PerformTaskActionInput) GetActionType() string {

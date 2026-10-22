@@ -80,6 +80,17 @@ type ListWorkflowStepsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListWorkflowStepsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListWorkflowStepsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListWorkflowStepsResponse) GetContentType() string {
 	if l == nil {
 		return ""

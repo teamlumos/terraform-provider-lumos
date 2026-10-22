@@ -202,6 +202,17 @@ type ListCustomAttributeDefinitionsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListCustomAttributeDefinitionsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListCustomAttributeDefinitionsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListCustomAttributeDefinitionsResponse) GetContentType() string {
 	if l == nil {
 		return ""

@@ -49,11 +49,11 @@ type DatetimeScopeFilterInput struct {
 	// Datetime scope filter group. Must be LAST_LOGIN or LAST_ACTIVITY.
 	Group DatetimeScopeFilterInputGroup `json:"group"`
 	// Optional. If given, must equal the group's `name` from GET /access_reviews/scope_options (e.g. 'Last Login'); the stored filter always uses that name.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// Inclusive lower bound. Records where the datetime field is >= this value match.
-	After *time.Time `json:"after,omitempty"`
+	After *time.Time `json:"after,omitzero"`
 	// Inclusive upper bound. Records where the datetime field is <= this value match.
-	Before *time.Time `json:"before,omitempty"`
+	Before *time.Time `json:"before,omitzero"`
 }
 
 func (d DatetimeScopeFilterInput) MarshalJSON() ([]byte, error) {

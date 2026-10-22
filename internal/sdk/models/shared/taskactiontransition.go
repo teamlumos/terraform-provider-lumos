@@ -53,7 +53,7 @@ func (e *TransitionTo) UnmarshalJSON(data []byte) error {
 
 type TaskActionTransition struct {
 	// The status the task will transition to when this action is taken.
-	TransitionTo *TransitionTo `json:"transition_to,omitempty"`
+	TransitionTo *TransitionTo `json:"transition_to,omitzero"`
 }
 
 func (t *TaskActionTransition) GetTransitionTo() *TransitionTo {

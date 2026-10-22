@@ -3,6 +3,7 @@
 package operations
 
 import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 	"net/http"
 )
@@ -12,6 +13,17 @@ type GetEntitlementRequest struct {
 	EntitlementUUID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
 	// Fields to expand. Supported fields: approval_workflow_override, provisioning_workflow, deprovisioning_workflow, appstore_settings.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (g GetEntitlementRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetEntitlementRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetEntitlementRequest) GetEntitlementUUID() string {
@@ -39,6 +51,17 @@ type GetEntitlementResponse struct {
 	EntitlementOutput *shared.EntitlementOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+}
+
+func (g GetEntitlementResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(g, "", false)
+}
+
+func (g *GetEntitlementResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &g, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (g *GetEntitlementResponse) GetContentType() string {

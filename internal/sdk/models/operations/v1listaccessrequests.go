@@ -222,6 +222,17 @@ type V1ListAccessRequestsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (v V1ListAccessRequestsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1ListAccessRequestsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *V1ListAccessRequestsResponse) GetContentType() string {
 	if v == nil {
 		return ""

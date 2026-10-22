@@ -89,6 +89,17 @@ type ListAppEntitlementsResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (l ListAppEntitlementsResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(l, "", false)
+}
+
+func (l *ListAppEntitlementsResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &l, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (l *ListAppEntitlementsResponse) GetContentType() string {
 	if l == nil {
 		return ""

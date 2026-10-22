@@ -9,7 +9,7 @@ type OutputParameterSchema struct {
 	// The type of the output value.
 	Type string `json:"type"`
 	// A human-readable label for the output.
-	Label *string `json:"label,omitempty"`
+	Label *string `json:"label,omitzero"`
 }
 
 func (o *OutputParameterSchema) GetKey() string {

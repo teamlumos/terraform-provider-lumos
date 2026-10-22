@@ -74,6 +74,17 @@ type V1GetAppStoreCatalogResponse struct {
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 
+func (v V1GetAppStoreCatalogResponse) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAppStoreCatalogResponse) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (v *V1GetAppStoreCatalogResponse) GetContentType() string {
 	if v == nil {
 		return ""

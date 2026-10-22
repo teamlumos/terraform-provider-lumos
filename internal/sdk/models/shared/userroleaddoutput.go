@@ -5,9 +5,9 @@ package shared
 // UserRoleAddOutput - Exactly one of the two fields is present.
 type UserRoleAddOutput struct {
 	// The role that was assigned. Absent when it was already assigned.
-	RoleAdded *string `json:"role_added,omitempty"`
+	RoleAdded *string `json:"role_added,omitzero"`
 	// Set when the role was already assigned and nothing changed.
-	Message *string `json:"message,omitempty"`
+	Message *string `json:"message,omitzero"`
 }
 
 func (u *UserRoleAddOutput) GetRoleAdded() *string {

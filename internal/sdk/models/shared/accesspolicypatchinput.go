@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 // AccessPolicyPatchInputStatus - The status of the access policy, `draft` or `published`.
@@ -41,19 +42,30 @@ type AccessPolicyPatchInputAccessCondition struct {
 // AccessPolicyPatchInput - A merge-patch body. A field you omit keeps its value, and no field can be `null`.
 type AccessPolicyPatchInput struct {
 	// The name of the access policy.
-	Name *string `json:"name,omitempty"`
+	Name *string `json:"name,omitzero"`
 	// Explanation for why this policy exists.
-	BusinessJustification *string `json:"business_justification,omitempty"`
+	BusinessJustification *string `json:"business_justification,omitzero"`
 	// The status of the access policy, `draft` or `published`.
-	Status *AccessPolicyPatchInputStatus `json:"status,omitempty"`
+	Status *AccessPolicyPatchInputStatus `json:"status,omitzero"`
 	// Whether the access policy is enabled.
-	IsEnabled *bool `json:"is_enabled,omitempty"`
+	IsEnabled *bool `json:"is_enabled,omitzero"`
 	// The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-	AccessCondition *AccessPolicyPatchInputAccessCondition `json:"access_condition,omitempty"`
+	AccessCondition *AccessPolicyPatchInputAccessCondition `json:"access_condition,omitzero"`
 	// Send `true` to make the access policy apply to everyone, replacing its `access_condition`. `false` changes nothing. The everyone condition a read returns in `access_condition` counts as `true`.
-	IsEveryoneCondition *bool `json:"is_everyone_condition,omitempty"`
+	IsEveryoneCondition *bool `json:"is_everyone_condition,omitzero"`
 	// The apps granted by this access policy. Replaces the current apps wholesale.
-	Apps []AccessPolicyAppInput `json:"apps,omitempty"`
+	Apps []AccessPolicyAppInput `json:"apps,omitzero"`
+}
+
+func (a AccessPolicyPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessPolicyPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccessPolicyPatchInput) GetName() *string {

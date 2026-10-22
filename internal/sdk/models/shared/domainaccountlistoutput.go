@@ -5,7 +5,7 @@ package shared
 // DomainAccountListOutput - A page of accounts, each carrying the full v1 account payload.
 type DomainAccountListOutput struct {
 	// Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.
-	NextPageToken *string `json:"next_page_token,omitempty"`
+	NextPageToken *string `json:"next_page_token,omitzero"`
 	// Accounts returned in this page.
 	Accounts []Account `json:"accounts"`
 }
