@@ -1,6 +1,6 @@
 module github.com/teamlumos/terraform-provider-lumos
 
-go 1.24.11
+go 1.26.10
 
 require (
 	github.com/hashicorp/go-uuid v1.0.3
