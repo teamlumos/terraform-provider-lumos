@@ -1,0 +1,50 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Behavior
+
+* **Who the policy applies to** is either everyone (`is_everyone_condition = true`) or the identities matching `access_condition`, never both. Write `access_condition` with `jsonencode`, giving every attribute and value as `{ label, value }` as in the example: that's the form Lumos stores and reads back, so any other form shows a change on every plan.
+* **Grants:** each entry in `apps` grants the app itself when it has no `entitlements`, or the listed entitlements otherwise. Order doesn't matter.
+* **`status` and `is_enabled`** keep their current values when left out. A published policy can't go back to `draft`, a draft can't be enabled, and two published policies can't share a condition; Lumos refuses each of these and the apply fails with its error.
+* **Editing a published policy publishes the change** in the same apply.
+* **Drafts started in the Lumos UI:** while a published policy has an unpublished draft from the UI, Lumos refuses edits to it, and the apply fails until that draft is published or discarded.
+
+## Destroy behavior
+
+Destroy deletes the policy and the pre-approval rules it created. It doesn't revoke access users already received through the policy.
+
+To stop managing a policy without deleting it, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_access_policy.engineering
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+## Import
+
+In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the policy's ID:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}
