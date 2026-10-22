@@ -3,7 +3,7 @@
 package shared
 
 type EntitlementTimeBasedAccessOverridePatchInput struct {
-	// Full replacement list of time-based access option labels for this entitlement's override, referencing options already defined for the domain. Must contain at least one label; to clear the override entirely, send `time_based_access_override` itself as `null` rather than an empty list here.
+	// Labels of the time-based access options for this entitlement's override, referencing options already defined for the organization. Must contain at least one label. To inherit the app's options instead, omit `time_based_access_override` or set it to `null`.
 	Options []string `json:"options"`
 }
 
