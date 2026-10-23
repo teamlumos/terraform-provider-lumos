@@ -210,32 +210,35 @@ func TestWorkflowRenamePlan(t *testing.T) {
 }
 
 // TestWorkflowAppAssignedByAPI checks a workflow created without app_id,
-// then given an app by the API, as binding does: the next update keeps and
-// sends that app_id instead of replacing the workflow or clearing it. It
-// uses a fake API so the app can be assigned between steps.
+// then given an app by the API, as binding does. Lumos can't clear that
+// app_id, so a config that still leaves it out fails at plan time, saying
+// which app to add; once the config sets it, the next update plans only the
+// rename and sends that app_id. It uses a fake API so the app can be
+// assigned between steps.
 func TestWorkflowAppAssignedByAPI(t *testing.T) {
 	fake := &fakeWorkflowAPI{t: t}
 	server := httptest.NewServer(fake)
 	defer server.Close()
 
-	config := func(name string) string {
+	config := func(name, appID string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_workflow" "provisioning" {
   name  = %q
   type  = "account-provisioning"
+  %s
   steps = [{
     step   = "wait"
     inputs = jsonencode({ duration = "P1D" })
   }]
 }
-`, name)
+`, name, appID)
 	}
 
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config("Provision"),
+				Config: config("Provision", ""),
 				Check:  resource.TestCheckNoResourceAttr("lumos_workflow.provisioning", "app_id"),
 			},
 			{
@@ -244,7 +247,11 @@ resource "lumos_workflow" "provisioning" {
 					defer fake.mu.Unlock()
 					fake.workflow["app_id"] = "app1"
 				},
-				Config: config("Provision accounts"),
+				Config:      config("Provision accounts", ""),
+				ExpectError: regexp.MustCompile(`(?s)app_id can't be cleared.*Add\s+app_id = "app1"`),
+			},
+			{
+				Config: config("Provision accounts", `app_id = "app1"`),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_workflow.provisioning", plancheck.ResourceActionUpdate),
