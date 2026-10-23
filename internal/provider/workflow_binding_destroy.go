@@ -46,7 +46,8 @@ func (r *EntitlementDeprovisioningWorkflowResource) ModifyPlan(ctx context.Conte
 }
 
 // refuseUnbinding fails a plan that destroys the binding or moves it to a
-// different owner. Creates and workflow_id changes plan as usual.
+// different owner, or to one not known until apply. Creates, even with an
+// owner not known until apply, and workflow_id changes plan as usual.
 func refuseUnbinding(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse, typeName, ownerAttr, ownerKind string) {
 	if req.State.Raw.IsNull() {
 		return
@@ -71,7 +72,23 @@ func refuseUnbinding(ctx context.Context, req resource.ModifyPlanRequest, resp *
 	}
 	var plannedOwner types.String
 	resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root(ownerAttr), &plannedOwner)...)
-	if resp.Diagnostics.HasError() || plannedOwner.IsUnknown() || plannedOwner.Equal(ownerID) {
+	if resp.Diagnostics.HasError() || plannedOwner.Equal(ownerID) {
+		return
+	}
+	// An owner created or replaced in the same apply isn't known yet, so the
+	// plan can't tell whether the binding moves. If it did, the replacement
+	// would leave the workflow bound to the old owner, so refuse it too.
+	if plannedOwner.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			path.Root(ownerAttr),
+			"Workflow binding can't be moved",
+			fmt.Sprintf("%s on this %s isn't known until apply, so the plan can't tell whether the binding "+
+				"moves away from %s %s. Moving it would replace the binding, and destroying the old binding "+
+				"wouldn't unbind workflow %s: Lumos can't empty this workflow slot. To move a workflow to another "+
+				"%s, rebind the old one and give the new one its own binding resource, as \"Moving a template to "+
+				"another app\" in the approvals guide shows. %s", ownerAttr, typeName, ownerKind,
+				ownerID.ValueString(), workflowID.ValueString(), ownerKind, help),
+		)
 		return
 	}
 	resp.Diagnostics.AddAttributeError(

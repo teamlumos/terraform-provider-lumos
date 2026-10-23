@@ -172,6 +172,65 @@ func TestWorkflowBindingMoveRefused(t *testing.T) {
 	}
 }
 
+// unknownOwnerBindingConfig binds wf1 to an app whose ID comes from a
+// terraform_data resource, so it isn't known until apply whenever owner
+// changes, like an app created or replaced in the same apply.
+func unknownOwnerBindingConfig(serverURL, owner string) string {
+	return fakeProviderConfig(serverURL) + `
+resource "terraform_data" "owner" {
+  input = "` + owner + `"
+}
+
+resource "lumos_app_approval_workflow" "test" {
+  app_id      = terraform_data.owner.output
+  workflow_id = "wf1"
+}
+`
+}
+
+// TestWorkflowBindingUnknownOwner checks a binding whose app ID isn't known
+// until apply. Creating it with the owner in one apply works. Repointing an
+// existing binding at an owner that isn't known yet fails the plan, since
+// the plan can't tell whether the binding moves, and a move would leave the
+// workflow bound to the old app; no bind request is sent. It uses a fake API
+// so the slots can be checked directly.
+func TestWorkflowBindingUnknownOwner(t *testing.T) {
+	fake := newFakeSlotAPI(t)
+	server := httptest.NewServer(fake)
+	defer server.Close()
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: unknownOwnerBindingConfig(server.URL, "app1"),
+				Check:  resource.TestCheckResourceAttr("lumos_app_approval_workflow.test", "app_id", "app1"),
+			},
+			{
+				Config:      unknownOwnerBindingConfig(server.URL, "app2"),
+				ExpectError: regexp.MustCompile(`(?s)Workflow binding can't be moved.*isn't known until apply`),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+resource "terraform_data" "owner" {
+  input = "app1"
+}
+` + removedAppApprovalBinding,
+			},
+		},
+	})
+
+	if got := fake.bound["/v1/apps/app1/approval-workflow"]; got != "wf1" {
+		t.Errorf("app1 holds %q, want wf1 from the first apply", got)
+	}
+	if _, ok := fake.bound["/v1/apps/app2/approval-workflow"]; ok {
+		t.Error("bound a workflow to app2, want the repoint refused")
+	}
+	if puts := fake.requestsWith(http.MethodPut); len(puts) != 1 {
+		t.Errorf("sent %v, want only the first bind", puts)
+	}
+}
+
 // TestWorkflowBindingReadAndImport checks that a binding reads its
 // workflow_id back, imports by the app's ID, and plans to bind again when
 // the slot reads back empty (404). It uses a fake API so the slot can be
