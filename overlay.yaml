@@ -1518,6 +1518,27 @@ actions:
           `true` covers a request for any of the app's entitlements. `false`
           covers only a request for the app itself, and is what a rule with
           none of the three entitlements fields set gets.
+  # The data sources read the response schema, whose descriptions tell API
+  # callers what to send. These say what a rule read back holds: only the
+  # field that decides its coverage is set, so the lists read back empty
+  # and request_has_entitlements null when they don't apply.
+  - target: $["components"]["schemas"]["PreApprovalRule"]["properties"]
+    update:
+      request_includes_entitlements:
+        description: >-
+          IDs of the entitlements the rule covers, in lowercase. The rule
+          covers no other entitlement, and not a request for the app itself.
+          Empty unless the rule lists the entitlements it covers.
+      request_does_not_include_entitlements:
+        description: >-
+          IDs of the entitlements the rule doesn't cover, in lowercase. The
+          rule covers every other entitlement and a request for the app
+          itself. Empty unless the rule lists the entitlements it excludes.
+      request_has_entitlements:
+        description: >-
+          `true` covers a request for any of the app's entitlements. `false`
+          covers only a request for the app itself. Null when the rule lists
+          entitlements.
 
   # data "lumos_pre_approval_rules": an app's rules.
   - target: $["paths"]["/v1/apps/{app_uuid}/pre-approval-rules"]["get"]
