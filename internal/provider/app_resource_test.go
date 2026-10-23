@@ -55,6 +55,9 @@ type fakeAPI struct {
 	patches  []map[string]any
 	settings map[string]any
 	app      map[string]any
+	// appPatches holds each lumos_app update body, apart from the settings
+	// PATCHes in patches.
+	appPatches []map[string]any
 }
 
 func newFakeAPI(t *testing.T) *fakeAPI {
@@ -124,7 +127,15 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			f.settings[k] = nilIfEmpty(v)
 		}
 		json.NewEncoder(w).Encode(f.settings)
-	case r.URL.Path == "/v1/apps/app1" && r.Method == http.MethodGet:
+	case r.URL.Path == "/v1/apps/app1" && (r.Method == http.MethodGet || r.Method == http.MethodPatch):
+		if r.Method == http.MethodPatch {
+			var patch map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&patch); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			f.appPatches = append(f.appPatches, patch)
+		}
 		app := map[string]any{"appstore_settings": f.settings}
 		for k, v := range f.app {
 			app[k] = v
@@ -543,5 +554,267 @@ removed {
 
 	if api.sawRequest("DELETE /v1/apps/app1") {
 		t.Errorf("removing lumos_app.slack with destroy = false called DELETE")
+	}
+}
+
+// TestAppCustomRequiresMetadata checks a custom app config must set label,
+// category and description: the API can't clear them, since null resets
+// them to the values the app was created with.
+func TestAppCustomRequiresMetadata(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{{
+			Config: fakeProviderConfig("http://127.0.0.1:1") + `
+resource "lumos_app" "wiki" {
+  label    = "Wiki"
+  category = "Developers"
+}
+`,
+			PlanOnly:    true,
+			ExpectError: regexp.MustCompile(`(?s)Invalid Attribute Combination.*description`),
+		}},
+	})
+}
+
+// TestAppIntegrationRemovalRejected imports a connected app, then drops
+// app_class_id from its config. There's no empty value to clear it to, so
+// the plan must fail rather than turn the integration into a custom app.
+func TestAppIntegrationRemovalRejected(t *testing.T) {
+	api := newFakeAPI(t)
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: fakeProviderConfig(server.URL) + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+
+resource "lumos_app" "slack" {
+  app_class_id = "slack.com"
+}
+`,
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+resource "lumos_app" "slack" {
+  label       = "Slack"
+  category    = "Communication"
+  description = "Team chat"
+}
+`,
+				ExpectError: regexp.MustCompile(`app_class_id can't be removed`),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+}
+
+// fakeCustomAppAPI serves custom app "custom1", applying PATCHes as the
+// API's merge patch does, and records each PATCH body.
+type fakeCustomAppAPI struct {
+	t       *testing.T
+	mu      sync.Mutex
+	app     map[string]any
+	patches []map[string]any
+}
+
+func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	w.Header().Set("Content-Type", "application/json")
+
+	switch {
+	case r.URL.Path == "/v1/apps" && r.Method == http.MethodPost:
+		var body map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		f.app = map[string]any{
+			"id": "custom1", "app_class_id": "custom", "instance_id": "custom_app_import",
+			"status": "approved", "disconnected": false, "sync_status": nil,
+			"approval_workflow": nil, "default_provisioning_workflow": nil, "default_deprovisioning_workflow": nil,
+			"logo_url": nil, "website_url": nil, "appstore_settings": nil,
+		}
+		for k, v := range body {
+			f.app[k] = v
+		}
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(f.app)
+	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodGet:
+		json.NewEncoder(w).Encode(f.app)
+	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodPatch:
+		var patch map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&patch); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		f.patches = append(f.patches, patch)
+		for k, v := range patch {
+			f.app[k] = v
+		}
+		json.NewEncoder(w).Encode(f.app)
+	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodDelete:
+		w.WriteHeader(http.StatusNoContent)
+	default:
+		f.t.Errorf("unexpected request %s %s", r.Method, r.URL.Path)
+		http.Error(w, "unexpected request", http.StatusNotFound)
+	}
+}
+
+// TestAppCustomClearsLogoAndWebsite creates a custom app with a logo and
+// website, then removes both from the config. The plan must show them
+// cleared, and the update must send null for each, the metadata the config
+// sets, and no app_class_id, which the API would reject for a custom app.
+func TestAppCustomClearsLogoAndWebsite(t *testing.T) {
+	api := &fakeCustomAppAPI{t: t}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(extra string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "wiki" {
+  label       = "Wiki"
+  category    = "Developers"
+  description = "Docs"
+  %s
+}
+`, extra)
+	}
+	const addr = "lumos_app.wiki"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`
+  logo_url    = "https://example.com/logo.png"
+  website_url = "https://example.com"
+`),
+				Check: resource.TestCheckResourceAttr(addr, "website_url", "https://example.com"),
+			},
+			{
+				Config: config(""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "logo_url", "website_url"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("logo_url"), knownvalue.Null()),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("website_url"), knownvalue.Null()),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr(addr, "logo_url"),
+					resource.TestCheckNoResourceAttr(addr, "website_url"),
+				),
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.patches) != 1 {
+		t.Fatalf("got %d PATCHes, want one update: %v", len(api.patches), api.patches)
+	}
+	got := map[string]string{}
+	for k, v := range api.patches[0] {
+		encoded, _ := json.Marshal(v)
+		got[k] = string(encoded)
+	}
+	want := map[string]string{
+		"label":       `"Wiki"`,
+		"category":    `"Developers"`,
+		"description": `"Docs"`,
+		"logo_url":    `null`,
+		"website_url": `null`,
+	}
+	if fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("update sent %v, want %v", got, want)
+	}
+}
+
+// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app that
+// shows a logo and website from its integration, then rotates its
+// credentials. Each plan must change only auth and the fields a reconnect
+// recomputes, and each update must send only the credentials: never the
+// integration's metadata, which would become overrides, or app_class_id.
+func TestAppConnectedUpdatePlansOnlyCredentials(t *testing.T) {
+	api := newFakeAPI(t)
+	api.app["logo_url"] = "https://example.com/slack.png"
+	api.app["website_url"] = "https://slack.com"
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(token string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "slack" {
+  app_class_id = "slack.com"
+  auth         = jsonencode({ token = %q })
+}
+`, token)
+	}
+	reconnect := []string{"auth", "sync_status", "disconnected", "instance_id"}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// auth is write-only, so an import that sets it plans an update.
+				Config: config("v1") + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange("lumos_app.slack", reconnect...)},
+				},
+				Check: resource.TestCheckResourceAttr("lumos_app.slack", "website_url", "https://slack.com"),
+			},
+			{
+				Config: config("v2"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange("lumos_app.slack", reconnect...)},
+				},
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 2 {
+		t.Fatalf("got %d app updates, want 2: %v", len(api.appPatches), api.appPatches)
+	}
+	for i, patch := range api.appPatches {
+		for k := range patch {
+			if k != "auth" {
+				t.Errorf("update %d sent %s; want only auth: %v", i+1, k, patch)
+			}
+		}
 	}
 }
