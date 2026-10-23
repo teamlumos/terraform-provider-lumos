@@ -122,27 +122,18 @@ resource "lumos_app_approval_workflow" "deploy_dashboard" {
 * A template can be bound to only one app or entitlement.
 * Changing a binding's `app_id` fails the plan, including when the new app isn't known until apply, for example an app created or replaced in the same apply. Changing it would replace the binding, and Lumos can't empty the old app's slot, so the old app would keep the template.
 
-### Moving a template to another app
+### Giving another app the same approval process
 
-A slot can't be emptied, so moving template `t` from app `a` to app `b` takes two bindings: rebind `a` to a different template, which frees `t`, then bind `t` to `b` with its own binding resource.
+A workflow belongs to one app and can't be moved to another. To give app `b` the same approval process as app `a`, create a separate `lumos_workflow` with `app_id = lumos_app.b.id` and the same steps, and bind that one with its own binding resource:
 
 ```terraform
-# App A gets a different template, so T is freed.
-resource "lumos_app_approval_workflow" "a" {
-  app_id      = lumos_app.a.id
-  workflow_id = lumos_workflow.t2.id # was lumos_workflow.t.id
-}
-
-# App B gets T, through its own binding resource.
 resource "lumos_app_approval_workflow" "b" {
   app_id      = lumos_app.b.id
-  workflow_id = lumos_workflow.t.id
-  depends_on  = [lumos_app_approval_workflow.a]
+  workflow_id = lumos_workflow.b_approvals.id
 }
 ```
 
-* `depends_on` makes Terraform rebind `a` first. Lumos refuses to bind an approval template that's still bound to another app, so binding `b` first fails.
-* Account and entitlement provisioning and deprovisioning workflows can be shared, so their order doesn't matter, but the old app or entitlement keeps the workflow until it's rebound.
+* If app `a` shouldn't keep its template, set its binding's `workflow_id` to a different workflow. An app's slot can't be emptied.
 * **Replacing the app itself,** for example a `lumos_app` change that forces a new app, fails the plan while a binding points at it. Stop managing the binding first with a `removed` block with `lifecycle { destroy = false }`, replace the app, then add the binding back.
 
 ## Limitations
