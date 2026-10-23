@@ -89,16 +89,13 @@ actions:
   - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true
-  # Send only the fields that changed, so an unchanged metadata field isn't
-  # written back as an override of the app's own default. auth and settings
-  # are still sent whenever they're set.
+  # Every update sends each field the plan holds, so a missing field was left
+  # out of the config. The appUpdateBody hook sends null for a custom app's
+  # missing logo_url and website_url, and keeps a connected app's metadata,
+  # which the config can't set, from being written back as overrides.
   - target: $["paths"]["/v1/apps/{app_uuid}"]["patch"]
     update:
-      x-speakeasy-entity-operation:
-        - entityOperation: App#update
-          options:
-            patch:
-              style: only-send-changed-attributes
+      x-speakeasy-entity-operation: App#update
   - target: $["paths"]["/v1/apps/{app_uuid}"]["delete"]
     update:
       x-speakeasy-entity-operation: App#delete
@@ -185,6 +182,49 @@ actions:
   - target: $["components"]["schemas"]["AppCreateInput"]["properties"]["app_class_id"]
     update:
       x-speakeasy-conflicts-with: [label, category, description, logo_url, website_url]
+  # A custom app's label, category and description can't be cleared: null
+  # resets them to the values the app was created with, so they're required
+  # for a custom app instead.
+  - target: $["components"]["schemas"]["AppCreateInput"]["properties"]["label","category","description"]
+    update:
+      x-speakeasy-xor-with: [app_class_id]
+  # Removing app_class_id from a connected app's config fails the plan: there
+  # is no empty value to clear it to, only a different, custom app.
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["app_class_id"]
+    update:
+      x-speakeasy-plan-modifiers: RejectIntegrationRemoval
+  # Omitted on a custom app, these plan null and clear. A connected app can't
+  # set them and keeps its integration's values.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["logo_url","website_url"]
+    update:
+      x-speakeasy-plan-modifiers: NullIfOmittedOnCustomApp
+  # The spec's descriptions tell API callers what sending null on update
+  # does. In a config, these follow it: required or cleared on a custom app,
+  # and not settable on a connected app.
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]
+    update:
+      app_class_id:
+        description: >-
+          Canonical identifier of an integration, e.g. `okta.com`. Setting it
+          connects that integration with `auth`/`settings`; leaving it out
+          creates a custom app. It can't be removed from a connected app's
+          config.
+      label:
+        description: The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.
+      category:
+        description: >-
+          The app's category. Required for a custom app; a connected app can't
+          set it. Possible values: 'Accounting & Finance', 'Marketing &
+          Analytics', 'Content & Social Media', 'Sales & Support', 'Design &
+          Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office
+          & Legal', 'Communication', 'Collaboration', 'Commerce &
+          Marketplaces', 'Other', 'Internal'
+      description:
+        description: The app's description. Required for a custom app; a connected app can't set it.
+      logo_url:
+        description: URL of the app's logo. On a custom app, omitted or set to `null`, the logo is cleared. A connected app can't set it.
+      website_url:
+        description: URL of the app's website. On a custom app, omitted or set to `null`, the website is cleared. A connected app can't set it.
 
   # request_instructions is writable through the app and through App Store
   # settings; only the latter can clear it, so only that one is exposed.
@@ -194,9 +234,10 @@ actions:
 
   # A lumos_app update can't change these, so a plan keeps their current
   # values instead of showing them as known after apply. The slots and
-  # appstore_settings change only through their own resources, and an
-  # omitted metadata field keeps its value in the merge patch.
-  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description","logo_url","website_url"]
+  # appstore_settings change only through their own resources. A custom app
+  # must set label, category and description, and a connected app can't, so
+  # theirs keep the integration's values.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description"]
     update:
       x-speakeasy-param-suppress-computed-diff: true
   # These change only when an update reconnects the integration. Updates
