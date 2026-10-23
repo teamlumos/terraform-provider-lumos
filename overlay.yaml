@@ -259,6 +259,13 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsResponse","CustomIntakeField"]["properties"][*]
     update:
       x-speakeasy-param-suppress-computed-diff: true
+  # The API reads an intake field's omitted description or dropdown options
+  # back as null. Left computed, a plan fills an omitted one from the field
+  # that had the same position before, so inserting a field would send its
+  # neighbour's description.
+  - target: $["components"]["schemas"]["CustomIntakeField"]["properties"]["description","dropdown_options"]
+    update:
+      x-speakeasy-param-computed: false
 
   # resource "lumos_entitlement". The API creates, renames and deletes an
   # entitlement; everything else on it is read-only here. App Store settings
