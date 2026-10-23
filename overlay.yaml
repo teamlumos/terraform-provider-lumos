@@ -128,15 +128,11 @@ actions:
         terraform-resource: AppAppstoreSettings#read
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["patch"]
     update:
-      # An update sends only the settings that changed, so it never writes
-      # back current values for settings the config leaves out. Create and
-      # update share one request builder, so the option has to be on a
-      # combined entry to take effect.
+      # Every update sends each setting the plan holds, not only the changed
+      # ones, so a setting missing from the request was left out of the
+      # config rather than left unchanged.
       x-speakeasy-entity-operation:
         - entityOperation: AppAppstoreSettings#create,update
-          options:
-            patch:
-              style: only-send-changed-attributes
   # Settings belong to one app; pointing the resource at another app means
   # managing a different app's settings.
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"][*]["parameters"][?@.name=="app_uuid"]
