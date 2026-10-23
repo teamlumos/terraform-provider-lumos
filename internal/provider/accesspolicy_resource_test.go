@@ -2,9 +2,12 @@ package provider
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
+	"strings"
 	"sync"
 	"testing"
 
@@ -109,6 +112,8 @@ resource "lumos_access_policy" "test" {
   name                   = "Engineering tools"
   business_justification = "Engineers need these"
   is_everyone_condition  = true
+  status                 = "draft"
+  is_enabled             = false
   apps = [
     { id = "app1" },
     {
@@ -176,6 +181,8 @@ resource "lumos_access_policy" "test" {
   name                   = "Engineering tools"
   business_justification = "Engineers need these"
   is_everyone_condition  = true
+  status                 = "draft"
+  is_enabled             = false
   apps                   = [{ id = "app1" }]
 }
 `
@@ -201,4 +208,36 @@ resource "lumos_access_policy" "test" {
 			},
 		},
 	})
+}
+
+// TestAccessPolicyRequiresStatusAndEnabled checks a policy config missing
+// status or is_enabled fails at plan time: neither can be cleared, so
+// leaving one out can't mean anything else.
+func TestAccessPolicyRequiresStatusAndEnabled(t *testing.T) {
+	for _, missing := range []string{"status", "is_enabled"} {
+		t.Run(missing, func(t *testing.T) {
+			set := map[string]string{"status": `"draft"`, "is_enabled": "false"}
+			delete(set, missing)
+			var lines []string
+			for name, value := range set {
+				lines = append(lines, fmt.Sprintf("  %s = %s", name, value))
+			}
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{{
+					Config: fakeProviderConfig("http://127.0.0.1:1") + `
+resource "lumos_access_policy" "test" {
+  name                   = "Engineering tools"
+  business_justification = "Engineers need these"
+  is_everyone_condition  = true
+  apps                   = [{ id = "app1" }]
+` + strings.Join(lines, "\n") + `
+}
+`,
+					PlanOnly:    true,
+					ExpectError: regexp.MustCompile(fmt.Sprintf(`The argument "%s" is required`, missing)),
+				}},
+			})
+		})
+	}
 }
