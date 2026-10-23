@@ -919,20 +919,24 @@ actions:
   - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["type"]
     update:
       x-speakeasy-param-force-new: true
-  # The API decides whether a workflow type needs an app, and gives an
-  # app-less workflow the app it's bound to. Left out of the config, app_id
-  # keeps the value the API holds, and updates send it back, since the API
-  # rejects an update whose app_id differs from the stored one. Changing a
-  # configured app_id creates a new workflow.
+  # A workflow can be created without an app, and the API gives it the app
+  # it's first bound to. Once set, app_id can't change or be cleared: an
+  # update with a different app_id is rejected. It follows the config, so
+  # leaving it out while Lumos holds one fails the plan instead of planning
+  # a change Lumos would refuse. Changing a configured app_id creates a new
+  # workflow.
   - target: $["components"]["schemas"]["WorkflowInput"]["properties"]["app_id"]
     update:
       x-speakeasy-param-force-new: true
+      x-speakeasy-plan-modifiers: RequireOnceSet
       description: >-
-        UUID of the app this workflow belongs to. Left out, it keeps the app
-        Lumos assigns when the workflow is bound.
+        UUID of the app this workflow belongs to. Leave it out for a workflow
+        not yet tied to an app. Once the workflow has an app, set when it's
+        created or by binding it, Lumos can't clear or change it, so the
+        config must set it.
   - target: $["components"]["schemas"]["Workflow"]["properties"]["app_id"]
     update:
-      x-speakeasy-param-suppress-computed-diff: true
+      x-speakeasy-param-computed: false
   # The API stores an omitted description as "" and reads it back that way.
   # The read turns "" into null so a config without a description matches,
   # and the input refuses "" so a config can't ask for the value that reads
