@@ -17,7 +17,7 @@ func TestListPageError(t *testing.T) {
 	}{
 		{name: "passes a successful page", operationID: "v1ListUsers", status: http.StatusOK},
 		{name: "fails an error page with its status and body", operationID: "v1ListUsers", status: http.StatusBadRequest, wantErr: `v1ListUsers: status 400: {"detail":"page token expired"}`},
-		{name: "fails an error page of a lookup", operationID: "listGroups", status: http.StatusTooManyRequests, wantErr: `listGroups: status 429: {"detail":"page token expired"}`},
+		{name: "fails an error page of a lookup", operationID: "listGroups", status: http.StatusInternalServerError, wantErr: `listGroups: status 500: {"detail":"page token expired"}`},
 		{name: "leaves other operations alone", operationID: "v1GetUser", status: http.StatusBadRequest},
 	}
 	for _, tt := range tests {
