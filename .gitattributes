@@ -36,4 +36,5 @@ original-openapi.json              linguist-generated=true
 # diffs visible.
 tests/**                                                                      linguist-generated=false
 internal/**/*_test.go                                                         linguist-generated=false
+docs/guides/**                                                                linguist-generated=false
 internal/sdk/internal/hooks/registration.go                                   linguist-generated=false
