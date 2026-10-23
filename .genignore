@@ -15,6 +15,7 @@ internal/planmodifiers/stringplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect_test.go
 internal/planmodifiers/stringplanmodifier/null_if_omitted_on_custom_app.go
 internal/planmodifiers/stringplanmodifier/reject_integration_removal.go
+internal/planmodifiers/stringplanmodifier/require_once_set.go
 internal/planmodifiers/boolplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/listplanmodifier/empty_when_null.go
 internal/planmodifiers/objectplanmodifier/empty_when_null.go
