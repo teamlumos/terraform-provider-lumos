@@ -26,7 +26,8 @@ For approval templates and chains, see the [approvals guide](../guides/approvals
   * assignees as `{ uuid = "<id>", type = "<user | group>" }`, or `{ label = "<attribute>", type = "custom_attribute_definition" }` for a custom attribute;
   * other workflows, groups and users by their IDs;
   * branch conditions with every attribute and value as a `{ label, value }` object (see the [approvals guide](../guides/approvals.md#branch-conditions)).
-* **Changing `type`**, or a configured `app_id`, replaces the workflow. Left out, `app_id` keeps the app Lumos assigns when the workflow is bound.
+* **Changing `type`**, or `app_id`, replaces the workflow.
+* **`app_id` follows the config, and can't be cleared once set.** Leave it out for a workflow not yet tied to an app. Binding such a workflow gives it the app it's bound to, and from then on the plan fails until the config sets `app_id` to that app. If you know the app, set `app_id` when you create the workflow.
 * **`description`** can be left out, but can't be `""`.
 * **A workflow runs only once it's bound** to an app or an entitlement. An approval chain runs through the approval template that references it.
 
