@@ -63,6 +63,8 @@ type V1ListAccessPoliciesResponse struct {
 	AccessPolicyListOutput *shared.AccessPolicyListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*V1ListAccessPoliciesResponse, error)
 }
 
 func (v V1ListAccessPoliciesResponse) MarshalJSON() ([]byte, error) {

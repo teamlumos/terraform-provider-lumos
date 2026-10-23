@@ -8,11 +8,11 @@ import (
 
 type AppResponse struct {
 	AppClassID                    types.String                              `tfsdk:"app_class_id"`
-	ApprovalWorkflow              *ApprovalWorkflowWorkflowRef              `tfsdk:"approval_workflow"`
+	ApprovalWorkflow              *EntitlementRefInput                      `tfsdk:"approval_workflow"`
 	AppstoreSettings              *AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Category                      types.String                              `tfsdk:"category"`
-	DefaultDeprovisioningWorkflow *ApprovalWorkflowWorkflowRef              `tfsdk:"default_deprovisioning_workflow"`
-	DefaultProvisioningWorkflow   *ApprovalWorkflowWorkflowRef              `tfsdk:"default_provisioning_workflow"`
+	DefaultDeprovisioningWorkflow *EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
+	DefaultProvisioningWorkflow   *EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                              `tfsdk:"description"`
 	Disconnected                  types.Bool                                `tfsdk:"disconnected"`
 	ID                            types.String                              `tfsdk:"id"`

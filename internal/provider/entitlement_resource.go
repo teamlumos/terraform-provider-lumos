@@ -39,15 +39,15 @@ type EntitlementResource struct {
 // EntitlementResourceModel describes the resource data model.
 type EntitlementResourceModel struct {
 	AppID                         types.String                                         `tfsdk:"app_id"`
-	ApprovalWorkflowOverride      *tfTypes.ApprovalWorkflowWorkflowRef                 `tfsdk:"approval_workflow_override"`
+	ApprovalWorkflowOverride      *tfTypes.EntitlementRefInput                         `tfsdk:"approval_workflow_override"`
 	AppstoreSettings              *tfTypes.AppstoreSettingsEntitlementAppStoreSettings `tfsdk:"appstore_settings"`
 	CustomApprovalMessageOverride types.String                                         `tfsdk:"custom_approval_message_override"`
-	DeprovisioningWorkflow        *tfTypes.ApprovalWorkflowWorkflowRef                 `tfsdk:"deprovisioning_workflow"`
+	DeprovisioningWorkflow        *tfTypes.EntitlementRefInput                         `tfsdk:"deprovisioning_workflow"`
 	Description                   types.String                                         `tfsdk:"description"`
 	EntitlementTypeLabel          types.String                                         `tfsdk:"entitlement_type_label"`
 	ID                            types.String                                         `tfsdk:"id"`
 	Label                         types.String                                         `tfsdk:"label"`
-	ProvisioningWorkflow          *tfTypes.ApprovalWorkflowWorkflowRef                 `tfsdk:"provisioning_workflow"`
+	ProvisioningWorkflow          *tfTypes.EntitlementRefInput                         `tfsdk:"provisioning_workflow"`
 	Source                        types.String                                         `tfsdk:"source"`
 }
 

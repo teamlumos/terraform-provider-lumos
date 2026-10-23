@@ -8,14 +8,14 @@ import (
 
 type EntitlementOutput struct {
 	AppID                         types.String                                 `tfsdk:"app_id"`
-	ApprovalWorkflowOverride      *ApprovalWorkflowWorkflowRef                 `tfsdk:"approval_workflow_override"`
+	ApprovalWorkflowOverride      *EntitlementRefInput                         `tfsdk:"approval_workflow_override"`
 	AppstoreSettings              *AppstoreSettingsEntitlementAppStoreSettings `tfsdk:"appstore_settings"`
 	CustomApprovalMessageOverride types.String                                 `tfsdk:"custom_approval_message_override"`
-	DeprovisioningWorkflow        *ApprovalWorkflowWorkflowRef                 `tfsdk:"deprovisioning_workflow"`
+	DeprovisioningWorkflow        *EntitlementRefInput                         `tfsdk:"deprovisioning_workflow"`
 	Description                   types.String                                 `tfsdk:"description"`
 	EntitlementTypeLabel          types.String                                 `tfsdk:"entitlement_type_label"`
 	ID                            types.String                                 `tfsdk:"id"`
 	Label                         types.String                                 `tfsdk:"label"`
-	ProvisioningWorkflow          *ApprovalWorkflowWorkflowRef                 `tfsdk:"provisioning_workflow"`
+	ProvisioningWorkflow          *EntitlementRefInput                         `tfsdk:"provisioning_workflow"`
 	Source                        types.String                                 `tfsdk:"source"`
 }

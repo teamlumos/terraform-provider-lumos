@@ -20,7 +20,7 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 		if resp.ApprovalWorkflow == nil {
 			r.ApprovalWorkflow = nil
 		} else {
-			r.ApprovalWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.ApprovalWorkflow = &tfTypes.EntitlementRefInput{}
 			r.ApprovalWorkflow.ID = types.StringValue(resp.ApprovalWorkflow.ID)
 		}
 		if resp.AppstoreSettings == nil {
@@ -66,7 +66,7 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 			if resp.AppstoreSettings.DefaultEntitlement == nil {
 				r.AppstoreSettings.DefaultEntitlement = nil
 			} else {
-				r.AppstoreSettings.DefaultEntitlement = &tfTypes.ApprovalWorkflowWorkflowRef{}
+				r.AppstoreSettings.DefaultEntitlement = &tfTypes.EntitlementRefInput{}
 				r.AppstoreSettings.DefaultEntitlement.ID = types.StringValue(resp.AppstoreSettings.DefaultEntitlement.ID)
 			}
 			r.AppstoreSettings.InAppStore = types.BoolValue(resp.AppstoreSettings.InAppStore)
@@ -88,13 +88,13 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 		if resp.DefaultDeprovisioningWorkflow == nil {
 			r.DefaultDeprovisioningWorkflow = nil
 		} else {
-			r.DefaultDeprovisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.DefaultDeprovisioningWorkflow = &tfTypes.EntitlementRefInput{}
 			r.DefaultDeprovisioningWorkflow.ID = types.StringValue(resp.DefaultDeprovisioningWorkflow.ID)
 		}
 		if resp.DefaultProvisioningWorkflow == nil {
 			r.DefaultProvisioningWorkflow = nil
 		} else {
-			r.DefaultProvisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.DefaultProvisioningWorkflow = &tfTypes.EntitlementRefInput{}
 			r.DefaultProvisioningWorkflow.ID = types.StringValue(resp.DefaultProvisioningWorkflow.ID)
 		}
 		r.Description = types.StringPointerValue(resp.Description)

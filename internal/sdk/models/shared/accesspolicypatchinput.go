@@ -35,8 +35,8 @@ func (e *AccessPolicyPatchInputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AccessPolicyPatchInputAccessCondition - The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-type AccessPolicyPatchInputAccessCondition struct {
+// AccessCondition - The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+type AccessCondition struct {
 }
 
 // AccessPolicyPatchInput - A merge-patch body. A field you omit keeps its value, and no field can be `null`.
@@ -50,7 +50,7 @@ type AccessPolicyPatchInput struct {
 	// Whether the access policy is enabled.
 	IsEnabled *bool `json:"is_enabled,omitzero"`
 	// The Lumos Condition object determining which identities qualify for this policy. Cannot be sent together with `is_everyone_condition: true`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-	AccessCondition *AccessPolicyPatchInputAccessCondition `json:"access_condition,omitzero"`
+	AccessCondition *AccessCondition `json:"access_condition,omitzero"`
 	// Send `true` to make the access policy apply to everyone, replacing its `access_condition`. `false` changes nothing. The everyone condition a read returns in `access_condition` counts as `true`.
 	IsEveryoneCondition *bool `json:"is_everyone_condition,omitzero"`
 	// The apps granted by this access policy. Replaces the current apps wholesale.
@@ -96,7 +96,7 @@ func (a *AccessPolicyPatchInput) GetIsEnabled() *bool {
 	return a.IsEnabled
 }
 
-func (a *AccessPolicyPatchInput) GetAccessCondition() *AccessPolicyPatchInputAccessCondition {
+func (a *AccessPolicyPatchInput) GetAccessCondition() *AccessCondition {
 	if a == nil {
 		return nil
 	}

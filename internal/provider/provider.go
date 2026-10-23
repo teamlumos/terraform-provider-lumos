@@ -124,6 +124,7 @@ func (p *LumosProvider) Actions(_ context.Context) []func() action.Action {
 
 func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
+		NewAccessPolicyResource,
 		NewAppResource,
 		NewAppAppstoreSettingsResource,
 		NewEntitlementResource,
@@ -133,6 +134,8 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 
 func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		NewAccessPoliciesDataSource,
+		NewAccessPolicyDataSource,
 		NewAccountsDataSource,
 		NewAppCategoriesDataSource,
 		NewAppEntitlementsDataSource,

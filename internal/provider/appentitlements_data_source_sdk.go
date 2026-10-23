@@ -26,7 +26,7 @@ func (r *AppEntitlementsDataSourceModel) RefreshFromSharedAppEntitlementListOutp
 			if entitlementsItem.ApprovalWorkflowOverride == nil {
 				entitlements.ApprovalWorkflowOverride = nil
 			} else {
-				entitlements.ApprovalWorkflowOverride = &tfTypes.ApprovalWorkflowWorkflowRef{}
+				entitlements.ApprovalWorkflowOverride = &tfTypes.EntitlementRefInput{}
 				entitlements.ApprovalWorkflowOverride.ID = types.StringValue(entitlementsItem.ApprovalWorkflowOverride.ID)
 			}
 			if entitlementsItem.AppstoreSettings == nil {
@@ -61,7 +61,7 @@ func (r *AppEntitlementsDataSourceModel) RefreshFromSharedAppEntitlementListOutp
 			if entitlementsItem.DeprovisioningWorkflow == nil {
 				entitlements.DeprovisioningWorkflow = nil
 			} else {
-				entitlements.DeprovisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+				entitlements.DeprovisioningWorkflow = &tfTypes.EntitlementRefInput{}
 				entitlements.DeprovisioningWorkflow.ID = types.StringValue(entitlementsItem.DeprovisioningWorkflow.ID)
 			}
 			entitlements.Description = types.StringPointerValue(entitlementsItem.Description)
@@ -71,7 +71,7 @@ func (r *AppEntitlementsDataSourceModel) RefreshFromSharedAppEntitlementListOutp
 			if entitlementsItem.ProvisioningWorkflow == nil {
 				entitlements.ProvisioningWorkflow = nil
 			} else {
-				entitlements.ProvisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+				entitlements.ProvisioningWorkflow = &tfTypes.EntitlementRefInput{}
 				entitlements.ProvisioningWorkflow.ID = types.StringValue(entitlementsItem.ProvisioningWorkflow.ID)
 			}
 			entitlements.Source = types.StringValue(string(entitlementsItem.Source))

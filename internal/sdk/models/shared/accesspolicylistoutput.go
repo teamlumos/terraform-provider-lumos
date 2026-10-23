@@ -5,7 +5,7 @@ package shared
 type AccessPolicyListOutput struct {
 	// Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.
 	NextPageToken *string `json:"next_page_token,omitzero"`
-	// Access policies returned in this page.
+	// The organization's access policies, newest first.
 	AccessPolicies []AccessPolicyOutput `json:"access_policies"`
 }
 

@@ -6,6 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type ApprovalWorkflowWorkflowRef struct {
+type EntitlementRefInput struct {
 	ID types.String `tfsdk:"id"`
 }

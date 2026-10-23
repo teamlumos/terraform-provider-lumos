@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 7719e7a854f6818fb3f87e2e06506a20
+  docChecksum: c4459f5cafc884c2d9be28a4d329b3e7
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -120,6 +120,12 @@ trackedFiles:
   internal/planmodifiers/utils/state_check.go:
     id: ead742412d0f
     pristine_git_object: cd0dbf813362d30f2c7b2f489f99a65ea2d528e0
+  internal/provider/accesspolicies_data_source.go: {}
+  internal/provider/accesspolicies_data_source_sdk.go: {}
+  internal/provider/accesspolicy_data_source.go: {}
+  internal/provider/accesspolicy_data_source_sdk.go: {}
+  internal/provider/accesspolicy_resource.go: {}
+  internal/provider/accesspolicy_resource_sdk.go: {}
   internal/provider/accounts_data_source.go: {}
   internal/provider/accounts_data_source_sdk.go: {}
   internal/provider/app_resource.go: {}
@@ -205,11 +211,12 @@ trackedFiles:
   internal/provider/typeconvert/int.go:
     id: c44fcd78fccc
     pristine_git_object: 85e79406782c5e6fb67d15b25784be652dc08478
+  internal/provider/types/access_policy_app_input.go: {}
+  internal/provider/types/access_policy_output.go: {}
   internal/provider/types/account.go: {}
   internal/provider/types/app_base.go: {}
   internal/provider/types/app_category.go: {}
   internal/provider/types/app_response.go: {}
-  internal/provider/types/approval_workflow_workflow_ref.go: {}
   internal/provider/types/appstore_settings_app_store_settings_response.go: {}
   internal/provider/types/appstore_settings_entitlement_app_store_settings.go: {}
   internal/provider/types/appstore_settings_time_based_access.go: {}
@@ -217,6 +224,7 @@ trackedFiles:
   internal/provider/types/custom_attribute_definition.go: {}
   internal/provider/types/custom_intake_field.go: {}
   internal/provider/types/entitlement_output.go: {}
+  internal/provider/types/entitlement_ref_input.go: {}
   ? internal/provider/types/entitlement_time_based_access_override_patch_input_time_based_access_override_entitlement_time_based_access_override_patch_input.go
   : {}
   internal/provider/types/group.go: {}
@@ -1529,7 +1537,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"access_policies": [{"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}, "is_everyone_condition": true}]}
+          application/json: {"access_policies": [{"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": false, "apps": [{"id": "<id>", "is_preapproved": false, "entitlements": [{"id": "<id>"}]}], "access_condition": {}, "is_everyone_condition": true}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -1540,7 +1548,7 @@ examples:
         application/json: {"name": "Company-wide Slack access", "business_justification": "Everyone at the company uses Slack.", "status": "published", "is_enabled": true, "is_everyone_condition": true, "apps": [{"id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "is_preapproved": true}]}
       responses:
         "201":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": false}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "is_everyone_condition": false}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
         "500":
@@ -1552,7 +1560,7 @@ examples:
           access_policy_id: "<id>"
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": true}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": true, "apps": [], "is_everyone_condition": true}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1576,7 +1584,7 @@ examples:
         application/json: {"name": "Company-wide Slack access", "business_justification": "Everyone at the company uses Slack.", "status": "published", "is_enabled": true, "is_everyone_condition": true, "apps": [{"id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890", "is_preapproved": true}]}
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "access_condition": {}, "is_everyone_condition": true}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "published", "is_enabled": true, "apps": [], "is_everyone_condition": true}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
@@ -1590,7 +1598,7 @@ examples:
         application/json: {"name": "Company-wide Slack access"}
       responses:
         "200":
-          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": false, "apps": [{"id": "<id>", "label": "<value>", "is_preapproved": false, "entitlements": [{"id": "<id>", "label": "<value>"}]}], "access_condition": {}, "is_everyone_condition": false}
+          application/json: {"name": "<value>", "business_justification": "<value>", "id": "<id>", "status": "draft", "is_enabled": false, "apps": [{"id": "<id>", "is_preapproved": false, "entitlements": [{"id": "<id>"}]}], "is_everyone_condition": false}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
         "500":
