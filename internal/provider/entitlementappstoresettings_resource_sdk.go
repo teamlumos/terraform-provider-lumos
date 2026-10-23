@@ -89,12 +89,9 @@ func (r *EntitlementAppstoreSettingsResourceModel) ToOperationsV1RemoveEntitleme
 func (r *EntitlementAppstoreSettingsResourceModel) ToSharedEntitlementAppStoreSettingsPatchInput(ctx context.Context) (*shared.EntitlementAppStoreSettingsPatchInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	visibleInAppstore := new(bool)
-	if !r.VisibleInAppstore.IsUnknown() && !r.VisibleInAppstore.IsNull() {
-		*visibleInAppstore = r.VisibleInAppstore.ValueBool()
-	} else {
-		visibleInAppstore = nil
-	}
+	var visibleInAppstore bool
+	visibleInAppstore = r.VisibleInAppstore.ValueBool()
+
 	var allowedRequesterGroupUuidsOverride []string
 	if r.AllowedRequesterGroupUuidsOverride != nil {
 		allowedRequesterGroupUuidsOverride = make([]string, 0, len(r.AllowedRequesterGroupUuidsOverride))

@@ -18,13 +18,16 @@ variable "engineering_group_id" {
 
 # Lists Okta in the App Store for one group, with two time-based access
 # options and a question on the request form. Time-based access options are
-# referred to by the labels your organization defines.
+# referred to by the labels your organization defines. Settings left out,
+# such as redirect_url, are cleared.
 resource "lumos_app_appstore_settings" "okta" {
-  app_id                        = lumos_app.okta.id
-  in_app_store                  = true
-  catalog_visibility            = "visible"
-  request_instructions          = "Request the role your team uses."
-  allowed_requester_group_uuids = [var.engineering_group_id]
+  app_id                              = lumos_app.okta.id
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  request_instructions                = "Request the role your team uses."
+  allowed_requester_group_uuids       = [var.engineering_group_id]
 
   time_based_access = {
     options = ["1 day", "1 week"]
@@ -45,21 +48,21 @@ resource "lumos_app_appstore_settings" "okta" {
 
 ### Required
 
+- `allow_multiple_permission_selection` (Boolean) When true, requesters may select more than one permission per request.
+- `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.
 - `app_id` (String) The app's ID, which `GET /v1/apps` returns as `id`. Requires replacement if changed.
+- `catalog_visibility` (String) Visibility within the catalog. must be one of ["visible", "search-only", "hidden"]
+- `in_app_store` (Boolean) Whether this app is listed in the App Store catalog.
 
 ### Optional
 
-- `allow_multiple_permission_selection` (Boolean) When true, requesters may select more than one permission per request. Omit to leave unchanged.
-- `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.
-- `allowed_requester_group_uuids` (Set of String) UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant.
-- `catalog_visibility` (String) Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged. must be one of ["visible", "search-only", "hidden"]
-- `custom_intake_fields` (Attributes List) The complete desired custom intake field list, matched by reference_key. Fields you omit from the list are deleted. Null or an empty list deletes all of them. Omit this property to leave them unchanged. (see [below for nested schema](#nestedatt--custom_intake_fields))
-- `default_entitlement` (Attributes) Entitlement to pre-select on the access-request form. Must belong to this app. Null clears the pre-selection. Omit to leave unchanged. (see [below for nested schema](#nestedatt--default_entitlement))
-- `in_app_store` (Boolean) Set to true to list this app in the AppStore catalog.
-- `redirect_url` (String) If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
-- `request_instructions` (String) Custom instructions shown on the access-request form. Null clears any existing instructions.
-- `request_validation_webhook_uuid` (String) UUID of the inline webhook to use for request validation. Null clears any existing webhook.
-- `time_based_access` (Attributes) Time-based access configuration. Omit to leave all sub-fields unchanged. (see [below for nested schema](#nestedatt--time_based_access))
+- `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Omitted or set to `null`, it's cleared to an empty set, which lets anyone in the organization request it.
+- `custom_intake_fields` (Attributes List) The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them. (see [below for nested schema](#nestedatt--custom_intake_fields))
+- `default_entitlement` (Attributes) Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared. (see [below for nested schema](#nestedatt--default_entitlement))
+- `redirect_url` (String) If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to `null`, the redirect is cleared.
+- `request_instructions` (String) Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
+- `request_validation_webhook_uuid` (String) UUID of the inline webhook called to validate access requests. Omitted or set to `null`, the webhook is cleared.
+- `time_based_access` (Attributes) Time-based access options and the pre-selected default. Omitted or set to `null`, the options are cleared to an empty list and the default to `null`. (see [below for nested schema](#nestedatt--time_based_access))
 
 <a id="nestedatt--custom_intake_fields"></a>
 ### Nested Schema for `custom_intake_fields`
@@ -77,9 +80,9 @@ Optional:
 <a id="nestedatt--default_entitlement"></a>
 ### Nested Schema for `default_entitlement`
 
-Optional:
+Required:
 
-- `id` (String) The UUID of the entitlement. Not Null
+- `id` (String) The UUID of the entitlement.
 
 
 <a id="nestedatt--time_based_access"></a>
@@ -87,15 +90,19 @@ Optional:
 
 Optional:
 
-- `default` (String) Label of the option to pre-select on the request form. Null clears the pre-selection.
-- `options` (List of String) Labels of domain-level time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to the domain defaults.
+- `default` (String) Label of the option pre-selected on the request form. Omitted or set to `null`, the pre-selection is cleared.
+- `options` (List of String) Labels of the organization's time-based access options to offer for this app. Omitted or set to `null`, it's cleared to an empty list, which reverts to the organization's defaults.
 
 ## Behavior
 
 * **One per app.** Changing `app_id` replaces the resource: the old app is taken out of the App Store, keeping its other settings, and the new app's settings are written.
 * **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
 * **Time-based access options** are set and shown by their labels.
-* **Omitted settings are left as they are.** Only the settings in the config are managed.
+* **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists (`allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`.
+* **Settings Lumos can't clear are required.** `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always have a value, and their starting values differ from app to app, so the config must set them.
+* **Removing the requester groups lets anyone request the app.** An empty `allowed_requester_group_uuids` means anyone in the organization can request it, and leaving the attribute out empties it. Check plans that show `allowed_requester_group_uuids` going to `[]`.
+* **Importing:** a config that leaves out settings Lumos already has clears them on the first apply. To keep them, write the config from what's in Lumos: run `terraform plan -generate-config-out=generated.tf` with an `import` block, then review the generated config.
+* **Every update sends all settings.** Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins.
 
 ## Destroy behavior
 

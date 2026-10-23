@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 3ff1796faa6b0ca0bfa1373e4ae46ef6
+  docChecksum: 7719e7a854f6818fb3f87e2e06506a20
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -567,7 +567,6 @@ trackedFiles:
   internal/sdk/models/shared/timebasedaccess.go: {}
   internal/sdk/models/shared/timebasedaccessoption.go: {}
   internal/sdk/models/shared/timebasedaccessoverrideoption.go: {}
-  internal/sdk/models/shared/timebasedaccesspatchinput.go: {}
   internal/sdk/models/shared/triggersyncinput.go: {}
   internal/sdk/models/shared/user.go:
     id: 9a5b526115dc
@@ -1838,7 +1837,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"in_app_store": true, "catalog_visibility": "visible", "request_instructions": "Pick the role you need and say what it's for.", "allowed_requester_group_uuids": ["4d5e6f70-8192-0123-def0-234567890123"], "time_based_access": {"options": ["7 days", "30 days"], "default": "7 days"}}
+        application/json: {"in_app_store": true, "catalog_visibility": "visible", "request_instructions": "Pick the role you need and say what it's for.", "allow_permission_selection": true, "allow_multiple_permission_selection": true, "allowed_requester_group_uuids": ["4d5e6f70-8192-0123-def0-234567890123"], "time_based_access": {"options": ["7 days", "30 days"], "default": "7 days"}}
       responses:
         "200":
           application/json: {"allow_permission_selection": true, "allow_multiple_permission_selection": true, "time_based_access": {}, "in_app_store": true, "catalog_visibility": "hidden"}

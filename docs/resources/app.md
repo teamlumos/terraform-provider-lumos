@@ -45,15 +45,15 @@ resource "lumos_app" "okta" {
 
 ### Optional
 
-- `app_class_id` (String) Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`. On update it is optional and, when supplied, must match the app's own integration — a mismatch is rejected with 400. Requires replacement if changed.
+- `app_class_id` (String) Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.
 - `auth` (String, Sensitive) Credentials for the integration, as a JSON object — **all secrets go here**. The accepted keys depend on the integration; read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. Some integrations connect in-band from these credentials; others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400, and so are credentials the third party rejects. Only applies to integrations. On update this field is required whenever `settings` or `version` is sent, because the credential group is replaced rather than merged. Parsed as JSON.
-- `category` (String) The app's category. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
-- `description` (String) The app's description. Required when creating a custom app. On update, a custom app's own description is replaced; for any other app this sets a domain-specific override, which is capped at 1,000 characters. Send `null` to reset the override to the app's default description.
-- `label` (String) The app's display name in your organization. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default name. At most 255 characters.
-- `logo_url` (String) URL of the app's logo. On update, send `null` to reset it to the app's default logo.
+- `category` (String) The app's category. Required for a custom app; a connected app can't set it. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+- `description` (String) The app's description. Required for a custom app; a connected app can't set it.
+- `label` (String) The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.
+- `logo_url` (String) URL of the app's logo. On a custom app, omitted or set to `null`, the logo is cleared. A connected app can't set it.
 - `settings` (String, Sensitive) Non-secret configuration for the integration, as a JSON object — e.g. host, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only applies to integrations. Parsed as JSON.
 - `version` (String) Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations.
-- `website_url` (String) URL of the app's website. On update, send `null` to clear the override.
+- `website_url` (String) URL of the app's website. On a custom app, omitted or set to `null`, the website is cleared. A connected app can't set it.
 
 ### Read-Only
 
@@ -143,7 +143,9 @@ Read-Only:
 
 * **Connecting or creating:** set `app_class_id` with `auth` (and `settings` if the integration needs them) to connect an integration, or `label`, `category` and `description` to create a custom app. A config can't mix the two.
 * **Editing a connected app reconnects it.** Every update resends `auth` and `settings`, so the API reconnects the integration and starts a sync, even for a metadata-only change. `sync_status`, `disconnected` and `instance_id` show as known after apply on those updates.
-* **Removing a metadata field from the config doesn't reset it.** The app keeps its current value. To go back to the default, set the field to that value.
+* **The config is authoritative.** A custom app must set `label`, `category` and `description`. Leaving out `logo_url` or `website_url`, or setting it to `null`, clears it, and the plan shows `-> null`. A connected app shows its integration's metadata and can't set it; set a connected app's display overrides in the Lumos UI.
+* **`app_class_id` can't be removed** from a connected app's config, since an app without it is a custom app. To stop managing the app, remove the resource or use a `removed` block.
+* **Imported custom apps with an uploaded logo:** for a custom app created in the Lumos UI with an uploaded logo, clearing `logo_url` brings back the uploaded logo, and the apply fails with an inconsistent result. Set `logo_url` in the config to keep a logo.
 * **App Store settings** appear read-only in `appstore_settings`. Change them with `lumos_app_appstore_settings`.
 
 ## Destroy behavior

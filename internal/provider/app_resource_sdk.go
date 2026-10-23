@@ -12,12 +12,6 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
-// AppResourceModelOptions enables patch sdk method construction.
-type AppResourceModelOptions struct {
-	Config *AppResourceModel
-	State  *AppResourceModel
-}
-
 func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, resp *shared.AppResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -126,7 +120,7 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 	return diags
 }
 
-func (r *AppResourceModel) ToOperationsV1DeleteAppRequest(ctx context.Context, opts *AppResourceModelOptions) (*operations.V1DeleteAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsV1DeleteAppRequest(ctx context.Context) (*operations.V1DeleteAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appUUID string
@@ -139,7 +133,7 @@ func (r *AppResourceModel) ToOperationsV1DeleteAppRequest(ctx context.Context, o
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToOperationsV1GetAppRequest(ctx context.Context, opts *AppResourceModelOptions) (*operations.V1GetAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsV1GetAppRequest(ctx context.Context) (*operations.V1GetAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appUUID string
@@ -152,13 +146,13 @@ func (r *AppResourceModel) ToOperationsV1GetAppRequest(ctx context.Context, opts
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToOperationsV1UpdateAppRequest(ctx context.Context, opts *AppResourceModelOptions) (*operations.V1UpdateAppRequest, diag.Diagnostics) {
+func (r *AppResourceModel) ToOperationsV1UpdateAppRequest(ctx context.Context) (*operations.V1UpdateAppRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	var appUUID string
 	appUUID = r.ID.ValueString()
 
-	appUpdateInput, appUpdateInputDiags := r.ToSharedAppUpdateInput(ctx, opts)
+	appUpdateInput, appUpdateInputDiags := r.ToSharedAppUpdateInput(ctx)
 	diags.Append(appUpdateInputDiags...)
 
 	if diags.HasError() {
@@ -173,7 +167,7 @@ func (r *AppResourceModel) ToOperationsV1UpdateAppRequest(ctx context.Context, o
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context, opts *AppResourceModelOptions) (*shared.AppCreateInput, diag.Diagnostics) {
+func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context) (*shared.AppCreateInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	appClassID := new(string)
@@ -241,11 +235,11 @@ func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context, opts *App
 	return &out, diags
 }
 
-func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context, opts *AppResourceModelOptions) (*shared.AppUpdateInput, diag.Diagnostics) {
+func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context) (*shared.AppUpdateInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
 	appClassID := new(string)
-	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() && (opts == nil || opts.State == nil || (!opts.State.AppClassID.Equal(r.AppClassID))) {
+	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
 		*appClassID = r.AppClassID.ValueString()
 	} else {
 		appClassID = nil
@@ -259,37 +253,37 @@ func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context, opts *App
 		_ = json.Unmarshal([]byte(r.Settings.ValueString()), &settings)
 	}
 	version := new(string)
-	if !r.Version.IsUnknown() && !r.Version.IsNull() && (opts == nil || opts.State == nil || (!opts.State.Version.Equal(r.Version))) {
+	if !r.Version.IsUnknown() && !r.Version.IsNull() {
 		*version = r.Version.ValueString()
 	} else {
 		version = nil
 	}
 	label := new(string)
-	if !r.Label.IsUnknown() && !r.Label.IsNull() && (opts == nil || opts.State == nil || (!opts.State.Label.Equal(r.Label))) {
+	if !r.Label.IsUnknown() && !r.Label.IsNull() {
 		*label = r.Label.ValueString()
 	} else {
 		label = nil
 	}
 	category := new(string)
-	if !r.Category.IsUnknown() && !r.Category.IsNull() && (opts == nil || opts.State == nil || (!opts.State.Category.Equal(r.Category))) {
+	if !r.Category.IsUnknown() && !r.Category.IsNull() {
 		*category = r.Category.ValueString()
 	} else {
 		category = nil
 	}
 	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() && (opts == nil || opts.State == nil || (!opts.State.Description.Equal(r.Description))) {
+	if !r.Description.IsUnknown() && !r.Description.IsNull() {
 		*description = r.Description.ValueString()
 	} else {
 		description = nil
 	}
 	logoURL := new(string)
-	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() && (opts == nil || opts.State == nil || (!opts.State.LogoURL.Equal(r.LogoURL))) {
+	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
 		*logoURL = r.LogoURL.ValueString()
 	} else {
 		logoURL = nil
 	}
 	websiteURL := new(string)
-	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() && (opts == nil || opts.State == nil || (!opts.State.WebsiteURL.Equal(r.WebsiteURL))) {
+	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
 		*websiteURL = r.WebsiteURL.ValueString()
 	} else {
 		websiteURL = nil
