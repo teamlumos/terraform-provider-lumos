@@ -66,8 +66,8 @@ func TestAccAppCustom(t *testing.T) {
 // provider can't assign, so TestAccAppStoreListing covers that with an
 // existing app. LUMOS_TEST_TBA_LABEL (one of the domain's time-based access
 // labels) and GROUP_ID add those settings when set. The first app's default
-// entitlement is one the test creates; the config can't clear it, so it's
-// still set when the post-test destroy deletes the entitlement and the app.
+// entitlement is one the test creates. Removing it from the config clears it
+// before the post-test destroy deletes the entitlement and the app.
 func TestAccAppStoreSettings(t *testing.T) {
 	prefix := "tf-acc-" + acctest.RandString(8)
 	tbaLabel := os.Getenv("LUMOS_TEST_TBA_LABEL")
@@ -80,58 +80,56 @@ resource "lumos_entitlement" "default" {
   label  = %q
 }
 `, prefix+"-default")
-	settings := func(appRef, visibility string, groups []string, intakeField bool, defaultEntitlement bool) string {
-		intake := "[]"
-		if intakeField {
-			intake = `[{
+	// full sets every optional setting the test can: an intake field, request
+	// instructions, redirect URL, default entitlement and, when their
+	// variables are set, requester groups and time-based access. Without it,
+	// the config sets only the required switches.
+	settings := func(appRef, visibility string, full bool) string {
+		var extra []string
+		if full {
+			extra = append(extra,
+				`custom_intake_fields = [{
     reference_key = "justification"
     field_type    = "text"
     prompt        = "Why do you need access?"
     is_required   = true
-  }]`
-		}
-		var extra []string
-		if tbaLabel != "" {
-			extra = append(extra, fmt.Sprintf("time_based_access = {\n    options = [%q]\n    default = %q\n  }", tbaLabel, tbaLabel))
-		}
-		if groups != nil {
-			quoted := make([]string, len(groups))
-			for i, g := range groups {
-				quoted[i] = fmt.Sprintf("%q", g)
+  }]`,
+				`request_instructions = "Set by an acceptance test."`,
+				`redirect_url = "https://example.com/tf-acc"`,
+				"default_entitlement = {\n    id = lumos_entitlement.default.id\n  }",
+			)
+			if tbaLabel != "" {
+				extra = append(extra, fmt.Sprintf("time_based_access = {\n    options = [%q]\n    default = %[1]q\n  }", tbaLabel))
 			}
-			extra = append(extra, fmt.Sprintf("allowed_requester_group_uuids = [%s]", strings.Join(quoted, ", ")))
-		}
-		if defaultEntitlement {
-			extra = append(extra, "default_entitlement = {\n    id = lumos_entitlement.default.id\n  }")
+			if groupID != "" {
+				extra = append(extra, fmt.Sprintf("allowed_requester_group_uuids = [%q]", groupID))
+			}
 		}
 		return fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "test" {
-  app_id               = %s.id
-  in_app_store         = false
-  catalog_visibility   = %q
-  request_instructions = "Set by an acceptance test."
-  custom_intake_fields = %s
+  app_id                              = %s.id
+  in_app_store                        = false
+  catalog_visibility                  = %q
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
   %s
 }
-`, appRef, visibility, intake, strings.Join(extra, "\n  "))
-	}
-	var groups []string
-	if groupID != "" {
-		groups = []string{groupID}
+`, appRef, visibility, strings.Join(extra, "\n  "))
 	}
 
 	steps := []resource.TestStep{
 		{
-			Config: providerConfig() + apps + settings("lumos_app.first", "visible", groups, true, true),
+			Config: providerConfig() + apps + settings("lumos_app.first", "visible", true),
 			Check: resource.ComposeAggregateTestCheckFunc(
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "catalog_visibility", "visible"),
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "custom_intake_fields.#", "1"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "app_id", "lumos_app.first", "id"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "default_entitlement.id", "lumos_entitlement.default", "id"),
+				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "redirect_url", "https://example.com/tf-acc"),
 			),
 		},
 		{
-			Config: providerConfig() + apps + settings("lumos_app.first", "search-only", groups, true, true),
+			Config: providerConfig() + apps + settings("lumos_app.first", "search-only", true),
 			ConfigPlanChecks: resource.ConfigPlanChecks{
 				PreApply: []plancheck.PlanCheck{
 					expectOnlyAttributesChange("lumos_app_appstore_settings.test", "catalog_visibility"),
@@ -140,27 +138,36 @@ resource "lumos_app_appstore_settings" "test" {
 			Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "catalog_visibility", "search-only"),
 		},
 	}
-	// Empty lists are sent, so they clear the intake field and, when set, the
-	// requester groups. Clearing them also lets the post-test destroy delete
-	// the app: rows that still point at a custom app make the API keep it.
-	var noGroups []string
-	if groupID != "" {
-		noGroups = []string{}
-	}
+	// Removing every optional setting clears it: lists and time-based access
+	// options plan empty, the rest null. The checks run after the read, so
+	// they also show that the API keeps empty time-based access options
+	// empty instead of filling in the organization's. Clearing all of this
+	// also lets the post-test destroy delete the app: rows that still point at
+	// a custom app make the API keep it.
 	clearedChecks := []resource.TestCheckFunc{
 		resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "custom_intake_fields.#", "0"),
-	}
-	if groupID != "" {
-		clearedChecks = append(clearedChecks, resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "allowed_requester_group_uuids.#", "0"))
+		resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "allowed_requester_group_uuids.#", "0"),
+		resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "time_based_access.options.#", "0"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "time_based_access.default"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "request_instructions"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "redirect_url"),
+		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "default_entitlement.id"),
 	}
 	steps = append(steps, resource.TestStep{
-		Config: providerConfig() + apps + settings("lumos_app.first", "search-only", noGroups, false, false),
-		Check:  resource.ComposeAggregateTestCheckFunc(clearedChecks...),
+		Config: providerConfig() + apps + settings("lumos_app.first", "search-only", false),
+		ConfigPlanChecks: resource.ConfigPlanChecks{
+			PreApply: []plancheck.PlanCheck{
+				expectOnlyAttributesChange("lumos_app_appstore_settings.test",
+					"custom_intake_fields", "allowed_requester_group_uuids", "time_based_access",
+					"request_instructions", "redirect_url", "default_entitlement"),
+			},
+		},
+		Check: resource.ComposeAggregateTestCheckFunc(clearedChecks...),
 	})
 	steps = append(steps, resource.TestStep{
 		// Settings belong to one app: pointing the resource at another app is
 		// a replace, not an update.
-		Config: providerConfig() + apps + settings("lumos_app.second", "search-only", noGroups, false, false),
+		Config: providerConfig() + apps + settings("lumos_app.second", "search-only", false),
 		ConfigPlanChecks: resource.ConfigPlanChecks{
 			PreApply: []plancheck.PlanCheck{
 				plancheck.ExpectResourceAction("lumos_app_appstore_settings.test", plancheck.ResourceActionReplace),
@@ -194,8 +201,11 @@ func TestAccAppStoreListing(t *testing.T) {
 			{
 				Config: providerConfig() + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "listed" {
-  app_id       = %q
-  in_app_store = true
+  app_id                              = %q
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
 }
 `, appID),
 				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.listed", "in_app_store", "true"),
@@ -203,8 +213,11 @@ resource "lumos_app_appstore_settings" "listed" {
 			{
 				Config: providerConfig() + testAccCustomApp("unlisted", label, "App Store listing test") + `
 resource "lumos_app_appstore_settings" "listed" {
-  app_id       = lumos_app.unlisted.id
-  in_app_store = false
+  app_id                              = lumos_app.unlisted.id
+  in_app_store                        = false
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
 }
 `,
 				ConfigPlanChecks: resource.ConfigPlanChecks{

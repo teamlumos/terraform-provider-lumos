@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"strings"
 	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func fakeProviderConfig(serverURL string) string {
@@ -114,11 +117,11 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				// Like the API, only the sub-fields present change.
 				current := f.settings[k].(map[string]any)
 				for sub, subValue := range withOptionObjects(v).(map[string]any) {
-					current[sub] = subValue
+					current[sub] = nilIfEmpty(subValue)
 				}
 				continue
 			}
-			f.settings[k] = v
+			f.settings[k] = nilIfEmpty(v)
 		}
 		json.NewEncoder(w).Encode(f.settings)
 	case r.URL.Path == "/v1/apps/app1" && r.Method == http.MethodGet:
@@ -150,6 +153,15 @@ func withOptionObjects(v any) any {
 	return tba
 }
 
+// nilIfEmpty stores an empty list as null, since the API reads one back that
+// way.
+func nilIfEmpty(v any) any {
+	if list, ok := v.([]any); ok && len(list) == 0 {
+		return nil
+	}
+	return v
+}
+
 func (f *fakeAPI) sawRequest(want string) bool {
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -162,26 +174,32 @@ func (f *fakeAPI) sawRequest(want string) bool {
 }
 
 // TestAppStoreSettingsOnImportedApp manages the App Store settings of an app
-// Terraform doesn't own: import, a one-field change, then destroy. It uses a
-// fake API because a UI-connected app with known settings can't be set up on
-// demand in a shared test domain.
+// Terraform doesn't own: import, a change that also removes the request
+// validation webhook, then destroy. It uses a fake API because a
+// UI-connected app with known settings and a validation webhook can't be set
+// up on demand in a shared test domain.
 func TestAppStoreSettingsOnImportedApp(t *testing.T) {
 	api := newFakeAPI(t)
+	api.settings["request_validation_webhook_uuid"] = "webhook1"
 	server := httptest.NewServer(api)
 	defer server.Close()
 
-	settings := func(visibility string) string {
+	settings := func(visibility, webhook string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "slack" {
-  app_id             = "app1"
-  in_app_store       = true
-  catalog_visibility = %q
+  app_id                              = "app1"
+  in_app_store                        = true
+  catalog_visibility                  = %q
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  allowed_requester_group_uuids       = ["group1"]
   time_based_access = {
     options = ["1 day"]
     default = "1 day"
   }
+  %s
 }
-`, visibility)
+`, visibility, webhook)
 	}
 
 	resource.UnitTest(t, resource.TestCase{
@@ -190,7 +208,7 @@ resource "lumos_app_appstore_settings" "slack" {
 			{
 				// Matching config: the import plans no change, which also
 				// shows time-based access options read back as labels.
-				Config: settings("visible") + `
+				Config: settings("visible", `request_validation_webhook_uuid = "webhook1"`) + `
 import {
   to = lumos_app_appstore_settings.slack
   id = "app1"
@@ -203,13 +221,17 @@ import {
 				},
 			},
 			{
-				Config: settings("search-only"),
+				Config: settings("search-only", ""),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_app_appstore_settings.slack", plancheck.ResourceActionUpdate),
+						expectOnlyAttributesChange("lumos_app_appstore_settings.slack", "catalog_visibility", "request_validation_webhook_uuid"),
 					},
 				},
-				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search-only"),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "catalog_visibility", "search-only"),
+					resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.slack", "request_validation_webhook_uuid"),
+				),
 			},
 		},
 	})
@@ -222,11 +244,242 @@ import {
 	if got := api.patches[0]["catalog_visibility"]; got != "search-only" {
 		t.Errorf("update sent catalog_visibility %v, want search-only", got)
 	}
-	if _, sent := api.patches[0]["allowed_requester_group_uuids"]; sent {
-		t.Errorf("update sent allowed_requester_group_uuids, which the config leaves alone")
+	if got, sent := api.patches[0]["request_validation_webhook_uuid"]; !sent || got != nil {
+		t.Errorf("update sent request_validation_webhook_uuid %v (sent: %t), want null", got, sent)
 	}
 	if got, want := api.patches[1], (map[string]any{"in_app_store": false}); fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Errorf("destroy sent %v, want %v", got, want)
+	}
+}
+
+// TestAppStoreSettingsInsertIntakeField adds an intake field without a
+// description in front of one with a description. The new field must be sent
+// without one, not with the description of the field that had its position
+// before. It uses a fake API so the check covers only the request the
+// provider builds.
+func TestAppStoreSettingsInsertIntakeField(t *testing.T) {
+	api := newFakeAPI(t)
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	const why = `{
+    reference_key = "why"
+    field_type    = "text"
+    prompt        = "Why do you need access?"
+    is_required   = true
+    description   = "Name the project."
+  }`
+	const ticket = `{
+    reference_key = "ticket"
+    field_type    = "text"
+    prompt        = "Ticket link"
+    is_required   = false
+  }`
+	settings := func(fields ...string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  custom_intake_fields                = [%s]
+}
+`, strings.Join(fields, ", "))
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{Config: settings(why)},
+			{
+				Config: settings(ticket, why),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.slack", "custom_intake_fields.0.description"),
+					resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "custom_intake_fields.1.description", "Name the project."),
+				),
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.patches) < 2 {
+		t.Fatalf("got %d PATCHes, want the create and the update: %v", len(api.patches), api.patches)
+	}
+	fields, _ := api.patches[1]["custom_intake_fields"].([]any)
+	if len(fields) != 2 {
+		t.Fatalf("update sent custom_intake_fields %v, want two fields", api.patches[1]["custom_intake_fields"])
+	}
+	if got := fields[0].(map[string]any)["description"]; got != nil {
+		t.Errorf("update sent the new field with description %v, want none", got)
+	}
+}
+
+// TestAppStoreSettingsRequiredSwitches checks that a settings config missing
+// a setting the API can't clear fails at plan time, before any API call.
+func TestAppStoreSettingsRequiredSwitches(t *testing.T) {
+	switches := map[string]string{
+		"in_app_store":                        "true",
+		"catalog_visibility":                  `"visible"`,
+		"allow_permission_selection":          "true",
+		"allow_multiple_permission_selection": "false",
+	}
+	configs := map[string]string{
+		"visible_in_appstore": `
+resource "lumos_entitlement_appstore_settings" "admin" {
+  entitlement_id = "ent1"
+}
+`,
+	}
+	for missing := range switches {
+		var set []string
+		for name, value := range switches {
+			if name != missing {
+				set = append(set, fmt.Sprintf("  %s = %s", name, value))
+			}
+		}
+		configs[missing] = fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "slack" {
+  app_id = "app1"
+%s
+}
+`, strings.Join(set, "\n"))
+	}
+
+	for missing, config := range configs {
+		t.Run(missing, func(t *testing.T) {
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{{
+					Config:      fakeProviderConfig("http://127.0.0.1:1") + config,
+					PlanOnly:    true,
+					ExpectError: regexp.MustCompile(fmt.Sprintf(`The argument "%s" is required`, missing)),
+				}},
+			})
+		})
+	}
+}
+
+// TestAppStoreSettingsOmittedSettingsCleared imports settings that have
+// every optional setting set, then removes them all from the config. The
+// plan must show each one cleared, and the update must send only what the
+// config and those cleared values say, never a value read from the API. A
+// config that sets time-based access without options clears the options.
+func TestAppStoreSettingsOmittedSettingsCleared(t *testing.T) {
+	api := newFakeAPI(t)
+	api.settings["request_instructions"] = "Ask first."
+	api.settings["request_validation_webhook_uuid"] = "webhook1"
+	api.settings["redirect_url"] = "https://example.com"
+	api.settings["default_entitlement"] = map[string]any{"id": "ent1"}
+	api.settings["custom_intake_fields"] = []any{map[string]any{
+		"reference_key": "why", "field_type": "text", "prompt": "Why?", "is_required": true,
+		"description": nil, "dropdown_options": nil,
+	}}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	settings := func(optional string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  %s
+}
+`, optional)
+	}
+	const addr = "lumos_app_appstore_settings.slack"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: settings(`
+  allowed_requester_group_uuids   = ["group1"]
+  request_instructions            = "Ask first."
+  request_validation_webhook_uuid = "webhook1"
+  redirect_url                    = "https://example.com"
+  default_entitlement             = { id = "ent1" }
+  custom_intake_fields = [{
+    reference_key = "why"
+    field_type    = "text"
+    prompt        = "Why?"
+    is_required   = true
+  }]
+  time_based_access = {
+    options = ["1 day"]
+    default = "1 day"
+  }
+`) + `
+import {
+  to = lumos_app_appstore_settings.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: settings(""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionUpdate),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("allowed_requester_group_uuids"), knownvalue.SetExact([]knownvalue.Check{})),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("custom_intake_fields"), knownvalue.ListExact([]knownvalue.Check{})),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("time_based_access"), knownvalue.ObjectExact(map[string]knownvalue.Check{
+							"options": knownvalue.ListExact([]knownvalue.Check{}),
+							"default": knownvalue.Null(),
+						})),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("request_instructions"), knownvalue.Null()),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("default_entitlement"), knownvalue.Null()),
+					},
+				},
+			},
+			{
+				Config: settings(`time_based_access = { default = "1 day" }`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "time_based_access"),
+					},
+				},
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.patches) < 2 {
+		t.Fatalf("got %d PATCHes, want both updates: %v", len(api.patches), api.patches)
+	}
+	want := map[string]string{
+		"in_app_store":                        `true`,
+		"catalog_visibility":                  `"visible"`,
+		"allow_permission_selection":          `true`,
+		"allow_multiple_permission_selection": `false`,
+		"allowed_requester_group_uuids":       `[]`,
+		"custom_intake_fields":                `[]`,
+		"time_based_access":                   `{"default":null,"options":[]}`,
+		"request_instructions":                `null`,
+		"request_validation_webhook_uuid":     `null`,
+		"redirect_url":                        `null`,
+		"default_entitlement":                 `null`,
+	}
+	for i, wantTBA := range []string{`{"default":null,"options":[]}`, `{"default":"1 day","options":[]}`} {
+		want["time_based_access"] = wantTBA
+		got := map[string]string{}
+		for k, v := range api.patches[i] {
+			encoded, _ := json.Marshal(v)
+			got[k] = string(encoded)
+		}
+		if fmt.Sprint(got) != fmt.Sprint(want) {
+			t.Errorf("update %d sent %v, want %v", i+1, got, want)
+		}
 	}
 }
 

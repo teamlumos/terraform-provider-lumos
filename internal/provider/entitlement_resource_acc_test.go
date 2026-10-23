@@ -84,8 +84,11 @@ func TestAccEntitlementAppStoreSettings(t *testing.T) {
 		}
 		return providerConfig() + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "listed" {
-  app_id       = %[1]q
-  in_app_store = true
+  app_id                              = %[1]q
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
 }
 
 resource "lumos_entitlement" "test" {
