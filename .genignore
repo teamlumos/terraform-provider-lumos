@@ -8,8 +8,11 @@ internal/sdk/internal/hooks/app_delete_test.go
 internal/sdk/internal/hooks/clear_unset_fields.go
 internal/sdk/internal/hooks/clear_unset_fields_test.go
 internal/planmodifiers/utils/reconnect.go
+internal/planmodifiers/utils/custom_app.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect_test.go
+internal/planmodifiers/stringplanmodifier/null_if_omitted_on_custom_app.go
+internal/planmodifiers/stringplanmodifier/reject_integration_removal.go
 internal/planmodifiers/boolplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/listplanmodifier/empty_when_null.go
 internal/planmodifiers/objectplanmodifier/empty_when_null.go
