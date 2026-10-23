@@ -839,19 +839,27 @@ actions:
           Lumos](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
       status:
         description: >-
-          `draft` or `published`. A new policy is a draft unless this says
-          otherwise, and a published policy can't go back to `draft`. Left
-          out, it keeps its current value.
+          `draft` or `published`. A published policy can't go back to
+          `draft`.
       is_enabled:
         description: >-
           Whether the policy is in effect. Only a published policy can be
-          enabled. A new policy is disabled unless this says otherwise. Left
-          out, it keeps its current value.
-  # status and is_enabled keep their current values when the config leaves
-  # them out, as PUT does.
-  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["status","is_enabled"]
+          enabled.
+  # status and is_enabled always have a value, and a policy has no "unset"
+  # one to clear them to, so the config must set them. The spec lets a PUT
+  # send null for "unchanged", and a nullable property isn't made required.
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["status","is_enabled"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["status"]
     update:
-      x-speakeasy-param-suppress-computed-diff: true
+      type: string
+      enum: [draft, published]
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["is_enabled"]
+    update:
+      type: boolean
+  - target: $["components"]["schemas"]["AccessPolicyInput"]
+    update:
+      required: [name, business_justification, apps, status, is_enabled]
 
   # data "lumos_access_policies", optionally filtered by name.
   - target: $["paths"]["/v1/access-policies"]["get"]

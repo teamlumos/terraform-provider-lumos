@@ -35,6 +35,7 @@ resource "lumos_access_policy" "test" {
   business_justification = "Terraform acceptance test"
   %[3]s
   status                 = %[4]q
+  is_enabled             = false
   apps = [
     {
       id           = lumos_app.app.id
