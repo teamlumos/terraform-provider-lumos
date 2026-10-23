@@ -8,7 +8,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// AppStoreSettingsPatchInputCatalogVisibility - Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged.
+// AppStoreSettingsPatchInputCatalogVisibility - Visibility within the catalog.
 type AppStoreSettingsPatchInputCatalogVisibility string
 
 const (
@@ -38,28 +38,60 @@ func (e *AppStoreSettingsPatchInputCatalogVisibility) UnmarshalJSON(data []byte)
 	}
 }
 
+type TimeBasedAccessPatchInput struct {
+	// Labels of the organization's time-based access options to offer for this app. Omitted or set to `null`, it's cleared to an empty list, which reverts to the organization's defaults.
+	Options []string `json:"options,omitzero"`
+	// Label of the option pre-selected on the request form. Omitted or set to `null`, the pre-selection is cleared.
+	Default *string `json:"default,omitzero"`
+}
+
+func (t TimeBasedAccessPatchInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(t, "", false)
+}
+
+func (t *TimeBasedAccessPatchInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &t, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *TimeBasedAccessPatchInput) GetOptions() []string {
+	if t == nil {
+		return nil
+	}
+	return t.Options
+}
+
+func (t *TimeBasedAccessPatchInput) GetDefault() *string {
+	if t == nil {
+		return nil
+	}
+	return t.Default
+}
+
 type AppStoreSettingsPatchInput struct {
-	// Set to true to list this app in the AppStore catalog.
-	InAppStore *bool `json:"in_app_store,omitzero"`
-	// Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged.
-	CatalogVisibility *AppStoreSettingsPatchInputCatalogVisibility `json:"catalog_visibility,omitzero"`
-	// Custom instructions shown on the access-request form. Null clears any existing instructions.
+	// Whether this app is listed in the App Store catalog.
+	InAppStore bool `json:"in_app_store"`
+	// Visibility within the catalog.
+	CatalogVisibility AppStoreSettingsPatchInputCatalogVisibility `json:"catalog_visibility"`
+	// Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
-	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.
-	AllowPermissionSelection *bool `json:"allow_permission_selection,omitzero"`
-	// When true, requesters may select more than one permission per request. Omit to leave unchanged.
-	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitzero"`
-	// UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant.
+	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.
+	AllowPermissionSelection bool `json:"allow_permission_selection"`
+	// When true, requesters may select more than one permission per request.
+	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
+	// UUIDs of the groups whose members may request this app. Omitted or set to `null`, it's cleared to an empty set, which lets anyone in the organization request it.
 	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
-	// Time-based access configuration. Omit to leave all sub-fields unchanged.
+	// Time-based access options and the pre-selected default. Omitted or set to `null`, the options are cleared to an empty list and the default to `null`.
 	TimeBasedAccess *TimeBasedAccessPatchInput `json:"time_based_access,omitzero"`
-	// UUID of the inline webhook to use for request validation. Null clears any existing webhook.
+	// UUID of the inline webhook called to validate access requests. Omitted or set to `null`, the webhook is cleared.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
-	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.
+	// If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to `null`, the redirect is cleared.
 	RedirectURL *string `json:"redirect_url,omitzero"`
-	// Entitlement to pre-select on the access-request form. Must belong to this app. Null clears the pre-selection. Omit to leave unchanged.
+	// Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
 	DefaultEntitlement *EntitlementRefInput `json:"default_entitlement,omitzero"`
-	// The complete desired custom intake field list, matched by reference_key. Fields you omit from the list are deleted. Null or an empty list deletes all of them. Omit this property to leave them unchanged.
+	// The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them.
 	CustomIntakeFields []CustomIntakeFieldPatchInput `json:"custom_intake_fields,omitzero"`
 }
 
@@ -74,16 +106,16 @@ func (a *AppStoreSettingsPatchInput) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AppStoreSettingsPatchInput) GetInAppStore() *bool {
+func (a *AppStoreSettingsPatchInput) GetInAppStore() bool {
 	if a == nil {
-		return nil
+		return false
 	}
 	return a.InAppStore
 }
 
-func (a *AppStoreSettingsPatchInput) GetCatalogVisibility() *AppStoreSettingsPatchInputCatalogVisibility {
+func (a *AppStoreSettingsPatchInput) GetCatalogVisibility() AppStoreSettingsPatchInputCatalogVisibility {
 	if a == nil {
-		return nil
+		return AppStoreSettingsPatchInputCatalogVisibility("")
 	}
 	return a.CatalogVisibility
 }
@@ -95,16 +127,16 @@ func (a *AppStoreSettingsPatchInput) GetRequestInstructions() *string {
 	return a.RequestInstructions
 }
 
-func (a *AppStoreSettingsPatchInput) GetAllowPermissionSelection() *bool {
+func (a *AppStoreSettingsPatchInput) GetAllowPermissionSelection() bool {
 	if a == nil {
-		return nil
+		return false
 	}
 	return a.AllowPermissionSelection
 }
 
-func (a *AppStoreSettingsPatchInput) GetAllowMultiplePermissionSelection() *bool {
+func (a *AppStoreSettingsPatchInput) GetAllowMultiplePermissionSelection() bool {
 	if a == nil {
-		return nil
+		return false
 	}
 	return a.AllowMultiplePermissionSelection
 }

@@ -15,11 +15,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	speakeasy_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
-	speakeasy_listplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/listplanmodifier"
-	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
-	speakeasy_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
-	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
+	custom_listplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/listplanmodifier"
+	custom_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
+	custom_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	speakeasy_boolvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/boolvalidators"
@@ -66,29 +64,21 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 		MarkdownDescription: "An app's App Store settings: whether it's listed, who can request it, and what the request form asks. Keyed by the app's ID.",
 		Attributes: map[string]schema.Attribute{
 			"allow_multiple_permission_selection": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.Bool{
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
-				Description: `When true, requesters may select more than one permission per request. Omit to leave unchanged.`,
+				Required:    true,
+				Description: `When true, requesters may select more than one permission per request.`,
 			},
 			"allow_permission_selection": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.Bool{
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
-				Description: `When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged.`,
+				Required:    true,
+				Description: `When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.`,
 			},
 			"allowed_requester_group_uuids": schema.SetAttribute{
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.Set{
-					speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
+					custom_setplanmodifier.EmptyWhenNull(),
 				},
 				ElementType: types.StringType,
-				Description: `UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant.`,
+				Description: `UUIDs of the groups whose members may request this app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared to an empty set, which lets anyone in the organization request it.`,
 			},
 			"app_id": schema.StringAttribute{
 				Required: true,
@@ -98,12 +88,8 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 				Description: `The app's ID, which ` + "`" + `GET /v1/apps` + "`" + ` returns as ` + "`" + `id` + "`" + `. Requires replacement if changed.`,
 			},
 			"catalog_visibility": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `Visibility within the catalog. "visible", "search-only", or "hidden". Omit to leave unchanged. must be one of ["visible", "search-only", "hidden"]`,
+				Required:    true,
+				Description: `Visibility within the catalog. must be one of ["visible", "search-only", "hidden"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"visible",
@@ -116,33 +102,22 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.List{
-					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+					custom_listplanmodifier.EmptyWhenNull(),
 				},
 				NestedObject: schema.NestedAttributeObject{
 					Validators: []validator.Object{
 						speakeasy_objectvalidators.NotNull(),
 					},
-					PlanModifiers: []planmodifier.Object{
-						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-					},
 					Attributes: map[string]schema.Attribute{
 						"description": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Optional:    true,
 							Description: `Additional guidance shown alongside the prompt.`,
 							Validators: []validator.String{
 								stringvalidator.UTF8LengthAtMost(500),
 							},
 						},
 						"dropdown_options": schema.ListAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.List{
-								speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-							},
+							Optional:    true,
 							ElementType: types.StringType,
 							Description: `The selectable values for a 'dropdown' field. Dropdown fields require at least one option; 'text' fields cannot have options.`,
 							Validators: []validator.List{
@@ -150,11 +125,8 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 							},
 						},
 						"field_type": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
+							Optional:    true,
 							Description: `Not Null; must be one of ["text", "dropdown"]`,
 							Validators: []validator.String{
 								speakeasy_stringvalidators.NotNull(),
@@ -165,22 +137,16 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 							},
 						},
 						"is_required": schema.BoolAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.Bool{
-								speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
+							Optional:    true,
 							Description: `Whether the requester must answer this field to submit a request. Not Null`,
 							Validators: []validator.Bool{
 								speakeasy_boolvalidators.NotNull(),
 							},
 						},
 						"prompt": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
+							Optional:    true,
 							Description: `The question shown to the requester. Not Null`,
 							Validators: []validator.String{
 								speakeasy_stringvalidators.NotNull(),
@@ -188,11 +154,8 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 							},
 						},
 						"reference_key": schema.StringAttribute{
-							Computed: true,
-							Optional: true,
-							PlanModifiers: []planmodifier.String{
-								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-							},
+							Computed:    true,
+							Optional:    true,
 							Description: `Stable identifier for this field. Required when creating a field and immutable after creation. Not Null`,
 							Validators: []validator.String{
 								speakeasy_stringvalidators.NotNull(),
@@ -201,93 +164,62 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 						},
 					},
 				},
-				Description: `The complete desired custom intake field list, matched by reference_key. Fields you omit from the list are deleted. Null or an empty list deletes all of them. Omit this property to leave them unchanged.`,
+				Description: `The complete list of custom intake fields, matched by ` + "`" + `reference_key` + "`" + `. Fields left out of the list are deleted. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared to an empty list, which deletes all of them.`,
 				Validators: []validator.List{
 					listvalidator.SizeAtMost(50),
 				},
 			},
 			"default_entitlement": schema.SingleNestedAttribute{
-				Computed: true,
 				Optional: true,
-				PlanModifiers: []planmodifier.Object{
-					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-				},
 				Attributes: map[string]schema.Attribute{
 					"id": schema.StringAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
-						Description: `The UUID of the entitlement. Not Null`,
-						Validators: []validator.String{
-							speakeasy_stringvalidators.NotNull(),
-						},
+						Required:    true,
+						Description: `The UUID of the entitlement.`,
 					},
 				},
-				Description: `Entitlement to pre-select on the access-request form. Must belong to this app. Null clears the pre-selection. Omit to leave unchanged.`,
+				Description: `Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to ` + "`" + `null` + "`" + `, the pre-selection is cleared.`,
 			},
 			"in_app_store": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.Bool{
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
-				Description: `Set to true to list this app in the AppStore catalog.`,
+				Required:    true,
+				Description: `Whether this app is listed in the App Store catalog.`,
 			},
 			"redirect_url": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters.`,
+				Optional:    true,
+				Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to ` + "`" + `null` + "`" + `, the redirect is cleared.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtMost(2048),
 				},
 			},
 			"request_instructions": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `Custom instructions shown on the access-request form. Null clears any existing instructions.`,
+				Optional:    true,
+				Description: `Custom instructions shown on the access-request form. Omitted or set to ` + "`" + `null` + "`" + `, the instructions are cleared.`,
 			},
 			"request_validation_webhook_uuid": schema.StringAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `UUID of the inline webhook to use for request validation. Null clears any existing webhook.`,
+				Optional:    true,
+				Description: `UUID of the inline webhook called to validate access requests. Omitted or set to ` + "`" + `null` + "`" + `, the webhook is cleared.`,
 			},
 			"time_based_access": schema.SingleNestedAttribute{
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.Object{
-					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					custom_objectplanmodifier.EmptyWhenNull(),
 				},
 				Attributes: map[string]schema.Attribute{
 					"default": schema.StringAttribute{
-						Computed: true,
-						Optional: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
-						Description: `Label of the option to pre-select on the request form. Null clears the pre-selection.`,
+						Optional:    true,
+						Description: `Label of the option pre-selected on the request form. Omitted or set to ` + "`" + `null` + "`" + `, the pre-selection is cleared.`,
 					},
 					"options": schema.ListAttribute{
 						Computed: true,
 						Optional: true,
 						PlanModifiers: []planmodifier.List{
-							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+							custom_listplanmodifier.EmptyWhenNull(),
 						},
 						ElementType: types.StringType,
-						Description: `Labels of domain-level time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to the domain defaults.`,
+						Description: `Labels of the organization's time-based access options to offer for this app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared to an empty list, which reverts to the organization's defaults.`,
 					},
 				},
-				Description: `Time-based access configuration. Omit to leave all sub-fields unchanged.`,
+				Description: `Time-based access options and the pre-selected default. Omitted or set to ` + "`" + `null` + "`" + `, the options are cleared to an empty list and the default to ` + "`" + `null` + "`" + `.`,
 			},
 		},
 	}
@@ -314,21 +246,8 @@ func (r *AppAppstoreSettingsResource) Configure(ctx context.Context, req resourc
 }
 
 func (r *AppAppstoreSettingsResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var (
-		configData AppAppstoreSettingsResourceModel
-		data       AppAppstoreSettingsResourceModel
-		plan       types.Object
-	)
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	opts := &AppAppstoreSettingsResourceModelOptions{
-		Config: &configData,
-	}
+	var data *AppAppstoreSettingsResourceModel
+	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -346,7 +265,7 @@ func (r *AppAppstoreSettingsResource) Create(ctx context.Context, req resource.C
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan)
 
-	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx, opts)
+	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -415,7 +334,7 @@ func (r *AppAppstoreSettingsResource) Read(ctx context.Context, req resource.Rea
 
 	ctx = withSensitiveValues(ctx, req.State)
 
-	request, requestDiags := data.ToOperationsV1GetAppStoreSettingsRequest(ctx, nil)
+	request, requestDiags := data.ToOperationsV1GetAppStoreSettingsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -456,29 +375,8 @@ func (r *AppAppstoreSettingsResource) Read(ctx context.Context, req resource.Rea
 }
 
 func (r *AppAppstoreSettingsResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var (
-		configData AppAppstoreSettingsResourceModel
-		data       AppAppstoreSettingsResourceModel
-		plan       types.Object
-		stateData  AppAppstoreSettingsResourceModel
-	)
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	opts := &AppAppstoreSettingsResourceModelOptions{
-		Config: &configData,
-		State:  &stateData,
-	}
+	var data *AppAppstoreSettingsResourceModel
+	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -492,7 +390,7 @@ func (r *AppAppstoreSettingsResource) Update(ctx context.Context, req resource.U
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan, req.State)
 
-	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx, opts)
+	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -554,7 +452,7 @@ func (r *AppAppstoreSettingsResource) Delete(ctx context.Context, req resource.D
 
 	ctx = withSensitiveValues(ctx, req.State)
 
-	request, requestDiags := data.ToOperationsV1RemoveAppFromAppStoreRequest(ctx, nil)
+	request, requestDiags := data.ToOperationsV1RemoveAppFromAppStoreRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {

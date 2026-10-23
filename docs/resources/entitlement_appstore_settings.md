@@ -36,13 +36,13 @@ resource "lumos_entitlement_appstore_settings" "deploy_admin" {
 ### Required
 
 - `entitlement_id` (String) The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`. Requires replacement if changed.
+- `visible_in_appstore` (Boolean) Whether this entitlement is visible in the AppStore catalog.
 
 ### Optional
 
 - `allowed_requester_group_uuids_override` (Set of String) UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. An empty list lets anyone in the organization request it. Omitted or set to `null`, the entitlement inherits the app's groups.
 - `request_validation_webhook_uuid` (String) UUID of the inline webhook called to validate access requests for this entitlement. Omitted or set to `null`, the entitlement has no webhook of its own.
 - `time_based_access_override` (Attributes) This entitlement's own time-based access options, overriding the app's. Omitted or set to `null`, the entitlement inherits the app's options. (see [below for nested schema](#nestedatt--time_based_access_override))
-- `visible_in_appstore` (Boolean) Whether this entitlement is visible in the AppStore catalog.
 
 <a id="nestedatt--time_based_access_override"></a>
 ### Nested Schema for `time_based_access_override`
@@ -55,9 +55,10 @@ Required:
 
 * **One per entitlement.** Changing `entitlement_id` replaces the resource: the old entitlement is hidden from the App Store, keeping its overrides, and the new entitlement's settings are written.
 * **The app must be in the App Store.** Otherwise, or if the entitlement has no request settings, the API returns 404.
-* **Overrides follow the config.** Omitting `allowed_requester_group_uuids_override` or `time_based_access_override`, or setting it to `null`, means the entitlement inherits the app's setting. Omitting `request_validation_webhook_uuid`, or setting it to `null`, means the entitlement has no webhook of its own. This differs from `lumos_app_appstore_settings`, where omitted settings are left as they are.
+* **The settings follow the config.** Omitting `allowed_requester_group_uuids_override` or `time_based_access_override`, or setting it to `null`, means the entitlement inherits the app's setting. Omitting `request_validation_webhook_uuid`, or setting it to `null`, means the entitlement has no webhook of its own. This includes overrides set in the Lumos UI or present when the settings are imported; the plan shows each one that will be cleared as `-> null`.
+* **`visible_in_appstore` is required.** It always has a value, so the config must set it.
 * **An empty `allowed_requester_group_uuids_override`** (`[]`) lets anyone in the organization request the entitlement, even if the app limits requests to some groups.
-* **`visible_in_appstore`** keeps its current value when omitted or set to `null`.
+* **Importing:** a config that leaves out overrides Lumos already has clears them on the first apply. To keep them, write the config from what's in Lumos: run `terraform plan -generate-config-out=generated.tf` with an `import` block, then review the generated config.
 * **Time-based access options** are set and shown by their labels.
 
 ## Destroy behavior

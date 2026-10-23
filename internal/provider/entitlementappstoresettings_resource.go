@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	speakeasy_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 )
@@ -81,11 +80,7 @@ func (r *EntitlementAppstoreSettingsResource) Schema(ctx context.Context, req re
 				Description: `This entitlement's own time-based access options, overriding the app's. Omitted or set to ` + "`" + `null` + "`" + `, the entitlement inherits the app's options.`,
 			},
 			"visible_in_appstore": schema.BoolAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.Bool{
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
+				Required:    true,
 				Description: `Whether this entitlement is visible in the AppStore catalog.`,
 			},
 		},

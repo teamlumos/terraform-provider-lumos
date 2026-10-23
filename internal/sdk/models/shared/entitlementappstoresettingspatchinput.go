@@ -16,7 +16,7 @@ import (
 // bool on the entitlement, so `null` there is equivalent to omitting the field.
 type EntitlementAppStoreSettingsPatchInput struct {
 	// Whether this entitlement is visible in the AppStore catalog.
-	VisibleInAppstore *bool `json:"visible_in_appstore,omitzero"`
+	VisibleInAppstore bool `json:"visible_in_appstore"`
 	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. An empty list lets anyone in the organization request it. Omitted or set to `null`, the entitlement inherits the app's groups.
 	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
 	// This entitlement's own time-based access options, overriding the app's. Omitted or set to `null`, the entitlement inherits the app's options.
@@ -36,9 +36,9 @@ func (e *EntitlementAppStoreSettingsPatchInput) UnmarshalJSON(data []byte) error
 	return nil
 }
 
-func (e *EntitlementAppStoreSettingsPatchInput) GetVisibleInAppstore() *bool {
+func (e *EntitlementAppStoreSettingsPatchInput) GetVisibleInAppstore() bool {
 	if e == nil {
-		return nil
+		return false
 	}
 	return e.VisibleInAppstore
 }

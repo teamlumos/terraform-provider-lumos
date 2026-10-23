@@ -75,10 +75,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
+					custom_stringplanmodifier.RejectIntegrationRemoval(),
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `Canonical identifier of an integration, e.g. ` + "`" + `okta.com` + "`" + `. On create, supplying it switches the request from creating a custom app to connecting that integration with ` + "`" + `auth` + "`" + `/` + "`" + `settings` + "`" + `. On update it is optional and, when supplied, must match the app's own integration — a mismatch is rejected with 400. Requires replacement if changed.`,
+				Description: `Canonical identifier of an integration, e.g. ` + "`" + `okta.com` + "`" + `. Setting it connects that integration with ` + "`" + `auth` + "`" + `/` + "`" + `settings` + "`" + `; leaving it out creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.`,
 				Validators: []validator.String{
 					stringvalidator.ConflictsWith(path.Expressions{
 						path.MatchRelative().AtParent().AtName("label"),
@@ -151,10 +152,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							},
 							Attributes: map[string]schema.Attribute{
 								"description": schema.StringAttribute{
-									Computed: true,
-									PlanModifiers: []planmodifier.String{
-										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-									},
+									Computed:    true,
 									Description: `Additional guidance shown alongside the prompt.`,
 								},
 								"dropdown_options": schema.ListAttribute{
@@ -220,24 +218,15 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						Description: `Whether this app is listed in the AppStore catalog.`,
 					},
 					"redirect_url": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Null means no redirect is configured. Max 2048 characters.`,
 					},
 					"request_instructions": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.`,
 					},
 					"request_validation_webhook_uuid": schema.StringAttribute{
-						Computed: true,
-						PlanModifiers: []planmodifier.String{
-							speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-						},
+						Computed:    true,
 						Description: `UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.`,
 					},
 					"time_based_access": schema.SingleNestedAttribute{
@@ -247,10 +236,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						},
 						Attributes: map[string]schema.Attribute{
 							"default": schema.StringAttribute{
-								Computed: true,
-								PlanModifiers: []planmodifier.String{
-									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-								},
+								Computed:    true,
 								Description: `Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.`,
 							},
 							"options": schema.ListAttribute{
@@ -279,7 +265,12 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `The app's category. Required when creating a custom app. On update this sets a domain-specific override; send ` + "`" + `null` + "`" + ` to reset it to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
+				Description: `The app's category. Required for a custom app; a connected app can't set it. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
+				Validators: []validator.String{
+					stringvalidator.ExactlyOneOf(path.Expressions{
+						path.MatchRelative().AtParent().AtName("app_class_id"),
+					}...),
+				},
 			},
 			"default_deprovisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -319,8 +310,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `The app's description. Required when creating a custom app. On update, a custom app's own description is replaced; for any other app this sets a domain-specific override, which is capped at 1,000 characters. Send ` + "`" + `null` + "`" + ` to reset the override to the app's default description.`,
+				Description: `The app's description. Required for a custom app; a connected app can't set it.`,
 				Validators: []validator.String{
+					stringvalidator.ExactlyOneOf(path.Expressions{
+						path.MatchRelative().AtParent().AtName("app_class_id"),
+					}...),
 					stringvalidator.UTF8LengthAtMost(8191),
 				},
 			},
@@ -351,8 +345,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `The app's display name in your organization. Required when creating a custom app. On update this sets a domain-specific override; send ` + "`" + `null` + "`" + ` to reset it to the app's default name. At most 255 characters.`,
+				Description: `The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.`,
 				Validators: []validator.String{
+					stringvalidator.ExactlyOneOf(path.Expressions{
+						path.MatchRelative().AtParent().AtName("app_class_id"),
+					}...),
 					stringvalidator.UTF8LengthAtMost(255),
 				},
 			},
@@ -360,9 +357,9 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.NullIfOmittedOnCustomApp(),
 				},
-				Description: `URL of the app's logo. On update, send ` + "`" + `null` + "`" + ` to reset it to the app's default logo.`,
+				Description: `URL of the app's logo. On a custom app, omitted or set to ` + "`" + `null` + "`" + `, the logo is cleared. A connected app can't set it.`,
 			},
 			"post_approval_message": schema.StringAttribute{
 				Computed: true,
@@ -399,9 +396,9 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Computed: true,
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.NullIfOmittedOnCustomApp(),
 				},
-				Description: `URL of the app's website. On update, send ` + "`" + `null` + "`" + ` to clear the override.`,
+				Description: `URL of the app's website. On a custom app, omitted or set to ` + "`" + `null` + "`" + `, the website is cleared. A connected app can't set it.`,
 			},
 		},
 	}
@@ -428,21 +425,8 @@ func (r *AppResource) Configure(ctx context.Context, req resource.ConfigureReque
 }
 
 func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var (
-		configData AppResourceModel
-		data       AppResourceModel
-		plan       types.Object
-	)
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	opts := &AppResourceModelOptions{
-		Config: &configData,
-	}
+	var data *AppResourceModel
+	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -460,7 +444,7 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan)
 
-	request, requestDiags := data.ToSharedAppCreateInput(ctx, opts)
+	request, requestDiags := data.ToSharedAppCreateInput(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -504,7 +488,7 @@ func (r *AppResource) Create(ctx context.Context, req resource.CreateRequest, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsV1GetAppRequest(ctx, opts)
+	request1, request1Diags := data.ToOperationsV1GetAppRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
@@ -573,7 +557,7 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 
 	ctx = withSensitiveValues(ctx, req.State)
 
-	request, requestDiags := data.ToOperationsV1GetAppRequest(ctx, nil)
+	request, requestDiags := data.ToOperationsV1GetAppRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -614,29 +598,8 @@ func (r *AppResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 }
 
 func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var (
-		configData AppResourceModel
-		data       AppResourceModel
-		plan       types.Object
-		stateData  AppResourceModel
-	)
-
-	resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &stateData)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	opts := &AppResourceModelOptions{
-		Config: &configData,
-		State:  &stateData,
-	}
+	var data *AppResourceModel
+	var plan types.Object
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
@@ -650,7 +613,7 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan, req.State)
 
-	request, requestDiags := data.ToOperationsV1UpdateAppRequest(ctx, opts)
+	request, requestDiags := data.ToOperationsV1UpdateAppRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
@@ -687,7 +650,7 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	request1, request1Diags := data.ToOperationsV1GetAppRequest(ctx, opts)
+	request1, request1Diags := data.ToOperationsV1GetAppRequest(ctx)
 	resp.Diagnostics.Append(request1Diags...)
 
 	if resp.Diagnostics.HasError() {
@@ -749,7 +712,7 @@ func (r *AppResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 
 	ctx = withSensitiveValues(ctx, req.State)
 
-	request, requestDiags := data.ToOperationsV1DeleteAppRequest(ctx, nil)
+	request, requestDiags := data.ToOperationsV1DeleteAppRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
