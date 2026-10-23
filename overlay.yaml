@@ -128,9 +128,10 @@ actions:
         terraform-resource: AppAppstoreSettings#read
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["patch"]
     update:
-      # Every update sends each setting the plan holds, not only the changed
-      # ones, so a setting missing from the request was left out of the
-      # config rather than left unchanged.
+      # Every update sends each setting the plan holds, and the plan holds
+      # only what the config sets, empty lists for omitted lists, and null.
+      # The request builder drops nulls, so the clearUnsetFields hook sends
+      # null for each clearable setting missing from the body.
       x-speakeasy-entity-operation:
         - entityOperation: AppAppstoreSettings#create,update
   # Settings belong to one app; pointing the resource at another app means
@@ -253,12 +254,31 @@ actions:
     update:
       format: set
 
-  # A settings update sends only what changed, and the API's merge patch
-  # leaves every other setting as it is, so plans keep their current values
-  # instead of showing them as known after apply.
-  - target: $["components"]["schemas"]["AppStoreSettingsResponse","CustomIntakeField"]["properties"][*]
+  # Every setting follows the config, so the provider never fills one in
+  # from what the API holds. A setting the API can't clear always has a
+  # value, and its starting value varies by app, so the config must set it.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput"]
     update:
-      x-speakeasy-param-suppress-computed-diff: true
+      required: [in_app_store, catalog_visibility, allow_permission_selection, allow_multiple_permission_selection]
+  # Omitting one of these plans null, which clears it.
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["redirect_url","request_instructions","request_validation_webhook_uuid","default_entitlement"]
+    update:
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]["properties"]["default"]
+    update:
+      x-speakeasy-param-computed: false
+  # Omitting a list plans it empty, which clears it; the read above turns the
+  # API's null back into [], so the next plan matches. Omitting time-based
+  # access plans empty options and no default. A spec default can't express
+  # this for the intake fields or time-based access, so a plan modifier does
+  # it. It goes on the request schemas: lumos_app shows the response schema
+  # read-only, where nothing is configured.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput"]["properties"]["allowed_requester_group_uuids","custom_intake_fields","time_based_access"]
+    update:
+      x-speakeasy-plan-modifiers: EmptyWhenNull
+  - target: $["components"]["schemas"]["TimeBasedAccessPatchInput"]["properties"]["options"]
+    update:
+      x-speakeasy-plan-modifiers: EmptyWhenNull
   # The API reads an intake field's omitted description or dropdown options
   # back as null. Left computed, a plan fills an omitted one from the field
   # that had the same position before, so inserting a field would send its
@@ -266,6 +286,40 @@ actions:
   - target: $["components"]["schemas"]["CustomIntakeField"]["properties"]["description","dropdown_options"]
     update:
       x-speakeasy-param-computed: false
+
+  # The spec's descriptions tell API callers what omitting a field or
+  # sending null does. In a config, omitting a setting and setting it to
+  # null are the same, and both clear it.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput"]["properties"]
+    update:
+      in_app_store:
+        description: Whether this app is listed in the App Store catalog.
+      catalog_visibility:
+        description: Visibility within the catalog.
+      request_instructions:
+        description: Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
+      allow_permission_selection:
+        description: When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.
+      allow_multiple_permission_selection:
+        description: When true, requesters may select more than one permission per request.
+      allowed_requester_group_uuids:
+        description: UUIDs of the groups whose members may request this app. Omitted or set to `null`, it's cleared to an empty set, which lets anyone in the organization request it.
+      time_based_access:
+        description: Time-based access options and the pre-selected default. Omitted or set to `null`, the options are cleared to an empty list and the default to `null`.
+      request_validation_webhook_uuid:
+        description: UUID of the inline webhook called to validate access requests. Omitted or set to `null`, the webhook is cleared.
+      redirect_url:
+        description: If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to `null`, the redirect is cleared.
+      default_entitlement:
+        description: Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
+      custom_intake_fields:
+        description: The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them.
+  - target: $["components"]["schemas"]["TimeBasedAccessPatchInput"]["properties"]
+    update:
+      options:
+        description: Labels of the organization's time-based access options to offer for this app. Omitted or set to `null`, it's cleared to an empty list, which reverts to the organization's defaults.
+      default:
+        description: Label of the option pre-selected on the request form. Omitted or set to `null`, the pre-selection is cleared.
 
   # resource "lumos_entitlement". The API creates, renames and deletes an
   # entitlement; everything else on it is read-only here. App Store settings
@@ -432,10 +486,17 @@ actions:
         override, referencing options already defined for the organization.
         Must contain at least one label. To inherit the app's options instead,
         omit `time_based_access_override` or set it to `null`.
-  # visible_in_appstore keeps its value when the config leaves it out.
-  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["visible_in_appstore"]
+  # visible_in_appstore always has a value, so the config must set it. The
+  # spec lets a PATCH send null for "unchanged", and a nullable property
+  # isn't made required.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["visible_in_appstore"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["visible_in_appstore"]
     update:
-      x-speakeasy-param-suppress-computed-diff: true
+      type: boolean
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]
+    update:
+      required: [visible_in_appstore]
 
 
   # Lookup data sources. Each list endpoint pages the way /v1/users does, so
