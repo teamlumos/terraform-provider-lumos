@@ -358,6 +358,7 @@ Available configuration:
 
 ### Managed Resources
 
+* [lumos_access_policy](docs/resources/access_policy.md)
 * [lumos_app](docs/resources/app.md)
 * [lumos_app_appstore_settings](docs/resources/app_appstore_settings.md)
 * [lumos_entitlement](docs/resources/entitlement.md)
@@ -365,6 +366,8 @@ Available configuration:
 
 ### Data Sources
 
+* [lumos_access_policies](docs/data-sources/access_policies.md)
+* [lumos_access_policy](docs/data-sources/access_policy.md)
 * [lumos_accounts](docs/data-sources/accounts.md)
 * [lumos_app_categories](docs/data-sources/app_categories.md)
 * [lumos_app_entitlements](docs/data-sources/app_entitlements.md)

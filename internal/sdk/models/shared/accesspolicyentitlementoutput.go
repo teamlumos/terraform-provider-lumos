@@ -7,8 +7,6 @@ package shared
 type AccessPolicyEntitlementOutput struct {
 	// The UUID of the entitlement.
 	ID string `json:"id"`
-	// The human-readable label of this entitlement.
-	Label string `json:"label"`
 }
 
 func (a *AccessPolicyEntitlementOutput) GetID() string {
@@ -16,11 +14,4 @@ func (a *AccessPolicyEntitlementOutput) GetID() string {
 		return ""
 	}
 	return a.ID
-}
-
-func (a *AccessPolicyEntitlementOutput) GetLabel() string {
-	if a == nil {
-		return ""
-	}
-	return a.Label
 }

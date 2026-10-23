@@ -47,7 +47,7 @@ type AppAppstoreSettingsResourceModel struct {
 	AppID                            types.String                             `tfsdk:"app_id"`
 	CatalogVisibility                types.String                             `tfsdk:"catalog_visibility"`
 	CustomIntakeFields               []tfTypes.CustomIntakeField              `tfsdk:"custom_intake_fields"`
-	DefaultEntitlement               *tfTypes.ApprovalWorkflowWorkflowRef     `tfsdk:"default_entitlement"`
+	DefaultEntitlement               *tfTypes.EntitlementRefInput             `tfsdk:"default_entitlement"`
 	InAppStore                       types.Bool                               `tfsdk:"in_app_store"`
 	RedirectURL                      types.String                             `tfsdk:"redirect_url"`
 	RequestInstructions              types.String                             `tfsdk:"request_instructions"`

@@ -10,8 +10,8 @@ type AccessPolicyAppInput struct {
 	// The ID of this app.
 	ID string `json:"id"`
 	// Whether requests created through this policy for this app are pre-approved.
-	IsPreapproved *bool `json:"is_preapproved,omitzero"`
-	// The entitlements granted for this app. Omit, or send an empty list, to grant access to the app itself rather than to specific entitlements.
+	IsPreapproved *bool `default:"false" json:"is_preapproved"`
+	// The entitlements granted for this app. Leave it out, or set it to an empty set, to grant access to the app itself rather than to specific entitlements.
 	Entitlements []EntitlementRefInput `json:"entitlements,omitzero"`
 }
 

@@ -12,7 +12,7 @@ type AppstoreSettingsAppStoreSettingsResponse struct {
 	AllowedRequesterGroupUuids       []types.String                   `tfsdk:"allowed_requester_group_uuids"`
 	CatalogVisibility                types.String                     `tfsdk:"catalog_visibility"`
 	CustomIntakeFields               []CustomIntakeField              `tfsdk:"custom_intake_fields"`
-	DefaultEntitlement               *ApprovalWorkflowWorkflowRef     `tfsdk:"default_entitlement"`
+	DefaultEntitlement               *EntitlementRefInput             `tfsdk:"default_entitlement"`
 	InAppStore                       types.Bool                       `tfsdk:"in_app_store"`
 	RedirectURL                      types.String                     `tfsdk:"redirect_url"`
 	RequestInstructions              types.String                     `tfsdk:"request_instructions"`

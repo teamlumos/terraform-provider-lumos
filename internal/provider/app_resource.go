@@ -43,12 +43,12 @@ type AppResource struct {
 // AppResourceModel describes the resource data model.
 type AppResourceModel struct {
 	AppClassID                    types.String                                      `tfsdk:"app_class_id"`
-	ApprovalWorkflow              *tfTypes.ApprovalWorkflowWorkflowRef              `tfsdk:"approval_workflow"`
+	ApprovalWorkflow              *tfTypes.EntitlementRefInput                      `tfsdk:"approval_workflow"`
 	AppstoreSettings              *tfTypes.AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Auth                          jsontypes.Normalized                              `tfsdk:"auth"`
 	Category                      types.String                                      `tfsdk:"category"`
-	DefaultDeprovisioningWorkflow *tfTypes.ApprovalWorkflowWorkflowRef              `tfsdk:"default_deprovisioning_workflow"`
-	DefaultProvisioningWorkflow   *tfTypes.ApprovalWorkflowWorkflowRef              `tfsdk:"default_provisioning_workflow"`
+	DefaultDeprovisioningWorkflow *tfTypes.EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
+	DefaultProvisioningWorkflow   *tfTypes.EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                                      `tfsdk:"description"`
 	Disconnected                  types.Bool                                        `tfsdk:"disconnected"`
 	ID                            types.String                                      `tfsdk:"id"`

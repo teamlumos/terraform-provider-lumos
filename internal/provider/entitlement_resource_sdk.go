@@ -19,7 +19,7 @@ func (r *EntitlementResourceModel) RefreshFromSharedEntitlementOutput(ctx contex
 		if resp.ApprovalWorkflowOverride == nil {
 			r.ApprovalWorkflowOverride = nil
 		} else {
-			r.ApprovalWorkflowOverride = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.ApprovalWorkflowOverride = &tfTypes.EntitlementRefInput{}
 			r.ApprovalWorkflowOverride.ID = types.StringValue(resp.ApprovalWorkflowOverride.ID)
 		}
 		if resp.AppstoreSettings == nil {
@@ -50,7 +50,7 @@ func (r *EntitlementResourceModel) RefreshFromSharedEntitlementOutput(ctx contex
 		if resp.DeprovisioningWorkflow == nil {
 			r.DeprovisioningWorkflow = nil
 		} else {
-			r.DeprovisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.DeprovisioningWorkflow = &tfTypes.EntitlementRefInput{}
 			r.DeprovisioningWorkflow.ID = types.StringValue(resp.DeprovisioningWorkflow.ID)
 		}
 		r.Description = types.StringPointerValue(resp.Description)
@@ -60,7 +60,7 @@ func (r *EntitlementResourceModel) RefreshFromSharedEntitlementOutput(ctx contex
 		if resp.ProvisioningWorkflow == nil {
 			r.ProvisioningWorkflow = nil
 		} else {
-			r.ProvisioningWorkflow = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.ProvisioningWorkflow = &tfTypes.EntitlementRefInput{}
 			r.ProvisioningWorkflow.ID = types.StringValue(resp.ProvisioningWorkflow.ID)
 		}
 		r.Source = types.StringValue(string(resp.Source))

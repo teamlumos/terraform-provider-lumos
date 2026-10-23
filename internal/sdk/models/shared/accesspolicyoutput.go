@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 // AccessPolicyOutputStatus - The status of the access policy.
@@ -34,10 +35,6 @@ func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AccessCondition - The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-type AccessCondition struct {
-}
-
 // AccessPolicyOutput - The full representation of an access policy returned by the V1 API.
 type AccessPolicyOutput struct {
 	// The name of the access policy.
@@ -53,9 +50,25 @@ type AccessPolicyOutput struct {
 	// The apps and entitlements granted by this access policy.
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-	AccessCondition AccessCondition `json:"access_condition"`
-	// True when the policy applies to everyone in your organization. In that case, `access_condition` holds the condition Lumos uses to match everyone.
+	AccessCondition any `json:"access_condition,omitzero"`
+	// True when the policy applies to everyone in your organization. `access_condition` is then null.
 	IsEveryoneCondition bool `json:"is_everyone_condition"`
+}
+
+func (a AccessPolicyOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessPolicyOutput) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, "if . == null then . else if .is_everyone_condition then .access_condition = null else .access_condition |= (if . == null then . else walk(if type == \"object\" then with_entries(select(.value != null)) else . end) end) end end"); err != nil {
+		return err
+	} else {
+		data = out
+	}
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccessPolicyOutput) GetName() string {
@@ -100,9 +113,9 @@ func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
 	return a.Apps
 }
 
-func (a *AccessPolicyOutput) GetAccessCondition() AccessCondition {
+func (a *AccessPolicyOutput) GetAccessCondition() any {
 	if a == nil {
-		return AccessCondition{}
+		return nil
 	}
 	return a.AccessCondition
 }

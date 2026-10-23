@@ -54,7 +54,7 @@ func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppStoreSettingsResp
 		if resp.DefaultEntitlement == nil {
 			r.DefaultEntitlement = nil
 		} else {
-			r.DefaultEntitlement = &tfTypes.ApprovalWorkflowWorkflowRef{}
+			r.DefaultEntitlement = &tfTypes.EntitlementRefInput{}
 			r.DefaultEntitlement.ID = types.StringValue(resp.DefaultEntitlement.ID)
 		}
 		r.InAppStore = types.BoolValue(resp.InAppStore)

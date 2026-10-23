@@ -2,15 +2,28 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type AccessPolicyAppOutput struct {
 	// The ID of this app.
 	ID string `json:"id"`
-	// The human-readable label of this app.
-	Label string `json:"label"`
 	// Whether requests created via this access policy are pre-approved.
-	IsPreapproved bool `json:"is_preapproved"`
+	IsPreapproved *bool `json:"is_preapproved,omitzero"`
 	// The entitlements granted for this app. A grant whose underlying request configuration is not yet linked to an entitlement is omitted, so this is not always the policy's complete set of grants. When more than one request configuration resolves to the same entitlement, only one entry is shown for it. Updating a policy replaces its apps wholesale, so an update built from this response drops any grant that was omitted or collapsed here.
-	Entitlements []AccessPolicyEntitlementOutput `json:"entitlements"`
+	Entitlements []AccessPolicyEntitlementOutput `json:"entitlements,omitzero"`
+}
+
+func (a AccessPolicyAppOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AccessPolicyAppOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AccessPolicyAppOutput) GetID() string {
@@ -20,23 +33,16 @@ func (a *AccessPolicyAppOutput) GetID() string {
 	return a.ID
 }
 
-func (a *AccessPolicyAppOutput) GetLabel() string {
+func (a *AccessPolicyAppOutput) GetIsPreapproved() *bool {
 	if a == nil {
-		return ""
-	}
-	return a.Label
-}
-
-func (a *AccessPolicyAppOutput) GetIsPreapproved() bool {
-	if a == nil {
-		return false
+		return nil
 	}
 	return a.IsPreapproved
 }
 
 func (a *AccessPolicyAppOutput) GetEntitlements() []AccessPolicyEntitlementOutput {
 	if a == nil {
-		return []AccessPolicyEntitlementOutput{}
+		return nil
 	}
 	return a.Entitlements
 }

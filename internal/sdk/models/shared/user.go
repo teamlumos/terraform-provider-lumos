@@ -8,19 +8,19 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-type UserStatus string
+type Status string
 
 const (
-	UserStatusStaged    UserStatus = "staged"
-	UserStatusActive    UserStatus = "active"
-	UserStatusSuspended UserStatus = "suspended"
-	UserStatusInactive  UserStatus = "inactive"
+	StatusStaged    Status = "staged"
+	StatusActive    Status = "active"
+	StatusSuspended Status = "suspended"
+	StatusInactive  Status = "inactive"
 )
 
-func (e UserStatus) ToPointer() *UserStatus {
+func (e Status) ToPointer() *Status {
 	return &e
 }
-func (e *UserStatus) UnmarshalJSON(data []byte) error {
+func (e *Status) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -33,10 +33,10 @@ func (e *UserStatus) UnmarshalJSON(data []byte) error {
 	case "suspended":
 		fallthrough
 	case "inactive":
-		*e = UserStatus(v)
+		*e = Status(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for UserStatus: %v", v)
+		return fmt.Errorf("invalid value for Status: %v", v)
 	}
 }
 
@@ -50,7 +50,7 @@ type User struct {
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitzero"`
 	// The status of this user.
-	Status *UserStatus `json:"status,omitzero"`
+	Status *Status `json:"status,omitzero"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
@@ -92,7 +92,7 @@ func (u *User) GetFamilyName() *string {
 	return u.FamilyName
 }
 
-func (u *User) GetStatus() *UserStatus {
+func (u *User) GetStatus() *Status {
 	if u == nil {
 		return nil
 	}

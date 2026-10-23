@@ -8,17 +8,18 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-type Status string
+// AccessPolicyInputStatus - `draft` or `published`. A published policy can't go back to `draft`.
+type AccessPolicyInputStatus string
 
 const (
-	StatusDraft     Status = "draft"
-	StatusPublished Status = "published"
+	AccessPolicyInputStatusDraft     AccessPolicyInputStatus = "draft"
+	AccessPolicyInputStatusPublished AccessPolicyInputStatus = "published"
 )
 
-func (e Status) ToPointer() *Status {
+func (e AccessPolicyInputStatus) ToPointer() *AccessPolicyInputStatus {
 	return &e
 }
-func (e *Status) UnmarshalJSON(data []byte) error {
+func (e *AccessPolicyInputStatus) UnmarshalJSON(data []byte) error {
 	var v string
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
@@ -27,10 +28,10 @@ func (e *Status) UnmarshalJSON(data []byte) error {
 	case "draft":
 		fallthrough
 	case "published":
-		*e = Status(v)
+		*e = AccessPolicyInputStatus(v)
 		return nil
 	default:
-		return fmt.Errorf("invalid value for Status: %v", v)
+		return fmt.Errorf("invalid value for AccessPolicyInputStatus: %v", v)
 	}
 }
 
@@ -39,13 +40,13 @@ type AccessPolicyInput struct {
 	Name string `json:"name"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
-	// The status of the access policy, `draft` or `published`. Defaults to `draft`.
-	Status *Status `json:"status,omitzero"`
-	// Whether the access policy is enabled. Defaults to false when supported.
-	IsEnabled *bool `json:"is_enabled,omitzero"`
-	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
-	AccessCondition map[string]any `json:"access_condition,omitzero"`
-	// Whether the access policy applies to everyone. Send `true` without `access_condition`, or `false` (the default) with one; sending both returns 400, unless `access_condition` is the everyone condition a read returns.
+	// `draft` or `published`. A published policy can't go back to `draft`.
+	Status AccessPolicyInputStatus `json:"status"`
+	// Whether the policy is in effect. Only a published policy can be enabled.
+	IsEnabled bool `json:"is_enabled"`
+	// The condition an identity must match for the policy to apply, as a Lumos condition written with `jsonencode`. Give every attribute and value as `{ label, value }`, the form Lumos reads back. Leave it out when `is_everyone_condition` is `true`. See [building conditions in Lumos](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+	AccessCondition any `json:"access_condition,omitzero"`
+	// Whether the policy applies to everyone in the organization. Set it to `true` instead of setting `access_condition`.
 	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
 	// The apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
@@ -76,21 +77,21 @@ func (a *AccessPolicyInput) GetBusinessJustification() string {
 	return a.BusinessJustification
 }
 
-func (a *AccessPolicyInput) GetStatus() *Status {
+func (a *AccessPolicyInput) GetStatus() AccessPolicyInputStatus {
 	if a == nil {
-		return nil
+		return AccessPolicyInputStatus("")
 	}
 	return a.Status
 }
 
-func (a *AccessPolicyInput) GetIsEnabled() *bool {
+func (a *AccessPolicyInput) GetIsEnabled() bool {
 	if a == nil {
-		return nil
+		return false
 	}
 	return a.IsEnabled
 }
 
-func (a *AccessPolicyInput) GetAccessCondition() map[string]any {
+func (a *AccessPolicyInput) GetAccessCondition() any {
 	if a == nil {
 		return nil
 	}
