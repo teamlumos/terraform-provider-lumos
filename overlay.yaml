@@ -1145,8 +1145,10 @@ actions:
   # Workflow bindings: one resource per app or entitlement workflow slot.
   # A slot's response is a full Workflow, which can map to only one entity,
   # so each binding gets its own copy narrowed to workflow_id, read from the
-  # workflow's id. With no delete mapping, destroy leaves the slot as it is;
-  # only the entitlement approval override has a DELETE, which turns the
+  # workflow's id. Lumos can't empty an app's slots or an entitlement's
+  # provisioning and deprovisioning slots, so those bindings have no delete
+  # mapping, and refuseUnbinding fails a plan that destroys or moves one.
+  # Only the entitlement approval override has a DELETE, which turns the
   # override off.
   - target: $["paths"]["/v1/apps/{app_uuid}/approval-workflow"]["get"]
     update:
@@ -1255,11 +1257,14 @@ actions:
         x-speakeasy-entity: AppApprovalWorkflow
         x-speakeasy-entity-description: >-
           Binds an approval template (a `lumos_workflow` of type
-          `approval`) to an app, as the approval process for
-          requests to the app. Destroying this resource doesn't
-          unbind or delete the workflow: the app keeps it as its
-          approval workflow until a different one is bound. To
-          change it, bind a different workflow.
+          `approval`) to an app, as the approval process for requests to
+          the app. Lumos can't empty this slot, so destroying this
+          resource, or moving it to a different app, even one not known
+          until apply, fails the plan. To change the workflow, set
+          `workflow_id` to a different one. To stop managing the binding
+          without changing Lumos, use a `removed` block with `destroy =
+          false`. To move the workflow to another app, see the approvals
+          guide.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppProvisioningWorkflowBinding:
@@ -1274,10 +1279,13 @@ actions:
         x-speakeasy-entity: AppProvisioningWorkflow
         x-speakeasy-entity-description: >-
           Binds an `account-provisioning` workflow to an app, as the
-          account workflow that creates accounts in the app.
-          Destroying this resource doesn't unbind or delete the
-          workflow: the app keeps it until a different one is bound.
-          To change it, bind a different workflow.
+          account workflow that creates accounts in the app. Lumos can't
+          empty this slot, so destroying this resource, or moving it to
+          a different app, even one not known until apply, fails the
+          plan. To change the workflow, set `workflow_id` to a different
+          one. To stop managing the binding without changing Lumos, use
+          a `removed` block with `destroy = false`. To move the workflow
+          to another app, see the approvals guide.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppDeprovisioningWorkflowBinding:
@@ -1292,11 +1300,14 @@ actions:
               place.
         x-speakeasy-entity: AppDeprovisioningWorkflow
         x-speakeasy-entity-description: >-
-          Binds an `account-deprovisioning` workflow to an app, as
-          the account workflow that removes accounts from the app.
-          Destroying this resource doesn't unbind or delete the
-          workflow: the app keeps it until a different one is bound.
-          To change it, bind a different workflow.
+          Binds an `account-deprovisioning` workflow to an app, as the
+          account workflow that removes accounts from the app. Lumos
+          can't empty this slot, so destroying this resource, or moving
+          it to a different app, even one not known until apply, fails
+          the plan. To change the workflow, set `workflow_id` to a
+          different one. To stop managing the binding without changing
+          Lumos, use a `removed` block with `destroy = false`. To move
+          the workflow to another app, see the approvals guide.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementApprovalWorkflowBinding:
@@ -1331,10 +1342,13 @@ actions:
         x-speakeasy-entity: EntitlementProvisioningWorkflow
         x-speakeasy-entity-description: >-
           Binds an `entitlement-provisioning` workflow to an
-          entitlement, as the workflow that grants it. Destroying
-          this resource doesn't unbind or delete the workflow: the
-          entitlement keeps it until a different one is bound. To
-          change it, bind a different workflow.
+          entitlement, as the workflow that grants it. Lumos can't empty
+          this slot, so destroying this resource, or moving it to a
+          different entitlement, even one not known until apply, fails
+          the plan. To change the workflow, set `workflow_id` to a
+          different one. To stop managing the binding without changing
+          Lumos, use a `removed` block with `destroy = false`. To move
+          the workflow to another entitlement, see the approvals guide.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementDeprovisioningWorkflowBinding:
@@ -1350,9 +1364,12 @@ actions:
         x-speakeasy-entity: EntitlementDeprovisioningWorkflow
         x-speakeasy-entity-description: >-
           Binds an `entitlement-deprovisioning` workflow to an
-          entitlement, as the workflow that revokes it. Destroying
-          this resource doesn't unbind or delete the workflow: the
-          entitlement keeps it until a different one is bound. To
-          change it, bind a different workflow.
+          entitlement, as the workflow that revokes it. Lumos can't
+          empty this slot, so destroying this resource, or moving it to
+          a different entitlement, even one not known until apply, fails
+          the plan. To change the workflow, set `workflow_id` to a
+          different one. To stop managing the binding without changing
+          Lumos, use a `removed` block with `destroy = false`. To move
+          the workflow to another entitlement, see the approvals guide.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
