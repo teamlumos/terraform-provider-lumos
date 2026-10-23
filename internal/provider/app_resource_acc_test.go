@@ -24,26 +24,39 @@ resource "lumos_app" %q {
 `, name, label, description)
 }
 
-// TestAccAppCustom creates a custom app, edits only its description, then
-// imports it. The edit must plan that one field and nothing else
-// (GOV-4388).
+// TestAccAppCustom creates a custom app with a logo and website, edits only
+// its description, removes the logo and website, then imports it. The edit
+// must plan that one field and nothing else (GOV-4388), and removing the
+// logo and website must clear them.
 func TestAccAppCustom(t *testing.T) {
 	label := "tf-acc-" + acctest.RandString(8)
+	withLinks := func(description string) string {
+		return fmt.Sprintf(`
+resource "lumos_app" "test" {
+  label       = %q
+  category    = "Developers"
+  description = %q
+  logo_url    = "https://example.com/tf-acc-logo.png"
+  website_url = "https://example.com/tf-acc"
+}
+`, label, description)
+	}
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig() + testAccCustomApp("test", label, "Created by an acceptance test"),
+				Config: providerConfig() + withLinks("Created by an acceptance test"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_app.test", "label", label),
 					resource.TestCheckResourceAttr("lumos_app.test", "app_class_id", "custom"),
+					resource.TestCheckResourceAttr("lumos_app.test", "website_url", "https://example.com/tf-acc"),
 					resource.TestCheckResourceAttrSet("lumos_app.test", "id"),
 				),
 			},
 			{
-				Config: providerConfig() + testAccCustomApp("test", label, "Edited by an acceptance test"),
+				Config: providerConfig() + withLinks("Edited by an acceptance test"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_app.test", plancheck.ResourceActionUpdate),
@@ -51,6 +64,18 @@ func TestAccAppCustom(t *testing.T) {
 					},
 				},
 				Check: resource.TestCheckResourceAttr("lumos_app.test", "description", "Edited by an acceptance test"),
+			},
+			{
+				Config: providerConfig() + testAccCustomApp("test", label, "Edited by an acceptance test"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange("lumos_app.test", "logo_url", "website_url"),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("lumos_app.test", "logo_url"),
+					resource.TestCheckNoResourceAttr("lumos_app.test", "website_url"),
+				),
 			},
 			{
 				ResourceName:      "lumos_app.test",
