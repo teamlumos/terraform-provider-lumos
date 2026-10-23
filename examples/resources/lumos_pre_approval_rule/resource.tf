@@ -20,8 +20,9 @@ resource "lumos_pre_approval_rule" "platform_viewers" {
   request_includes_entitlements = [lumos_entitlement.deploy_viewer.id]
 }
 
-# Pre-approves a request for any of the wiki's entitlements, or for the wiki
-# itself, when the organization's pre-approval webhook approves it.
+# Pre-approves a request for any of the wiki's entitlements when the
+# organization's pre-approval webhook approves it. A request for the wiki
+# itself, with no entitlement, isn't covered.
 resource "lumos_pre_approval_rule" "wiki_by_webhook" {
   app_id        = lumos_app.wiki.id
   justification = "An access service decides who can read the wiki."
