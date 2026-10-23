@@ -9,16 +9,16 @@ import (
 )
 
 type UpdatePreApprovalRuleRequest struct {
-	AppUUID                    string                            `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID                      string                            `pathParam:"style=simple,explode=false,name=app_uuid"`
 	PreApprovalRuleID          string                            `pathParam:"style=simple,explode=false,name=pre_approval_rule_id"`
 	PreApprovalRuleUpdateInput shared.PreApprovalRuleUpdateInput `request:"mediaType=application/json"`
 }
 
-func (u *UpdatePreApprovalRuleRequest) GetAppUUID() string {
+func (u *UpdatePreApprovalRuleRequest) GetAppID() string {
 	if u == nil {
 		return ""
 	}
-	return u.AppUUID
+	return u.AppID
 }
 
 func (u *UpdatePreApprovalRuleRequest) GetPreApprovalRuleID() string {
