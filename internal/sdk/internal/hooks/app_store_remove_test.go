@@ -21,7 +21,7 @@ func TestRemoveFromAppStore(t *testing.T) {
 	}{
 		{name: "sends in_app_store false to the app settings endpoint", operationID: "v1RemoveAppFromAppStore", path: "/v1/apps/123/appstore-settings/", wantPath: "/v1/apps/123/appstore-settings", wantBody: `{"in_app_store":false}`},
 		{name: "sends visible_in_appstore false to the entitlement settings endpoint", operationID: "v1RemoveEntitlementFromAppStore", path: "/v1/entitlements/456/appstore-settings/", wantPath: "/v1/entitlements/456/appstore-settings", wantBody: `{"visible_in_appstore":false}`},
-		{name: "leaves other operations alone", operationID: "v1PatchAppStoreSettings", path: "/v1/apps/123/appstore-settings/", wantPath: "/v1/apps/123/appstore-settings/", wantBody: `{}`},
+		{name: "leaves other operations alone", operationID: "v1GetAppStoreSettings", path: "/v1/apps/123/appstore-settings/", wantPath: "/v1/apps/123/appstore-settings/", wantBody: `{}`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
