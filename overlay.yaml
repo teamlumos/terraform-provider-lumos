@@ -16,7 +16,11 @@ actions:
       changes without prior notice. Pin an exact version. For production, stay
       on 0.x (version = "~> 0.10").
 
-  # Retry rate limiting and server errors with exponential backoff.
+  # Retry rate limiting and server errors with exponential backoff. A 429's
+  # Retry-After replaces the backoff interval; one that runs past
+  # maxElapsedTime fails the request at once instead of stalling the apply
+  # (hooks/rate_limited.go words that error). apiserver's per-minute limit can
+  # ask for up to 60s, so maxElapsedTime is 2 minutes.
   - target: $
     update:
       x-speakeasy-retries:
@@ -24,7 +28,7 @@ actions:
         backoff:
           initialInterval: 500
           maxInterval: 30000
-          maxElapsedTime: 60000
+          maxElapsedTime: 120000
           exponent: 1.5
         statusCodes: ["429", "5XX"]
         retryConnectionErrors: true

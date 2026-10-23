@@ -12,6 +12,8 @@ func initHooks(h *Hooks) {
 	// Add hooks by calling h.register{SDKInit/BeforeRequest/AfterSuccess/AfterError}Hook
 	// with an instance of a hook that implements that specific Hook interface
 	// Hooks are registered per SDK instance, and are valid for the lifetime of the SDK instance
+	// Before listPageError, so a rate-limited list page gets the rate-limit error.
+	h.registerAfterSuccessHook(rateLimited{})
 	h.registerAfterSuccessHook(listPageError{})
 	h.registerBeforeRequestHook(appStoreSettingsExpand{})
 	h.registerBeforeRequestHook(removeFromAppStore{})
