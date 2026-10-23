@@ -7,6 +7,8 @@ internal/sdk/internal/hooks/app_delete.go
 internal/sdk/internal/hooks/app_delete_test.go
 internal/sdk/internal/hooks/clear_unset_fields.go
 internal/sdk/internal/hooks/clear_unset_fields_test.go
+internal/sdk/internal/hooks/app_update_body.go
+internal/sdk/internal/hooks/app_update_body_test.go
 internal/planmodifiers/utils/reconnect.go
 internal/planmodifiers/utils/custom_app.go
 internal/planmodifiers/stringplanmodifier/unknown_on_reconnect.go
