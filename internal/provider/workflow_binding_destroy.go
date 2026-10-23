@@ -84,10 +84,9 @@ func refuseUnbinding(ctx context.Context, req resource.ModifyPlanRequest, resp *
 			"Workflow binding can't be moved",
 			fmt.Sprintf("%s on this %s isn't known until apply, so the plan can't tell whether the binding "+
 				"moves away from %s %s. Moving it would replace the binding, and destroying the old binding "+
-				"wouldn't unbind workflow %s: Lumos can't empty this workflow slot. To move a workflow to another "+
-				"%s, rebind the old one and give the new one its own binding resource, as \"Moving a template to "+
-				"another app\" in the approvals guide shows. %s", ownerAttr, typeName, ownerKind,
-				ownerID.ValueString(), workflowID.ValueString(), ownerKind, help),
+				"wouldn't unbind workflow %s: Lumos can't empty this workflow slot. A workflow can't move to "+
+				"another %s; to bind one to the new %s, add a separate binding resource for it. %s", ownerAttr,
+				typeName, ownerKind, ownerID.ValueString(), workflowID.ValueString(), ownerKind, ownerKind, help),
 		)
 		return
 	}

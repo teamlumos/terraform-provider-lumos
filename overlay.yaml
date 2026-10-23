@@ -1121,8 +1121,8 @@ actions:
           until apply, fails the plan. To change the workflow, set
           `workflow_id` to a different one. To stop managing the binding
           without changing Lumos, use a `removed` block with `destroy =
-          false`. To move the workflow to another app, see the approvals
-          guide.
+          false`. To bind a workflow to a different app, add a separate
+          binding resource for it.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppProvisioningWorkflowBinding:
@@ -1142,8 +1142,8 @@ actions:
           a different app, even one not known until apply, fails the
           plan. To change the workflow, set `workflow_id` to a different
           one. To stop managing the binding without changing Lumos, use
-          a `removed` block with `destroy = false`. To move the workflow
-          to another app, see the approvals guide.
+          a `removed` block with `destroy = false`. To bind a workflow
+          to a different app, add a separate binding resource for it.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppDeprovisioningWorkflowBinding:
@@ -1164,8 +1164,9 @@ actions:
           it to a different app, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`. To move
-          the workflow to another app, see the approvals guide.
+          Lumos, use a `removed` block with `destroy = false`. To bind a
+          workflow to a different app, add a separate binding resource
+          for it.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementApprovalWorkflowBinding:
@@ -1205,8 +1206,9 @@ actions:
           different entitlement, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`. To move
-          the workflow to another entitlement, see the approvals guide.
+          Lumos, use a `removed` block with `destroy = false`. To bind a
+          workflow to a different entitlement, add a separate binding
+          resource for it.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementDeprovisioningWorkflowBinding:
@@ -1227,7 +1229,8 @@ actions:
           a different entitlement, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`. To move
-          the workflow to another entitlement, see the approvals guide.
+          Lumos, use a `removed` block with `destroy = false`. To bind a
+          workflow to a different entitlement, add a separate binding
+          resource for it.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
