@@ -100,6 +100,73 @@ data "lumos_groups" "test" {
 			},
 		},
 		{
+			name: "app by ID",
+			env:  []string{"APP_ID"},
+			config: func(env map[string]string) string {
+				return fmt.Sprintf(`data "lumos_app" "test" { id = %q }`, env["APP_ID"])
+			},
+			check: func(env map[string]string) resource.TestCheckFunc {
+				return resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.lumos_app.test", "id", env["APP_ID"]),
+					resource.TestCheckResourceAttrSet("data.lumos_app.test", "label"),
+					resource.TestCheckResourceAttrSet("data.lumos_app.test", "appstore_settings.in_app_store"),
+				)
+			},
+		},
+		{
+			// Looks up one of the app's own entitlements, so the test needs no
+			// entitlement ID of its own.
+			name: "entitlement by ID",
+			env:  []string{"APP_ID"},
+			config: func(env map[string]string) string {
+				return fmt.Sprintf(`
+data "lumos_app_entitlements" "test" { app_id = %q }
+
+data "lumos_entitlement" "test" {
+  id = data.lumos_app_entitlements.test.entitlements[0].id
+}
+`, env["APP_ID"])
+			},
+			check: func(env map[string]string) resource.TestCheckFunc {
+				return resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrPair("data.lumos_entitlement.test", "id", "data.lumos_app_entitlements.test", "entitlements.0.id"),
+					resource.TestCheckResourceAttrPair("data.lumos_entitlement.test", "label", "data.lumos_app_entitlements.test", "entitlements.0.label"),
+					resource.TestCheckResourceAttr("data.lumos_entitlement.test", "app_id", env["APP_ID"]),
+				)
+			},
+		},
+		{
+			name: "user by ID",
+			env:  []string{"USER_ID"},
+			config: func(env map[string]string) string {
+				return fmt.Sprintf(`
+data "lumos_user" "test" {
+  id     = %q
+  expand = ["custom_attributes"]
+}
+`, env["USER_ID"])
+			},
+			check: func(env map[string]string) resource.TestCheckFunc {
+				return resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.lumos_user.test", "id", env["USER_ID"]),
+					resource.TestCheckResourceAttrSet("data.lumos_user.test", "email"),
+				)
+			},
+		},
+		{
+			name: "group by ID",
+			env:  []string{"GROUP_ID", "GROUP_NAME"},
+			config: func(env map[string]string) string {
+				return fmt.Sprintf(`data "lumos_group" "test" { id = %q }`, env["GROUP_ID"])
+			},
+			check: func(env map[string]string) resource.TestCheckFunc {
+				return resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("data.lumos_group.test", "id", env["GROUP_ID"]),
+					resource.TestCheckResourceAttr("data.lumos_group.test", "name", env["GROUP_NAME"]),
+				)
+			},
+		},
+		{
 			name: "inline webhooks",
 			config: func(map[string]string) string {
 				return `data "lumos_inline_webhooks" "test" {}`
