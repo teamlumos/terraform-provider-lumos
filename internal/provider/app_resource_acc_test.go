@@ -294,3 +294,52 @@ func testAccCheckNotInAppStore(appID string) resource.TestCheckFunc {
 		return nil
 	}
 }
+
+// TestAccAppStoreSettingsIgnoreChanges sets request instructions, standing
+// in for an app owner setting them in the UI, then drops them from the config
+// with ignore_changes and makes an unrelated change. The update must keep
+// the instructions. Dropping the lifecycle block then clears them.
+func TestAccAppStoreSettingsIgnoreChanges(t *testing.T) {
+	const addr = "lumos_app_appstore_settings.test"
+	app := testAccCustomApp("first", "tf-acc-"+acctest.RandString(8), "ignore_changes test")
+	settings := func(multiple bool, extra string) string {
+		return fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "test" {
+  app_id                              = lumos_app.first.id
+  in_app_store                        = false
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = %t
+  %s
+}
+`, multiple, extra)
+	}
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: providerConfig() + app + settings(false, `request_instructions = "Set outside Terraform."`),
+			},
+			{
+				Config: providerConfig() + app + settings(true, "lifecycle {\n    ignore_changes = [request_instructions]\n  }"),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "allow_multiple_permission_selection"),
+					},
+				},
+				Check: resource.TestCheckResourceAttr(addr, "request_instructions", "Set outside Terraform."),
+			},
+			{
+				Config: providerConfig() + app + settings(true, ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "request_instructions"),
+					},
+				},
+				Check: resource.TestCheckNoResourceAttr(addr, "request_instructions"),
+			},
+		},
+	})
+}
