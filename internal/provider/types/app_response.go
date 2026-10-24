@@ -11,6 +11,7 @@ type AppResponse struct {
 	ApprovalWorkflow              *EntitlementRefInput                      `tfsdk:"approval_workflow"`
 	AppstoreSettings              *AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Category                      types.String                              `tfsdk:"category"`
+	CustomAttributes              map[string]CustomAttribute                `tfsdk:"custom_attributes"`
 	DefaultDeprovisioningWorkflow *EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
 	DefaultProvisioningWorkflow   *EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                              `tfsdk:"description"`

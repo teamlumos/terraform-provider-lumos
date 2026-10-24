@@ -18,6 +18,7 @@ import (
 	custom_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
 	speakeasy_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
 	speakeasy_listplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/listplanmodifier"
+	speakeasy_mapplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/mapplanmodifier"
 	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
 	speakeasy_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
 	custom_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
@@ -47,6 +48,7 @@ type AppResourceModel struct {
 	AppstoreSettings              *tfTypes.AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Auth                          jsontypes.Normalized                              `tfsdk:"auth"`
 	Category                      types.String                                      `tfsdk:"category"`
+	CustomAttributes              map[string]tfTypes.CustomAttribute                `tfsdk:"custom_attributes"`
 	DefaultDeprovisioningWorkflow *tfTypes.EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
 	DefaultProvisioningWorkflow   *tfTypes.EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                                      `tfsdk:"description"`
@@ -271,6 +273,72 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						path.MatchRelative().AtParent().AtName("app_class_id"),
 					}...),
 				},
+			},
+			"custom_attributes": schema.MapNestedAttribute{
+				Computed: true,
+				PlanModifiers: []planmodifier.Map{
+					speakeasy_mapplanmodifier.SuppressDiff(speakeasy_mapplanmodifier.ExplicitSuppress),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					PlanModifiers: []planmodifier.Object{
+						speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+					},
+					Attributes: map[string]schema.Attribute{
+						"type": schema.StringAttribute{
+							Computed: true,
+							PlanModifiers: []planmodifier.String{
+								speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+							},
+							Description: `The type of custom attribute. Only text and user options are available today`,
+						},
+						"value": schema.SingleNestedAttribute{
+							Computed: true,
+							PlanModifiers: []planmodifier.Object{
+								speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
+							},
+							Attributes: map[string]schema.Attribute{
+								"array_of_user": schema.ListNestedAttribute{
+									Computed: true,
+									NestedObject: schema.NestedAttributeObject{
+										Attributes: map[string]schema.Attribute{
+											"email": schema.StringAttribute{
+												Computed:    true,
+												Description: `The email of this user.`,
+											},
+											"family_name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The family name of this user.`,
+											},
+											"given_name": schema.StringAttribute{
+												Computed:    true,
+												Description: `The given name of this user.`,
+											},
+											"id": schema.StringAttribute{
+												Computed:    true,
+												Description: `The ID of this user.`,
+											},
+											"status": schema.StringAttribute{
+												Computed:    true,
+												Description: `The status of this user.`,
+											},
+										},
+									},
+								},
+								"date_time": schema.StringAttribute{
+									Computed: true,
+								},
+								"integer": schema.Int64Attribute{
+									Computed: true,
+								},
+								"str": schema.StringAttribute{
+									Computed: true,
+								},
+							},
+							Description: `The value of the attribute for an individual Order`,
+						},
+					},
+				},
+				Description: `Custom attributes configured on this app, keyed by the attribute's name.`,
 			},
 			"default_deprovisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,

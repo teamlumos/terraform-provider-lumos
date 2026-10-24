@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/teamlumos/terraform-provider-lumos/internal/provider/typeconvert"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
@@ -84,6 +85,46 @@ func (r *AppDataSourceModel) RefreshFromSharedAppResponse(ctx context.Context, r
 			}
 		}
 		r.Category = types.StringPointerValue(resp.Category)
+		if resp.CustomAttributes != nil {
+			r.CustomAttributes = make(map[string]tfTypes.CustomAttribute, len(resp.CustomAttributes))
+			for customAttributeKey, customAttributeValue := range resp.CustomAttributes {
+				var customAttributeResult tfTypes.CustomAttribute
+				customAttributeResult.Type = types.StringValue(string(customAttributeValue.Type))
+				if customAttributeValue.Value != nil {
+					customAttributeResult.Value = &tfTypes.Value{}
+					if customAttributeValue.Value.Str != nil {
+						customAttributeResult.Value.Str = types.StringPointerValue(customAttributeValue.Value.Str)
+					}
+					if customAttributeValue.Value.ArrayOfUser != nil {
+						customAttributeResult.Value.ArrayOfUser = []tfTypes.User{}
+
+						for _, arrayOfUserItem := range customAttributeValue.Value.ArrayOfUser {
+							var arrayOfUser tfTypes.User
+
+							arrayOfUser.Email = types.StringPointerValue(arrayOfUserItem.Email)
+							arrayOfUser.FamilyName = types.StringPointerValue(arrayOfUserItem.FamilyName)
+							arrayOfUser.GivenName = types.StringPointerValue(arrayOfUserItem.GivenName)
+							arrayOfUser.ID = types.StringValue(arrayOfUserItem.ID)
+							if arrayOfUserItem.Status != nil {
+								arrayOfUser.Status = types.StringValue(string(*arrayOfUserItem.Status))
+							} else {
+								arrayOfUser.Status = types.StringNull()
+							}
+
+							customAttributeResult.Value.ArrayOfUser = append(customAttributeResult.Value.ArrayOfUser, arrayOfUser)
+						}
+					}
+					if customAttributeValue.Value.DateTime != nil {
+						customAttributeResult.Value.DateTime = types.StringPointerValue(typeconvert.TimePointerToStringPointer(customAttributeValue.Value.DateTime))
+					}
+					if customAttributeValue.Value.Integer != nil {
+						customAttributeResult.Value.Integer = types.Int64PointerValue(customAttributeValue.Value.Integer)
+					}
+				}
+
+				r.CustomAttributes[customAttributeKey] = customAttributeResult
+			}
+		}
 		if resp.DefaultDeprovisioningWorkflow == nil {
 			r.DefaultDeprovisioningWorkflow = nil
 		} else {
