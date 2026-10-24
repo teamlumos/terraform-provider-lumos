@@ -15,7 +15,7 @@ func initHooks(h *Hooks) {
 	// Before listPageError, so a rate-limited list page gets the rate-limit error.
 	h.registerAfterSuccessHook(rateLimited{})
 	h.registerAfterSuccessHook(listPageError{})
-	h.registerBeforeRequestHook(appStoreSettingsExpand{})
+	h.registerBeforeRequestHook(readExpand{})
 	h.registerBeforeRequestHook(removeFromAppStore{})
 	h.registerBeforeRequestHook(clearUnsetFields{})
 	h.registerBeforeRequestHook(appCreateBody{})
