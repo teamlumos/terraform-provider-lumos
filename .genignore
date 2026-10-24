@@ -52,3 +52,7 @@ internal/sdk/internal/hooks/rate_limited.go
 internal/sdk/internal/hooks/rate_limited_test.go
 internal/sdk/internal/hooks/entitlement_settings_unlisted.go
 internal/sdk/internal/hooks/entitlement_settings_unlisted_test.go
+examples/data-sources/lumos_app/
+examples/data-sources/lumos_user/
+examples/data-sources/lumos_group/
+examples/data-sources/lumos_entitlement/
