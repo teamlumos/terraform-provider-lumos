@@ -10,14 +10,14 @@ import (
 
 type GetEntitlementDeprovisioningWorkflowRequest struct {
 	// The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.
-	EntitlementUUID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
 }
 
-func (g *GetEntitlementDeprovisioningWorkflowRequest) GetEntitlementUUID() string {
+func (g *GetEntitlementDeprovisioningWorkflowRequest) GetEntitlementID() string {
 	if g == nil {
 		return ""
 	}
-	return g.EntitlementUUID
+	return g.EntitlementID
 }
 
 type GetEntitlementDeprovisioningWorkflowResponse struct {
@@ -28,7 +28,7 @@ type GetEntitlementDeprovisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	EntitlementDeprovisioningWorkflowBinding *shared.EntitlementDeprovisioningWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -65,11 +65,11 @@ func (g *GetEntitlementDeprovisioningWorkflowResponse) GetRawResponse() *http.Re
 	return g.RawResponse
 }
 
-func (g *GetEntitlementDeprovisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetEntitlementDeprovisioningWorkflowResponse) GetEntitlementDeprovisioningWorkflowBinding() *shared.EntitlementDeprovisioningWorkflowBinding {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.EntitlementDeprovisioningWorkflowBinding
 }
 
 func (g *GetEntitlementDeprovisioningWorkflowResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

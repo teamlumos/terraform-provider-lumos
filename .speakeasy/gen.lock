@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 14355f5c917e6da6713f2ad7dff4cb18
+  docChecksum: 8a651c5dc4bc02b3bd66993c752bf8fc
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -130,12 +130,18 @@ trackedFiles:
   internal/provider/accounts_data_source_sdk.go: {}
   internal/provider/app_resource.go: {}
   internal/provider/app_resource_sdk.go: {}
+  internal/provider/appapprovalworkflow_resource.go: {}
+  internal/provider/appapprovalworkflow_resource_sdk.go: {}
   internal/provider/appappstoresettings_resource.go: {}
   internal/provider/appappstoresettings_resource_sdk.go: {}
   internal/provider/appcategories_data_source.go: {}
   internal/provider/appcategories_data_source_sdk.go: {}
+  internal/provider/appdeprovisioningworkflow_resource.go: {}
+  internal/provider/appdeprovisioningworkflow_resource_sdk.go: {}
   internal/provider/appentitlements_data_source.go: {}
   internal/provider/appentitlements_data_source_sdk.go: {}
+  internal/provider/appprovisioningworkflow_resource.go: {}
+  internal/provider/appprovisioningworkflow_resource_sdk.go: {}
   internal/provider/apps_data_source.go: {}
   internal/provider/apps_data_source_sdk.go: {}
   internal/provider/currentuser_data_source.go: {}
@@ -144,8 +150,14 @@ trackedFiles:
   internal/provider/customattributedefinitions_data_source_sdk.go: {}
   internal/provider/entitlement_resource.go: {}
   internal/provider/entitlement_resource_sdk.go: {}
+  internal/provider/entitlementapprovalworkflow_resource.go: {}
+  internal/provider/entitlementapprovalworkflow_resource_sdk.go: {}
   internal/provider/entitlementappstoresettings_resource.go: {}
   internal/provider/entitlementappstoresettings_resource_sdk.go: {}
+  internal/provider/entitlementdeprovisioningworkflow_resource.go: {}
+  internal/provider/entitlementdeprovisioningworkflow_resource_sdk.go: {}
+  internal/provider/entitlementprovisioningworkflow_resource.go: {}
+  internal/provider/entitlementprovisioningworkflow_resource_sdk.go: {}
   internal/provider/entitlements_data_source.go: {}
   internal/provider/entitlements_data_source_sdk.go: {}
   internal/provider/groups_data_source.go: {}
@@ -331,6 +343,7 @@ trackedFiles:
   internal/sdk/models/operations/createtaskcomment.go: {}
   internal/sdk/models/operations/createworkflow.go: {}
   internal/sdk/models/operations/deleteentitlement.go: {}
+  internal/sdk/models/operations/deleteentitlementapprovalworkflowoverride.go: {}
   internal/sdk/models/operations/deleteknowledgecontext.go: {}
   internal/sdk/models/operations/deletepreapprovalrule.go: {}
   internal/sdk/models/operations/deleteworkflow.go: {}
@@ -467,13 +480,16 @@ trackedFiles:
   internal/sdk/models/shared/apierror.go: {}
   internal/sdk/models/shared/apierrorenvelope.go: {}
   internal/sdk/models/shared/apierrorfield.go: {}
+  internal/sdk/models/shared/appapprovalworkflowbinding.go: {}
   internal/sdk/models/shared/appbase.go: {}
   internal/sdk/models/shared/appcategory.go: {}
   internal/sdk/models/shared/appcategorylistoutput.go: {}
   internal/sdk/models/shared/appcreateinput.go: {}
+  internal/sdk/models/shared/appdeprovisioningworkflowbinding.go: {}
   internal/sdk/models/shared/appentitlementlistoutput.go: {}
   internal/sdk/models/shared/applicationtagoutput.go: {}
   internal/sdk/models/shared/applistoutput.go: {}
+  internal/sdk/models/shared/appprovisioningworkflowbinding.go: {}
   internal/sdk/models/shared/appresponse.go: {}
   internal/sdk/models/shared/appstorecatalogappresponse.go: {}
   internal/sdk/models/shared/appstorecataloglistoutput.go: {}
@@ -502,13 +518,16 @@ trackedFiles:
     id: e580bf2279a5
     pristine_git_object: e383771108e62df88c7f59b6af773db8d77505e0
   internal/sdk/models/shared/domainaccountlistoutput.go: {}
+  internal/sdk/models/shared/entitlementapprovalworkflowbinding.go: {}
   internal/sdk/models/shared/entitlementappstorecataloglistoutput.go: {}
   internal/sdk/models/shared/entitlementappstorecatalogoutput.go: {}
   internal/sdk/models/shared/entitlementappstoresettings.go: {}
   internal/sdk/models/shared/entitlementappstoresettingspatchinput.go: {}
   internal/sdk/models/shared/entitlementcreateinput.go: {}
+  internal/sdk/models/shared/entitlementdeprovisioningworkflowbinding.go: {}
   internal/sdk/models/shared/entitlementlistoutput.go: {}
   internal/sdk/models/shared/entitlementoutput.go: {}
+  internal/sdk/models/shared/entitlementprovisioningworkflowbinding.go: {}
   internal/sdk/models/shared/entitlementref.go: {}
   internal/sdk/models/shared/entitlementrefinput.go: {}
   internal/sdk/models/shared/entitlementtimebasedaccessoverridepatchinput.go: {}
@@ -1891,7 +1910,7 @@ examples:
           app_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
         "500":
@@ -1905,7 +1924,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1917,7 +1936,7 @@ examples:
           app_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1931,7 +1950,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval-chain", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -1943,7 +1962,7 @@ examples:
           app_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
         "500":
@@ -1957,7 +1976,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "account-deprovisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -2094,7 +2113,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval-chain", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "rate_limited", "code": "<value>"}}
         "500":
@@ -2108,7 +2127,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval-chain", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "runtime", "code": "<value>"}}
         "500":
@@ -2120,7 +2139,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -2134,7 +2153,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":
@@ -2146,7 +2165,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval-chain", "steps": [{"step": "<value>", "inputs": "{}"}]}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":
@@ -2160,7 +2179,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": []}
+          application/json: {"workflow_id": "<id>"}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -2655,6 +2674,16 @@ examples:
       parameters:
         path:
           entitlement_uuid: "<id>"
+  deleteEntitlementApprovalWorkflowOverride:
+    speakeasy-default-delete-entitlement-approval-workflow-override:
+      parameters:
+        path:
+          entitlement_uuid: "<id>"
+      responses:
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
 examplesVersion: 1.0.2
 generatedTests: {}
 generatedFiles:

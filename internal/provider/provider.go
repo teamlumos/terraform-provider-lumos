@@ -126,9 +126,15 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 	return []func() resource.Resource{
 		NewAccessPolicyResource,
 		NewAppResource,
+		NewAppApprovalWorkflowResource,
 		NewAppAppstoreSettingsResource,
+		NewAppDeprovisioningWorkflowResource,
+		NewAppProvisioningWorkflowResource,
 		NewEntitlementResource,
+		NewEntitlementApprovalWorkflowResource,
 		NewEntitlementAppstoreSettingsResource,
+		NewEntitlementDeprovisioningWorkflowResource,
+		NewEntitlementProvisioningWorkflowResource,
 		NewWorkflowResource,
 	}
 }
