@@ -129,6 +129,7 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 		NewAppAppstoreSettingsResource,
 		NewEntitlementResource,
 		NewEntitlementAppstoreSettingsResource,
+		NewWorkflowResource,
 	}
 }
 

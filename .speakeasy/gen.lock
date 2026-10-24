@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: c4459f5cafc884c2d9be28a4d329b3e7
+  docChecksum: 57160d1d0886860250e975c22fa2e265
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -236,6 +236,7 @@ trackedFiles:
   internal/provider/types/user.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
+  internal/provider/types/workflow_step_input.go: {}
   internal/provider/types/workflow_step_template.go: {}
   internal/provider/userroles_data_source.go: {}
   internal/provider/userroles_data_source_sdk.go: {}
@@ -244,6 +245,8 @@ trackedFiles:
   internal/provider/utils.go:
     id: 312d50f148af
     pristine_git_object: d2cc34dd0d2340d2ee5ad7c7e0211481dc1badbb
+  internal/provider/workflow_resource.go: {}
+  internal/provider/workflow_resource_sdk.go: {}
   internal/provider/workflowsteps_data_source.go: {}
   internal/provider/workflowsteps_data_source_sdk.go: {}
   internal/sdk/accesspolicies.go: {}
@@ -1902,7 +1905,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": {}}]}
+          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
@@ -1954,7 +1957,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "account-deprovisioning", "steps": [{"step": "<value>", "inputs": {}}]}
+          application/json: {"id": "<id>", "type": "account-deprovisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -2117,7 +2120,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": {}}]}
+          application/json: {"id": "<id>", "type": "entitlement-provisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -2131,7 +2134,7 @@ examples:
         application/json: {"workflow_id": "5e6f7081-9203-1234-ef01-345678901234"}
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": [{"step": "<value>", "inputs": {}}]}
+          application/json: {"id": "<id>", "type": "entitlement-deprovisioning", "steps": [{"step": "<value>", "inputs": "{}"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":
@@ -2143,7 +2146,7 @@ examples:
           entitlement_uuid: "<id>"
       responses:
         "200":
-          application/json: {"id": "<id>", "type": "approval-chain", "steps": [{"step": "<value>", "inputs": {}}]}
+          application/json: {"id": "<id>", "type": "approval-chain", "steps": [{"step": "<value>", "inputs": "{}"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "conflict", "code": "<value>"}}
         "500":

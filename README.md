@@ -363,6 +363,7 @@ Available configuration:
 * [lumos_app_appstore_settings](docs/resources/app_appstore_settings.md)
 * [lumos_entitlement](docs/resources/entitlement.md)
 * [lumos_entitlement_appstore_settings](docs/resources/entitlement_appstore_settings.md)
+* [lumos_workflow](docs/resources/workflow.md)
 
 ### Data Sources
 

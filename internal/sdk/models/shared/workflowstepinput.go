@@ -6,20 +6,24 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// WorkflowStepInputInputs - The configured inputs for this step.
-type WorkflowStepInputInputs struct {
-}
-
 // WorkflowStepInput - A single configured step in a workflow (request shape).
 type WorkflowStepInput struct {
 	// Identifier (catalogue slug) for the step to execute.
 	Step string `json:"step"`
-	// The configured inputs for this step.
-	Inputs *WorkflowStepInputInputs `json:"inputs,omitzero"`
+	// The step's inputs as a JSON object, usually written with `jsonencode`. A key set to `null` counts as left out.
+	Inputs *string `json:"inputs,omitzero"`
 }
 
 func (w WorkflowStepInput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(w, "", false)
+	jsonBytes, err := utils.MarshalJSON(w, "", false)
+	if err != nil {
+		return nil, err
+	}
+	out, err := utils.RunJQBytes(jsonBytes, "if .inputs == null then . else .inputs |= fromjson end")
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (w *WorkflowStepInput) UnmarshalJSON(data []byte) error {
@@ -36,7 +40,7 @@ func (w *WorkflowStepInput) GetStep() string {
 	return w.Step
 }
 
-func (w *WorkflowStepInput) GetInputs() *WorkflowStepInputInputs {
+func (w *WorkflowStepInput) GetInputs() *string {
 	if w == nil {
 		return nil
 	}
