@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
 // WorkflowType - The kind of workflow.
@@ -60,6 +61,22 @@ type Workflow struct {
 	AppID *string `json:"app_id,omitzero"`
 	// The ordered steps of the workflow.
 	Steps []WorkflowStepOutput `json:"steps"`
+}
+
+func (w Workflow) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
+}
+
+func (w *Workflow) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, "if .description == \"\" then .description = null else . end"); err != nil {
+		return err
+	} else {
+		data = out
+	}
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (w *Workflow) GetID() string {

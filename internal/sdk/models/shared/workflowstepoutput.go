@@ -2,9 +2,9 @@
 
 package shared
 
-// Inputs - The configured inputs for this step.
-type Inputs struct {
-}
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
 
 // WorkflowStepOutput - A single configured step in a workflow (response shape).
 type WorkflowStepOutput struct {
@@ -12,8 +12,24 @@ type WorkflowStepOutput struct {
 	Step string `json:"step"`
 	// Server-derived human-readable name for this step. Read-only.
 	Name *string `json:"name,omitzero"`
-	// The configured inputs for this step.
-	Inputs Inputs `json:"inputs"`
+	// The step's inputs as a JSON object, usually written with `jsonencode`. A key set to `null` counts as left out.
+	Inputs string `json:"inputs"`
+}
+
+func (w WorkflowStepOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(w, "", false)
+}
+
+func (w *WorkflowStepOutput) UnmarshalJSON(data []byte) error {
+	if out, err := utils.RunJQBytes(data, "if .inputs == null then . else .inputs |= tojson end"); err != nil {
+		return err
+	} else {
+		data = out
+	}
+	if err := utils.UnmarshalJSON(data, &w, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (w *WorkflowStepOutput) GetStep() string {
@@ -30,9 +46,9 @@ func (w *WorkflowStepOutput) GetName() *string {
 	return w.Name
 }
 
-func (w *WorkflowStepOutput) GetInputs() Inputs {
+func (w *WorkflowStepOutput) GetInputs() string {
 	if w == nil {
-		return Inputs{}
+		return ""
 	}
 	return w.Inputs
 }

@@ -54,7 +54,7 @@ type WorkflowInput struct {
 	Description *string `json:"description,omitzero"`
 	// The kind of workflow.
 	Type WorkflowInputType `json:"type"`
-	// UUID of the app this Workflow belongs to. May be null for a shared, not-yet-associated Workflow. Immutable on update: a PUT whose app_id differs from the stored Workflow's app is rejected with a 400 (workflow.app_reassignment_not_allowed).
+	// UUID of the app this workflow belongs to. Leave it out for a workflow not yet tied to an app. Once the workflow has an app, set when it's created or by binding it, Lumos can't clear or change it, so the config must set it.
 	AppID *string `json:"app_id,omitzero"`
 	// The ordered steps of the workflow.
 	Steps []WorkflowStepInput `json:"steps"`
