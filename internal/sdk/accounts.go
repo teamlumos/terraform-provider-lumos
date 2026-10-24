@@ -123,7 +123,7 @@ func (s *Accounts) ListAccounts(ctx context.Context, request operations.ListAcco
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -425,7 +425,7 @@ func (s *Accounts) ListAccountEntitlements(ctx context.Context, request operatio
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -684,7 +684,7 @@ func (s *Accounts) V1UploadAccounts(ctx context.Context, request shared.Accounts
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

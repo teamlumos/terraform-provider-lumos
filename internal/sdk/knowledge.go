@@ -123,7 +123,7 @@ func (s *Knowledge) ListKnowledgeContext(ctx context.Context, request operations
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -384,7 +384,7 @@ func (s *Knowledge) CreateKnowledgeContext(ctx context.Context, request shared.B
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -636,7 +636,7 @@ func (s *Knowledge) GetKnowledgeContext(ctx context.Context, request operations.
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -899,7 +899,7 @@ func (s *Knowledge) UpdateKnowledgeContext(ctx context.Context, request operatio
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1151,7 +1151,7 @@ func (s *Knowledge) DeleteKnowledgeContext(ctx context.Context, request operatio
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

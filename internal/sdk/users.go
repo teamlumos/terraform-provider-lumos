@@ -131,7 +131,7 @@ func (s *Users) V1ListUsers(ctx context.Context, request operations.V1ListUsersR
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -427,7 +427,7 @@ func (s *Users) V1GetCurrentUser(ctx context.Context, opts ...operations.Option)
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -683,7 +683,7 @@ func (s *Users) V1GetUser(ctx context.Context, request operations.V1GetUserReque
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -941,7 +941,7 @@ func (s *Users) V1ListUserAccounts(ctx context.Context, request operations.V1Lis
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1193,7 +1193,7 @@ func (s *Users) ListUserRoles(ctx context.Context, request operations.ListUserRo
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1445,7 +1445,7 @@ func (s *Users) AddUserRole(ctx context.Context, request operations.AddUserRoleR
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1697,7 +1697,7 @@ func (s *Users) RemoveUserRole(ctx context.Context, request operations.RemoveUse
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

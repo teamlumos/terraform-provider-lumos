@@ -116,7 +116,7 @@ func (s *Meta) V1GetArt(ctx context.Context, opts ...operations.Option) (*operat
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -364,7 +364,7 @@ func (s *Meta) V1GetInfo(ctx context.Context, opts ...operations.Option) (*opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

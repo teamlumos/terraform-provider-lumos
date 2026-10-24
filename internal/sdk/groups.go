@@ -124,7 +124,7 @@ func (s *Groups) ListGroups(ctx context.Context, request operations.ListGroupsRe
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -422,7 +422,7 @@ func (s *Groups) GetGroup(ctx context.Context, request operations.GetGroupReques
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -680,7 +680,7 @@ func (s *Groups) ListGroupMembers(ctx context.Context, request operations.ListGr
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

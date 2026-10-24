@@ -140,7 +140,7 @@ func (s *Workflows) CreateWorkflow(ctx context.Context, request shared.WorkflowI
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -400,7 +400,7 @@ func (s *Workflows) ListWorkflows(ctx context.Context, request operations.ListWo
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -654,7 +654,7 @@ func (s *Workflows) GetWorkflow(ctx context.Context, request operations.GetWorkf
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -913,7 +913,7 @@ func (s *Workflows) UpdateWorkflow(ctx context.Context, request operations.Updat
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1167,7 +1167,7 @@ func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.Delet
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1409,7 +1409,7 @@ func (s *Workflows) ListWorkflowSteps(ctx context.Context, request operations.Li
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

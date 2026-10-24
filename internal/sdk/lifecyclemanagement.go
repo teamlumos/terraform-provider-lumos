@@ -130,7 +130,7 @@ func (s *LifecycleManagement) V1CreateUserOffboarding(ctx context.Context, reque
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -384,7 +384,7 @@ func (s *LifecycleManagement) V1GetUserOffboarding(ctx context.Context, request 
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -636,7 +636,7 @@ func (s *LifecycleManagement) V1CancelUserOffboarding(ctx context.Context, reque
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
