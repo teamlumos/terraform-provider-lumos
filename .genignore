@@ -19,6 +19,7 @@ internal/planmodifiers/boolplanmodifier/unknown_on_reconnect.go
 internal/planmodifiers/listplanmodifier/empty_when_null.go
 internal/planmodifiers/objectplanmodifier/empty_when_null.go
 internal/planmodifiers/setplanmodifier/empty_when_null.go
+internal/planmodifiers/boolplanmodifier/false_if_no_entitlements.go
 examples/resources/lumos_app/
 examples/resources/lumos_app_appstore_settings/
 examples/resources/lumos_entitlement/
@@ -26,6 +27,9 @@ examples/resources/lumos_entitlement_appstore_settings/
 examples/resources/lumos_access_policy/
 examples/data-sources/lumos_access_policy/
 examples/data-sources/lumos_access_policies/
+examples/resources/lumos_pre_approval_rule/
+examples/data-sources/lumos_pre_approval_rule/
+examples/data-sources/lumos_pre_approval_rules/
 .gitattributes
 internal/sdk/internal/hooks/list_page_error.go
 internal/sdk/internal/hooks/list_page_error_test.go

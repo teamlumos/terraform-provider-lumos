@@ -4,7 +4,7 @@ package shared
 
 // PreApprovalRuleListOutput - A page of pre-approval rules.
 type PreApprovalRuleListOutput struct {
-	// Pre-approval rules in this page.
+	// The app's pre-approval rules.
 	PreApprovalRules []PreApprovalRule `json:"pre_approval_rules"`
 	// Opaque cursor for the next page. Pass back as `page_token` to continue; `null` means this is the last page.
 	NextPageToken *string `json:"next_page_token,omitzero"`

@@ -1,0 +1,54 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+{{ tffile (printf "examples/resources/%s/resource.tf" .Name) }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Behavior
+
+* **Conditions:** write `condition` with `jsonencode`, giving every attribute and value as `{ label, value }` as in the example: that's the form Lumos stores and reads back, so any other form shows a change on every plan. Every rule needs a condition. Besides identity attributes, a condition can check:
+  * a pre-approval webhook: attribute `webhook.responses["<inline webhook id>"]` with `equals` `{ label = "Pre-approved", value = "PREAPPROVED" }`. The webhook must be a pre-approval webhook.
+  * an on-call schedule: attribute `identity.oncall["<schedule entitlement id>"].on_call` with `equals` `{ label = "On call", value = true }`.
+
+  Neither can be inside a `not`. See [building conditions in Lumos](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+* **Which requests the rule covers:** set `request_includes_entitlements` to cover only those entitlements, `request_does_not_include_entitlements` to cover every other entitlement and a request for the app itself, or `request_has_entitlements = true` to cover any entitlement. Set at most one. With none set, the rule covers only a request for the app itself, and `request_has_entitlements` reads `false`. Removing a list from the configuration changes the rule to match.
+* **Entitlement IDs** are stored in lowercase and their order doesn't matter, so write them in lowercase.
+* **`app_id`** must be the ID of the app the rule is stored on. For an app that was merged into another app, use the ID of the app it was merged into: Lumos stores the rule there and reads that ID back, so any other ID fails the apply.
+* **Rules created by an access policy,** for apps marked `is_preapproved` in a `lumos_access_policy`, can't be managed here: Lumos refuses to change or delete them, and they read back without a condition. Manage them through the access policy.
+
+## Destroy behavior
+
+Destroy deletes the rule. It doesn't revoke access already granted through it.
+
+To stop managing a rule without deleting it, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_pre_approval_rule.platform_viewers
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
+## Import
+
+A rule is imported with a JSON object holding its app's ID and its own ID. In Terraform v1.6.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can build it with `jsonencode`:
+
+{{ codefile "terraform" (printf "examples/resources/%s/import-by-string-id.tf" .Name) }}
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can also be used:
+
+{{ codefile "shell" (printf "examples/resources/%s/import.sh" .Name) }}
