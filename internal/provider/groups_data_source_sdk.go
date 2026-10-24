@@ -29,7 +29,7 @@ func (r *GroupsDataSourceModel) RefreshFromSharedGroupListOutput(ctx context.Con
 			} else {
 				groups.GroupLifecycle = types.StringNull()
 			}
-			groups.ID = types.StringPointerValue(groupsItem.ID)
+			groups.ID = types.StringValue(groupsItem.ID)
 			groups.IntegrationSpecificID = types.StringPointerValue(groupsItem.IntegrationSpecificID)
 			groups.Name = types.StringPointerValue(groupsItem.Name)
 			groups.SourceAppID = types.StringPointerValue(groupsItem.SourceAppID)
