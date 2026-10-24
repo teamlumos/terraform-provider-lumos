@@ -82,14 +82,12 @@ actions:
   - target: $["paths"]["/v1/apps"]["post"]
     update:
       x-speakeasy-entity-operation: App#create
-  # Resource only; the app data sources are mapped separately. The app shows
-  # its App Store settings read-only, which needs expand=appstore_settings on
-  # this read.
+  # Also data "lumos_app", which reads one app by ID. The app shows its App
+  # Store settings read-only, which needs expand=appstore_settings on this
+  # read.
   - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
     update:
-      x-speakeasy-entity-operation:
-        terraform-datasource: null
-        terraform-resource: App#read
+      x-speakeasy-entity-operation: App#read
   - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true
@@ -395,15 +393,14 @@ actions:
 
   # resource "lumos_entitlement". The API creates, renames and deletes an
   # entitlement; everything else on it is read-only here. App Store settings
-  # show read-only, which needs expand=appstore_settings on this read.
+  # show read-only, which needs expand=appstore_settings on this read. The
+  # read is also data "lumos_entitlement", which reads one entitlement by ID.
   - target: $["paths"]["/v1/entitlements"]["post"]
     update:
       x-speakeasy-entity-operation: Entitlement#create
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]
     update:
-      x-speakeasy-entity-operation:
-        terraform-datasource: null
-        terraform-resource: Entitlement#read
+      x-speakeasy-entity-operation: Entitlement#read
   - target: $["paths"]["/v1/entitlements/{entitlement_uuid}"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true
@@ -663,6 +660,19 @@ actions:
       x-speakeasy-entity-description: >-
         Accounts in the organization's apps. Requires `app_id` or `email`.
 
+  # data "lumos_user": one user by ID. Like lumos_users, it reads custom
+  # attributes only when `expand` asks for them.
+  - target: $["paths"]["/v1/users/{user_id}"]["get"]
+    update:
+      x-speakeasy-entity-operation: User#read
+  - target: $["paths"]["/v1/users/{user_id}"]["get"]["parameters"][?@.name=="user_id"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["UserWithCustomAttributes"]
+    update:
+      x-speakeasy-entity: User
+      x-speakeasy-entity-description: One user in the organization, by ID.
+
   # data "lumos_user_roles": not paginated.
   - target: $["paths"]["/v1/users/{user_id}/roles"]["get"]
     update:
@@ -682,6 +692,28 @@ actions:
       x-speakeasy-entity-description: >-
         Groups in the organization. Requires `name`, `integration_specific_id`
         or `app_id`.
+
+  # data "lumos_group": one group by ID.
+  - target: $["paths"]["/v1/groups/{group_id}"]["get"]
+    update:
+      x-speakeasy-entity-operation: Group#read
+  - target: $["paths"]["/v1/groups/{group_id}"]["get"]["parameters"][?@.name=="group_id"]
+    update:
+      x-speakeasy-match: id
+  - target: $["components"]["schemas"]["Group"]
+    update:
+      x-speakeasy-entity: Group
+      x-speakeasy-entity-description: One group in the organization, by ID.
+  # The spec makes a group's id nullable, which would make the lookup's id
+  # optional. Every group has one.
+  - target: $["components"]["schemas"]["Group"]["properties"]["id"]["anyOf"]
+    remove: true
+  - target: $["components"]["schemas"]["Group"]["properties"]["id"]
+    update:
+      type: string
+  - target: $["components"]["schemas"]["Group"]
+    update:
+      required: [id]
 
   # data "lumos_inline_webhooks"
   - target: $["paths"]["/v1/inline-webhooks"]["get"]
