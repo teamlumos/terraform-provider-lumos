@@ -154,7 +154,7 @@ func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequ
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -461,7 +461,7 @@ func (s *Apps) V1CreateApp(ctx context.Context, request shared.AppCreateInput, o
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -731,7 +731,7 @@ func (s *Apps) V1GetAppStoreCatalog(ctx context.Context, request operations.V1Ge
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -989,7 +989,7 @@ func (s *Apps) V1GetApp(ctx context.Context, request operations.V1GetAppRequest,
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1254,7 +1254,7 @@ func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRe
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1518,7 +1518,7 @@ func (s *Apps) V1DeleteApp(ctx context.Context, request operations.V1DeleteAppRe
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1776,7 +1776,7 @@ func (s *Apps) V1GetAppStoreSettings(ctx context.Context, request operations.V1G
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2037,7 +2037,7 @@ func (s *Apps) V1PatchAppStoreSettings(ctx context.Context, request operations.V
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2302,7 +2302,7 @@ func (s *Apps) ListAppEntitlements(ctx context.Context, request operations.ListA
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2606,7 +2606,7 @@ func (s *Apps) V1GetAppEntitlementAppStoreCatalog(ctx context.Context, request o
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2860,7 +2860,7 @@ func (s *Apps) GetAppApprovalWorkflow(ctx context.Context, request operations.Ge
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3121,7 +3121,7 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3375,7 +3375,7 @@ func (s *Apps) GetAppProvisioningWorkflow(ctx context.Context, request operation
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3636,7 +3636,7 @@ func (s *Apps) SetAppProvisioningWorkflow(ctx context.Context, request operation
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3890,7 +3890,7 @@ func (s *Apps) GetAppDeprovisioningWorkflow(ctx context.Context, request operati
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -4151,7 +4151,7 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -4405,7 +4405,7 @@ func (s *Apps) V1DisconnectApp(ctx context.Context, request operations.V1Disconn
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -4666,7 +4666,7 @@ func (s *Apps) TriggerAppSyncV1(ctx context.Context, request operations.TriggerA
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -4923,7 +4923,7 @@ func (s *Apps) V1RemoveAppFromAppStore(ctx context.Context, request operations.V
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

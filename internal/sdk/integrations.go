@@ -137,7 +137,7 @@ func (s *Integrations) ListIntegrationsV1(ctx context.Context, request operation
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -433,7 +433,7 @@ func (s *Integrations) GetIntegrationV1(ctx context.Context, request operations.
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -685,7 +685,7 @@ func (s *Integrations) GetIntegrationConnectionSchemaV1(ctx context.Context, req
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

@@ -124,7 +124,7 @@ func (s *AccessPolicies) V1ListAccessPolicies(ctx context.Context, request opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -433,7 +433,7 @@ func (s *AccessPolicies) V1CreateAccessPolicy(ctx context.Context, request share
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -685,7 +685,7 @@ func (s *AccessPolicies) V1GetAccessPolicy(ctx context.Context, request operatio
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -939,7 +939,7 @@ func (s *AccessPolicies) V1DeleteAccessPolicy(ctx context.Context, request opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1181,7 +1181,7 @@ func (s *AccessPolicies) V1UpdateAccessPolicy(ctx context.Context, request opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1442,7 +1442,7 @@ func (s *AccessPolicies) V1PatchAccessPolicy(ctx context.Context, request operat
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

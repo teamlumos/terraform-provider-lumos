@@ -137,7 +137,7 @@ func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -444,7 +444,7 @@ func (s *Entitlements) CreateEntitlement(ctx context.Context, request shared.Ent
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -700,7 +700,7 @@ func (s *Entitlements) GetEntitlement(ctx context.Context, request operations.Ge
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -963,7 +963,7 @@ func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1219,7 +1219,7 @@ func (s *Entitlements) DeleteEntitlement(ctx context.Context, request operations
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1460,7 +1460,7 @@ func (s *Entitlements) ListEntitlementAccounts(ctx context.Context, request oper
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1712,7 +1712,7 @@ func (s *Entitlements) GetEntitlementAppStoreSettings(ctx context.Context, reque
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1971,7 +1971,7 @@ func (s *Entitlements) UpdateEntitlementAppStoreSettings(ctx context.Context, re
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2227,7 +2227,7 @@ func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Contex
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2488,7 +2488,7 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -2742,7 +2742,7 @@ func (s *Entitlements) GetEntitlementProvisioningWorkflow(ctx context.Context, r
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3003,7 +3003,7 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3257,7 +3257,7 @@ func (s *Entitlements) GetEntitlementDeprovisioningWorkflow(ctx context.Context,
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3518,7 +3518,7 @@ func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context,
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -3769,7 +3769,7 @@ func (s *Entitlements) V1RemoveEntitlementFromAppStore(ctx context.Context, requ
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

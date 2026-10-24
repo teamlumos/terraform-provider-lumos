@@ -122,7 +122,7 @@ func (s *AccessRequests) V1ListAccessRequests(ctx context.Context, request opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -383,7 +383,7 @@ func (s *AccessRequests) V1CreateAccessRequest(ctx context.Context, request shar
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -641,7 +641,7 @@ func (s *AccessRequests) V1GetAccessRequest(ctx context.Context, request operati
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -902,7 +902,7 @@ func (s *AccessRequests) V1CancelAccessRequest(ctx context.Context, request oper
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

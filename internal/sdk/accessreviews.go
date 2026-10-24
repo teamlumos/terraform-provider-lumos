@@ -131,7 +131,7 @@ func (s *AccessReviews) SyncAppReview(ctx context.Context, request operations.Sy
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -391,7 +391,7 @@ func (s *AccessReviews) ListSubjectFilters(ctx context.Context, request operatio
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -653,7 +653,7 @@ func (s *AccessReviews) GetSubject(ctx context.Context, request operations.GetSu
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

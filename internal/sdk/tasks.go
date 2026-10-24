@@ -146,7 +146,7 @@ func (s *Tasks) ListTasks(ctx context.Context, request operations.ListTasksReque
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -404,7 +404,7 @@ func (s *Tasks) GetTask(ctx context.Context, request operations.GetTaskRequest, 
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -656,7 +656,7 @@ func (s *Tasks) ListTaskActions(ctx context.Context, request operations.ListTask
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -915,7 +915,7 @@ func (s *Tasks) CompleteTask(ctx context.Context, request operations.CompleteTas
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1156,7 +1156,7 @@ func (s *Tasks) DismissTask(ctx context.Context, request operations.DismissTaskR
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1401,7 +1401,7 @@ func (s *Tasks) PerformTaskAction(ctx context.Context, request operations.Perfor
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1641,7 +1641,7 @@ func (s *Tasks) ReassignTask(ctx context.Context, request operations.ReassignTas
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1881,7 +1881,7 @@ func (s *Tasks) CreateTaskComment(ctx context.Context, request operations.Create
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

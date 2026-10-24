@@ -116,7 +116,7 @@ func (s *Operations) GetOperation(ctx context.Context, request operations.GetOpe
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}

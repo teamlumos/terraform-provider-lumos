@@ -122,7 +122,7 @@ func (s *PreApprovalRules) GetPreApprovalRule(ctx context.Context, request opera
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -389,7 +389,7 @@ func (s *PreApprovalRules) UpdatePreApprovalRule(ctx context.Context, request op
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -643,7 +643,7 @@ func (s *PreApprovalRules) DeletePreApprovalRule(ctx context.Context, request op
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -888,7 +888,7 @@ func (s *PreApprovalRules) ListPreApprovalRules(ctx context.Context, request ope
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
@@ -1153,7 +1153,7 @@ func (s *PreApprovalRules) CreatePreApprovalRule(ctx context.Context, request op
 					InitialInterval: 500,
 					MaxInterval:     30000,
 					Exponent:        1.5,
-					MaxElapsedTime:  60000,
+					MaxElapsedTime:  120000,
 				},
 				RetryConnectionErrors: true,
 			}
