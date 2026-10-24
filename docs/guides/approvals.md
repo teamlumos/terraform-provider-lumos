@@ -106,7 +106,35 @@ resource "lumos_workflow" "manager_then_it" {
 }
 ```
 
-The template does nothing until it's bound to the app or to one of its entitlements.
+## Binding the template
+
+The template does nothing until it's bound. Bind it to the app to make it the approval process for requests to the app:
+
+```terraform
+resource "lumos_app_approval_workflow" "deploy_dashboard" {
+  app_id      = lumos_app.deploy_dashboard.id
+  workflow_id = lumos_workflow.deploy_dashboard_approvals.id
+}
+```
+
+* An app always has an approval workflow. To change it, set `workflow_id` to a different template; removing the binding from the configuration fails the plan rather than leaving the template bound while Terraform reports it gone. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`.
+* To give one entitlement a different approval process, bind another template with `lumos_entitlement_approval_workflow`. That turns the entitlement's override on; destroying the binding turns it off again, so the entitlement goes back to the app's template.
+* A template can be bound to only one app or entitlement.
+* Changing a binding's `app_id` fails the plan, including when the new app isn't known until apply, for example an app created or replaced in the same apply. Changing it would replace the binding, and Lumos can't empty the old app's slot, so the old app would keep the template.
+
+### Giving another app the same approval process
+
+A workflow belongs to one app and can't be moved to another. To give app `b` the same approval process as app `a`, create a separate `lumos_workflow` with `app_id = lumos_app.b.id` and the same steps, and bind that one with its own binding resource:
+
+```terraform
+resource "lumos_app_approval_workflow" "b" {
+  app_id      = lumos_app.b.id
+  workflow_id = lumos_workflow.b_approvals.id
+}
+```
+
+* If app `a` shouldn't keep its template, set its binding's `workflow_id` to a different workflow. An app's slot can't be emptied.
+* **Replacing the app itself,** for example a `lumos_app` change that forces a new app, fails the plan while a binding points at it. Stop managing the binding first with a `removed` block with `lifecycle { destroy = false }`, replace the app, then add the binding back.
 
 ## Limitations
 

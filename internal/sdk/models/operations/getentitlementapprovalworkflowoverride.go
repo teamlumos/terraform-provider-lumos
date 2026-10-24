@@ -10,14 +10,14 @@ import (
 
 type GetEntitlementApprovalWorkflowOverrideRequest struct {
 	// The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.
-	EntitlementUUID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
+	EntitlementID string `pathParam:"style=simple,explode=false,name=entitlement_uuid"`
 }
 
-func (g *GetEntitlementApprovalWorkflowOverrideRequest) GetEntitlementUUID() string {
+func (g *GetEntitlementApprovalWorkflowOverrideRequest) GetEntitlementID() string {
 	if g == nil {
 		return ""
 	}
-	return g.EntitlementUUID
+	return g.EntitlementID
 }
 
 type GetEntitlementApprovalWorkflowOverrideResponse struct {
@@ -28,7 +28,7 @@ type GetEntitlementApprovalWorkflowOverrideResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	EntitlementApprovalWorkflowBinding *shared.EntitlementApprovalWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -65,11 +65,11 @@ func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetRawResponse() *http.
 	return g.RawResponse
 }
 
-func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetWorkflow() *shared.Workflow {
+func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetEntitlementApprovalWorkflowBinding() *shared.EntitlementApprovalWorkflowBinding {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.EntitlementApprovalWorkflowBinding
 }
 
 func (g *GetEntitlementApprovalWorkflowOverrideResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

@@ -360,9 +360,15 @@ Available configuration:
 
 * [lumos_access_policy](docs/resources/access_policy.md)
 * [lumos_app](docs/resources/app.md)
+* [lumos_app_approval_workflow](docs/resources/app_approval_workflow.md)
 * [lumos_app_appstore_settings](docs/resources/app_appstore_settings.md)
+* [lumos_app_deprovisioning_workflow](docs/resources/app_deprovisioning_workflow.md)
+* [lumos_app_provisioning_workflow](docs/resources/app_provisioning_workflow.md)
 * [lumos_entitlement](docs/resources/entitlement.md)
+* [lumos_entitlement_approval_workflow](docs/resources/entitlement_approval_workflow.md)
 * [lumos_entitlement_appstore_settings](docs/resources/entitlement_appstore_settings.md)
+* [lumos_entitlement_deprovisioning_workflow](docs/resources/entitlement_deprovisioning_workflow.md)
+* [lumos_entitlement_provisioning_workflow](docs/resources/entitlement_provisioning_workflow.md)
 * [lumos_workflow](docs/resources/workflow.md)
 
 ### Data Sources

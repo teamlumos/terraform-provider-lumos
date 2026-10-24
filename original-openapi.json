@@ -6427,6 +6427,107 @@
             "description": "Internal Server Error"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Entitlements"
+        ],
+        "summary": "Remove Entitlement Approval Workflow Override",
+        "description": "Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. Entitlements with no request configuration behind them return 404.",
+        "operationId": "deleteEntitlementApprovalWorkflowOverride",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entitlement_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.",
+              "title": "Entitlement Uuid"
+            },
+            "description": "The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/v1/entitlements/{entitlement_uuid}/provisioning-workflow": {
@@ -17458,7 +17559,7 @@
           "auth_schema": {
             "type": "object",
             "title": "Auth Schema",
-            "description": "JSON Schema (draft-07 style) describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods \u2014 mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
+            "description": "Draft-07 JSON Schema describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods \u2014 mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
           },
           "settings_schema": {
             "type": "object",
