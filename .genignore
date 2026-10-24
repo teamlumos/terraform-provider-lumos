@@ -48,3 +48,7 @@ internal/sdk/internal/hooks/require_list_filter_test.go
 internal/customtypes/
 internal/sdk/internal/hooks/rate_limited.go
 internal/sdk/internal/hooks/rate_limited_test.go
+examples/data-sources/lumos_app/
+examples/data-sources/lumos_user/
+examples/data-sources/lumos_group/
+examples/data-sources/lumos_entitlement/

@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 14355f5c917e6da6713f2ad7dff4cb18
+  docChecksum: aa1dc8921c087bdfd48d6dbe49197b7a
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -128,6 +128,8 @@ trackedFiles:
   internal/provider/accesspolicy_resource_sdk.go: {}
   internal/provider/accounts_data_source.go: {}
   internal/provider/accounts_data_source_sdk.go: {}
+  internal/provider/app_data_source.go: {}
+  internal/provider/app_data_source_sdk.go: {}
   internal/provider/app_resource.go: {}
   internal/provider/app_resource_sdk.go: {}
   internal/provider/appappstoresettings_resource.go: {}
@@ -142,12 +144,16 @@ trackedFiles:
   internal/provider/currentuser_data_source_sdk.go: {}
   internal/provider/customattributedefinitions_data_source.go: {}
   internal/provider/customattributedefinitions_data_source_sdk.go: {}
+  internal/provider/entitlement_data_source.go: {}
+  internal/provider/entitlement_data_source_sdk.go: {}
   internal/provider/entitlement_resource.go: {}
   internal/provider/entitlement_resource_sdk.go: {}
   internal/provider/entitlementappstoresettings_resource.go: {}
   internal/provider/entitlementappstoresettings_resource_sdk.go: {}
   internal/provider/entitlements_data_source.go: {}
   internal/provider/entitlements_data_source_sdk.go: {}
+  internal/provider/group_data_source.go: {}
+  internal/provider/group_data_source_sdk.go: {}
   internal/provider/groups_data_source.go: {}
   internal/provider/groups_data_source_sdk.go: {}
   internal/provider/inlinewebhooks_data_source.go: {}
@@ -238,6 +244,8 @@ trackedFiles:
   internal/provider/types/value.go: {}
   internal/provider/types/workflow_step_input.go: {}
   internal/provider/types/workflow_step_template.go: {}
+  internal/provider/user_data_source.go: {}
+  internal/provider/user_data_source_sdk.go: {}
   internal/provider/userroles_data_source.go: {}
   internal/provider/userroles_data_source_sdk.go: {}
   internal/provider/users_data_source.go: {}
@@ -828,7 +836,7 @@ examples:
           group_id: "<id>"
       responses:
         "200":
-          application/json: {}
+          application/json: {"id": "<id>"}
         "422":
           application/json: {}
         "400":
@@ -2173,7 +2181,7 @@ examples:
           page_size: 100
       responses:
         "200":
-          application/json: {"groups": [{}]}
+          application/json: {"groups": [{"id": "<id>"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
         "500":
