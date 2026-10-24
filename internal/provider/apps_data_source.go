@@ -168,6 +168,60 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `The category this app belongs to.`,
 						},
+						"custom_attributes": schema.MapNestedAttribute{
+							Computed: true,
+							NestedObject: schema.NestedAttributeObject{
+								Attributes: map[string]schema.Attribute{
+									"type": schema.StringAttribute{
+										Computed:    true,
+										Description: `The type of custom attribute. Only text and user options are available today`,
+									},
+									"value": schema.SingleNestedAttribute{
+										Computed: true,
+										Attributes: map[string]schema.Attribute{
+											"array_of_user": schema.ListNestedAttribute{
+												Computed: true,
+												NestedObject: schema.NestedAttributeObject{
+													Attributes: map[string]schema.Attribute{
+														"email": schema.StringAttribute{
+															Computed:    true,
+															Description: `The email of this user.`,
+														},
+														"family_name": schema.StringAttribute{
+															Computed:    true,
+															Description: `The family name of this user.`,
+														},
+														"given_name": schema.StringAttribute{
+															Computed:    true,
+															Description: `The given name of this user.`,
+														},
+														"id": schema.StringAttribute{
+															Computed:    true,
+															Description: `The ID of this user.`,
+														},
+														"status": schema.StringAttribute{
+															Computed:    true,
+															Description: `The status of this user.`,
+														},
+													},
+												},
+											},
+											"date_time": schema.StringAttribute{
+												Computed: true,
+											},
+											"integer": schema.Int64Attribute{
+												Computed: true,
+											},
+											"str": schema.StringAttribute{
+												Computed: true,
+											},
+										},
+										Description: `The value of the attribute for an individual Order`,
+									},
+								},
+							},
+							Description: `Custom attributes configured on this app, keyed by the attribute's name.`,
+						},
 						"default_deprovisioning_workflow": schema.SingleNestedAttribute{
 							Computed: true,
 							Attributes: map[string]schema.Attribute{

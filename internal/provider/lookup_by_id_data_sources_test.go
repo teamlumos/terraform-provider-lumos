@@ -50,7 +50,7 @@ func TestLookupByIDDataSources(t *testing.T) {
 			dataSource: "lumos_app",
 			config:     `id = "app-1"`,
 			wantPath:   "/v1/apps/app-1",
-			wantQuery:  "expand=appstore_settings",
+			wantQuery:  "expand=appstore_settings&expand=custom_attributes",
 			body:       `{"id":"app-1","label":"Okta","appstore_settings":{"in_app_store":true}}`,
 			wantAttrs:  map[string]string{"id": "app-1", "label": "Okta", "appstore_settings.in_app_store": "true"},
 		},

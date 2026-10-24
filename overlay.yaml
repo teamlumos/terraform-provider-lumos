@@ -83,8 +83,8 @@ actions:
     update:
       x-speakeasy-entity-operation: App#create
   # Also data "lumos_app", which reads one app by ID. The app shows its App
-  # Store settings read-only, which needs expand=appstore_settings on this
-  # read.
+  # Store settings and custom attributes read-only, which needs
+  # expand=appstore_settings,custom_attributes on this read.
   - target: $["paths"]["/v1/apps/{app_uuid}"]["get"]
     update:
       x-speakeasy-entity-operation: App#read
@@ -236,10 +236,11 @@ actions:
 
   # A lumos_app update can't change these, so a plan keeps their current
   # values instead of showing them as known after apply. The slots and
-  # appstore_settings change only through their own resources. A custom app
-  # must set label, category and description, and a connected app can't, so
-  # theirs keep the integration's values.
-  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description"]
+  # appstore_settings change only through their own resources, and custom
+  # attributes only outside Terraform. A custom app must set label, category
+  # and description, and a connected app can't, so theirs keep the
+  # integration's values.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","label","category","description","custom_attributes"]
     update:
       x-speakeasy-param-suppress-computed-diff: true
   # These change only when an update reconnects the integration. Updates
@@ -254,10 +255,15 @@ actions:
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["disconnected"]["default"]
     remove: true
 
-  # Expanded-only fields stay off the resource; the data source reads them.
-  - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins","custom_attributes"]
+  # admins is only present when expanded, and no read asks for it.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["admins"]
     update:
       x-speakeasy-terraform-ignore: true
+  # The provider always expands them, so the description drops the spec's
+  # expand note.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["custom_attributes"]
+    update:
+      description: Custom attributes configured on this app, keyed by the attribute's name.
   # Unexpanded, a workflow slot is always {id}.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow"]["anyOf"]
     remove: true
@@ -587,8 +593,9 @@ actions:
   - target: $["components"]["schemas"]["AppListOutput","EntitlementListOutput","AppEntitlementListOutput","DomainAccountListOutput","GroupListOutput","InlineWebhookListOutput","AppCategoryListOutput","IntegrationCatalogListOutput","CustomAttributeDefinitionListOutput","WorkflowStepTemplateListOutput"]["properties"]["next_page_token"]
     update:
       x-speakeasy-terraform-ignore: true
-  # expand changes the shape of the items; the lookups return the default
-  # shape.
+  # expand changes the shape of the items, so it isn't an argument; the
+  # lookups return the default shape, except that lumos_apps always reads
+  # full App Store settings and custom attributes.
   - target: $["paths"]["/v1/apps","/v1/entitlements","/v1/apps/{app_uuid}/entitlements","/v1/accounts"]["get"]["parameters"][?@.name=="expand"]
     update:
       x-speakeasy-terraform-ignore: true

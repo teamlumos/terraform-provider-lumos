@@ -7,18 +7,18 @@ import (
 )
 
 // Runs through New() so the test also fails if the hook isn't registered.
-func TestAppStoreSettingsExpand(t *testing.T) {
+func TestReadExpand(t *testing.T) {
 	tests := []struct {
 		name        string
 		operationID string
 		rawQuery    string
 		want        []string
 	}{
-		{name: "adds expand to an app read", operationID: "v1GetApp", rawQuery: "", want: []string{"appstore_settings"}},
-		{name: "keeps other expansions", operationID: "v1GetApp", rawQuery: "expand=admins", want: []string{"admins", "appstore_settings"}},
-		{name: "doesn't repeat it", operationID: "v1GetApp", rawQuery: "expand=appstore_settings", want: []string{"appstore_settings"}},
+		{name: "adds expand to an app read", operationID: "v1GetApp", rawQuery: "", want: []string{"appstore_settings", "custom_attributes"}},
+		{name: "keeps other expansions", operationID: "v1GetApp", rawQuery: "expand=admins", want: []string{"admins", "appstore_settings", "custom_attributes"}},
+		{name: "doesn't repeat them", operationID: "v1GetApp", rawQuery: "expand=custom_attributes&expand=appstore_settings", want: []string{"custom_attributes", "appstore_settings"}},
 		{name: "adds expand to an entitlement read", operationID: "getEntitlement", rawQuery: "", want: []string{"appstore_settings"}},
-		{name: "adds expand to an app list", operationID: "v1ListApps", rawQuery: "page_size=100", want: []string{"appstore_settings"}},
+		{name: "adds expand to an app list", operationID: "v1ListApps", rawQuery: "page_size=100", want: []string{"appstore_settings", "custom_attributes"}},
 		{name: "leaves other operations alone", operationID: "listAppEntitlements", rawQuery: "", want: nil},
 	}
 	for _, tt := range tests {

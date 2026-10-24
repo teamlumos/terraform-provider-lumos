@@ -2,30 +2,34 @@ package hooks
 
 import "net/http"
 
-// appStoreSettingsExpand asks app and entitlement reads, and the app list,
-// for full App Store settings: lumos_app and lumos_entitlement show them as a
-// read-only nested block, and lumos_apps shows them on each app. expand is a
-// list parameter, and the spec can't give it a default that the generated
-// client sends.
-type appStoreSettingsExpand struct{}
+// readExpand asks app and entitlement reads, and the app list, for the
+// expansions the provider shows: full App Store settings on lumos_app,
+// lumos_entitlement and lumos_apps, which show them as a read-only nested
+// block, and an app's custom attributes. expand is a list parameter, and the
+// spec can't give it a default that the generated client sends.
+type readExpand struct{}
 
-var appStoreSettingsExpandOperations = map[string]bool{
-	"v1GetApp":       true,
-	"getEntitlement": true,
-	"v1ListApps":     true,
+var readExpandOperations = map[string][]string{
+	"v1GetApp":       {"appstore_settings", "custom_attributes"},
+	"getEntitlement": {"appstore_settings"},
+	"v1ListApps":     {"appstore_settings", "custom_attributes"},
 }
 
-func (appStoreSettingsExpand) BeforeRequest(hookCtx BeforeRequestContext, req *http.Request) (*http.Request, error) {
-	if !appStoreSettingsExpandOperations[hookCtx.OperationID] {
+func (readExpand) BeforeRequest(hookCtx BeforeRequestContext, req *http.Request) (*http.Request, error) {
+	expansions, ok := readExpandOperations[hookCtx.OperationID]
+	if !ok {
 		return req, nil
 	}
 	q := req.URL.Query()
+	requested := map[string]bool{}
 	for _, v := range q["expand"] {
-		if v == "appstore_settings" {
-			return req, nil
+		requested[v] = true
+	}
+	for _, e := range expansions {
+		if !requested[e] {
+			q.Add("expand", e)
 		}
 	}
-	q.Add("expand", "appstore_settings")
 	req.URL.RawQuery = q.Encode()
 	return req, nil
 }
