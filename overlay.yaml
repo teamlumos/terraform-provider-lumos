@@ -202,6 +202,13 @@ actions:
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["label","description","category","logo_url","website_url"]
     update:
       x-speakeasy-plan-modifiers: ShowsOverride
+  # The API refuses "" for these. The plan refuses it first and says to leave
+  # the attribute out to clear it, which the spec's minLength error doesn't.
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["logo_url_override","website_url_override"]
+    update:
+      x-speakeasy-plan-validators: LeaveOutToClear
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["logo_url_override","website_url_override"]["anyOf"][0]["minLength"]
+    remove: true
   # The spec's descriptions tell API callers what sending or omitting a field
   # on update does. In a config, these follow it: cleared when omitted.
   - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]
@@ -317,6 +324,11 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsResponse"]["properties"]["time_based_access"]["properties"]["default"]
     update:
       x-speakeasy-param-computed: false
+  # The API stores "" as null, so a config that sets "" would plan a change
+  # on every run. The plan refuses it instead and says to leave it out.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput"]["properties"]["request_instructions"]
+    update:
+      x-speakeasy-plan-validators: LeaveOutToClear
   # Omitting a list plans it empty, which clears it; the read above turns the
   # API's null back into [], so the next plan matches. Omitting time-based
   # access plans empty options and no default. A spec default can't express
@@ -336,6 +348,11 @@ actions:
   - target: $["components"]["schemas"]["CustomIntakeField"]["properties"]["description","dropdown_options"]
     update:
       x-speakeasy-param-computed: false
+  # The API stores an intake field's "" description as null, so the plan
+  # refuses it, as for request_instructions.
+  - target: $["components"]["schemas"]["CustomIntakeField"]["properties"]["description"]
+    update:
+      x-speakeasy-plan-validators: LeaveOutToClear
 
   # The spec's descriptions tell API callers what omitting a field or
   # sending null does. In a config, omitting a setting and setting it to
