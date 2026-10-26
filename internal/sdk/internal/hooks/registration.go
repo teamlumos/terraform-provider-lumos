@@ -21,5 +21,6 @@ func initHooks(h *Hooks) {
 	h.registerBeforeRequestHook(appCreateBody{})
 	h.registerBeforeRequestHook(appUpdateBody{})
 	h.registerAfterSuccessHook(appDeleteRecordKept{})
+	h.registerAfterSuccessHook(entitlementSettingsUnlisted{})
 	h.registerBeforeRequestHook(requireListFilter{})
 }

@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -162,5 +163,71 @@ resource "lumos_entitlement_appstore_settings" "test" {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		CheckDestroy:             testAccCheckNotInAppStore(appID),
 		Steps:                    steps,
+	})
+}
+
+// TestAccEntitlementAppStoreSettingsAppUnlisted lists the app in
+// LUMOS_TEST_APPSTORE_APP_ID, manages an entitlement's App Store settings,
+// then unlists the app. The API then answers 404 for the settings, which
+// still exist, and refresh must fail with a message saying why instead of
+// dropping them from state (GOV-4617). A removed block then stops managing
+// them, as the message says. The app is left unlisted, as
+// TestAccAppStoreListing leaves it.
+func TestAccEntitlementAppStoreSettingsAppUnlisted(t *testing.T) {
+	appID := testAccOptionalEnv(t, "LUMOS_TEST_APPSTORE_APP_ID")
+	label := "tf-acc-" + acctest.RandString(8)
+
+	app := func(listed bool) string {
+		return providerConfig() + fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "listed" {
+  app_id                              = %[1]q
+  in_app_store                        = %[2]t
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+}
+
+resource "lumos_entitlement" "test" {
+  app_id = %[1]q
+  label  = %[3]q
+}
+`, appID, listed, label)
+	}
+	settings := `
+resource "lumos_entitlement_appstore_settings" "test" {
+  entitlement_id      = lumos_entitlement.test.id
+  visible_in_appstore = true
+
+  depends_on = [lumos_app_appstore_settings.listed]
+}
+`
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckNotInAppStore(appID),
+		Steps: []resource.TestStep{
+			{
+				Config: app(true) + settings,
+				Check:  resource.TestCheckResourceAttr("lumos_entitlement_appstore_settings.test", "visible_in_appstore", "true"),
+			},
+			{
+				// The apply unlists the app; the plan after it refreshes the
+				// settings.
+				Config:      app(false) + settings,
+				ExpectError: regexp.MustCompile(`isn't in the App Store: list\s+the\s+app\s+again`),
+			},
+			{
+				Config: app(false) + `
+removed {
+  from = lumos_entitlement_appstore_settings.test
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
 	})
 }

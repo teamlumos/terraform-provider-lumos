@@ -7,17 +7,21 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"strings"
 	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 // fakeEntitlementAPI serves entitlement "ent1" and its App Store settings
 // in the API's shapes, applying settings PATCHes as a merge patch. It keeps
 // an empty group list as sent, so a test can check that the provider holds
-// [] and null apart.
+// [] and null apart. Like the API, it answers 404 for the settings while
+// the entitlement's app "app1" isn't in the App Store, and serves that
+// app's settings for in_app_store.
 type fakeEntitlementAPI struct {
 	t            *testing.T
 	mu           sync.Mutex
@@ -27,6 +31,10 @@ type fakeEntitlementAPI struct {
 	settings     map[string]any
 	deleteStatus int
 	deleteBody   string
+
+	appUnlisted     bool
+	entitlementGone bool
+	settingsGone    bool
 }
 
 func newFakeEntitlementAPI(t *testing.T, source string) *fakeEntitlementAPI {
@@ -60,6 +68,12 @@ func (f *fakeEntitlementAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch {
+	case f.entitlementGone && strings.HasPrefix(r.URL.Path, "/v1/entitlements/ent1"),
+		(f.appUnlisted || f.settingsGone) && r.URL.Path == "/v1/entitlements/ent1/appstore-settings":
+		w.WriteHeader(http.StatusNotFound)
+		io.WriteString(w, `{"detail":"AppStore settings are not available for this entitlement."}`)
+	case r.URL.Path == "/v1/apps/app1/appstore-settings" && r.Method == http.MethodGet:
+		json.NewEncoder(w).Encode(map[string]any{"in_app_store": !f.appUnlisted})
 	case r.URL.Path == "/v1/entitlements/ent1" && r.Method == http.MethodGet:
 		entitlement := map[string]any{"appstore_settings": f.settings}
 		for k, v := range f.entitlement {
@@ -296,6 +310,133 @@ removed {
 			if deletes != 1 {
 				t.Errorf("got %d DELETEs, want 1: the refused destroy, and none for the removed block", deletes)
 			}
+		})
+	}
+}
+
+// entitlementAppStoreSettingsConfig manages ent1's App Store settings and
+// nothing else, so a test can change what the fake answers for them alone.
+func entitlementAppStoreSettingsConfig(serverURL string) string {
+	return fakeProviderConfig(serverURL) + `
+resource "lumos_entitlement_appstore_settings" "admin" {
+  entitlement_id      = "ent1"
+  visible_in_appstore = true
+  allowed_requester_group_uuids_override = ["group1"]
+}
+`
+}
+
+const entitlementAppStoreSettingsImport = `
+import {
+  to = lumos_entitlement_appstore_settings.admin
+  id = "ent1"
+}
+`
+
+// TestEntitlementAppStoreSettingsAppUnlisted checks that while the
+// entitlement's app isn't in the App Store, which makes the API answer 404
+// for settings that still exist, refresh fails with a message saying so and
+// keeps the settings in state, so listing the app again plans no change. It
+// uses a fake API to switch the app's listing between steps (GOV-4617).
+func TestEntitlementAppStoreSettingsAppUnlisted(t *testing.T) {
+	api := newFakeEntitlementAPI(t, "manual")
+	server := httptest.NewServer(api)
+	defer server.Close()
+	setUnlisted := func(unlisted bool) func() {
+		return func() {
+			api.mu.Lock()
+			defer api.mu.Unlock()
+			api.appUnlisted = unlisted
+		}
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: entitlementAppStoreSettingsConfig(server.URL) + entitlementAppStoreSettingsImport,
+			},
+			{
+				PreConfig:   setUnlisted(true),
+				Config:      entitlementAppStoreSettingsConfig(server.URL),
+				ExpectError: regexp.MustCompile(`the entitlement's app \(app1\) isn't in the App Store: list\s+the\s+app\s+again,\s+or\s+stop\s+managing\s+this\s+resource\s+with\s+a\s+removed\s+block\s+that\s+sets\s+destroy\s+=\s+false`),
+			},
+			{
+				PreConfig: setUnlisted(false),
+				Config:    entitlementAppStoreSettingsConfig(server.URL),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("lumos_entitlement_appstore_settings.admin", plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				// Still unlisted, a removed block stops managing the
+				// settings: removing the resource from the config would plan
+				// a destroy, which refreshes it first, and the API refuses
+				// writes while the app is unlisted anyway.
+				PreConfig: setUnlisted(true),
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_entitlement_appstore_settings.admin
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+}
+
+// TestEntitlementAppStoreSettingsDeleted checks that a 404 that means the
+// settings are really gone still drops them from state, so the next plan
+// creates them: the entitlement was deleted, or it has no settings although
+// its app is in the App Store. It uses a fake API because neither can be
+// set up on demand for an entitlement Terraform already manages.
+func TestEntitlementAppStoreSettingsDeleted(t *testing.T) {
+	tests := []struct {
+		name string
+		gone func(*fakeEntitlementAPI)
+	}{
+		{name: "entitlement deleted", gone: func(f *fakeEntitlementAPI) { f.entitlementGone = true }},
+		{name: "settings gone from a listed app", gone: func(f *fakeEntitlementAPI) { f.settingsGone = true }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			api := newFakeEntitlementAPI(t, "manual")
+			server := httptest.NewServer(api)
+			defer server.Close()
+
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{
+					{
+						Config: entitlementAppStoreSettingsConfig(server.URL) + entitlementAppStoreSettingsImport,
+					},
+					{
+						// The refresh below runs on the last config, which
+						// mustn't still import.
+						Config: entitlementAppStoreSettingsConfig(server.URL),
+					},
+					{
+						PreConfig: func() {
+							api.mu.Lock()
+							defer api.mu.Unlock()
+							tt.gone(api)
+						},
+						RefreshState:       true,
+						ExpectNonEmptyPlan: true,
+						Check: func(s *terraform.State) error {
+							if _, ok := s.RootModule().Resources["lumos_entitlement_appstore_settings.admin"]; ok {
+								return fmt.Errorf("lumos_entitlement_appstore_settings.admin is still in state after a refresh that read 404")
+							}
+							return nil
+						},
+					},
+				},
+			})
 		})
 	}
 }
