@@ -2,6 +2,7 @@ package provider
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -193,6 +194,85 @@ func TestPreApprovalRuleEntitlements(t *testing.T) {
 		}
 		if !reflect.DeepEqual(sent, want[i]) {
 			t.Errorf("write %d sent entitlements fields %v, want %v", i, sent, want[i])
+		}
+	}
+}
+
+// TestPreApprovalRuleWebhookAndOnCallConditions checks that a condition on
+// a pre-approval webhook's response, and one on an on-call schedule, are
+// sent as written and stored so the next plan is empty: the webhook
+// attribute's escaped quotes and the on-call condition's boolean value
+// survive the round trip.
+func TestPreApprovalRuleWebhookAndOnCallConditions(t *testing.T) {
+	api := &fakePreApprovalRuleAPI{t: t}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	webhook := map[string]any{
+		"attribute": map[string]any{"label": "Access check", "value": `webhook.responses["webhook1"]`},
+		"equals":    map[string]any{"label": "Pre-approved", "value": "PREAPPROVED"},
+	}
+	onCall := map[string]any{
+		"attribute": map[string]any{"label": "On call", "value": `identity.oncall["schedule1"].on_call`},
+		"equals":    map[string]any{"label": "On call", "value": true},
+	}
+	config := func(condition string) string {
+		return fakeProviderConfig(server.URL) + `
+resource "lumos_pre_approval_rule" "test" {
+  app_id                   = "app1"
+  justification            = "Engineers need it"
+  condition                = jsonencode(` + condition + `)
+  request_has_entitlements = true
+}
+`
+	}
+	conditionIs := func(want map[string]any) resource.TestCheckFunc {
+		return resource.TestCheckResourceAttrWith("lumos_pre_approval_rule.test", "condition", func(v string) error {
+			var got map[string]any
+			if err := json.Unmarshal([]byte(v), &got); err != nil {
+				return err
+			}
+			if !reflect.DeepEqual(got, want) {
+				return fmt.Errorf("condition in state is %v, want %v", got, want)
+			}
+			return nil
+		})
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`{
+    attribute = { label = "Access check", value = "webhook.responses[\"webhook1\"]" }
+    equals    = { label = "Pre-approved", value = "PREAPPROVED" }
+  }`),
+				Check: conditionIs(webhook),
+			},
+			{
+				Config: config(`{
+    attribute = { label = "On call", value = "identity.oncall[\"schedule1\"].on_call" }
+    equals    = { label = "On call", value = true }
+  }`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange("lumos_pre_approval_rule.test", "condition"),
+					},
+				},
+				Check: conditionIs(onCall),
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	want := []map[string]any{webhook, onCall}
+	if len(api.writes) != len(want) {
+		t.Fatalf("got %d writes, want a create and an update: %v", len(api.writes), api.writes)
+	}
+	for i, write := range api.writes {
+		if !reflect.DeepEqual(write["condition"], want[i]) {
+			t.Errorf("write %d sent condition %v, want %v", i, write["condition"], want[i])
 		}
 	}
 }

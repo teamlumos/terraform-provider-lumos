@@ -128,3 +128,68 @@ data "lumos_pre_approval_rules" "test" {
 		},
 	})
 }
+
+// TestAccPreApprovalRuleWebhook writes a rule that pre-approves requests a
+// pre-approval webhook approves, on a custom app the test creates, and
+// reads it back through the data source. LUMOS_TEST_PREAPPROVAL_WEBHOOK_ID
+// names the webhook, which the provider can't create.
+func TestAccPreApprovalRuleWebhook(t *testing.T) {
+	webhookID := testAccOptionalEnv(t, "LUMOS_TEST_PREAPPROVAL_WEBHOOK_ID")
+	testAccPreApprovalRuleCondition(t, fmt.Sprintf(`jsonencode({
+    attribute = { label = "Access check", value = "webhook.responses[\"%s\"]" }
+    equals    = { label = "Pre-approved", value = "PREAPPROVED" }
+  })`, webhookID))
+}
+
+// TestAccPreApprovalRuleOnCall writes a rule that pre-approves whoever is on
+// call, on a custom app the test creates, and reads it back through the
+// data source. LUMOS_TEST_ONCALL_SCHEDULE_ENTITLEMENT_ID names the on-call
+// schedule's entitlement, which the provider can't create.
+func TestAccPreApprovalRuleOnCall(t *testing.T) {
+	scheduleID := testAccOptionalEnv(t, "LUMOS_TEST_ONCALL_SCHEDULE_ENTITLEMENT_ID")
+	testAccPreApprovalRuleCondition(t, fmt.Sprintf(`jsonencode({
+    attribute = { label = "On call", value = "identity.oncall[\"%s\"].on_call" }
+    equals    = { label = "On call", value = true }
+  })`, scheduleID))
+}
+
+// testAccPreApprovalRuleCondition writes a rule with condition on a custom
+// app, checks the data source reads the condition back as written, and
+// imports the rule. Every step must plan no change once applied.
+func testAccPreApprovalRuleCondition(t *testing.T, condition string) {
+	prefix := "tf-acc-" + acctest.RandString(8)
+	rule := "lumos_pre_approval_rule.test"
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: providerConfig() + testAccCustomApp("app", prefix, "Pre-approval rule test") + `
+resource "lumos_pre_approval_rule" "test" {
+  app_id        = lumos_app.app.id
+  justification = "Terraform acceptance test"
+  condition     = ` + condition + `
+}
+
+data "lumos_pre_approval_rule" "test" {
+  app_id = lumos_pre_approval_rule.test.app_id
+  id     = lumos_pre_approval_rule.test.id
+}
+`,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrPair("data.lumos_pre_approval_rule.test", "condition", rule, "condition"),
+				),
+			},
+			{
+				ResourceName:      rule,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					attributes := s.RootModule().Resources[rule].Primary.Attributes
+					id, err := json.Marshal(map[string]string{"app_id": attributes["app_id"], "id": attributes["id"]})
+					return string(id), err
+				},
+			},
+		},
+	})
+}
