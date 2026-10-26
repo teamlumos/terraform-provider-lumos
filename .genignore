@@ -50,3 +50,5 @@ internal/sdk/internal/hooks/require_list_filter_test.go
 internal/customtypes/
 internal/sdk/internal/hooks/rate_limited.go
 internal/sdk/internal/hooks/rate_limited_test.go
+internal/sdk/internal/hooks/entitlement_settings_unlisted.go
+internal/sdk/internal/hooks/entitlement_settings_unlisted_test.go
