@@ -21,6 +21,7 @@ internal/planmodifiers/listplanmodifier/empty_when_null.go
 internal/planmodifiers/objectplanmodifier/empty_when_null.go
 internal/planmodifiers/setplanmodifier/empty_when_null.go
 internal/validators/boolvalidators/everyone_or_condition.go
+internal/validators/stringvalidators/leave_out_to_clear.go
 examples/resources/lumos_app/
 examples/resources/lumos_app_appstore_settings/
 examples/resources/lumos_entitlement/

@@ -604,6 +604,69 @@ removed {
 	}
 }
 
+// TestAppEmptyStringsRejected checks that "" fails at plan time, with a
+// message to leave the field out, on the fields the API doesn't keep "" for.
+// The check runs before any API call, so the server URL is never contacted.
+func TestAppEmptyStringsRejected(t *testing.T) {
+	configs := map[string]string{
+		"logo_url_override": `
+resource "lumos_app" "wiki" {
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Team wiki"
+  logo_url_override    = ""
+}
+`,
+		"website_url_override": `
+resource "lumos_app" "wiki" {
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Team wiki"
+  website_url_override = ""
+}
+`,
+		"request_instructions": `
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  request_instructions                = ""
+}
+`,
+		"custom_intake_fields[0].description": `
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = true
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  custom_intake_fields = [{
+    reference_key = "why"
+    field_type    = "text"
+    prompt        = "Why?"
+    is_required   = true
+    description   = ""
+  }]
+}
+`,
+	}
+	for field, config := range configs {
+		t.Run(field, func(t *testing.T) {
+			field := regexp.QuoteMeta(field)
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{{
+					Config:      fakeProviderConfig("http://127.0.0.1:1") + config,
+					PlanOnly:    true,
+					ExpectError: regexp.MustCompile(fmt.Sprintf(`(?s)%s can't be "".*Leave\s+%s\s+out\s+to\s+clear\s+it`, field, field)),
+				}},
+			})
+		})
+	}
+}
+
 // TestAppIntegrationRemovalRejected imports a connected app, then drops
 // app_class_id from its config. There's no empty value to clear it to, so
 // the plan must fail rather than turn the integration into a custom app.
