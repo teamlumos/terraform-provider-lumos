@@ -34,3 +34,25 @@ resource "lumos_pre_approval_rule" "wiki_by_webhook" {
 
   request_has_entitlements = true
 }
+
+# Pre-approves requests for the deploy dashboard's Admin entitlement from
+# whoever is on call for the platform rotation, for up to 12 hours.
+resource "lumos_pre_approval_rule" "deploy_admins_on_call" {
+  app_id        = lumos_app.deploy_dashboard.id
+  justification = "The on-call engineer may need to roll back a deploy."
+
+  condition = jsonencode({
+    and = [
+      {
+        attribute = { label = "On call", value = "identity.oncall[\"<schedule entitlement id>\"].on_call" }
+        equals    = { label = "On call", value = true }
+      },
+      {
+        attribute = { label = "Access length", value = "access_request.access_length" }
+        "<="      = { label = "12 hours", value = 43200 }
+      },
+    ]
+  })
+
+  request_includes_entitlements = [lumos_entitlement.deploy_admin.id]
+}
