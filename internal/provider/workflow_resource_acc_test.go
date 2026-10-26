@@ -70,7 +70,8 @@ resource "lumos_workflow" "chain" {
 // TestAccWorkflowProvisioningTypes creates a one-step wait workflow of each
 // provisioning and deprovisioning type on a custom app the test creates,
 // changes the wait, which must plan only the steps, then imports it. The
-// duration is written in the ISO 8601 form the API reads back.
+// duration is written in the ISO 8601 form the API reads back. Each type
+// gets its own app, so the types run in parallel.
 func TestAccWorkflowProvisioningTypes(t *testing.T) {
 	for _, workflowType := range []string{
 		"account-provisioning",
@@ -79,6 +80,7 @@ func TestAccWorkflowProvisioningTypes(t *testing.T) {
 		"entitlement-deprovisioning",
 	} {
 		t.Run(workflowType, func(t *testing.T) {
+			t.Parallel()
 			prefix := "tf-acc-" + acctest.RandString(8)
 			config := func(duration string) string {
 				return providerConfig() + testAccCustomApp("app", prefix, "Workflow test") + fmt.Sprintf(`
