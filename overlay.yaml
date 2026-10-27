@@ -248,10 +248,6 @@ actions:
         description: URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
       website_url_override:
         description: URL of the app's website in your organization, shown as `website_url`. Omitted or set to `null`, it's cleared, and `website_url` shows the app's default website, if it has one. At most 2,048 characters.
-  # The spec can write this, but the resource only reads it until its own
-  # change maps it. Ignoring it would drop the attribute entirely.
-  - target: $["components"]["schemas"]["EntitlementCreateInput"]["properties"]["custom_approval_message_override"]
-    remove: true
 
   # request_instructions is writable through the app and through App Store
   # settings; only the latter can clear it, so only that one is exposed.
@@ -443,9 +439,10 @@ actions:
         description: Label of the option pre-selected on the request form. Omitted or set to `null`, the pre-selection is cleared.
 
   # resource "lumos_entitlement". The API creates, renames and deletes an
-  # entitlement; everything else on it is read-only here. App Store settings
-  # show read-only, which needs expand=appstore_settings on this read. The
-  # read is also data "lumos_entitlement", which reads one entitlement by ID.
+  # entitlement and sets its description and approval message; everything
+  # else on it is read-only here. App Store settings show read-only, which
+  # needs expand=appstore_settings on this read. The read is also
+  # data "lumos_entitlement", which reads one entitlement by ID.
   - target: $["paths"]["/v1/entitlements"]["post"]
     update:
       x-speakeasy-entity-operation: Entitlement#create
@@ -481,21 +478,38 @@ actions:
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]
     update:
       anyOf: [{"$ref": "#/components/schemas/WorkflowRef"}, {"type": "null"}]
-  # An update only renames, so a plan keeps the current value of everything
-  # else instead of showing it as known after apply.
-  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["id","app_id","entitlement_type_label","source","description","approval_workflow_override","provisioning_workflow","deprovisioning_workflow","custom_approval_message_override","appstore_settings"]
+  # An update only renames and sets the description and approval message, so
+  # a plan keeps the current value of everything else instead of showing it
+  # as known after apply.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["id","app_id","entitlement_type_label","source","approval_workflow_override","provisioning_workflow","deprovisioning_workflow","appstore_settings"]
     update:
       x-speakeasy-param-suppress-computed-diff: true
-
-  # The API now takes the approval message on create as well as update,
-  # which would make it Optional and Computed, keeping a removed message.
-  # It stays read-only until it follows the config (GOV-4601).
+  # description is what requesters see: description_override if set,
+  # otherwise the integration's. It changes only with description_override.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["description"]
+    update:
+      x-speakeasy-plan-modifiers: UnknownOnDescriptionOverrideChange
+  # The description and approval message follow the config: leaving one out
+  # means the entitlement shows its integration's description or inherits
+  # the app's message, so the provider never fills them in from what the API
+  # holds. The clearUnsetFields hook sends null for them on update; the
+  # generated client drops nulls. The descriptions go on the request schemas:
+  # the entitlement data sources show the response schema, where nothing is
+  # configured.
+  - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["description_override","custom_approval_message_override"]
+    update:
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["EntitlementCreateInput","EntitlementUpdateInput"]["properties"]["description_override"]
+    update:
+      description: >-
+        Description shown to requesters, kept across syncs. Omitted or set to
+        `null`, a synced entitlement shows its integration's description from
+        its next sync, and a manual one has no description.
   - target: $["components"]["schemas"]["EntitlementCreateInput","EntitlementUpdateInput"]["properties"]["custom_approval_message_override"]
     update:
-      x-speakeasy-param-readonly: true
       description: >-
-        This entitlement's own approval message, overriding the app's. Null
-        means it inherits the app's message.
+        Message sent when a request for this entitlement is approved. Omitted
+        or set to `null`, the entitlement inherits the app's message.
 
   # resource "lumos_entitlement_appstore_settings": writes an entitlement's
   # App Store settings through their own endpoint.

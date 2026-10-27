@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-// clearUnsetFields makes a clearable App Store setting that the config
-// leaves out mean "clear it". The generated client omits unset fields, and
-// the API's merge patch treats an omitted field as unchanged, so without
-// this hook a setting removed from the config would stay in place. The hook
-// sends null for each clearable field missing from the body.
+// clearUnsetFields makes a clearable field that the config leaves out mean
+// "clear it". The generated client omits unset fields, and the API's merge
+// patch treats an omitted field as unchanged, so without this hook a field
+// removed from the config would stay in place. The hook sends null for each
+// clearable field missing from the body.
 //
 // A missing key always means unset in config: these fields aren't computed,
-// and both settings PATCHes send every field the plan holds, not only the
-// changed ones. Settings the API can't clear, such as visible_in_appstore
+// and these PATCHes send every field the plan holds, not only the changed
+// ones. Settings the API can't clear, such as visible_in_appstore
 // and in_app_store, are required, and omitted lists plan as [], which the
 // client sends, so neither is listed.
 //
@@ -27,8 +27,13 @@ import (
 type clearUnsetFields struct{}
 
 var clearUnsetFieldsByOperation = map[string][]string{
-	// For an entitlement, a cleared override means it inherits the app's
-	// setting.
+	// For an entitlement, a cleared description means it shows its
+	// integration's, and a cleared approval message means it inherits the
+	// app's. The API ignores a null for either when none is set.
+	"updateEntitlement": {
+		"description_override",
+		"custom_approval_message_override",
+	},
 	"updateEntitlementAppStoreSettings": {
 		"allowed_requester_group_uuids_override",
 		"time_based_access_override",

@@ -13,17 +13,26 @@ import (
 )
 
 // TestAccEntitlementManual creates a manual entitlement on a custom app the
-// test creates, renames it, then imports it. The rename must plan only the
-// label (GOV-4388).
+// test creates with a description and an approval message, renames it,
+// changes each, leaves both out, then imports it. The rename must plan only
+// the label (GOV-4388), and leaving them out must clear them.
 func TestAccEntitlementManual(t *testing.T) {
 	prefix := "tf-acc-" + acctest.RandString(8)
-	config := func(label string) string {
+	config := func(label, description, message string) string {
+		if description != "" {
+			description = fmt.Sprintf("description_override = %q", description)
+		}
+		if message != "" {
+			message = fmt.Sprintf("custom_approval_message_override = %q", message)
+		}
 		return providerConfig() + testAccCustomApp("app", prefix, "Entitlement test") + fmt.Sprintf(`
 resource "lumos_entitlement" "test" {
   app_id = lumos_app.app.id
   label  = %q
+  %s
+  %s
 }
-`, label)
+`, label, description, message)
 	}
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -31,16 +40,19 @@ resource "lumos_entitlement" "test" {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: config(prefix + "-admin"),
+				Config: config(prefix+"-admin", "Ask first.", "Approved."),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_entitlement.test", "label", prefix+"-admin"),
 					resource.TestCheckResourceAttr("lumos_entitlement.test", "source", "manual"),
+					resource.TestCheckResourceAttr("lumos_entitlement.test", "description_override", "Ask first."),
+					resource.TestCheckResourceAttr("lumos_entitlement.test", "description", "Ask first."),
+					resource.TestCheckResourceAttr("lumos_entitlement.test", "custom_approval_message_override", "Approved."),
 					resource.TestCheckResourceAttrPair("lumos_entitlement.test", "app_id", "lumos_app.app", "id"),
 					resource.TestCheckResourceAttrSet("lumos_entitlement.test", "id"),
 				),
 			},
 			{
-				Config: config(prefix + "-owner"),
+				Config: config(prefix+"-owner", "Ask first.", "Approved."),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_entitlement.test", plancheck.ResourceActionUpdate),
@@ -48,6 +60,34 @@ resource "lumos_entitlement" "test" {
 					},
 				},
 				Check: resource.TestCheckResourceAttr("lumos_entitlement.test", "label", prefix+"-owner"),
+			},
+			{
+				Config: config(prefix+"-owner", "Ask IT.", "Approved."),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange("lumos_entitlement.test", "description_override", "description"),
+					},
+				},
+				Check: resource.TestCheckResourceAttr("lumos_entitlement.test", "description", "Ask IT."),
+			},
+			{
+				Config: config(prefix+"-owner", "Ask IT.", "Approved by IT."),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange("lumos_entitlement.test", "custom_approval_message_override"),
+					},
+				},
+				Check: resource.TestCheckResourceAttr("lumos_entitlement.test", "custom_approval_message_override", "Approved by IT."),
+			},
+			{
+				// Omitted, both are cleared: a manual entitlement has no
+				// description, and inherits the app's message.
+				Config: config(prefix+"-owner", "", ""),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckNoResourceAttr("lumos_entitlement.test", "description_override"),
+					resource.TestCheckNoResourceAttr("lumos_entitlement.test", "description"),
+					resource.TestCheckNoResourceAttr("lumos_entitlement.test", "custom_approval_message_override"),
+				),
 			},
 			{
 				ResourceName:      "lumos_entitlement.test",
