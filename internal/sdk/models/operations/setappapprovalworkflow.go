@@ -10,15 +10,15 @@ import (
 
 type SetAppApprovalWorkflowRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID                  string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID                    string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
 	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
 }
 
-func (s *SetAppApprovalWorkflowRequest) GetAppUUID() string {
+func (s *SetAppApprovalWorkflowRequest) GetAppID() string {
 	if s == nil {
 		return ""
 	}
-	return s.AppUUID
+	return s.AppID
 }
 
 func (s *SetAppApprovalWorkflowRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
@@ -36,7 +36,7 @@ type SetAppApprovalWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppApprovalWorkflowBinding *shared.AppApprovalWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -73,11 +73,11 @@ func (s *SetAppApprovalWorkflowResponse) GetRawResponse() *http.Response {
 	return s.RawResponse
 }
 
-func (s *SetAppApprovalWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (s *SetAppApprovalWorkflowResponse) GetAppApprovalWorkflowBinding() *shared.AppApprovalWorkflowBinding {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.AppApprovalWorkflowBinding
 }
 
 func (s *SetAppApprovalWorkflowResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

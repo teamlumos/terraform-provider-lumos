@@ -10,15 +10,15 @@ import (
 
 type SetAppProvisioningWorkflowRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID                  string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID                    string                          `pathParam:"style=simple,explode=false,name=app_uuid"`
 	WorkflowAssociationInput shared.WorkflowAssociationInput `request:"mediaType=application/json"`
 }
 
-func (s *SetAppProvisioningWorkflowRequest) GetAppUUID() string {
+func (s *SetAppProvisioningWorkflowRequest) GetAppID() string {
 	if s == nil {
 		return ""
 	}
-	return s.AppUUID
+	return s.AppID
 }
 
 func (s *SetAppProvisioningWorkflowRequest) GetWorkflowAssociationInput() shared.WorkflowAssociationInput {
@@ -36,7 +36,7 @@ type SetAppProvisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppProvisioningWorkflowBinding *shared.AppProvisioningWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -73,11 +73,11 @@ func (s *SetAppProvisioningWorkflowResponse) GetRawResponse() *http.Response {
 	return s.RawResponse
 }
 
-func (s *SetAppProvisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (s *SetAppProvisioningWorkflowResponse) GetAppProvisioningWorkflowBinding() *shared.AppProvisioningWorkflowBinding {
 	if s == nil {
 		return nil
 	}
-	return s.Workflow
+	return s.AppProvisioningWorkflowBinding
 }
 
 func (s *SetAppProvisioningWorkflowResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

@@ -2329,12 +2329,12 @@ func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementApprovalWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementApprovalWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -2590,12 +2590,12 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementApprovalWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementApprovalWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3077,12 +3077,12 @@ func (s *Entitlements) GetEntitlementProvisioningWorkflow(ctx context.Context, r
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementProvisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementProvisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3338,12 +3338,12 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementProvisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementProvisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3592,12 +3592,12 @@ func (s *Entitlements) GetEntitlementDeprovisioningWorkflow(ctx context.Context,
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementDeprovisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementDeprovisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3853,12 +3853,12 @@ func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context,
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.EntitlementDeprovisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.EntitlementDeprovisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
