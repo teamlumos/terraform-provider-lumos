@@ -5589,7 +5589,7 @@
           "Entitlements"
         ],
         "summary": "Create Entitlement",
-        "description": "Create a requestable entitlement on the named app, so employees can request it from the AppStore.\n\nSetting `custom_approval_message_override` also needs permission to manage approval workflows. Returns 404 if `app_id` is unknown in your organization.",
+        "description": "Create a requestable entitlement on the named app, so employees can request it from the AppStore.\n\nSetting `description_override` also needs permission to edit entitlements, and `custom_approval_message_override` permission to manage approval workflows. Returns 404 if `app_id` is unknown in your organization.",
         "operationId": "createEntitlement",
         "security": [
           {
@@ -5825,7 +5825,7 @@
           "Entitlements"
         ],
         "summary": "Update Entitlement",
-        "description": "Update an entitlement's `label`, `description` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field returns 400.\n\nOnly entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description` you set is kept across syncs, on synced entitlements too. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
+        "description": "Update an entitlement's `label`, `description_override` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field, including the read-only `description`, returns 400.\n\nOnly entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
         "operationId": "updateEntitlement",
         "security": [
           {
@@ -17058,6 +17058,20 @@
             "title": "Label",
             "description": "Human-readable label for the entitlement."
           },
+          "description_override": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Override",
+            "description": "Description shown to requesters, kept as sent. Omit it, or send `null`, for no description."
+          },
           "custom_approval_message_override": {
             "anyOf": [
               {
@@ -17172,7 +17186,19 @@
               }
             ],
             "title": "Description",
-            "description": "Optional long-form description of the entitlement."
+            "description": "The description shown to requesters: `description_override` if set, otherwise the integration's own description. Read-only; set `description_override` instead."
+          },
+          "description_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Override",
+            "description": "The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description."
           },
           "approval_workflow_override": {
             "anyOf": [
@@ -17312,7 +17338,7 @@
             "title": "Label",
             "description": "New human-readable label for the entitlement. Only entitlements created in Lumos (`source` is `manual`) can be renamed; the integration owns a synced entitlement's label."
           },
-          "description": {
+          "description_override": {
             "anyOf": [
               {
                 "type": "string",
@@ -17323,8 +17349,8 @@
                 "type": "null"
               }
             ],
-            "title": "Description",
-            "description": "Shown to requesters. `null` removes the description you set; the integration's own description returns on its next sync."
+            "title": "Description Override",
+            "description": "Description shown to requesters in place of the integration's, kept as sent and across syncs. `null` removes it, and the integration's own description returns on its next sync; when none is set, `null` changes nothing."
           },
           "custom_approval_message_override": {
             "anyOf": [
