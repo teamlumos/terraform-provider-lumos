@@ -13,6 +13,7 @@ type EntitlementOutput struct {
 	CustomApprovalMessageOverride types.String                                 `tfsdk:"custom_approval_message_override"`
 	DeprovisioningWorkflow        *EntitlementRefInput                         `tfsdk:"deprovisioning_workflow"`
 	Description                   types.String                                 `tfsdk:"description"`
+	DescriptionOverride           types.String                                 `tfsdk:"description_override"`
 	EntitlementTypeLabel          types.String                                 `tfsdk:"entitlement_type_label"`
 	ID                            types.String                                 `tfsdk:"id"`
 	Label                         types.String                                 `tfsdk:"label"`

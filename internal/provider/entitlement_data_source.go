@@ -35,6 +35,7 @@ type EntitlementDataSourceModel struct {
 	CustomApprovalMessageOverride types.String                                         `tfsdk:"custom_approval_message_override"`
 	DeprovisioningWorkflow        *tfTypes.EntitlementRefInput                         `tfsdk:"deprovisioning_workflow"`
 	Description                   types.String                                         `tfsdk:"description"`
+	DescriptionOverride           types.String                                         `tfsdk:"description_override"`
 	EntitlementTypeLabel          types.String                                         `tfsdk:"entitlement_type_label"`
 	ID                            types.String                                         `tfsdk:"id"`
 	Label                         types.String                                         `tfsdk:"label"`
@@ -113,7 +114,11 @@ func (r *EntitlementDataSource) Schema(ctx context.Context, req datasource.Schem
 			},
 			"description": schema.StringAttribute{
 				Computed:    true,
-				Description: `Optional long-form description of the entitlement.`,
+				Description: `The description shown to requesters: ` + "`" + `description_override` + "`" + ` if set, otherwise the integration's own description. Read-only; set ` + "`" + `description_override` + "`" + ` instead.`,
+			},
+			"description_override": schema.StringAttribute{
+				Computed:    true,
+				Description: `The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description.`,
 			},
 			"entitlement_type_label": schema.StringAttribute{
 				Computed:    true,

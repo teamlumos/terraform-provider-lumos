@@ -65,6 +65,7 @@ func (r *EntitlementsDataSourceModel) RefreshFromSharedEntitlementListOutput(ctx
 				entitlements.DeprovisioningWorkflow.ID = types.StringValue(entitlementsItem.DeprovisioningWorkflow.ID)
 			}
 			entitlements.Description = types.StringPointerValue(entitlementsItem.Description)
+			entitlements.DescriptionOverride = types.StringPointerValue(entitlementsItem.DescriptionOverride)
 			entitlements.EntitlementTypeLabel = types.StringValue(entitlementsItem.EntitlementTypeLabel)
 			entitlements.ID = types.StringValue(entitlementsItem.ID)
 			entitlements.Label = types.StringValue(entitlementsItem.Label)

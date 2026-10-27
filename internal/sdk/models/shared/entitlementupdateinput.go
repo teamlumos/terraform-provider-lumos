@@ -6,9 +6,9 @@ package shared
 type EntitlementUpdateInput struct {
 	// New human-readable label for the entitlement. Only entitlements created in Lumos (`source` is `manual`) can be renamed; the integration owns a synced entitlement's label.
 	Label *string `json:"label,omitzero"`
-	// Shown to requesters. `null` removes the description you set; the integration's own description returns on its next sync.
-	Description *string `json:"description,omitzero"`
-	// This entitlement's own approval message, overriding the app's. Null means it inherits the app's message.
+	// Description shown to requesters, kept across syncs. Omitted or set to `null`, a synced entitlement shows its integration's description from its next sync, and a manual one has no description.
+	DescriptionOverride *string `json:"description_override,omitzero"`
+	// Message sent when a request for this entitlement is approved. Omitted or set to `null`, the entitlement inherits the app's message.
 	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitzero"`
 }
 
@@ -19,11 +19,11 @@ func (e *EntitlementUpdateInput) GetLabel() *string {
 	return e.Label
 }
 
-func (e *EntitlementUpdateInput) GetDescription() *string {
+func (e *EntitlementUpdateInput) GetDescriptionOverride() *string {
 	if e == nil {
 		return nil
 	}
-	return e.Description
+	return e.DescriptionOverride
 }
 
 func (e *EntitlementUpdateInput) GetCustomApprovalMessageOverride() *string {

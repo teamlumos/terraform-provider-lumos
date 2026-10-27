@@ -365,7 +365,7 @@ func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.
 // CreateEntitlement - Create Entitlement
 // Create a requestable entitlement on the named app, so employees can request it from the AppStore.
 //
-// Setting `custom_approval_message_override` also needs permission to manage approval workflows. Returns 404 if `app_id` is unknown in your organization.
+// Setting `description_override` also needs permission to edit entitlements, and `custom_approval_message_override` permission to manage approval workflows. Returns 404 if `app_id` is unknown in your organization.
 func (s *Entitlements) CreateEntitlement(ctx context.Context, request shared.EntitlementCreateInput, opts ...operations.Option) (*operations.CreateEntitlementResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -880,9 +880,9 @@ func (s *Entitlements) GetEntitlement(ctx context.Context, request operations.Ge
 }
 
 // UpdateEntitlement - Update Entitlement
-// Update an entitlement's `label`, `description` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field returns 400.
+// Update an entitlement's `label`, `description_override` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field, including the read-only `description`, returns 400.
 //
-// Only entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description` you set is kept across syncs, on synced entitlements too. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.
+// Only entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.
 //
 // Returns 404 if the entitlement is unknown in the caller's organization.
 func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations.UpdateEntitlementRequest, opts ...operations.Option) (*operations.UpdateEntitlementResponse, error) {

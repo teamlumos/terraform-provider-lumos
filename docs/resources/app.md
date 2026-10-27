@@ -53,6 +53,7 @@ resource "lumos_app" "okta" {
 - `description_override` (String) The app's description in your organization, shown as `description`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
 - `label_override` (String) The app's display name in your organization, shown as `label`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
 - `logo_url_override` (String) URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
+- `post_approval_message` (String) Message sent to the requester when their access request is approved. Omitted or set to `null`, the message is removed.
 - `settings` (String, Sensitive) Non-secret configuration for the integration, as a JSON object — e.g. host, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only applies to integrations. Parsed as JSON.
 - `version` (String) Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations.
 - `website_url_override` (String) URL of the app's website in your organization, shown as `website_url`. Omitted or set to `null`, it's cleared, and `website_url` shows the app's default website, if it has one. At most 2,048 characters.
@@ -71,7 +72,6 @@ resource "lumos_app" "okta" {
 - `instance_id` (String) The app-instance identifier distinguishing multiple instances of the same app.
 - `label` (String) The display name of the app.
 - `logo_url` (String) URL of the app logo image.
-- `post_approval_message` (String) Custom message shown to the requester after their access request is approved. Omitted when none is set.
 - `status` (String) The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
 - `sync_status` (String) The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
 - `website_url` (String) URL of the app's official website.

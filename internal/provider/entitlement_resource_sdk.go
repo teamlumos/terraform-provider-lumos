@@ -54,6 +54,7 @@ func (r *EntitlementResourceModel) RefreshFromSharedEntitlementOutput(ctx contex
 			r.DeprovisioningWorkflow.ID = types.StringValue(resp.DeprovisioningWorkflow.ID)
 		}
 		r.Description = types.StringPointerValue(resp.Description)
+		r.DescriptionOverride = types.StringPointerValue(resp.DescriptionOverride)
 		r.EntitlementTypeLabel = types.StringValue(resp.EntitlementTypeLabel)
 		r.ID = types.StringValue(resp.ID)
 		r.Label = types.StringValue(resp.Label)
@@ -125,9 +126,23 @@ func (r *EntitlementResourceModel) ToSharedEntitlementCreateInput(ctx context.Co
 	var label string
 	label = r.Label.ValueString()
 
+	descriptionOverride := new(string)
+	if !r.DescriptionOverride.IsUnknown() && !r.DescriptionOverride.IsNull() {
+		*descriptionOverride = r.DescriptionOverride.ValueString()
+	} else {
+		descriptionOverride = nil
+	}
+	customApprovalMessageOverride := new(string)
+	if !r.CustomApprovalMessageOverride.IsUnknown() && !r.CustomApprovalMessageOverride.IsNull() {
+		*customApprovalMessageOverride = r.CustomApprovalMessageOverride.ValueString()
+	} else {
+		customApprovalMessageOverride = nil
+	}
 	out := shared.EntitlementCreateInput{
-		AppID: appID,
-		Label: label,
+		AppID:                         appID,
+		Label:                         label,
+		DescriptionOverride:           descriptionOverride,
+		CustomApprovalMessageOverride: customApprovalMessageOverride,
 	}
 
 	return &out, diags
@@ -142,11 +157,11 @@ func (r *EntitlementResourceModel) ToSharedEntitlementUpdateInput(ctx context.Co
 	} else {
 		label = nil
 	}
-	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() {
-		*description = r.Description.ValueString()
+	descriptionOverride := new(string)
+	if !r.DescriptionOverride.IsUnknown() && !r.DescriptionOverride.IsNull() {
+		*descriptionOverride = r.DescriptionOverride.ValueString()
 	} else {
-		description = nil
+		descriptionOverride = nil
 	}
 	customApprovalMessageOverride := new(string)
 	if !r.CustomApprovalMessageOverride.IsUnknown() && !r.CustomApprovalMessageOverride.IsNull() {
@@ -156,7 +171,7 @@ func (r *EntitlementResourceModel) ToSharedEntitlementUpdateInput(ctx context.Co
 	}
 	out := shared.EntitlementUpdateInput{
 		Label:                         label,
-		Description:                   description,
+		DescriptionOverride:           descriptionOverride,
 		CustomApprovalMessageOverride: customApprovalMessageOverride,
 	}
 
