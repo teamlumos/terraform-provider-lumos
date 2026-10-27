@@ -57,7 +57,7 @@ resource "lumos_app_appstore_settings" "okta" {
 ### Optional
 
 - `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Omitted or set to `null`, it's cleared to an empty set, which lets anyone in the organization request it.
-- `custom_intake_fields` (Attributes List) The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them. (see [below for nested schema](#nestedatt--custom_intake_fields))
+- `custom_intake_fields` (Attributes Set) The complete set of custom intake fields, matched by `reference_key`. Order in the config has no effect. Fields left out of the set are deleted. Omitted or set to `null`, it's cleared to an empty set, which deletes all of them. (see [below for nested schema](#nestedatt--custom_intake_fields))
 - `default_entitlement` (Attributes) Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared. (see [below for nested schema](#nestedatt--default_entitlement))
 - `redirect_url` (String) If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to `null`, the redirect is cleared.
 - `request_instructions` (String) Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
@@ -98,6 +98,7 @@ Optional:
 * **One per app.** Changing `app_id` replaces the resource: the old app is taken out of the App Store, keeping its other settings, and the new app's settings are written.
 * **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
 * **Time-based access options** are set and shown by their labels.
+* **Intake field order has no effect.** Lumos shows required fields first, then the rest in the order they were created, whatever order the config lists them in. Because `custom_intake_fields` is a set, a plan that edits a field shows the old field removed and the edited one added; Lumos updates the field in place, matched by `reference_key`.
 * **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists (`allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`.
 * **Settings Lumos can't clear are required.** `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always have a value, and their starting values differ from app to app, so the config must set them.
 * **Removing the requester groups lets anyone request the app.** An empty `allowed_requester_group_uuids` means anyone in the organization can request it, and leaving the attribute out empties it. Check plans that show `allowed_requester_group_uuids` going to `[]`.
