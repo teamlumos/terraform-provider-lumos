@@ -18,22 +18,28 @@ func TestAppUpdateBody(t *testing.T) {
 		want        string
 	}{
 		{
-			name:        "sends null for a custom app's unset overrides",
+			name:        "sends null for a custom app's unset overrides and message",
 			operationID: "v1UpdateApp",
 			body:        `{"app_class_id":"custom","label_override":"Wiki","category_override":"Developers","description_override":"Docs"}`,
-			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":null,"website_url_override":null}`,
+			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":null,"website_url_override":null,"post_approval_message":null}`,
 		},
 		{
 			name:        "keeps a custom app's configured overrides",
 			operationID: "v1UpdateApp",
 			body:        `{"app_class_id":"custom","label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":"https://example.com/logo.png","website_url_override":"https://example.com"}`,
-			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":"https://example.com/logo.png","website_url_override":"https://example.com"}`,
+			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":"https://example.com/logo.png","website_url_override":"https://example.com","post_approval_message":null}`,
 		},
 		{
 			name:        "sends a connected app's credentials and configured overrides, and null for the rest",
 			operationID: "v1UpdateApp",
 			body:        `{"app_class_id":"slack.com","auth":{"token":"x"},"label_override":"Slack"}`,
-			want:        `{"auth":{"token":"x"},"label_override":"Slack","description_override":null,"category_override":null,"logo_url_override":null,"website_url_override":null}`,
+			want:        `{"auth":{"token":"x"},"label_override":"Slack","description_override":null,"category_override":null,"logo_url_override":null,"website_url_override":null,"post_approval_message":null}`,
+		},
+		{
+			name:        "keeps a configured post-approval message",
+			operationID: "v1UpdateApp",
+			body:        `{"app_class_id":"slack.com","auth":{"token":"x"},"label_override":"Slack","post_approval_message":"Welcome."}`,
+			want:        `{"auth":{"token":"x"},"label_override":"Slack","description_override":null,"category_override":null,"logo_url_override":null,"website_url_override":null,"post_approval_message":"Welcome."}`,
 		},
 		{
 			name:        "leaves other operations alone",
