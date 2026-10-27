@@ -91,7 +91,7 @@ type AppStoreSettingsPatchInput struct {
 	RedirectURL *string `json:"redirect_url,omitzero"`
 	// Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
 	DefaultEntitlement *EntitlementRefInput `json:"default_entitlement,omitzero"`
-	// The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them.
+	// The complete set of custom intake fields, matched by `reference_key`. Order in the config has no effect. Fields left out of the set are deleted. Omitted or set to `null`, it's cleared to an empty set, which deletes all of them.
 	CustomIntakeFields []CustomIntakeFieldPatchInput `json:"custom_intake_fields,omitzero"`
 }
 

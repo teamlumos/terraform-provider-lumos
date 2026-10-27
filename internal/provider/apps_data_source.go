@@ -88,7 +88,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 									Computed:    true,
 									Description: `Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.`,
 								},
-								"custom_intake_fields": schema.ListNestedAttribute{
+								"custom_intake_fields": schema.SetNestedAttribute{
 									Computed: true,
 									NestedObject: schema.NestedAttributeObject{
 										Attributes: map[string]schema.Attribute{

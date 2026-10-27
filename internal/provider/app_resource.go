@@ -141,10 +141,10 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						},
 						Description: `Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.`,
 					},
-					"custom_intake_fields": schema.ListNestedAttribute{
+					"custom_intake_fields": schema.SetNestedAttribute{
 						Computed: true,
-						PlanModifiers: []planmodifier.List{
-							speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
+						PlanModifiers: []planmodifier.Set{
+							speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 						},
 						NestedObject: schema.NestedAttributeObject{
 							PlanModifiers: []planmodifier.Object{
