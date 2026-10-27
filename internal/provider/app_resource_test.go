@@ -685,7 +685,7 @@ resource "lumos_app_appstore_settings" "slack" {
   request_instructions                = ""
 }
 `,
-		"custom_intake_fields[0].description": `
+		"description": `
 resource "lumos_app_appstore_settings" "slack" {
   app_id                              = "app1"
   in_app_store                        = true
