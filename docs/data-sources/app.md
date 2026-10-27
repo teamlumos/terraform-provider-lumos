@@ -46,6 +46,7 @@ output "app_in_app_store" {
 - `appstore_settings` (Attributes) AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object. (see [below for nested schema](#nestedatt--appstore_settings))
 - `category` (String) The category this app belongs to.
 - `category_override` (String) The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category.
+- `custom_attributes` (Attributes Map) Custom attributes configured on this app, keyed by the attribute's name. (see [below for nested schema](#nestedatt--custom_attributes))
 - `default_deprovisioning_workflow` (Attributes) The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow))
 - `default_provisioning_workflow` (Attributes) The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_provisioning_workflow))
 - `description` (String) A description of the app.
@@ -115,6 +116,38 @@ Read-Only:
 
 - `default` (String) Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
 - `options` (List of String) Labels of the time-based access options offered for this app. An empty list means the app uses the domain-level defaults.
+
+
+
+<a id="nestedatt--custom_attributes"></a>
+### Nested Schema for `custom_attributes`
+
+Read-Only:
+
+- `type` (String) The type of custom attribute. Only text and user options are available today
+- `value` (Attributes) The value of the attribute for an individual Order (see [below for nested schema](#nestedatt--custom_attributes--value))
+
+<a id="nestedatt--custom_attributes--value"></a>
+### Nested Schema for `custom_attributes.value`
+
+Read-Only:
+
+- `array_of_user` (Attributes List) (see [below for nested schema](#nestedatt--custom_attributes--value--array_of_user))
+- `date_time` (String)
+- `integer` (Number)
+- `str` (String)
+
+<a id="nestedatt--custom_attributes--value--array_of_user"></a>
+### Nested Schema for `custom_attributes.value.array_of_user`
+
+Read-Only:
+
+- `email` (String) The email of this user.
+- `family_name` (String) The family name of this user.
+- `given_name` (String) The given name of this user.
+- `id` (String) The ID of this user.
+- `status` (String) The status of this user.
+
 
 
 
