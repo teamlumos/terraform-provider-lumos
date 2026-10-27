@@ -310,6 +310,12 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsPatchInput","AppStoreSettingsResponse"]["properties"]["allowed_requester_group_uuids"]["anyOf"][?@.type=="array"]
     update:
       format: set
+  # The API reads intake fields back required-first, then in creation order,
+  # whatever order they were written in, so a list would plan a reorder after
+  # every apply.
+  - target: $["components"]["schemas"]["AppStoreSettingsPatchInput","AppStoreSettingsResponse"]["properties"]["custom_intake_fields"]["anyOf"][?@.type=="array"]
+    update:
+      format: set
 
   # Every setting follows the config, so the provider never fills one in
   # from what the API holds. A setting the API can't clear always has a
@@ -342,9 +348,8 @@ actions:
     update:
       x-speakeasy-plan-modifiers: EmptyWhenNull
   # The API reads an intake field's omitted description or dropdown options
-  # back as null. Left computed, a plan fills an omitted one from the field
-  # that had the same position before, so inserting a field would send its
-  # neighbour's description.
+  # back as null, so omitting one plans null rather than a value from another
+  # field.
   - target: $["components"]["schemas"]["CustomIntakeField"]["properties"]["description","dropdown_options"]
     update:
       x-speakeasy-param-computed: false
@@ -380,7 +385,7 @@ actions:
       default_entitlement:
         description: Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
       custom_intake_fields:
-        description: The complete list of custom intake fields, matched by `reference_key`. Fields left out of the list are deleted. Omitted or set to `null`, it's cleared to an empty list, which deletes all of them.
+        description: The complete set of custom intake fields, matched by `reference_key`. Order in the config has no effect. Fields left out of the set are deleted. Omitted or set to `null`, it's cleared to an empty set, which deletes all of them.
   - target: $["components"]["schemas"]["TimeBasedAccessPatchInput"]["properties"]
     update:
       options:
