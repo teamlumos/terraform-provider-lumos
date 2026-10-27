@@ -43,6 +43,7 @@ type AppAppstoreSettingsResource struct {
 
 // AppAppstoreSettingsResourceModel describes the resource data model.
 type AppAppstoreSettingsResourceModel struct {
+	Admins                           []tfTypes.AdminAssignee                  `tfsdk:"admins"`
 	AllowedRequesterGroupUuids       []types.String                           `tfsdk:"allowed_requester_group_uuids"`
 	AllowMultiplePermissionSelection types.Bool                               `tfsdk:"allow_multiple_permission_selection"`
 	AllowPermissionSelection         types.Bool                               `tfsdk:"allow_permission_selection"`
@@ -63,8 +64,41 @@ func (r *AppAppstoreSettingsResource) Metadata(ctx context.Context, req resource
 
 func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "An app's App Store settings: whether it's listed, who can request it, and what the request form asks. Keyed by the app's ID.",
+		MarkdownDescription: "An app's App Store settings: whether it's listed, who administers it, who can request it, and what the request form asks. Keyed by the app's ID.",
 		Attributes: map[string]schema.Attribute{
+			"admins": schema.SetNestedAttribute{
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.Set{
+					custom_setplanmodifier.EmptyWhenNull(),
+				},
+				NestedObject: schema.NestedAttributeObject{
+					Validators: []validator.Object{
+						speakeasy_objectvalidators.NotNull(),
+					},
+					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Optional:    true,
+							Description: `The UUID of the user or group to make an admin. Not Null`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+							},
+						},
+						"type": schema.StringAttribute{
+							Optional:    true,
+							Description: `Whether ` + "`" + `id` + "`" + ` names a ` + "`" + `user` + "`" + ` or a ` + "`" + `group` + "`" + `. Not Null; must be one of ["user", "group"]`,
+							Validators: []validator.String{
+								speakeasy_stringvalidators.NotNull(),
+								stringvalidator.OneOf(
+									"user",
+									"group",
+								),
+							},
+						},
+					},
+				},
+				Description: `The users and groups that administer this app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared to an empty set, which removes every admin. Lumos lists an app only while it has an admin, so with ` + "`" + `in_app_store = true` + "`" + ` this must name at least one.`,
+			},
 			"allow_multiple_permission_selection": schema.BoolAttribute{
 				Required:    true,
 				Description: `When true, requesters may select more than one permission per request.`,
@@ -184,7 +218,7 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 			},
 			"in_app_store": schema.BoolAttribute{
 				Required:    true,
-				Description: `Whether this app is listed in the App Store catalog.`,
+				Description: `Whether this app is listed in the App Store catalog. A listed app needs at least one admin in ` + "`" + `admins` + "`" + `.`,
 			},
 			"redirect_url": schema.StringAttribute{
 				Optional:    true,
@@ -271,13 +305,13 @@ func (r *AppAppstoreSettingsResource) Create(ctx context.Context, req resource.C
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan)
 
-	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
+	request, requestDiags := data.ToOperationsV1SetAppAdminsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Apps.V1PatchAppStoreSettings(ctx, *request)
+	res, err := r.client.Apps.V1SetAppAdmins(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", redactSensitiveValues(ctx, err.Error()))
 		if res != nil && res.RawResponse != nil {
@@ -300,11 +334,55 @@ func (r *AppAppstoreSettingsResource) Create(ctx context.Context, req resource.C
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AppStoreSettingsResponse != nil) {
+	if !(res.AppAdminsResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreSettingsResponse(ctx, res.AppStoreSettingsResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppAdminsResponse(ctx, res.AppAdminsResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Apps.V1PatchAppStoreSettings(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", redactSensitiveValues(ctx, err.Error()))
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode == 409 {
+		resp.Diagnostics.AddError(
+			"Resource Already Exists",
+			"When creating this resource, the API indicated that this resource already exists. You can bring the existing resource under management using Terraform import functionality or retry with a unique configuration.",
+		)
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AppStoreSettingsResponse != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreSettingsResponse(ctx, res1.AppStoreSettingsResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -375,6 +453,41 @@ func (r *AppAppstoreSettingsResource) Read(ctx context.Context, req resource.Rea
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	request1, request1Diags := data.ToOperationsV1GetAppAdminsRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Apps.V1GetAppAdmins(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", redactSensitiveValues(ctx, err.Error()))
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode == 404 {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AppAdminsResponse != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppAdminsResponse(ctx, res1.AppAdminsResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -396,13 +509,13 @@ func (r *AppAppstoreSettingsResource) Update(ctx context.Context, req resource.U
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan, req.State)
 
-	request, requestDiags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
+	request, requestDiags := data.ToOperationsV1SetAppAdminsRequest(ctx)
 	resp.Diagnostics.Append(requestDiags...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	res, err := r.client.Apps.V1PatchAppStoreSettings(ctx, *request)
+	res, err := r.client.Apps.V1SetAppAdmins(ctx, *request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", redactSensitiveValues(ctx, err.Error()))
 		if res != nil && res.RawResponse != nil {
@@ -418,11 +531,48 @@ func (r *AppAppstoreSettingsResource) Update(ctx context.Context, req resource.U
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AppStoreSettingsResponse != nil) {
+	if !(res.AppAdminsResponse != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreSettingsResponse(ctx, res.AppStoreSettingsResponse)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAppAdminsResponse(ctx, res.AppAdminsResponse)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	request1, request1Diags := data.ToOperationsV1PatchAppStoreSettingsRequest(ctx)
+	resp.Diagnostics.Append(request1Diags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res1, err := r.client.Apps.V1PatchAppStoreSettings(ctx, *request1)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", redactSensitiveValues(ctx, err.Error()))
+		if res1 != nil && res1.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res1.RawResponse))
+		}
+		return
+	}
+	if res1 == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res1))
+		return
+	}
+	if res1.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res1.StatusCode), debugResponse(res1.RawResponse))
+		return
+	}
+	if !(res1.AppStoreSettingsResponse != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res1.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreSettingsResponse(ctx, res1.AppStoreSettingsResponse)...)
 
 	if resp.Diagnostics.HasError() {
 		return

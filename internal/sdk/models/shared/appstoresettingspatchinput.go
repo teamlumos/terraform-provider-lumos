@@ -71,7 +71,7 @@ func (t *TimeBasedAccessPatchInput) GetDefault() *string {
 }
 
 type AppStoreSettingsPatchInput struct {
-	// Whether this app is listed in the App Store catalog.
+	// Whether this app is listed in the App Store catalog. A listed app needs at least one admin in `admins`.
 	InAppStore bool `json:"in_app_store"`
 	// Visibility within the catalog.
 	CatalogVisibility AppStoreSettingsPatchInputCatalogVisibility `json:"catalog_visibility"`

@@ -266,6 +266,12 @@ func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context) (*shared.
 	} else {
 		websiteURLOverride = nil
 	}
+	postApprovalMessage := new(string)
+	if !r.PostApprovalMessage.IsUnknown() && !r.PostApprovalMessage.IsNull() {
+		*postApprovalMessage = r.PostApprovalMessage.ValueString()
+	} else {
+		postApprovalMessage = nil
+	}
 	out := shared.AppCreateInput{
 		AppClassID:          appClassID,
 		Auth:                auth,
@@ -276,6 +282,7 @@ func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context) (*shared.
 		CategoryOverride:    categoryOverride,
 		LogoURLOverride:     logoURLOverride,
 		WebsiteURLOverride:  websiteURLOverride,
+		PostApprovalMessage: postApprovalMessage,
 	}
 
 	return &out, diags
@@ -334,6 +341,12 @@ func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context) (*shared.
 	} else {
 		websiteURLOverride = nil
 	}
+	postApprovalMessage := new(string)
+	if !r.PostApprovalMessage.IsUnknown() && !r.PostApprovalMessage.IsNull() {
+		*postApprovalMessage = r.PostApprovalMessage.ValueString()
+	} else {
+		postApprovalMessage = nil
+	}
 	out := shared.AppUpdateInput{
 		AppClassID:          appClassID,
 		Auth:                auth,
@@ -344,6 +357,7 @@ func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context) (*shared.
 		CategoryOverride:    categoryOverride,
 		LogoURLOverride:     logoURLOverride,
 		WebsiteURLOverride:  websiteURLOverride,
+		PostApprovalMessage: postApprovalMessage,
 	}
 
 	return &out, diags

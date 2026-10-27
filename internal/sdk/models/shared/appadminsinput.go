@@ -2,14 +2,29 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 type AppAdminsInput struct {
-	// The complete set of users and groups that administer this app. It replaces the current admins; an empty list removes them all.
-	Admins []AdminAssigneeInput `json:"admins"`
+	// The users and groups that administer this app. Omitted or set to `null`, it's cleared to an empty set, which removes every admin. Lumos lists an app only while it has an admin, so with `in_app_store = true` this must name at least one.
+	Admins []AdminAssigneeInput `json:"admins,omitzero"`
+}
+
+func (a AppAdminsInput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(a, "", false)
+}
+
+func (a *AppAdminsInput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &a, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *AppAdminsInput) GetAdmins() []AdminAssigneeInput {
 	if a == nil {
-		return []AdminAssigneeInput{}
+		return nil
 	}
 	return a.Admins
 }
