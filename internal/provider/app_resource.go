@@ -362,7 +362,8 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:    true,
 				Description: `URL of the app's logo in your organization, shown as ` + "`" + `logo_url` + "`" + `. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `logo_url` + "`" + ` shows the app's default logo. At most 2,048 characters.`,
 				Validators: []validator.String{
-					stringvalidator.UTF8LengthBetween(1, 2048),
+					stringvalidator.UTF8LengthAtMost(2048),
+					custom_stringvalidators.LeaveOutToClear(),
 				},
 			},
 			"post_approval_message": schema.StringAttribute{
@@ -407,7 +408,8 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:    true,
 				Description: `URL of the app's website in your organization, shown as ` + "`" + `website_url` + "`" + `. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `website_url` + "`" + ` shows the app's default website, if it has one. At most 2,048 characters.`,
 				Validators: []validator.String{
-					stringvalidator.UTF8LengthBetween(1, 2048),
+					stringvalidator.UTF8LengthAtMost(2048),
+					custom_stringvalidators.LeaveOutToClear(),
 				},
 			},
 		},
