@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -140,6 +141,9 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 				continue
 			}
+			if k == "custom_intake_fields" {
+				v = requiredFirst(v)
+			}
 			f.settings[k] = nilIfEmpty(v)
 		}
 		json.NewEncoder(w).Encode(f.settings)
@@ -209,6 +213,28 @@ func withOptionObjects(v any) any {
 		tba["options"] = options
 	}
 	return tba
+}
+
+// requiredFirst reorders written intake fields required-first, since the API
+// reads them back that way whatever order they were written in.
+func requiredFirst(v any) any {
+	fields, ok := v.([]any)
+	if !ok {
+		return v
+	}
+	sorted := slices.Clone(fields)
+	slices.SortStableFunc(sorted, func(a, b any) int {
+		aRequired, _ := a.(map[string]any)["is_required"].(bool)
+		bRequired, _ := b.(map[string]any)["is_required"].(bool)
+		switch {
+		case aRequired == bRequired:
+			return 0
+		case aRequired:
+			return -1
+		}
+		return 1
+	})
+	return sorted
 }
 
 // nilIfEmpty stores an empty list as null, since the API reads one back that
@@ -310,11 +336,12 @@ import {
 	}
 }
 
-// TestAppStoreSettingsInsertIntakeField adds an intake field without a
-// description in front of one with a description. The new field must be sent
-// without one, not with the description of the field that had its position
-// before. It uses a fake API so the check covers only the request the
-// provider builds.
+// TestAppStoreSettingsInsertIntakeField adds an optional intake field without
+// a description in front of a required one with a description, then edits the
+// new field's prompt. The new field must be sent without a description, the
+// API reading the fields back required-first must not plan a change, and the
+// edit must change only the intake fields. It uses a fake API so the check
+// covers only what the provider plans and sends.
 func TestAppStoreSettingsInsertIntakeField(t *testing.T) {
 	api := newFakeAPI(t)
 	server := httptest.NewServer(api)
@@ -327,12 +354,14 @@ func TestAppStoreSettingsInsertIntakeField(t *testing.T) {
     is_required   = true
     description   = "Name the project."
   }`
-	const ticket = `{
+	ticket := func(prompt string) string {
+		return fmt.Sprintf(`{
     reference_key = "ticket"
     field_type    = "text"
-    prompt        = "Ticket link"
+    prompt        = %q
     is_required   = false
-  }`
+  }`, prompt)
+	}
 	settings := func(fields ...string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "slack" {
@@ -346,16 +375,34 @@ resource "lumos_app_appstore_settings" "slack" {
 `, strings.Join(fields, ", "))
 	}
 
+	const addr = "lumos_app_appstore_settings.slack"
+
+	// Each step's post-apply plan must be empty, so the fields read back in
+	// the API's order must not plan a change.
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{Config: settings(why)},
 			{
-				Config: settings(ticket, why),
+				Config: settings(ticket("Ticket link"), why),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.slack", "custom_intake_fields.0.description"),
-					resource.TestCheckResourceAttr("lumos_app_appstore_settings.slack", "custom_intake_fields.1.description", "Name the project."),
+					resource.TestCheckTypeSetElemNestedAttrs(addr, "custom_intake_fields.*", map[string]string{
+						"reference_key": "ticket",
+						"prompt":        "Ticket link",
+					}),
+					resource.TestCheckTypeSetElemNestedAttrs(addr, "custom_intake_fields.*", map[string]string{
+						"reference_key": "why",
+						"description":   "Name the project.",
+					}),
 				),
+			},
+			{
+				Config: settings(ticket("Link to the ticket"), why),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "custom_intake_fields"),
+					},
+				},
 			},
 		},
 	})
@@ -369,8 +416,11 @@ resource "lumos_app_appstore_settings" "slack" {
 	if len(fields) != 2 {
 		t.Fatalf("update sent custom_intake_fields %v, want two fields", api.patches[1]["custom_intake_fields"])
 	}
-	if got := fields[0].(map[string]any)["description"]; got != nil {
-		t.Errorf("update sent the new field with description %v, want none", got)
+	for _, f := range fields {
+		field := f.(map[string]any)
+		if field["reference_key"] == "ticket" && field["description"] != nil {
+			t.Errorf("update sent the new field with description %v, want none", field["description"])
+		}
 	}
 }
 
@@ -489,7 +539,7 @@ import {
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionUpdate),
 						plancheck.ExpectKnownValue(addr, tfjsonpath.New("allowed_requester_group_uuids"), knownvalue.SetExact([]knownvalue.Check{})),
-						plancheck.ExpectKnownValue(addr, tfjsonpath.New("custom_intake_fields"), knownvalue.ListExact([]knownvalue.Check{})),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("custom_intake_fields"), knownvalue.SetExact([]knownvalue.Check{})),
 						plancheck.ExpectKnownValue(addr, tfjsonpath.New("time_based_access"), knownvalue.ObjectExact(map[string]knownvalue.Check{
 							"options": knownvalue.ListExact([]knownvalue.Check{}),
 							"default": knownvalue.Null(),
