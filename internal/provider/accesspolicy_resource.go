@@ -20,6 +20,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	custom_boolvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/boolvalidators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
@@ -137,6 +138,9 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				Optional:    true,
 				Default:     booldefault.StaticBool(false),
 				Description: `Whether the policy applies to everyone in the organization. Set it to ` + "`" + `true` + "`" + ` instead of setting ` + "`" + `access_condition` + "`" + `. Default: false`,
+				Validators: []validator.Bool{
+					custom_boolvalidators.EveryoneOrCondition(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Required:    true,

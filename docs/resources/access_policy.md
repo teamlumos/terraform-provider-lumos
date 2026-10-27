@@ -77,7 +77,7 @@ Optional:
 
 ## Behavior
 
-* **Who the policy applies to** is either everyone (`is_everyone_condition = true`) or the identities matching `access_condition`, never both. Write `access_condition` with `jsonencode`, giving every attribute and value as `{ label, value }` as in the example: that's the form Lumos stores and reads back, so any other form shows a change on every plan.
+* **Who the policy applies to** is either everyone (`is_everyone_condition = true`) or the identities matching `access_condition`: the plan fails when a config sets both or neither. Write `access_condition` with `jsonencode`, giving every attribute and value as `{ label, value }` as in the example: that's the form Lumos stores and reads back, so any other form shows a change on every plan.
 * **Grants:** each entry in `apps` grants the app itself when it has no `entitlements`, or the listed entitlements otherwise. Order doesn't matter.
 * **`status` and `is_enabled` are required.** They always have a value, and a policy has no unset state to clear them to. A published policy can't go back to `draft`, a draft can't be enabled, and two published policies can't share a condition; Lumos refuses each of these and the apply fails with its error.
 * **Editing a published policy publishes the change** in the same apply.
