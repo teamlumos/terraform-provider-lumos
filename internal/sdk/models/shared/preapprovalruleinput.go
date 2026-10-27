@@ -10,35 +10,28 @@ import (
 // is the same as `request_has_entitlements: false`, which covers only a request for the app
 // itself.
 type PreApprovalRuleInput struct {
-	// Justification shown to requesters and reviewers for why this rule exists.
+	// Why the rule exists, shown to requesters and reviewers.
 	Justification string `json:"justification"`
-	// Who this rule pre-approves, and for how long they can have access.
-	//
-	// A condition is either a single check or several checks combined. A single check looks like `{"attribute": {"label": "<name>", "value": "<path>"}, "<operator>": <value>}` and uses exactly one operator. To require every check to match, wrap them in `{"and": [...]}`. To require at least one to match, wrap them in `{"or": [...]}`. To match the opposite of a check, wrap it in `{"not": {...}}`.
-	//
-	// Only the attributes below are accepted, and each one accepts only the operators listed for it. Any other attribute or operator returns 400.
-	//
-	// - `identity.groups[*].external_id` accepts `contains_any`. The value is a list of `{"label": "<group name>", "value": "<group ID>"}`, where the group ID is the ID the group has in the app it comes from. The check matches a person who belongs to any of the listed groups.
-	// - `identity.email`, `identity.team`, `identity.title`, and `identity.status` accept `equals`, `!=`, `in`, `exists`, `contains`, `starts_with`, and `ends_with`.
-	// - `identity.start_date` and `identity.end_date` accept `equals`, `!=`, `>`, `>=`, `<`, `<=`, `in`, and `exists`.
-	// - `identity.source_app.id` accepts `equals`, `!=`, `in`, and `exists`.
-	// - `identity.custom_attributes["<Key>"]` checks a custom attribute your organization has defined. For an attribute whose value is a person, use `identity.custom_attributes["<Key>"].id`. For an attribute whose value is a group, use `identity.custom_attributes["<Key>"].external_id`. It accepts the same operators as the attributes above that have the same value type. To match any of several values, use `in` with a list of `{"label": "<display name>", "value": "<value>"}`.
-	// - `webhook.responses["<webhook ID>"]` checks the response of one of your organization's pre-approval webhooks, which is called when the request is evaluated. It accepts only `equals` with the value `"PREAPPROVED"`, and can't be inside a `not`. The check matches when the webhook pre-approves the request.
-	// - `identity.oncall["<schedule ID>"].on_call` checks whether the person is on call for an on-call schedule when the request is evaluated. The schedule ID is the schedule's entitlement ID. It accepts only `equals` with the value `true`, and can't be inside a `not`.
-	// - `access_request.access_length` accepts `equals`, `!=`, `>`, `>=`, `<`, `<=`, and `in`. Values are in seconds, for example `{"label": "<display name>", "value": <seconds>}`. To match unlimited access, use the value `2147483647` (2**31 - 1). Leaving this attribute out allows any duration, unlimited included.
-	//
-	// Required. Every rule must limit who it applies to, so leaving `condition` out returns 400.
-	Condition map[string]any `json:"condition,omitzero"`
-	// IDs of the entitlements this rule covers. The rule does not cover a request for any other entitlement. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
+	// Who the rule pre-approves, and for how long they can have access, as a Lumos condition written with `jsonencode`. Give every attribute and value as `{ label, value }`, the form Lumos reads back.
+	Condition any `json:"condition"`
+	// IDs of the entitlements the rule covers, in lowercase. The rule covers no other entitlement, and not a request for the app itself. Set at most one of `request_includes_entitlements`, `request_does_not_include_entitlements` and `request_has_entitlements`.
 	RequestIncludesEntitlements []string `json:"request_includes_entitlements,omitzero"`
-	// IDs of the entitlements this rule does not cover. The rule covers every other entitlement, and also a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
+	// IDs of the entitlements the rule doesn't cover, in lowercase. The rule covers every other entitlement and a request for the app itself.
 	RequestDoesNotIncludeEntitlements []string `json:"request_does_not_include_entitlements,omitzero"`
-	// `true` covers a request for any entitlement of this app, so you don't need to keep a list of IDs up to date. `false` covers only a request for the app itself with no entitlement attached. Exactly one of `request_includes_entitlements`, `request_does_not_include_entitlements`, and `request_has_entitlements` decides which requested entitlements this rule pre-approves. Responses include only that field. In requests, leave the other two out or set them to `null`. When a request asks for several entitlements, the rule checks each one separately.
+	// `true` covers a request for any of the app's entitlements. `false` covers only a request for the app itself, and is what a rule with none of the three entitlements fields set gets.
 	RequestHasEntitlements *bool `json:"request_has_entitlements,omitzero"`
 }
 
 func (p PreApprovalRuleInput) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(p, "", false)
+	jsonBytes, err := utils.MarshalJSON(p, "", false)
+	if err != nil {
+		return nil, err
+	}
+	out, err := utils.RunJQBytes(jsonBytes, "if . == null then . else with_entries(select(.value != [])) end")
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (p *PreApprovalRuleInput) UnmarshalJSON(data []byte) error {
@@ -55,7 +48,7 @@ func (p *PreApprovalRuleInput) GetJustification() string {
 	return p.Justification
 }
 
-func (p *PreApprovalRuleInput) GetCondition() map[string]any {
+func (p *PreApprovalRuleInput) GetCondition() any {
 	if p == nil {
 		return nil
 	}

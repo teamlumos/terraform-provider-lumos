@@ -135,6 +135,7 @@ func (p *LumosProvider) Resources(ctx context.Context) []func() resource.Resourc
 		NewEntitlementAppstoreSettingsResource,
 		NewEntitlementDeprovisioningWorkflowResource,
 		NewEntitlementProvisioningWorkflowResource,
+		NewPreApprovalRuleResource,
 		NewWorkflowResource,
 	}
 }
@@ -157,6 +158,8 @@ func (p *LumosProvider) DataSources(ctx context.Context) []func() datasource.Dat
 		NewInlineWebhooksDataSource,
 		NewIntegrationConnectionSchemaDataSource,
 		NewIntegrationsDataSource,
+		NewPreApprovalRuleDataSource,
+		NewPreApprovalRulesDataSource,
 		NewUserDataSource,
 		NewUserRolesDataSource,
 		NewUsersDataSource,

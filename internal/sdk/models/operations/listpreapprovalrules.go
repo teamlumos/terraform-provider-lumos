@@ -9,7 +9,7 @@ import (
 )
 
 type ListPreApprovalRulesRequest struct {
-	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
 	PageToken *string `queryParam:"style=form,explode=true,name=page_token"`
 	// Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected.
@@ -27,11 +27,11 @@ func (l *ListPreApprovalRulesRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (l *ListPreApprovalRulesRequest) GetAppUUID() string {
+func (l *ListPreApprovalRulesRequest) GetAppID() string {
 	if l == nil {
 		return ""
 	}
-	return l.AppUUID
+	return l.AppID
 }
 
 func (l *ListPreApprovalRulesRequest) GetPageToken() *string {
@@ -59,6 +59,8 @@ type ListPreApprovalRulesResponse struct {
 	PreApprovalRuleListOutput *shared.PreApprovalRuleListOutput
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
+
+	Next func() (*ListPreApprovalRulesResponse, error)
 }
 
 func (l ListPreApprovalRulesResponse) MarshalJSON() ([]byte, error) {
