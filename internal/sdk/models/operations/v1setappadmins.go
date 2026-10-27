@@ -10,15 +10,15 @@ import (
 
 type V1SetAppAdminsRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID        string                `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID          string                `pathParam:"style=simple,explode=false,name=app_uuid"`
 	AppAdminsInput shared.AppAdminsInput `request:"mediaType=application/json"`
 }
 
-func (v *V1SetAppAdminsRequest) GetAppUUID() string {
+func (v *V1SetAppAdminsRequest) GetAppID() string {
 	if v == nil {
 		return ""
 	}
-	return v.AppUUID
+	return v.AppID
 }
 
 func (v *V1SetAppAdminsRequest) GetAppAdminsInput() shared.AppAdminsInput {

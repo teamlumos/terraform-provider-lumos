@@ -8,7 +8,7 @@ type EntitlementUpdateInput struct {
 	Label *string `json:"label,omitzero"`
 	// Shown to requesters. `null` removes the description you set; the integration's own description returns on its next sync.
 	Description *string `json:"description,omitzero"`
-	// Message sent when a request is approved. `null` inherits the app's message.
+	// This entitlement's own approval message, overriding the app's. Null means it inherits the app's message.
 	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitzero"`
 }
 

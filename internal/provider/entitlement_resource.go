@@ -130,7 +130,7 @@ func (r *EntitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `Message sent when a request is approved. ` + "`" + `null` + "`" + ` inherits the app's message.`,
+				Description: `This entitlement's own approval message, overriding the app's. Null means it inherits the app's message.`,
 			},
 			"deprovisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,

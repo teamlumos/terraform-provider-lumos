@@ -435,11 +435,11 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				},
 			},
 			"post_approval_message": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				Optional:    true,
+				Description: `Message sent to the requester when their access request is approved. Omitted or set to ` + "`" + `null` + "`" + `, the message is removed.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthBetween(1, 511),
 				},
-				Description: `Custom message shown to the requester after their access request is approved. Omitted when none is set.`,
 			},
 			"settings": schema.StringAttribute{
 				CustomType:  jsontypes.NormalizedType{},

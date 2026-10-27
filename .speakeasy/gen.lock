@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: b64e5b8616fcb7c341b09ea3fd2ccc81
+  docChecksum: 8f04161620e4ebc9579431ed10e144f6
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -220,6 +220,7 @@ trackedFiles:
   internal/provider/types/access_policy_app_input.go: {}
   internal/provider/types/access_policy_output.go: {}
   internal/provider/types/account.go: {}
+  internal/provider/types/admin_assignee.go: {}
   internal/provider/types/app_base.go: {}
   internal/provider/types/app_category.go: {}
   internal/provider/types/app_response.go: {}

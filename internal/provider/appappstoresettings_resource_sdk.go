@@ -11,6 +11,25 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
 
+func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppAdminsResponse(ctx context.Context, resp *shared.AppAdminsResponse) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	if resp != nil {
+		r.Admins = []tfTypes.AdminAssignee{}
+
+		for _, adminsItem := range resp.Admins {
+			var admins tfTypes.AdminAssignee
+
+			admins.ID = types.StringValue(adminsItem.ID)
+			admins.Type = types.StringValue(string(adminsItem.Type))
+
+			r.Admins = append(r.Admins, admins)
+		}
+	}
+
+	return diags
+}
+
 func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppStoreSettingsResponse(ctx context.Context, resp *shared.AppStoreSettingsResponse) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -78,6 +97,19 @@ func (r *AppAppstoreSettingsResourceModel) RefreshFromSharedAppStoreSettingsResp
 	return diags
 }
 
+func (r *AppAppstoreSettingsResourceModel) ToOperationsV1GetAppAdminsRequest(ctx context.Context) (*operations.V1GetAppAdminsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var appID string
+	appID = r.AppID.ValueString()
+
+	out := operations.V1GetAppAdminsRequest{
+		AppID: appID,
+	}
+
+	return &out, diags
+}
+
 func (r *AppAppstoreSettingsResourceModel) ToOperationsV1GetAppStoreSettingsRequest(ctx context.Context) (*operations.V1GetAppStoreSettingsRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
@@ -120,6 +152,48 @@ func (r *AppAppstoreSettingsResourceModel) ToOperationsV1RemoveAppFromAppStoreRe
 
 	out := operations.V1RemoveAppFromAppStoreRequest{
 		AppID: appID,
+	}
+
+	return &out, diags
+}
+
+func (r *AppAppstoreSettingsResourceModel) ToOperationsV1SetAppAdminsRequest(ctx context.Context) (*operations.V1SetAppAdminsRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var appID string
+	appID = r.AppID.ValueString()
+
+	appAdminsInput, appAdminsInputDiags := r.ToSharedAppAdminsInput(ctx)
+	diags.Append(appAdminsInputDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	out := operations.V1SetAppAdminsRequest{
+		AppID:          appID,
+		AppAdminsInput: *appAdminsInput,
+	}
+
+	return &out, diags
+}
+
+func (r *AppAppstoreSettingsResourceModel) ToSharedAppAdminsInput(ctx context.Context) (*shared.AppAdminsInput, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	admins := make([]shared.AdminAssigneeInput, 0, len(r.Admins))
+	for adminsIndex := range r.Admins {
+		var id string
+		id = r.Admins[adminsIndex].ID.ValueString()
+
+		typeVar := shared.AdminAssigneeInputType(r.Admins[adminsIndex].Type.ValueString())
+		admins = append(admins, shared.AdminAssigneeInput{
+			ID:   id,
+			Type: typeVar,
+		})
+	}
+	out := shared.AppAdminsInput{
+		Admins: admins,
 	}
 
 	return &out, diags

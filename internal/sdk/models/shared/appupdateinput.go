@@ -27,6 +27,8 @@ type AppUpdateInput struct {
 	WebsiteURLOverride *string `json:"website_url_override,omitzero"`
 	// Instructions shown to a requester when they request access to this app. Unlike the override fields, `null` is ignored here rather than clearing the current value.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
+	// Message sent to the requester when their access request is approved. Omitted or set to `null`, the message is removed.
+	PostApprovalMessage *string `json:"post_approval_message,omitzero"`
 }
 
 func (a *AppUpdateInput) GetAppClassID() *string {
@@ -97,4 +99,11 @@ func (a *AppUpdateInput) GetRequestInstructions() *string {
 		return nil
 	}
 	return a.RequestInstructions
+}
+
+func (a *AppUpdateInput) GetPostApprovalMessage() *string {
+	if a == nil {
+		return nil
+	}
+	return a.PostApprovalMessage
 }
