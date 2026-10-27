@@ -17,6 +17,7 @@ import (
 	speakeasy_boolplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/boolplanmodifier"
 	speakeasy_objectplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/objectplanmodifier"
 	speakeasy_setplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/setplanmodifier"
+	custom_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
@@ -44,6 +45,7 @@ type EntitlementResourceModel struct {
 	CustomApprovalMessageOverride types.String                                         `tfsdk:"custom_approval_message_override"`
 	DeprovisioningWorkflow        *tfTypes.EntitlementRefInput                         `tfsdk:"deprovisioning_workflow"`
 	Description                   types.String                                         `tfsdk:"description"`
+	DescriptionOverride           types.String                                         `tfsdk:"description_override"`
 	EntitlementTypeLabel          types.String                                         `tfsdk:"entitlement_type_label"`
 	ID                            types.String                                         `tfsdk:"id"`
 	Label                         types.String                                         `tfsdk:"label"`
@@ -126,11 +128,11 @@ func (r *EntitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: `The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore.`,
 			},
 			"custom_approval_message_override": schema.StringAttribute{
-				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				Optional:    true,
+				Description: `Message sent when a request for this entitlement is approved. Omitted or set to ` + "`" + `null` + "`" + `, the entitlement inherits the app's message.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthBetween(1, 511),
 				},
-				Description: `This entitlement's own approval message, overriding the app's. Null means it inherits the app's message.`,
 			},
 			"deprovisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -151,9 +153,16 @@ func (r *EntitlementResource) Schema(ctx context.Context, req resource.SchemaReq
 			"description": schema.StringAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.UnknownOnDescriptionOverrideChange(),
 				},
-				Description: `Shown to requesters. ` + "`" + `null` + "`" + ` removes the description you set; the integration's own description returns on its next sync.`,
+				Description: `The description shown to requesters: ` + "`" + `description_override` + "`" + ` if set, otherwise the integration's own description. Read-only; set ` + "`" + `description_override` + "`" + ` instead.`,
+			},
+			"description_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `Description shown to requesters, kept across syncs. Omitted or set to ` + "`" + `null` + "`" + `, a synced entitlement shows its integration's description from its next sync, and a manual one has no description.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthBetween(1, 2000),
+				},
 			},
 			"entitlement_type_label": schema.StringAttribute{
 				Computed: true,

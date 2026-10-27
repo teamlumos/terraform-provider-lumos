@@ -17,6 +17,9 @@ An entitlement on an app: a role, license, group or permission. App Store settin
 resource "lumos_entitlement" "deploy_admin" {
   app_id = lumos_app.deploy_dashboard.id
   label  = "Admin"
+
+  description_override             = "Full admin access to Deploy Dashboard. Ask in #deploys before requesting."
+  custom_approval_message_override = "Your Deploy Dashboard admin access is approved. Ask in #deploys if you need help."
 }
 ```
 
@@ -28,13 +31,17 @@ resource "lumos_entitlement" "deploy_admin" {
 - `app_id` (String) The ID of the app that will own this entitlement. Requires replacement if changed.
 - `label` (String) Human-readable label for the entitlement.
 
+### Optional
+
+- `custom_approval_message_override` (String) Message sent when a request for this entitlement is approved. Omitted or set to `null`, the entitlement inherits the app's message.
+- `description_override` (String) Description shown to requesters, kept across syncs. Omitted or set to `null`, a synced entitlement shows its integration's description from its next sync, and a manual one has no description.
+
 ### Read-Only
 
 - `approval_workflow_override` (Attributes) The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow. (see [below for nested schema](#nestedatt--approval_workflow_override))
 - `appstore_settings` (Attributes) The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore. (see [below for nested schema](#nestedatt--appstore_settings))
-- `custom_approval_message_override` (String) Message sent when a request is approved. `null` inherits the app's message.
 - `deprovisioning_workflow` (Attributes) The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow. (see [below for nested schema](#nestedatt--deprovisioning_workflow))
-- `description` (String) Shown to requesters. `null` removes the description you set; the integration's own description returns on its next sync.
+- `description` (String) The description shown to requesters: `description_override` if set, otherwise the integration's own description. Read-only; set `description_override` instead.
 - `entitlement_type_label` (String) Human-readable label for the entitlement's type (e.g. 'Role', 'License', 'Group').
 - `id` (String) The ID of this entitlement.
 - `provisioning_workflow` (Attributes) The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow. (see [below for nested schema](#nestedatt--provisioning_workflow))

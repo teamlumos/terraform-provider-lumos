@@ -2,12 +2,12 @@
 page_title: "lumos_app_appstore_settings Resource - terraform-provider-lumos"
 subcategory: ""
 description: |-
-  An app's App Store settings: whether it's listed, who can request it, and what the request form asks. Keyed by the app's ID.
+  An app's App Store settings: whether it's listed, who administers it, who can request it, and what the request form asks. Keyed by the app's ID.
 ---
 
 # lumos_app_appstore_settings (Resource)
 
-An app's App Store settings: whether it's listed, who can request it, and what the request form asks. Keyed by the app's ID.
+An app's App Store settings: whether it's listed, who administers it, who can request it, and what the request form asks. Keyed by the app's ID.
 
 ## Example Usage
 
@@ -16,10 +16,17 @@ variable "engineering_group_id" {
   type = string
 }
 
-# Lists Okta in the App Store for one group, with two time-based access
-# options and a question on the request form. Time-based access options are
-# referred to by the labels your organization defines. Settings left out,
-# such as redirect_url, are cleared.
+variable "it_admins_group_id" {
+  type = string
+}
+
+data "lumos_current_user" "me" {}
+
+# Lists Okta in the App Store for one group, administered by the IT admins
+# group and the current user, with two time-based access options and a
+# question on the request form. A listed app needs at least one admin.
+# Time-based access options are referred to by the labels your organization
+# defines. Settings left out, such as redirect_url, are cleared.
 resource "lumos_app_appstore_settings" "okta" {
   app_id                              = lumos_app.okta.id
   in_app_store                        = true
@@ -28,6 +35,11 @@ resource "lumos_app_appstore_settings" "okta" {
   allow_multiple_permission_selection = false
   request_instructions                = "Request the role your team uses."
   allowed_requester_group_uuids       = [var.engineering_group_id]
+
+  admins = [
+    { id = var.it_admins_group_id, type = "group" },
+    { id = data.lumos_current_user.me.id, type = "user" },
+  ]
 
   time_based_access = {
     options = ["1 day", "1 week"]
@@ -52,10 +64,11 @@ resource "lumos_app_appstore_settings" "okta" {
 - `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it.
 - `app_id` (String) The app's ID, which `GET /v1/apps` returns as `id`. Requires replacement if changed.
 - `catalog_visibility` (String) Visibility within the catalog. must be one of ["visible", "search-only", "hidden"]
-- `in_app_store` (Boolean) Whether this app is listed in the App Store catalog.
+- `in_app_store` (Boolean) Whether this app is listed in the App Store catalog. A listed app needs at least one admin in `admins`.
 
 ### Optional
 
+- `admins` (Attributes Set) The users and groups that administer this app. Omitted or set to `null`, it's cleared to an empty set, which removes every admin. Lumos lists an app only while it has an admin, so with `in_app_store = true` this must name at least one. (see [below for nested schema](#nestedatt--admins))
 - `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Omitted or set to `null`, it's cleared to an empty set, which lets anyone in the organization request it.
 - `custom_intake_fields` (Attributes Set) The complete set of custom intake fields, matched by `reference_key`. Order in the config has no effect. Fields left out of the set are deleted. Omitted or set to `null`, it's cleared to an empty set, which deletes all of them. (see [below for nested schema](#nestedatt--custom_intake_fields))
 - `default_entitlement` (Attributes) Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared. (see [below for nested schema](#nestedatt--default_entitlement))
@@ -63,6 +76,15 @@ resource "lumos_app_appstore_settings" "okta" {
 - `request_instructions` (String) Custom instructions shown on the access-request form. Omitted or set to `null`, the instructions are cleared.
 - `request_validation_webhook_uuid` (String) UUID of the inline webhook called to validate access requests. Omitted or set to `null`, the webhook is cleared.
 - `time_based_access` (Attributes) Time-based access options and the pre-selected default. Omitted or set to `null`, the options are cleared to an empty list and the default to `null`. (see [below for nested schema](#nestedatt--time_based_access))
+
+<a id="nestedatt--admins"></a>
+### Nested Schema for `admins`
+
+Optional:
+
+- `id` (String) The UUID of the user or group to make an admin. Not Null
+- `type` (String) Whether `id` names a `user` or a `group`. Not Null; must be one of ["user", "group"]
+
 
 <a id="nestedatt--custom_intake_fields"></a>
 ### Nested Schema for `custom_intake_fields`
@@ -99,11 +121,13 @@ Optional:
 * **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
 * **Time-based access options** are set and shown by their labels.
 * **Intake field order has no effect.** Lumos shows required fields first, then the rest in the order they were created, whatever order the config lists them in. Because `custom_intake_fields` is a set, a plan that edits a field shows the old field removed and the edited one added; Lumos updates the field in place, matched by `reference_key`.
-* **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists (`allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`. To leave some settings to the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
+* **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists and sets (`admins`, `allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`. To leave some settings to the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
 * **Settings Lumos can't clear are required.** `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always have a value, and their starting values differ from app to app, so the config must set them.
+* **A listed app needs an admin.** Lumos keeps an app in the App Store only while it has at least one admin, a user or a group, so a config with `in_app_store = true` must set `admins`. Terraform writes the admins before the other settings, so one apply can add an app's first admin and list it. Leaving `admins` out removes every admin, and the apply then fails for a listed app.
+* **Admins have no order.** `admins` is a set: listing them in a different order from Lumos plans no change.
 * **Removing the requester groups lets anyone request the app.** An empty `allowed_requester_group_uuids` means anyone in the organization can request it, and leaving the attribute out empties it. Check plans that show `allowed_requester_group_uuids` going to `[]`.
 * **Importing:** a config that leaves out settings Lumos already has clears them on the first apply. To keep them, write the config from what's in Lumos: run `terraform plan -generate-config-out=generated.tf` with an `import` block, then review the generated config.
-* **Every update sends all settings.** Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins.
+* **Every update sends all settings.** Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins, including an update whose config leaves `admins` out.
 
 ## Leaving settings to the Lumos UI
 
@@ -133,7 +157,7 @@ resource "lumos_app_appstore_settings" "okta" {
 
 ## Destroy behavior
 
-Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays. To stop managing the settings without unlisting the app, use a `removed` block:
+Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays, including its admins. To stop managing the settings without unlisting the app, use a `removed` block:
 
 ```terraform
 removed {

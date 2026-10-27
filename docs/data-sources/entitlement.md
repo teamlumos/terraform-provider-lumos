@@ -46,7 +46,8 @@ output "entitlement_app_id" {
 - `appstore_settings` (Attributes) The entitlement's AppStore-catalog settings. Null unless expanded with expand=appstore_settings. Omitted entirely (not present, not null) when the parent app isn't enrolled in the AppStore. (see [below for nested schema](#nestedatt--appstore_settings))
 - `custom_approval_message_override` (String) This entitlement's own custom approval message, shown to requesters when the entitlement is approved, overriding the app's. Null means this entitlement inherits the app's approval message.
 - `deprovisioning_workflow` (Attributes) The entitlement's deprovisioning workflow. Returns {id} by default; expand with expand=deprovisioning_workflow for the full workflow. (see [below for nested schema](#nestedatt--deprovisioning_workflow))
-- `description` (String) Optional long-form description of the entitlement.
+- `description` (String) The description shown to requesters: `description_override` if set, otherwise the integration's own description. Read-only; set `description_override` instead.
+- `description_override` (String) The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description.
 - `entitlement_type_label` (String) Human-readable label for the entitlement's type (e.g. 'Role', 'License', 'Group').
 - `label` (String) Human-readable label for the entitlement (e.g. a role or permission name).
 - `provisioning_workflow` (Attributes) The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow. (see [below for nested schema](#nestedatt--provisioning_workflow))

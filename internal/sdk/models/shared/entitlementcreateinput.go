@@ -8,6 +8,10 @@ type EntitlementCreateInput struct {
 	AppID string `json:"app_id"`
 	// Human-readable label for the entitlement.
 	Label string `json:"label"`
+	// Description shown to requesters, kept across syncs. Omitted or set to `null`, a synced entitlement shows its integration's description from its next sync, and a manual one has no description.
+	DescriptionOverride *string `json:"description_override,omitzero"`
+	// Message sent when a request for this entitlement is approved. Omitted or set to `null`, the entitlement inherits the app's message.
+	CustomApprovalMessageOverride *string `json:"custom_approval_message_override,omitzero"`
 }
 
 func (e *EntitlementCreateInput) GetAppID() string {
@@ -22,4 +26,18 @@ func (e *EntitlementCreateInput) GetLabel() string {
 		return ""
 	}
 	return e.Label
+}
+
+func (e *EntitlementCreateInput) GetDescriptionOverride() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DescriptionOverride
+}
+
+func (e *EntitlementCreateInput) GetCustomApprovalMessageOverride() *string {
+	if e == nil {
+		return nil
+	}
+	return e.CustomApprovalMessageOverride
 }

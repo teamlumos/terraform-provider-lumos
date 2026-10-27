@@ -109,7 +109,11 @@ func (r *EntitlementsDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
-							Description: `Optional long-form description of the entitlement.`,
+							Description: `The description shown to requesters: ` + "`" + `description_override` + "`" + ` if set, otherwise the integration's own description. Read-only; set ` + "`" + `description_override` + "`" + ` instead.`,
+						},
+						"description_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description.`,
 						},
 						"entitlement_type_label": schema.StringAttribute{
 							Computed:    true,

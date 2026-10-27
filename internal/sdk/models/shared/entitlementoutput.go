@@ -198,8 +198,10 @@ type EntitlementOutput struct {
 	EntitlementTypeLabel string `json:"entitlement_type_label"`
 	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
 	Source Source `json:"source"`
-	// Optional long-form description of the entitlement.
+	// The description shown to requesters: `description_override` if set, otherwise the integration's own description. Read-only; set `description_override` instead.
 	Description *string `json:"description,omitzero"`
+	// The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description.
+	DescriptionOverride *string `json:"description_override,omitzero"`
 	// The entitlement's approval workflow override. Returns {id} by default; expand with expand=approval_workflow_override for the full workflow.
 	ApprovalWorkflowOverride *WorkflowRef `json:"approval_workflow_override,omitzero"`
 	// The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow.
@@ -263,6 +265,13 @@ func (e *EntitlementOutput) GetDescription() *string {
 		return nil
 	}
 	return e.Description
+}
+
+func (e *EntitlementOutput) GetDescriptionOverride() *string {
+	if e == nil {
+		return nil
+	}
+	return e.DescriptionOverride
 }
 
 func (e *EntitlementOutput) GetApprovalWorkflowOverride() *WorkflowRef {
