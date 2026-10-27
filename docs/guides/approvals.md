@@ -117,7 +117,7 @@ resource "lumos_app_approval_workflow" "deploy_dashboard" {
 }
 ```
 
-* An app always has an approval workflow. To change it, set `workflow_id` to a different template. Removing the binding from the configuration fails the plan. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`.
+* An app always has an approval workflow. To change it, set `workflow_id` to a different template. Removing the binding from the configuration fails the plan. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`. To destroy the app as well, see [Limitations](#limitations).
 * To give one entitlement a different approval process, bind another template with `lumos_entitlement_approval_workflow`. That turns the entitlement's override on; destroying the binding turns it off again, so the entitlement goes back to the app's template.
 * A template can be bound to only one app or entitlement.
 * Changing a binding's `app_id` fails the plan, including when the new app isn't known until apply, for example an app created or replaced in the same apply. Changing it would replace the binding, and Lumos can't empty the old app's slot, so the old app would keep the template.
@@ -139,3 +139,32 @@ resource "lumos_app_approval_workflow" "b" {
 
 * A chain can be used by only one workflow. Lumos refuses a template that references a chain another workflow already uses.
 * A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
+* An app can't be destroyed in one pass together with its bound approval workflows:
+  * Destroying an app's approval binding fails the plan.
+  * Lumos refuses to delete an approval template while it's an app's or entitlement's approval workflow.
+  * Lumos refuses to delete an approval chain.
+
+  To destroy the app, first stop managing the binding, the template and its chains without changing Lumos, using `removed` blocks, then destroy the app. The template and its chains stay in Lumos.
+
+  ```terraform
+  removed {
+    from = lumos_app_approval_workflow.deploy_dashboard
+    lifecycle {
+      destroy = false
+    }
+  }
+
+  removed {
+    from = lumos_workflow.deploy_dashboard_approvals
+    lifecycle {
+      destroy = false
+    }
+  }
+
+  removed {
+    from = lumos_workflow.manager_then_it
+    lifecycle {
+      destroy = false
+    }
+  }
+  ```
