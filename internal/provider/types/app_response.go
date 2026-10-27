@@ -11,16 +11,21 @@ type AppResponse struct {
 	ApprovalWorkflow              *EntitlementRefInput                      `tfsdk:"approval_workflow"`
 	AppstoreSettings              *AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Category                      types.String                              `tfsdk:"category"`
+	CategoryOverride              types.String                              `tfsdk:"category_override"`
 	DefaultDeprovisioningWorkflow *EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
 	DefaultProvisioningWorkflow   *EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                              `tfsdk:"description"`
+	DescriptionOverride           types.String                              `tfsdk:"description_override"`
 	Disconnected                  types.Bool                                `tfsdk:"disconnected"`
 	ID                            types.String                              `tfsdk:"id"`
 	InstanceID                    types.String                              `tfsdk:"instance_id"`
 	Label                         types.String                              `tfsdk:"label"`
+	LabelOverride                 types.String                              `tfsdk:"label_override"`
 	LogoURL                       types.String                              `tfsdk:"logo_url"`
+	LogoURLOverride               types.String                              `tfsdk:"logo_url_override"`
 	PostApprovalMessage           types.String                              `tfsdk:"post_approval_message"`
 	Status                        types.String                              `tfsdk:"status"`
 	SyncStatus                    types.String                              `tfsdk:"sync_status"`
 	WebsiteURL                    types.String                              `tfsdk:"website_url"`
+	WebsiteURLOverride            types.String                              `tfsdk:"website_url_override"`
 }

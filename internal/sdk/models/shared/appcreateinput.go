@@ -4,7 +4,7 @@ package shared
 
 // AppCreateInput - Body of `POST /v1/apps`: create a custom app, or connect an integration.
 type AppCreateInput struct {
-	// Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out creates a custom app. It can't be removed from a connected app's config.
+	// Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out, or setting `"custom"`, the value a custom app reads back with, creates a custom app. It can't be removed from a connected app's config.
 	AppClassID *string `json:"app_class_id,omitzero"`
 	// Credentials for the integration, as a JSON object — **all secrets go here**. The accepted keys depend on the integration; read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. Some integrations connect in-band from these credentials; others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400, and so are credentials the third party rejects. Only applies to integrations. On update this field is required whenever `settings` or `version` is sent, because the credential group is replaced rather than merged.
 	Auth any `json:"auth,omitzero"`
@@ -12,17 +12,17 @@ type AppCreateInput struct {
 	Settings any `json:"settings,omitzero"`
 	// Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations.
 	Version *string `json:"version,omitzero"`
-	// The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.
-	Label *string `json:"label,omitzero"`
-	// The app's category. Required for a custom app; a connected app can't set it. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
-	Category *string `json:"category,omitzero"`
-	// The app's description. Required for a custom app; a connected app can't set it.
-	Description *string `json:"description,omitzero"`
-	// URL of the app's logo. On a custom app, omitted or set to `null`, the logo is cleared. A connected app can't set it.
-	LogoURL *string `json:"logo_url,omitzero"`
-	// URL of the app's website. On a custom app, omitted or set to `null`, the website is cleared. A connected app can't set it.
-	WebsiteURL *string `json:"website_url,omitzero"`
-	// Instructions shown to a requester when they request access to this app. Unlike the other override fields, `null` is ignored here rather than clearing the current value.
+	// The app's display name in your organization, shown as `label`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
+	LabelOverride *string `json:"label_override,omitzero"`
+	// The app's description in your organization, shown as `description`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
+	DescriptionOverride *string `json:"description_override,omitzero"`
+	// The app's category in your organization, shown as `category`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+	CategoryOverride *string `json:"category_override,omitzero"`
+	// URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
+	LogoURLOverride *string `json:"logo_url_override,omitzero"`
+	// URL of the app's website in your organization, shown as `website_url`. Omitted or set to `null`, it's cleared, and `website_url` shows the app's default website, if it has one. At most 2,048 characters.
+	WebsiteURLOverride *string `json:"website_url_override,omitzero"`
+	// Instructions shown to a requester when they request access to this app. Unlike the override fields, `null` is ignored here rather than clearing the current value.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
 }
 
@@ -54,39 +54,39 @@ func (a *AppCreateInput) GetVersion() *string {
 	return a.Version
 }
 
-func (a *AppCreateInput) GetLabel() *string {
+func (a *AppCreateInput) GetLabelOverride() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Label
+	return a.LabelOverride
 }
 
-func (a *AppCreateInput) GetCategory() *string {
+func (a *AppCreateInput) GetDescriptionOverride() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Category
+	return a.DescriptionOverride
 }
 
-func (a *AppCreateInput) GetDescription() *string {
+func (a *AppCreateInput) GetCategoryOverride() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Description
+	return a.CategoryOverride
 }
 
-func (a *AppCreateInput) GetLogoURL() *string {
+func (a *AppCreateInput) GetLogoURLOverride() *string {
 	if a == nil {
 		return nil
 	}
-	return a.LogoURL
+	return a.LogoURLOverride
 }
 
-func (a *AppCreateInput) GetWebsiteURL() *string {
+func (a *AppCreateInput) GetWebsiteURLOverride() *string {
 	if a == nil {
 		return nil
 	}
-	return a.WebsiteURL
+	return a.WebsiteURLOverride
 }
 
 func (a *AppCreateInput) GetRequestInstructions() *string {

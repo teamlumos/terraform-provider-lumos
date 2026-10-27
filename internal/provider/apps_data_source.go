@@ -168,6 +168,10 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `The category this app belongs to.`,
 						},
+						"category_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The category set for this app in your organization, exactly as written. ` + "`" + `category` + "`" + ` shows it when set. Null when the app uses its default category.`,
+						},
 						"default_deprovisioning_workflow": schema.SingleNestedAttribute{
 							Computed: true,
 							Attributes: map[string]schema.Attribute{
@@ -192,6 +196,10 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `A description of the app.`,
 						},
+						"description_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The description set for this app in your organization, exactly as written. ` + "`" + `description` + "`" + ` shows it when set. Null when the app uses its default description.`,
+						},
 						"disconnected": schema.BoolAttribute{
 							Computed:    true,
 							Description: `Whether this app has been disconnected (its stored credentials removed via ` + "`" + `POST /v1/apps/{app_uuid}:disconnect` + "`" + `). A disconnected app is excluded from ` + "`" + `GET /v1/apps?disconnected=false` + "`" + `; reconnect it by sending credentials to ` + "`" + `PATCH /v1/apps/{app_uuid}` + "`" + `.`,
@@ -208,13 +216,21 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 							Computed:    true,
 							Description: `The display name of the app.`,
 						},
+						"label_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The display name set for this app in your organization, exactly as written. ` + "`" + `label` + "`" + ` shows it when set. Null when the app uses its default name.`,
+						},
 						"logo_url": schema.StringAttribute{
 							Computed:    true,
 							Description: `URL of the app logo image.`,
 						},
+						"logo_url_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The logo URL set for this app in your organization, exactly as written. ` + "`" + `logo_url` + "`" + ` shows it when set. Null when the app uses its default logo.`,
+						},
 						"post_approval_message": schema.StringAttribute{
 							Computed:    true,
-							Description: `Custom message shown to the requester after their access request is approved.`,
+							Description: `Custom message shown to the requester after their access request is approved. Omitted when none is set.`,
 						},
 						"status": schema.StringAttribute{
 							Computed:    true,
@@ -227,6 +243,10 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						"website_url": schema.StringAttribute{
 							Computed:    true,
 							Description: `URL of the app's official website.`,
+						},
+						"website_url_override": schema.StringAttribute{
+							Computed:    true,
+							Description: `The website URL set for this app in your organization, exactly as written. ` + "`" + `website_url` + "`" + ` shows it when set. Null when the app uses its default website, if any.`,
 						},
 					},
 				},

@@ -10,9 +10,9 @@ import (
 )
 
 type V1ListActivityLogsRequest struct {
-	// Only include logs at or after this ISO-8601 timestamp (inclusive).
+	// Only include logs whose `event_began_at` is at or after this ISO-8601 timestamp (inclusive).
 	Since *time.Time `queryParam:"style=form,explode=true,name=since"`
-	// Only include logs at or before this ISO-8601 timestamp (inclusive).
+	// Only include logs whose `event_began_at` is at or before this ISO-8601 timestamp (inclusive).
 	Until *time.Time `queryParam:"style=form,explode=true,name=until"`
 	// Filter logs by product area (APP_STORE, ACCESS_REVIEW, VENDORS, or OTHER). When specified, only returns activity logs associated with that product area and requires the corresponding product-area-specific READ permission.
 	ProductArea *shared.ActivityLogRollupProductArea `queryParam:"style=form,explode=true,name=product_area"`
