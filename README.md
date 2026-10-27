@@ -369,6 +369,7 @@ Available configuration:
 * [lumos_entitlement_appstore_settings](docs/resources/entitlement_appstore_settings.md)
 * [lumos_entitlement_deprovisioning_workflow](docs/resources/entitlement_deprovisioning_workflow.md)
 * [lumos_entitlement_provisioning_workflow](docs/resources/entitlement_provisioning_workflow.md)
+* [lumos_pre_approval_rule](docs/resources/pre_approval_rule.md)
 * [lumos_workflow](docs/resources/workflow.md)
 
 ### Data Sources
@@ -389,6 +390,8 @@ Available configuration:
 * [lumos_inline_webhooks](docs/data-sources/inline_webhooks.md)
 * [lumos_integration_connection_schema](docs/data-sources/integration_connection_schema.md)
 * [lumos_integrations](docs/data-sources/integrations.md)
+* [lumos_pre_approval_rule](docs/data-sources/pre_approval_rule.md)
+* [lumos_pre_approval_rules](docs/data-sources/pre_approval_rules.md)
 * [lumos_user](docs/data-sources/user.md)
 * [lumos_user_roles](docs/data-sources/user_roles.md)
 * [lumos_users](docs/data-sources/users.md)

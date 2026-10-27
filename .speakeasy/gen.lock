@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 90bdd42d24ad52df193e31c648d06f3c
+  docChecksum: c098221d93428b018089c1cab0909d6b
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -174,6 +174,12 @@ trackedFiles:
   internal/provider/integrationconnectionschema_data_source_sdk.go: {}
   internal/provider/integrations_data_source.go: {}
   internal/provider/integrations_data_source_sdk.go: {}
+  internal/provider/preapprovalrule_data_source.go: {}
+  internal/provider/preapprovalrule_data_source_sdk.go: {}
+  internal/provider/preapprovalrule_resource.go: {}
+  internal/provider/preapprovalrule_resource_sdk.go: {}
+  internal/provider/preapprovalrules_data_source.go: {}
+  internal/provider/preapprovalrules_data_source_sdk.go: {}
   internal/provider/provider.go:
     id: 1e7e86841cf3
     pristine_git_object: cade954268074f6d8e2576394aa268a3da31bec5
@@ -252,6 +258,7 @@ trackedFiles:
   internal/provider/types/integration_catalog_output.go: {}
   internal/provider/types/json_schema.go: {}
   internal/provider/types/output_parameter_schema.go: {}
+  internal/provider/types/pre_approval_rule.go: {}
   internal/provider/types/user.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
@@ -2458,7 +2465,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"justification": "<value>"}
+        application/json: {"justification": "<value>", "condition": "<value>"}
       responses:
         "201":
           application/json: {"id": "<id>", "app_id": "<id>", "justification": "<value>"}
