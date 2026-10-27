@@ -30,8 +30,14 @@ func (v StringLeaveOutToClearValidator) ValidateString(_ context.Context, req va
 	if req.ConfigValue.IsNull() || req.ConfigValue.IsUnknown() || req.ConfigValue.ValueString() != "" {
 		return
 	}
-	resp.Diagnostics.AddAttributeError(req.Path, fmt.Sprintf(`%s can't be ""`, req.Path),
-		fmt.Sprintf(`Lumos doesn't keep "" as a value. Leave %s out to clear it.`, req.Path))
+	// Only the attribute's own name: inside a set, the full path names the
+	// element by its whole value. The diagnostic already points at the block.
+	name := req.Path.String()
+	if step, _ := req.Path.Steps().LastStep(); step != nil {
+		name = step.String()
+	}
+	resp.Diagnostics.AddAttributeError(req.Path, fmt.Sprintf(`%s can't be ""`, name),
+		fmt.Sprintf(`Lumos doesn't keep "" as a value. Leave %s out to clear it.`, name))
 }
 
 func LeaveOutToClear() validator.String {
