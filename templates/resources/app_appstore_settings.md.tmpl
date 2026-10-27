@@ -21,11 +21,13 @@ description: |-
 * **Unlisting:** set `in_app_store = false` to take the app out of the App Store while Terraform keeps managing its settings. Destroying the resource also unlists it, then stops managing the settings.
 * **Time-based access options** are set and shown by their labels.
 * **Intake field order has no effect.** Lumos shows required fields first, then the rest in the order they were created, whatever order the config lists them in. Because `custom_intake_fields` is a set, a plan that edits a field shows the old field removed and the edited one added; Lumos updates the field in place, matched by `reference_key`.
-* **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists (`allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`. To leave some settings to the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
+* **The settings follow the config.** A setting the config leaves out, or sets to `null`, is cleared, including values set in the Lumos UI or present when the settings are imported. Lists and sets (`admins`, `allowed_requester_group_uuids`, `custom_intake_fields` and `time_based_access.options`) are cleared to empty and everything else to `null`; omitting `time_based_access` clears both its options and its default. The plan shows each setting that will be cleared, as `-> []` or `-> null`. To leave some settings to the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
 * **Settings Lumos can't clear are required.** `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always have a value, and their starting values differ from app to app, so the config must set them.
+* **A listed app needs an admin.** Lumos keeps an app in the App Store only while it has at least one admin, a user or a group, so a config with `in_app_store = true` must set `admins`. Terraform writes the admins before the other settings, so one apply can add an app's first admin and list it. Leaving `admins` out removes every admin, and the apply then fails for a listed app.
+* **Admins have no order.** `admins` is a set: listing them in a different order from Lumos plans no change.
 * **Removing the requester groups lets anyone request the app.** An empty `allowed_requester_group_uuids` means anyone in the organization can request it, and leaving the attribute out empties it. Check plans that show `allowed_requester_group_uuids` going to `[]`.
 * **Importing:** a config that leaves out settings Lumos already has clears them on the first apply. To keep them, write the config from what's in Lumos: run `terraform plan -generate-config-out=generated.tf` with an `import` block, then review the generated config.
-* **Every update sends all settings.** Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins.
+* **Every update sends all settings.** Since `in_app_store` is always sent, any update to a listed app fails while the app has no approvers or admins, including an update whose config leaves `admins` out.
 
 ## Leaving settings to the Lumos UI
 
@@ -39,7 +41,7 @@ To manage some settings in Terraform and leave others to the Lumos UI, leave the
 
 ## Destroy behavior
 
-Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays. To stop managing the settings without unlisting the app, use a `removed` block:
+Destroy takes the app out of the App Store (`in_app_store = false`). The rest of its App Store configuration stays, including its admins. To stop managing the settings without unlisting the app, use a `removed` block:
 
 ```terraform
 removed {
