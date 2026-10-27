@@ -117,24 +117,36 @@ actions:
       anyOf: [{"$ref": "#/components/schemas/AppStoreSettingsResponse"}, {"type": "null"}]
 
   # resource "lumos_app_appstore_settings": writes an app's App Store
-  # settings, which the API only accepts through their own endpoint. There is
-  # no delete endpoint, so destroy leaves the settings as they are.
+  # settings, which the API only accepts through their own endpoint, along
+  # with the app's admins, which have an endpoint of their own. There is no
+  # delete endpoint, so destroy leaves the settings as they are.
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["get"]
     update:
       x-speakeasy-entity-operation:
         terraform-datasource: null
-        terraform-resource: AppAppstoreSettings#read
+        terraform-resource: AppAppstoreSettings#read#1
   - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"]["patch"]
     update:
       # Every update sends each setting the plan holds, and the plan holds
       # only what the config sets, empty lists for omitted lists, and null.
       # The request builder drops nulls, so the clearUnsetFields hook sends
-      # null for each clearable setting missing from the body.
+      # null for each clearable setting missing from the body. It runs last:
+      # the API lists an app only once it has an admin.
       x-speakeasy-entity-operation:
-        - entityOperation: AppAppstoreSettings#create,update
+        - entityOperation: AppAppstoreSettings#create,update#2
+  - target: $["paths"]["/v1/apps/{app_uuid}/admins"]["get"]
+    update:
+      x-speakeasy-entity-operation:
+        terraform-datasource: null
+        terraform-resource: AppAppstoreSettings#read#2
+  # PUT replaces the whole set, which is what a config holds.
+  - target: $["paths"]["/v1/apps/{app_uuid}/admins"]["put"]
+    update:
+      x-speakeasy-entity-operation:
+        - entityOperation: AppAppstoreSettings#create,update#1
   # Settings belong to one app; pointing the resource at another app means
   # managing a different app's settings.
-  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings"][*]["parameters"][?@.name=="app_uuid"]
+  - target: $["paths"]["/v1/apps/{app_uuid}/appstore-settings","/v1/apps/{app_uuid}/admins"][*]["parameters"][?@.name=="app_uuid"]
     update:
       x-speakeasy-name-override: app_id
       x-speakeasy-param-force-new: true
@@ -142,8 +154,9 @@ actions:
     update:
       x-speakeasy-entity: AppAppstoreSettings
       x-speakeasy-entity-description: >-
-        An app's App Store settings: whether it's listed, who can request it,
-        and what the request form asks. Keyed by the app's ID.
+        An app's App Store settings: whether it's listed, who administers it,
+        who can request it, and what the request form asks. Keyed by the app's
+        ID.
   # The API takes an app out of the App Store by setting in_app_store to
   # false, not with a DELETE. Destroy needs its own operation for that, so
   # this one exists only in the provider's spec: the trailing slash keeps its
@@ -235,10 +248,8 @@ actions:
         description: URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
       website_url_override:
         description: URL of the app's website in your organization, shown as `website_url`. Omitted or set to `null`, it's cleared, and `website_url` shows the app's default website, if it has one. At most 2,048 characters.
-  # The spec can write these, but the resources only read them until their
-  # own change maps them. Ignoring them would drop the attributes entirely.
-  - target: $["components"]["schemas"]["AppUpdateInput"]["properties"]["post_approval_message"]
-    remove: true
+  # The spec can write this, but the resource only reads it until its own
+  # change maps it. Ignoring it would drop the attribute entirely.
   - target: $["components"]["schemas"]["EntitlementCreateInput"]["properties"]["custom_approval_message_override"]
     remove: true
 
@@ -247,12 +258,24 @@ actions:
   - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["request_instructions"]
     update:
       x-speakeasy-terraform-ignore: true
+  # The post-approval message follows the config on any app: omitted, it
+  # plans null, and the appUpdateBody hook sends null, which removes it. The
+  # description goes on the request schemas: the app data sources show the
+  # response schema, where nothing is configured.
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["post_approval_message"]
+    update:
+      x-speakeasy-param-computed: false
+  - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["post_approval_message"]
+    update:
+      description: >-
+        Message sent to the requester when their access request is approved.
+        Omitted or set to `null`, the message is removed.
 
   # A lumos_app update can't change these, so a plan keeps their current
   # values instead of showing them as known after apply. The slots and
   # appstore_settings change only through their own resources, and custom
   # attributes only outside Terraform.
-  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","post_approval_message","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","custom_attributes"]
+  - target: $["components"]["schemas"]["AppResponse"]["properties"]["id","status","appstore_settings","approval_workflow","default_provisioning_workflow","default_deprovisioning_workflow","custom_attributes"]
     update:
       x-speakeasy-param-suppress-computed-diff: true
   # These change only when an update reconnects the integration. Updates
@@ -351,6 +374,21 @@ actions:
   - target: $["components"]["schemas"]["TimeBasedAccessPatchInput"]["properties"]["options"]
     update:
       x-speakeasy-plan-modifiers: EmptyWhenNull
+  # Admins work the same way, and have no order and no duplicates in the API.
+  # The PUT requires the list, which the plan always holds. An admin is
+  # always both an id and a type, as the config gives them.
+  - target: $["components"]["schemas"]["AppAdminsInput"]["required"]
+    remove: true
+  - target: $["components"]["schemas"]["AppAdminsInput"]["properties"]["admins"]
+    update:
+      format: set
+      x-speakeasy-plan-modifiers: EmptyWhenNull
+  - target: $["components"]["schemas"]["AppAdminsResponse"]["properties"]["admins"]
+    update:
+      format: set
+  - target: $["components"]["schemas"]["AdminAssignee"]["properties"]["id","type"]
+    update:
+      x-speakeasy-param-computed: false
   # The API reads an intake field's omitted description or dropdown options
   # back as null, so omitting one plans null rather than a value from another
   # field.
@@ -369,7 +407,7 @@ actions:
   - target: $["components"]["schemas"]["AppStoreSettingsPatchInput"]["properties"]
     update:
       in_app_store:
-        description: Whether this app is listed in the App Store catalog.
+        description: Whether this app is listed in the App Store catalog. A listed app needs at least one admin in `admins`.
       catalog_visibility:
         description: Visibility within the catalog.
       request_instructions:
@@ -390,6 +428,13 @@ actions:
         description: Entitlement to pre-select on the access-request form. Must belong to this app. Omitted or set to `null`, the pre-selection is cleared.
       custom_intake_fields:
         description: The complete set of custom intake fields, matched by `reference_key`. Order in the config has no effect. Fields left out of the set are deleted. Omitted or set to `null`, it's cleared to an empty set, which deletes all of them.
+  - target: $["components"]["schemas"]["AppAdminsInput"]["properties"]["admins"]
+    update:
+      description: >-
+        The users and groups that administer this app. Omitted or set to
+        `null`, it's cleared to an empty set, which removes every admin. Lumos
+        lists an app only while it has an admin, so with `in_app_store = true`
+        this must name at least one.
   - target: $["components"]["schemas"]["TimeBasedAccessPatchInput"]["properties"]
     update:
       options:
@@ -441,6 +486,16 @@ actions:
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["id","app_id","entitlement_type_label","source","description","approval_workflow_override","provisioning_workflow","deprovisioning_workflow","custom_approval_message_override","appstore_settings"]
     update:
       x-speakeasy-param-suppress-computed-diff: true
+
+  # The API now takes the approval message on create as well as update,
+  # which would make it Optional and Computed, keeping a removed message.
+  # It stays read-only until it follows the config (GOV-4601).
+  - target: $["components"]["schemas"]["EntitlementCreateInput","EntitlementUpdateInput"]["properties"]["custom_approval_message_override"]
+    update:
+      x-speakeasy-param-readonly: true
+      description: >-
+        This entitlement's own approval message, overriding the app's. Null
+        means it inherits the app's message.
 
   # resource "lumos_entitlement_appstore_settings": writes an entitlement's
   # App Store settings through their own endpoint.

@@ -15,8 +15,8 @@ import (
 //   - app_class_id is dropped. It never changes on update, and the API
 //     compares it with its own ID for the app, which isn't "custom" for a
 //     custom app.
-//   - null is sent for each *_override field that's missing, which clears
-//     it. The generated client drops nulls.
+//   - null is sent for each *_override field and for post_approval_message
+//     when it's missing, which clears it. The generated client drops nulls.
 type appUpdateBody struct{}
 
 var clearableAppMetadata = []string{
@@ -25,6 +25,7 @@ var clearableAppMetadata = []string{
 	"category_override",
 	"logo_url_override",
 	"website_url_override",
+	"post_approval_message",
 }
 
 func (appUpdateBody) BeforeRequest(hookCtx BeforeRequestContext, req *http.Request) (*http.Request, error) {
