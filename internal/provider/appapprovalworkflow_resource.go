@@ -41,7 +41,7 @@ func (r *AppApprovalWorkflowResource) Metadata(ctx context.Context, req resource
 
 func (r *AppApprovalWorkflowResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Binds an approval template (a `lumos_workflow` of type `approval`) to an app, as the approval process for requests to the app. Lumos can't empty this slot, so destroying this resource, or moving it to a different app, even one not known until apply, fails the plan. To change the workflow, set `workflow_id` to a different one. To stop managing the binding without changing Lumos, use a `removed` block with `destroy = false`.",
+		MarkdownDescription: "Binds an approval template (a `lumos_workflow` of type `approval`) to an app, as the approval process for requests to the app. Lumos can't empty this slot, so destroying this resource, or moving it to a different app, even one not known until apply, fails the plan. To change the workflow, set `workflow_id` to a different one. To stop managing the binding without changing Lumos, use a `removed` block with `destroy = false`. Lumos refuses to delete a workflow while it's bound to an app, so the app can't be destroyed in the same pass as this binding and its workflow. Stop managing both with `removed` blocks first, then destroy the app. The workflow stays in Lumos.",
 		Attributes: map[string]schema.Attribute{
 			"app_id": schema.StringAttribute{
 				Required: true,

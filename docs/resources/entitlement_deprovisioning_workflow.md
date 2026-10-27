@@ -3,12 +3,12 @@
 page_title: "lumos_entitlement_deprovisioning_workflow Resource - terraform-provider-lumos"
 subcategory: ""
 description: |-
-  Binds an entitlement-deprovisioning workflow to an entitlement, as the workflow that revokes it. Lumos can't empty this slot, so destroying this resource, or moving it to a different entitlement, even one not known until apply, fails the plan. To change the workflow, set workflow_id to a different one. To stop managing the binding without changing Lumos, use a removed block with destroy = false.
+  Binds an entitlement-deprovisioning workflow to an entitlement, as the workflow that revokes it. Lumos can't empty this slot, so destroying this resource, or moving it to a different entitlement, even one not known until apply, fails the plan. To change the workflow, set workflow_id to a different one. To stop managing the binding without changing Lumos, use a removed block with destroy = false. Lumos refuses to delete a workflow while it's bound to an entitlement, so the entitlement can't be destroyed in the same pass as this binding and its workflow. Stop managing both with removed blocks first, then destroy the entitlement. The workflow stays in Lumos.
 ---
 
 # lumos_entitlement_deprovisioning_workflow (Resource)
 
-Binds an `entitlement-deprovisioning` workflow to an entitlement, as the workflow that revokes it. Lumos can't empty this slot, so destroying this resource, or moving it to a different entitlement, even one not known until apply, fails the plan. To change the workflow, set `workflow_id` to a different one. To stop managing the binding without changing Lumos, use a `removed` block with `destroy = false`.
+Binds an `entitlement-deprovisioning` workflow to an entitlement, as the workflow that revokes it. Lumos can't empty this slot, so destroying this resource, or moving it to a different entitlement, even one not known until apply, fails the plan. To change the workflow, set `workflow_id` to a different one. To stop managing the binding without changing Lumos, use a `removed` block with `destroy = false`. Lumos refuses to delete a workflow while it's bound to an entitlement, so the entitlement can't be destroyed in the same pass as this binding and its workflow. Stop managing both with `removed` blocks first, then destroy the entitlement. The workflow stays in Lumos.
 
 ## Example Usage
 
