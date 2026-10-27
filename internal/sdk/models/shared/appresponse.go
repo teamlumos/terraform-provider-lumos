@@ -354,7 +354,7 @@ type AppResponse struct {
 	DefaultDeprovisioningWorkflow *DefaultDeprovisioningWorkflowWorkflowRef `json:"default_deprovisioning_workflow,omitzero"`
 	// AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object.
 	AppstoreSettings *AppstoreSettingsAppStoreSettingsResponse `json:"appstore_settings,omitzero"`
-	// Custom attributes configured on this app. Only present when expand=custom_attributes is requested.
+	// Custom attributes configured on this app, keyed by the attribute's name.
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitzero"`
 	// The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
 	SyncStatus *SyncStatus `json:"sync_status,omitzero"`

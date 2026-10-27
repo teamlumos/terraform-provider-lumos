@@ -12,6 +12,7 @@ type AppResponse struct {
 	AppstoreSettings              *AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Category                      types.String                              `tfsdk:"category"`
 	CategoryOverride              types.String                              `tfsdk:"category_override"`
+	CustomAttributes              map[string]CustomAttribute                `tfsdk:"custom_attributes"`
 	DefaultDeprovisioningWorkflow *EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
 	DefaultProvisioningWorkflow   *EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                              `tfsdk:"description"`
