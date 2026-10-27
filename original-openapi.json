@@ -15096,6 +15096,20 @@
             ],
             "title": "Request Instructions",
             "description": "Instructions shown to a requester when they request access to this app. Unlike the override fields, `null` is ignored here rather than clearing the current value."
+          },
+          "post_approval_message": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 511,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post Approval Message",
+            "description": "Message sent to the requester when their access request is approved. Applies to a custom app and a connected integration alike."
           }
         },
         "additionalProperties": false,
