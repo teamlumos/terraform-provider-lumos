@@ -22,6 +22,7 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 	speakeasy_boolvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/boolvalidators"
 	speakeasy_objectvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/objectvalidators"
+	custom_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 	speakeasy_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
@@ -114,6 +115,7 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 							Description: `Additional guidance shown alongside the prompt.`,
 							Validators: []validator.String{
 								stringvalidator.UTF8LengthAtMost(500),
+								custom_stringvalidators.LeaveOutToClear(),
 							},
 						},
 						"dropdown_options": schema.ListAttribute{
@@ -193,6 +195,9 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 			"request_instructions": schema.StringAttribute{
 				Optional:    true,
 				Description: `Custom instructions shown on the access-request form. Omitted or set to ` + "`" + `null` + "`" + `, the instructions are cleared.`,
+				Validators: []validator.String{
+					custom_stringvalidators.LeaveOutToClear(),
+				},
 			},
 			"request_validation_webhook_uuid": schema.StringAttribute{
 				Optional:    true,
