@@ -826,6 +826,13 @@ actions:
   - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["access_condition"]
     update:
       x-speakeasy-type-override: any
+  # Lumos refuses a policy with both an access_condition and
+  # is_everyone_condition = true, or with neither, so the plan fails instead
+  # of the apply. is_everyone_condition = false next to an access_condition
+  # is valid, which ConflictsWith can't express.
+  - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]["is_everyone_condition"]
+    update:
+      x-speakeasy-plan-validators: EveryoneOrCondition
   # The spec's descriptions tell API callers what to send; these say what a
   # config sets.
   - target: $["components"]["schemas"]["AccessPolicyInput"]["properties"]

@@ -241,3 +241,47 @@ resource "lumos_access_policy" "test" {
 		})
 	}
 }
+
+// TestAccessPolicyConditionChoice checks a policy config that sets both
+// access_condition and is_everyone_condition = true, or neither, fails at
+// plan time rather than with Lumos's 400 at apply. An access_condition with
+// is_everyone_condition left out or false, and is_everyone_condition = true
+// alone, plan.
+func TestAccessPolicyConditionChoice(t *testing.T) {
+	const condition = `access_condition = jsonencode({ attribute = { label = "Team", value = "identity.team" }, equals = { label = "Engineering", value = "Engineering" } })`
+	for name, tc := range map[string]struct {
+		lines string
+		error string
+	}{
+		"both":                      {condition + "\n  is_everyone_condition = true", `access_condition and is_everyone_condition = true\s+can't both be set`},
+		"neither":                   {"", `access_condition or is_everyone_condition = true is\s+required`},
+		"everyone false":            {"is_everyone_condition = false", `access_condition or is_everyone_condition = true is\s+required`},
+		"condition":                 {condition, ""},
+		"condition, everyone false": {condition + "\n  is_everyone_condition = false", ""},
+		"everyone":                  {"is_everyone_condition = true", ""},
+	} {
+		t.Run(name, func(t *testing.T) {
+			step := resource.TestStep{
+				Config: fakeProviderConfig("http://127.0.0.1:1") + `
+resource "lumos_access_policy" "test" {
+  name                   = "Engineering tools"
+  business_justification = "Engineers need these"
+  status                 = "draft"
+  is_enabled             = false
+  apps                   = [{ id = "app1" }]
+  ` + tc.lines + `
+}
+`,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
+			}
+			if tc.error != "" {
+				step.ExpectError = regexp.MustCompile(tc.error)
+			}
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps:                    []resource.TestStep{step},
+			})
+		})
+	}
+}
