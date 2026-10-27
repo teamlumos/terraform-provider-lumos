@@ -2344,10 +2344,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Only include logs at or after this ISO-8601 timestamp (inclusive).",
+              "description": "Only include logs whose `event_began_at` is at or after this ISO-8601 timestamp (inclusive).",
               "title": "Since"
             },
-            "description": "Only include logs at or after this ISO-8601 timestamp (inclusive)."
+            "description": "Only include logs whose `event_began_at` is at or after this ISO-8601 timestamp (inclusive)."
           },
           {
             "name": "until",
@@ -2363,10 +2363,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Only include logs at or before this ISO-8601 timestamp (inclusive).",
+              "description": "Only include logs whose `event_began_at` is at or before this ISO-8601 timestamp (inclusive).",
               "title": "Until"
             },
-            "description": "Only include logs at or before this ISO-8601 timestamp (inclusive)."
+            "description": "Only include logs whose `event_began_at` is at or before this ISO-8601 timestamp (inclusive)."
           },
           {
             "name": "product_area",
@@ -2886,7 +2886,7 @@
           "Apps"
         ],
         "summary": "Create App",
-        "description": "Create a custom app, or connect an integration.\n\nA body with `label`, `category` and `description` creates a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself. A body with `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. The two halves are mutually exclusive.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
+        "description": "Create a custom app, or connect an integration.\n\nA body without `app_class_id` creates a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself \u2014 and needs `label_override`, `category_override` and `description_override`. A body with `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.\n\nEither kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
         "operationId": "v1CreateApp",
         "security": [
           {
@@ -3318,7 +3318,7 @@
           "Apps"
         ],
         "summary": "Update App",
-        "description": "Update an app in place: its domain-specific metadata overrides, its integration credentials, or both.\n\nThe **metadata** fields are merge-patched \u2014 an omitted field keeps its current value, and a field sent as `null` resets that override to the app's own default. The one exception is `request_instructions`, which ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog.\n\nThe **credential** fields \u2014 `auth`, `settings` and `version` \u2014 are one group that is *replaced*, not merge-patched, because Lumos cannot read your stored credentials back to merge against. Sending any of the three reconnects the integration with exactly what you send and discards the rest of the stored set, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A body with none of the three never touches credentials.\n\nOn a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.",
+        "description": "Update an app in place: its domain-specific metadata overrides, its integration credentials, or both.\n\nThe **metadata** fields are merge-patched: an omitted field keeps its current value. The `*_override` fields are stored exactly as sent and returned as written; send `null` to clear one, after which the response returns `null` for it and the matching read-only field (`label`, `description` and so on) shows the app's default. `request_instructions` ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog. `post_approval_message` has no default, so `null` removes it.\n\nThe **credential** fields \u2014 `auth`, `settings` and `version` \u2014 are one group that is *replaced*, not merge-patched, because Lumos cannot read your stored credentials back to merge against. Sending any of the three reconnects the integration with exactly what you send and discards the rest of the stored set, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A body with none of the three never touches credentials.\n\nOn a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.",
         "operationId": "v1UpdateApp",
         "security": [
           {
@@ -3810,6 +3810,244 @@
           },
           "422": {
             "description": "The patch names something that can't be applied: `in_app_store: true` for an app without at least one admin (a user or a group); a group in `allowed_requester_group_uuids` or a label in `time_based_access.options` your organization doesn't have; a `time_based_access.default` the app doesn't offer, including options that drop the current default without a new `default`; an unknown `request_validation_webhook_uuid`; or a `default_entitlement` that doesn't exist, belongs to another app, or isn't requestable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/apps/{app_uuid}/admins": {
+      "get": {
+        "tags": [
+          "Apps"
+        ],
+        "summary": "Get App Admins",
+        "description": "Get the users and groups that administer an app.\n\nIf you are already fetching the app, `GET /v1/apps/{app_uuid}?expand=admins` returns the same admins inline.",
+        "operationId": "v1GetAppAdmins",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The app's ID, which `GET /v1/apps` returns as `id`.",
+              "title": "App Uuid"
+            },
+            "description": "The app's ID, which `GET /v1/apps` returns as `id`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppAdminsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Apps"
+        ],
+        "summary": "Set App Admins",
+        "description": "Replace the users and groups that administer an app. Send the complete set: anyone left out stops being an admin, and an empty list removes every admin.\n\nAn app needs at least one admin to be listed in the AppStore, so set its admins before setting `in_app_store` to true with `PATCH /v1/apps/{app_uuid}/appstore-settings`. Removing the last admin doesn't take a listed app out of the AppStore.",
+        "operationId": "v1SetAppAdmins",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "app_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The app's ID, which `GET /v1/apps` returns as `id`.",
+              "title": "App Uuid"
+            },
+            "description": "The app's ID, which `GET /v1/apps` returns as `id`."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppAdminsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppAdminsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "You can't manage this app's admins, or can't read one of the groups.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "A user or group isn't in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5351,7 +5589,7 @@
           "Entitlements"
         ],
         "summary": "Create Entitlement",
-        "description": "Create a requestable entitlement on the named app, so employees can request it from the AppStore.\n\nReturns 404 if `app_id` is unknown in your organization.",
+        "description": "Create a requestable entitlement on the named app, so employees can request it from the AppStore.\n\nSetting `custom_approval_message_override` also needs permission to manage approval workflows. Returns 404 if `app_id` is unknown in your organization.",
         "operationId": "createEntitlement",
         "security": [
           {
@@ -5587,7 +5825,7 @@
           "Entitlements"
         ],
         "summary": "Update Entitlement",
-        "description": "Update an entitlement's `label`, `description` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field returns 400.\n\nOnly entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending `label` for a synced one returns 400 and changes nothing. A `description` you set is kept across syncs, on synced entitlements too. `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
+        "description": "Update an entitlement's `label`, `description` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field returns 400.\n\nOnly entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description` you set is kept across syncs, on synced entitlements too. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
         "operationId": "updateEntitlement",
         "security": [
           {
@@ -5699,7 +5937,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 `custom_approval_message_override` was sent for an entitlement with no request configuration (code `entitlement.not_requestable`).",
+            "description": "Unprocessable \u2014 a non-null `custom_approval_message_override` was sent for an entitlement with no request configuration (code `entitlement.not_requestable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6355,6 +6593,107 @@
                 }
               }
             }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entitlements"
+        ],
+        "summary": "Remove Entitlement Approval Workflow Override",
+        "description": "Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. Entitlements with no request configuration behind them return 404.",
+        "operationId": "deleteEntitlementApprovalWorkflowOverride",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entitlement_uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`.",
+              "title": "Entitlement Uuid"
+            },
+            "description": "The entitlement's ID, which `GET /v1/entitlements` and `GET /v1/apps/{app_uuid}/entitlements` return as `id`."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "400": {
             "content": {
@@ -14265,6 +14604,31 @@
         ],
         "title": "AdminAssignee"
       },
+      "AdminAssigneeInput": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The UUID of the user or group to make an admin."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "group"
+            ],
+            "title": "Type",
+            "description": "Whether `id` names a `user` or a `group`."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "title": "AdminAssigneeInput"
+      },
       "AiRecommendation": {
         "properties": {
           "decision": {
@@ -14384,6 +14748,55 @@
         ],
         "title": "ApiErrorField",
         "description": "A single field-level error (used for validation failures)."
+      },
+      "AppAdminsInput": {
+        "properties": {
+          "admins": {
+            "items": {
+              "$ref": "#/components/schemas/AdminAssigneeInput"
+            },
+            "type": "array",
+            "title": "Admins",
+            "description": "The complete set of users and groups that administer this app. It replaces the current admins; an empty list removes them all."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "admins"
+        ],
+        "title": "AppAdminsInput",
+        "examples": [
+          {
+            "admins": [
+              {
+                "id": "1a2b3c4d-5e6f-7081-92a3-b4c5d6e7f809",
+                "type": "user"
+              },
+              {
+                "id": "4d5e6f70-8192-0123-def0-234567890123",
+                "type": "group"
+              }
+            ]
+          }
+        ]
+      },
+      "AppAdminsResponse": {
+        "properties": {
+          "admins": {
+            "items": {
+              "$ref": "#/components/schemas/AdminAssignee"
+            },
+            "type": "array",
+            "title": "Admins",
+            "description": "Users and groups that administer this app: users first, each sorted by id."
+          }
+        },
+        "type": "object",
+        "required": [
+          "admins"
+        ],
+        "title": "AppAdminsResponse"
       },
       "AppBase": {
         "properties": {
@@ -14603,45 +15016,35 @@
             "title": "Version",
             "description": "Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations."
           },
-          "label": {
+          "label_override": {
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 255
+                "maxLength": 255,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Label",
-            "description": "The app's display name in your organization. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default name. At most 255 characters."
+            "title": "Label Override",
+            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app. Send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
           },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category",
-            "description": "The app's category. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
-          },
-          "description": {
+          "description_override": {
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 8191
+                "maxLength": 1000,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Description",
-            "description": "The app's description. Required when creating a custom app. On update, a custom app's own description is replaced; for any other app this sets a domain-specific override, which is capped at 1,000 characters. Send `null` to reset the override to the app's default description."
+            "title": "Description Override",
+            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app. Send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
           },
-          "logo_url": {
+          "category_override": {
             "anyOf": [
               {
                 "type": "string"
@@ -14650,20 +15053,36 @@
                 "type": "null"
               }
             ],
-            "title": "Logo Url",
-            "description": "URL of the app's logo. On update, send `null` to reset it to the app's default logo."
+            "title": "Category Override",
+            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app. Send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
           },
-          "website_url": {
+          "logo_url_override": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "maxLength": 2048,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Website Url",
-            "description": "URL of the app's website. On update, send `null` to clear the override."
+            "title": "Logo Url Override",
+            "description": "URL of the app's logo in your organization, shown as `logo_url`. Send `null` to clear it, so `logo_url` shows the app's default logo. It can't be empty. At most 2,048 characters."
+          },
+          "website_url_override": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url Override",
+            "description": "URL of the app's website in your organization, shown as `website_url`. Send `null` to clear it, so `website_url` shows the app's default website, if it has one. It can't be empty. At most 2,048 characters."
           },
           "request_instructions": {
             "anyOf": [
@@ -14676,7 +15095,7 @@
               }
             ],
             "title": "Request Instructions",
-            "description": "Instructions shown to a requester when they request access to this app. Unlike the other override fields, `null` is ignored here rather than clearing the current value."
+            "description": "Instructions shown to a requester when they request access to this app. Unlike the override fields, `null` is ignored here rather than clearing the current value."
           }
         },
         "additionalProperties": false,
@@ -14685,15 +15104,16 @@
         "description": "Body of `POST /v1/apps`: create a custom app, or connect an integration.",
         "examples": [
           {
-            "category": "Developers",
-            "description": "Hand-rolled deploy dashboard.",
-            "label": "My internal tool"
+            "category_override": "Developers",
+            "description_override": "Hand-rolled deploy dashboard.",
+            "label_override": "My internal tool"
           },
           {
             "app_class_id": "okta.com",
             "auth": {
               "api_key": "0123456789abcdef0123456789abcdef"
             },
+            "label_override": "Okta (Workforce)",
             "settings": {
               "app_instance_identifier": "myorg.okta.com"
             }
@@ -14846,6 +15266,66 @@
             "description": "Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.",
             "default": false
           },
+          "label_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Override",
+            "description": "The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name."
+          },
+          "description_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Override",
+            "description": "The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description."
+          },
+          "category_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Override",
+            "description": "The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category."
+          },
+          "logo_url_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logo Url Override",
+            "description": "The logo URL set for this app in your organization, exactly as written. `logo_url` shows it when set. Null when the app uses its default logo."
+          },
+          "website_url_override": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url Override",
+            "description": "The website URL set for this app in your organization, exactly as written. `website_url` shows it when set. Null when the app uses its default website, if any."
+          },
           "post_approval_message": {
             "anyOf": [
               {
@@ -14856,7 +15336,7 @@
               }
             ],
             "title": "Post Approval Message",
-            "description": "Custom message shown to the requester after their access request is approved."
+            "description": "Custom message shown to the requester after their access request is approved. Omitted when none is set."
           },
           "admins": {
             "anyOf": [
@@ -15564,45 +16044,35 @@
             "title": "Version",
             "description": "Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations."
           },
-          "label": {
+          "label_override": {
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 255
+                "maxLength": 255,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Label",
-            "description": "The app's display name in your organization. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default name. At most 255 characters."
+            "title": "Label Override",
+            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app. Send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
           },
-          "category": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Category",
-            "description": "The app's category. Required when creating a custom app. On update this sets a domain-specific override; send `null` to reset it to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
-          },
-          "description": {
+          "description_override": {
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 8191
+                "maxLength": 1000,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Description",
-            "description": "The app's description. Required when creating a custom app. On update, a custom app's own description is replaced; for any other app this sets a domain-specific override, which is capped at 1,000 characters. Send `null` to reset the override to the app's default description."
+            "title": "Description Override",
+            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app. Send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
           },
-          "logo_url": {
+          "category_override": {
             "anyOf": [
               {
                 "type": "string"
@@ -15611,20 +16081,36 @@
                 "type": "null"
               }
             ],
-            "title": "Logo Url",
-            "description": "URL of the app's logo. On update, send `null` to reset it to the app's default logo."
+            "title": "Category Override",
+            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app. Send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
           },
-          "website_url": {
+          "logo_url_override": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "maxLength": 2048,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Website Url",
-            "description": "URL of the app's website. On update, send `null` to clear the override."
+            "title": "Logo Url Override",
+            "description": "URL of the app's logo in your organization, shown as `logo_url`. Send `null` to clear it, so `logo_url` shows the app's default logo. It can't be empty. At most 2,048 characters."
+          },
+          "website_url_override": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2048,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website Url Override",
+            "description": "URL of the app's website in your organization, shown as `website_url`. Send `null` to clear it, so `website_url` shows the app's default website, if it has one. It can't be empty. At most 2,048 characters."
           },
           "request_instructions": {
             "anyOf": [
@@ -15637,7 +16123,21 @@
               }
             ],
             "title": "Request Instructions",
-            "description": "Instructions shown to a requester when they request access to this app. Unlike the other override fields, `null` is ignored here rather than clearing the current value."
+            "description": "Instructions shown to a requester when they request access to this app. Unlike the override fields, `null` is ignored here rather than clearing the current value."
+          },
+          "post_approval_message": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 511,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Post Approval Message",
+            "description": "Message sent to the requester when their access request is approved. `null` removes it."
           }
         },
         "additionalProperties": false,
@@ -15646,8 +16146,8 @@
         "description": "Body of `PATCH /v1/apps/{app_uuid}`: update metadata overrides and/or rotate credentials.\n\nMetadata fields are merge-patched; `auth`, `settings` and `version` are replaced as one\ngroup, so `auth` is required whenever either of the others is sent.",
         "examples": [
           {
-            "description": "Hand-rolled deploy dashboard.",
-            "label": "My internal tool"
+            "description_override": "Hand-rolled deploy dashboard.",
+            "label_override": "My internal tool"
           },
           {
             "auth": {
@@ -16543,6 +17043,20 @@
             "type": "string",
             "title": "Label",
             "description": "Human-readable label for the entitlement."
+          },
+          "custom_approval_message_override": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 511,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Approval Message Override",
+            "description": "Message sent when a request is approved. Omit it, or send `null`, to inherit the app's message."
           }
         },
         "additionalProperties": false,
@@ -17458,7 +17972,7 @@
           "auth_schema": {
             "type": "object",
             "title": "Auth Schema",
-            "description": "JSON Schema (draft-07 style) describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods \u2014 mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
+            "description": "Draft-07 JSON Schema describing the `auth` object to pass to the Apps API's create endpoint. Properties are the credential keys the integration accepts; secret fields are marked `writeOnly`, and fixed-choice fields carry an `enum`. Most integrations use a flat object with credential keys at the top level; some nest credentials under named groups when the integration supports multiple authentication methods \u2014 mirror that nesting in the connect request. An empty object (`{\"type\":\"object\",\"properties\":{}}`) means no credentials are supplied up front (the connection is completed via browser consent in the Lumos UI). A manually-set instance id belongs in `settings_schema`, not `auth`."
           },
           "settings_schema": {
             "type": "object",
