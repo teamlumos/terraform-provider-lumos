@@ -60,7 +60,7 @@ resource "lumos_entitlement" "test" {
 
 // TestAccEntitlementAppStoreSettings lists the app in
 // LUMOS_TEST_APPSTORE_APP_ID (settings are only available for App Store
-// apps), creates an entitlement on it, and manages that entitlement's App
+// apps) with the token's user as its admin, creates an entitlement on it, and manages that entitlement's App
 // Store settings. GROUP_ID adds a group override, which is then omitted to
 // go back to inheriting the app's groups, and LUMOS_TEST_TBA_LABEL adds a
 // time-based access override. The app is left unlisted, as
@@ -83,13 +83,14 @@ func TestAccEntitlementAppStoreSettings(t *testing.T) {
 		if tbaLabel != "" {
 			override += fmt.Sprintf("\n  time_based_access_override = {\n    options = [%q]\n  }", tbaLabel)
 		}
-		return providerConfig() + fmt.Sprintf(`
+		return providerConfig() + testAccCurrentUser + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "listed" {
   app_id                              = %[1]q
   in_app_store                        = true
   catalog_visibility                  = "visible"
   allow_permission_selection          = true
   allow_multiple_permission_selection = false
+  %[5]s
 }
 
 resource "lumos_entitlement" "test" {
@@ -104,7 +105,7 @@ resource "lumos_entitlement_appstore_settings" "test" {
 
   depends_on = [lumos_app_appstore_settings.listed]
 }
-`, appID, label, visible, override)
+`, appID, label, visible, override, testAccAdmins)
 	}
 	var groups []string
 	if groupID != "" {

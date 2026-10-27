@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"regexp"
 	"slices"
+	"sort"
 	"strings"
 	"sync"
 	"testing"
@@ -15,6 +16,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
@@ -57,7 +59,8 @@ resource "lumos_app" "wiki" {
 // fakeAPI records every request it receives and serves App Store settings
 // for app "app1", applying PATCHes the way the API's merge patch does. app
 // holds the app's display defaults under label, logo_url and so on, and
-// reads back as withEffectiveDisplay shows it.
+// reads back as withEffectiveDisplay shows it. It reads the app's admins back
+// the way the API does, users first, each sorted by id.
 type fakeAPI struct {
 	t        *testing.T
 	mu       sync.Mutex
@@ -65,9 +68,12 @@ type fakeAPI struct {
 	patches  []map[string]any
 	settings map[string]any
 	app      map[string]any
+	admins   []any
 	// appPatches holds each lumos_app update body, apart from the settings
 	// PATCHes in patches.
 	appPatches []map[string]any
+	// adminPuts holds each admins list written.
+	adminPuts [][]any
 }
 
 func newFakeAPI(t *testing.T) *fakeAPI {
@@ -111,7 +117,9 @@ func newFakeAPI(t *testing.T) *fakeAPI {
 			"approval_workflow":               nil,
 			"default_provisioning_workflow":   nil,
 			"default_deprovisioning_workflow": nil,
+			"post_approval_message":           nil,
 		},
+		admins: []any{},
 	}
 }
 
@@ -162,10 +170,26 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					f.app[k] = v
 				}
 			}
+			if message, ok := patch["post_approval_message"]; ok {
+				f.app["post_approval_message"] = message
+			}
 		}
 		app := withEffectiveDisplay(f.app)
 		app["appstore_settings"] = f.settings
 		json.NewEncoder(w).Encode(app)
+	case r.URL.Path == "/v1/apps/app1/admins" && (r.Method == http.MethodGet || r.Method == http.MethodPut):
+		if r.Method == http.MethodPut {
+			var body struct {
+				Admins []any `json:"admins"`
+			}
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Admins == nil {
+				http.Error(w, fmt.Sprintf("want an admins list: %v", err), http.StatusUnprocessableEntity)
+				return
+			}
+			f.adminPuts = append(f.adminPuts, body.Admins)
+			f.admins = sortedAdmins(body.Admins)
+		}
+		json.NewEncoder(w).Encode(map[string]any{"admins": f.admins})
 	default:
 		f.t.Errorf("unexpected request %s %s", r.Method, r.URL.Path)
 		http.Error(w, "unexpected request", http.StatusNotFound)
@@ -196,6 +220,20 @@ func withEffectiveDisplay(app map[string]any) map[string]any {
 		}
 	}
 	return read
+}
+
+// sortedAdmins orders admins as the API reads them back: users first, each
+// sorted by id.
+func sortedAdmins(admins []any) []any {
+	sorted := append([]any{}, admins...)
+	sort.Slice(sorted, func(i, j int) bool {
+		a, b := sorted[i].(map[string]any), sorted[j].(map[string]any)
+		if a["type"] != b["type"] {
+			return a["type"] == "user"
+		}
+		return a["id"].(string) < b["id"].(string)
+	})
+	return sorted
 }
 
 // withOptionObjects turns written option labels into the objects the API
@@ -591,6 +629,196 @@ import {
 	}
 }
 
+// TestAppStoreSettingsAdmins creates settings with admins, reorders them,
+// changes them, then removes them from the config. The admins must be
+// written before the settings, since the API lists an app only once it has
+// an admin; the API's order must never show as a change; and removing them
+// must send an empty list. Destroy must leave them as they are.
+func TestAppStoreSettingsAdmins(t *testing.T) {
+	api := newFakeAPI(t)
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	settings := func(inAppStore bool, admins ...string) string {
+		list := ""
+		if admins != nil {
+			list = fmt.Sprintf("admins = [%s]", strings.Join(admins, ", "))
+		}
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = %t
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  %s
+}
+`, inAppStore, list)
+	}
+	const addr = "lumos_app_appstore_settings.slack"
+	const group = `{ id = "group1", type = "group" }`
+	const userA = `{ id = "user-a", type = "user" }`
+	const userB = `{ id = "user-b", type = "user" }`
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: settings(true, group, userB),
+				Check:  resource.TestCheckResourceAttr(addr, "admins.#", "2"),
+			},
+			{
+				// The API reads users first; the config lists the group first.
+				Config: settings(true, userB, group),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: settings(true, group, userB, userA),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "admins"),
+					},
+				},
+			},
+			{
+				// The real API keeps a listed app only while it has an admin,
+				// so the config that removes them also unlists the app.
+				Config: settings(false),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "in_app_store", "admins"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("admins"), knownvalue.SetExact([]knownvalue.Check{})),
+					},
+				},
+				Check: resource.TestCheckResourceAttr(addr, "admins.#", "0"),
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	wantAdmins := []string{
+		`[{"id":"group1","type":"group"},{"id":"user-b","type":"user"}]`,
+		`[{"id":"group1","type":"group"},{"id":"user-a","type":"user"},{"id":"user-b","type":"user"}]`,
+		`[]`,
+	}
+	var gotAdmins []string
+	for _, put := range api.adminPuts {
+		encoded, _ := json.Marshal(sortedByID(put))
+		gotAdmins = append(gotAdmins, string(encoded))
+	}
+	if fmt.Sprint(gotAdmins) != fmt.Sprint(wantAdmins) {
+		t.Errorf("admins writes sent %v, want %v", gotAdmins, wantAdmins)
+	}
+	// Each create or update writes the admins, then the settings; destroy
+	// only unlists the app.
+	var writes []string
+	for _, r := range api.requests {
+		if !strings.HasPrefix(r, "GET ") {
+			writes = append(writes, r)
+		}
+	}
+	var wantWrites []string
+	for range 3 {
+		wantWrites = append(wantWrites, "PUT /v1/apps/app1/admins", "PATCH /v1/apps/app1/appstore-settings")
+	}
+	wantWrites = append(wantWrites, "PATCH /v1/apps/app1/appstore-settings")
+	if fmt.Sprint(writes) != fmt.Sprint(wantWrites) {
+		t.Errorf("writes were %v, want %v", writes, wantWrites)
+	}
+}
+
+// sortedByID orders admins by id alone, so a check doesn't depend on the
+// order a set is sent in.
+func sortedByID(admins []any) []any {
+	sorted := append([]any{}, admins...)
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].(map[string]any)["id"].(string) < sorted[j].(map[string]any)["id"].(string)
+	})
+	return sorted
+}
+
+// TestAppStoreSettingsImportUIAdmins imports settings whose admins were set
+// in the Lumos UI. A config that lists the same admins, in any order, must
+// plan no change and write nothing. Leaving them out then plans to clear
+// them.
+func TestAppStoreSettingsImportUIAdmins(t *testing.T) {
+	api := newFakeAPI(t)
+	api.admins = sortedAdmins([]any{
+		map[string]any{"id": "user-b", "type": "user"},
+		map[string]any{"id": "group1", "type": "group"},
+		map[string]any{"id": "user-a", "type": "user"},
+	})
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	settings := func(inAppStore bool, optional string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app_appstore_settings" "slack" {
+  app_id                              = "app1"
+  in_app_store                        = %t
+  catalog_visibility                  = "visible"
+  allow_permission_selection          = true
+  allow_multiple_permission_selection = false
+  allowed_requester_group_uuids       = ["group1"]
+  time_based_access = {
+    options = ["1 day"]
+    default = "1 day"
+  }
+  %s
+}
+`, inAppStore, optional)
+	}
+	const addr = "lumos_app_appstore_settings.slack"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: settings(true, `
+  admins = [
+    { id = "group1", type = "group" },
+    { id = "user-a", type = "user" },
+    { id = "user-b", type = "user" },
+  ]
+`) + `
+import {
+  to = lumos_app_appstore_settings.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionNoop),
+					},
+				},
+				Check: func(*terraform.State) error {
+					api.mu.Lock()
+					defer api.mu.Unlock()
+					if len(api.adminPuts) != 0 {
+						return fmt.Errorf("import wrote admins %v, want none", api.adminPuts)
+					}
+					return nil
+				},
+			},
+			{
+				// Lumos keeps a listed app only while it has an admin.
+				Config: settings(false, ""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "in_app_store", "admins"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("admins"), knownvalue.SetExact([]knownvalue.Check{})),
+					},
+				},
+			},
+		},
+	})
+}
+
 // TestAppImportedFromUIRemovedWithoutDelete imports an app connected in the
 // Lumos UI, then stops managing it with a removed block. The API refuses to
 // delete such an app, so the documented way out must never call DELETE. It
@@ -800,6 +1028,7 @@ func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			f.app[field] = body[override]
 			f.app[override] = body[override]
 		}
+		f.app["post_approval_message"] = body["post_approval_message"]
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(withEffectiveDisplay(f.app))
 	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodGet:
@@ -827,7 +1056,8 @@ func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // then removes both from the config. The create must plan the label it
 // shows. Removing the logo and website must plan their overrides cleared,
 // and the update must send null for each, the overrides the config sets,
-// and no app_class_id, which the API would reject for a custom app.
+// and no app_class_id, which the API would reject for a custom app. The
+// unset post-approval message is sent as null too.
 func TestAppCustomClearsOverrides(t *testing.T) {
 	api := &fakeCustomAppAPI{t: t}
 	server := httptest.NewServer(api)
@@ -888,6 +1118,8 @@ resource "lumos_app" "wiki" {
 		"description_override": `"Docs"`,
 		"logo_url_override":    `null`,
 		"website_url_override": `null`,
+
+		"post_approval_message": `null`,
 	}
 	if got := encodeFields(api.patches[0]); fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Errorf("update sent %v, want %v", got, want)
@@ -992,21 +1224,168 @@ resource "lumos_app" "wiki" {
 	}
 }
 
-// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app, then
-// rotates its credentials. Each plan must change only auth, the fields a
-// reconnect recomputes, and the display fields, whose defaults a reconnect
-// can change. Each update sends the credentials, null for every override
-// the config leaves out, and never app_class_id.
+// TestAppPostApprovalMessage creates a custom app with a post-approval
+// message, changes it, then removes it from the config. The create must send
+// it, and removing it must plan null and send null, which removes it.
+func TestAppPostApprovalMessage(t *testing.T) {
+	api := &fakeCustomAppAPI{t: t}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(extra string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "wiki" {
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Docs"
+  %s
+}
+`, extra)
+	}
+	const addr = "lumos_app.wiki"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`post_approval_message = "Welcome aboard."`),
+				Check:  resource.TestCheckResourceAttr(addr, "post_approval_message", "Welcome aboard."),
+			},
+			{
+				Config: config(`post_approval_message = "Ask in #it for help."`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "post_approval_message"),
+					},
+				},
+				Check: resource.TestCheckResourceAttr(addr, "post_approval_message", "Ask in #it for help."),
+			},
+			{
+				Config: config(""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "post_approval_message"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("post_approval_message"), knownvalue.Null()),
+					},
+				},
+				Check: resource.TestCheckNoResourceAttr(addr, "post_approval_message"),
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.creates) != 1 {
+		t.Fatalf("got %d creates, want 1: %v", len(api.creates), api.creates)
+	}
+	if got := api.creates[0]["post_approval_message"]; got != "Welcome aboard." {
+		t.Errorf("create sent post_approval_message %v, want %q", got, "Welcome aboard.")
+	}
+	if len(api.patches) != 2 {
+		t.Fatalf("got %d PATCHes, want the change and the removal: %v", len(api.patches), api.patches)
+	}
+	for i, want := range []any{"Ask in #it for help.", nil} {
+		if got, sent := api.patches[i]["post_approval_message"]; !sent || got != want {
+			t.Errorf("update %d sent post_approval_message %v (sent: %t), want %v", i+1, got, sent, want)
+		}
+	}
+}
+
+// TestAppImportedPostApprovalMessage imports a connected app whose
+// post-approval message was set in the Lumos UI. A config with the same
+// message plans no change; one that leaves it out plans to remove it.
+func TestAppImportedPostApprovalMessage(t *testing.T) {
+	api := newFakeAPI(t)
+	api.app["post_approval_message"] = "Welcome aboard."
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(extra string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "slack" {
+  app_class_id = "slack.com"
+  %s
+}
+`, extra)
+	}
+	const addr = "lumos_app.slack"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`post_approval_message = "Welcome aboard."`) + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction(addr, plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: config(""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "post_approval_message"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("post_approval_message"), knownvalue.Null()),
+					},
+				},
+				Check: resource.TestCheckNoResourceAttr(addr, "post_approval_message"),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 1 {
+		t.Fatalf("got %d app updates, want the removal: %v", len(api.appPatches), api.appPatches)
+	}
+	want := map[string]string{
+		"label_override":        `null`,
+		"category_override":     `null`,
+		"description_override":  `null`,
+		"logo_url_override":     `null`,
+		"website_url_override":  `null`,
+		"post_approval_message": `null`,
+	}
+	if got := encodeFields(api.appPatches[0]); fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Errorf("removal sent %v, want %v", got, want)
+	}
+}
+
+// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app with a
+// post-approval message its config keeps, then rotates its credentials. Each
+// plan must change only auth, the fields a reconnect recomputes, and the
+// display fields, whose defaults a reconnect can change. Each update sends
+// the credentials, the configured message, null for every override the
+// config leaves out, and never app_class_id.
 func TestAppConnectedUpdatePlansOnlyCredentials(t *testing.T) {
 	api := newFakeAPI(t)
+	api.app["post_approval_message"] = "Welcome aboard."
 	server := httptest.NewServer(api)
 	defer server.Close()
 
 	config := func(token string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app" "slack" {
-  app_class_id = "slack.com"
-  auth         = jsonencode({ token = %q })
+  app_class_id          = "slack.com"
+  auth                  = jsonencode({ token = %q })
+  post_approval_message = "Welcome aboard."
 }
 `, token)
 	}
@@ -1063,6 +1442,8 @@ removed {
 			"description_override": `null`,
 			"logo_url_override":    `null`,
 			"website_url_override": `null`,
+
+			"post_approval_message": `"Welcome aboard."`,
 		}
 		if got := encodeFields(api.appPatches[i]); fmt.Sprint(got) != fmt.Sprint(want) {
 			t.Errorf("update %d sent %v, want %v", i+1, got, want)
@@ -1154,6 +1535,8 @@ removed {
 		"category_override":    `null`,
 		"description_override": `null`,
 		"logo_url_override":    `null`,
+
+		"post_approval_message": `null`,
 	}
 	for i, website := range []string{`"https://acme.slack.com"`, `null`} {
 		want := map[string]string{"website_url_override": website}

@@ -14,6 +14,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
+// testAccCurrentUser reads the API token's user, the one admin an acceptance
+// test can always give an app. testAccAdmins makes it an app's only admin.
+const testAccCurrentUser = `
+data "lumos_current_user" "me" {}
+`
+const testAccAdmins = `admins = [{ id = data.lumos_current_user.me.id, type = "user" }]`
+
 func testAccCustomApp(name, label, description string) string {
 	return fmt.Sprintf(`
 resource "lumos_app" %q {
@@ -87,10 +94,10 @@ resource "lumos_app" "test" {
 }
 
 // TestAccAppStoreSettings manages the App Store settings of a custom app the
-// test creates. The app stays unlisted: listing needs an admin, which the
-// provider can't assign, so TestAccAppStoreListing covers that with an
-// existing app. LUMOS_TEST_TBA_LABEL (one of the domain's time-based access
-// labels) and GROUP_ID add those settings when set. The first app's default
+// test creates. The app stays unlisted, so its admin can be removed again;
+// TestAccAppStoreListing covers listing. LUMOS_TEST_TBA_LABEL (one of the
+// domain's time-based access labels) and GROUP_ID add those settings when
+// set. The first app's default
 // entitlement is one the test creates. Removing it from the config clears it
 // before the post-test destroy deletes the entitlement and the app.
 func TestAccAppStoreSettings(t *testing.T) {
@@ -98,21 +105,23 @@ func TestAccAppStoreSettings(t *testing.T) {
 	tbaLabel := os.Getenv("LUMOS_TEST_TBA_LABEL")
 	groupID := os.Getenv("GROUP_ID")
 
-	apps := testAccCustomApp("first", prefix+"-first", "App Store settings test") +
+	apps := testAccCurrentUser + testAccCustomApp("first", prefix+"-first", "App Store settings test") +
 		testAccCustomApp("second", prefix+"-second", "App Store settings test") + fmt.Sprintf(`
 resource "lumos_entitlement" "default" {
   app_id = lumos_app.first.id
   label  = %q
 }
 `, prefix+"-default")
-	// full sets every optional setting the test can: an intake field, request
-	// instructions, redirect URL, default entitlement and, when their
-	// variables are set, requester groups and time-based access. Without it,
-	// the config sets only the required switches.
+	// full sets every optional setting the test can: the token's user as
+	// admin, an intake field, request instructions, redirect URL, default
+	// entitlement and, when their variables are set, requester groups and
+	// time-based access. Without it, the config sets only the required
+	// switches.
 	settings := func(appRef, visibility string, full bool) string {
 		var extra []string
 		if full {
 			extra = append(extra,
+				testAccAdmins,
 				`custom_intake_fields = [{
     reference_key = "justification"
     field_type    = "text"
@@ -151,6 +160,8 @@ resource "lumos_app_appstore_settings" "test" {
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "app_id", "lumos_app.first", "id"),
 				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "default_entitlement.id", "lumos_entitlement.default", "id"),
 				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "redirect_url", "https://example.com/tf-acc"),
+				resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "admins.#", "1"),
+				resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "admins.0.id", "data.lumos_current_user.me", "id"),
 			),
 		},
 		{
@@ -177,6 +188,7 @@ resource "lumos_app_appstore_settings" "test" {
 		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "request_instructions"),
 		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "redirect_url"),
 		resource.TestCheckNoResourceAttr("lumos_app_appstore_settings.test", "default_entitlement.id"),
+		resource.TestCheckResourceAttr("lumos_app_appstore_settings.test", "admins.#", "0"),
 	}
 	steps = append(steps, resource.TestStep{
 		Config: providerConfig() + apps + settings("lumos_app.first", "search-only", false),
@@ -184,7 +196,7 @@ resource "lumos_app_appstore_settings" "test" {
 			PreApply: []plancheck.PlanCheck{
 				expectOnlyAttributesChange("lumos_app_appstore_settings.test",
 					"custom_intake_fields", "allowed_requester_group_uuids", "time_based_access",
-					"request_instructions", "redirect_url", "default_entitlement"),
+					"request_instructions", "redirect_url", "default_entitlement", "admins"),
 			},
 		},
 		Check: resource.ComposeAggregateTestCheckFunc(clearedChecks...),
@@ -211,9 +223,9 @@ resource "lumos_app_appstore_settings" "test" {
 // TestAccAppStoreListing lists an existing app in the App Store, then moves
 // its settings resource to a custom app the test creates. The replace has to
 // take the old app out of the App Store. It needs
-// LUMOS_TEST_APPSTORE_APP_ID: an app with an admin, reserved for tests,
-// since the test leaves it unlisted. The custom app has no admin, so it
-// stays unlisted throughout.
+// LUMOS_TEST_APPSTORE_APP_ID: an app reserved for tests, since the test
+// makes the token's user its only admin and leaves it unlisted. The custom
+// app has no admin, so it stays unlisted throughout.
 func TestAccAppStoreListing(t *testing.T) {
 	appID := testAccOptionalEnv(t, "LUMOS_TEST_APPSTORE_APP_ID")
 	label := "tf-acc-" + acctest.RandString(8)
@@ -230,15 +242,16 @@ func TestAccAppStoreListing(t *testing.T) {
 		CheckDestroy:             testAccCheckNotInAppStore(appID),
 		Steps: []resource.TestStep{
 			{
-				Config: providerConfig() + fmt.Sprintf(`
+				Config: providerConfig() + testAccCurrentUser + fmt.Sprintf(`
 resource "lumos_app_appstore_settings" "listed" {
   app_id                              = %q
   in_app_store                        = true
   catalog_visibility                  = "visible"
   allow_permission_selection          = true
   allow_multiple_permission_selection = false
+  %s
 }
-`, appID),
+`, appID, testAccAdmins),
 				Check: resource.TestCheckResourceAttr("lumos_app_appstore_settings.listed", "in_app_store", "true"),
 			},
 			{
