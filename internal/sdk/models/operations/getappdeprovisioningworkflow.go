@@ -10,14 +10,14 @@ import (
 
 type GetAppDeprovisioningWorkflowRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 }
 
-func (g *GetAppDeprovisioningWorkflowRequest) GetAppUUID() string {
+func (g *GetAppDeprovisioningWorkflowRequest) GetAppID() string {
 	if g == nil {
 		return ""
 	}
-	return g.AppUUID
+	return g.AppID
 }
 
 type GetAppDeprovisioningWorkflowResponse struct {
@@ -28,7 +28,7 @@ type GetAppDeprovisioningWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppDeprovisioningWorkflowBinding *shared.AppDeprovisioningWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -65,11 +65,11 @@ func (g *GetAppDeprovisioningWorkflowResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppDeprovisioningWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetAppDeprovisioningWorkflowResponse) GetAppDeprovisioningWorkflowBinding() *shared.AppDeprovisioningWorkflowBinding {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.AppDeprovisioningWorkflowBinding
 }
 
 func (g *GetAppDeprovisioningWorkflowResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {

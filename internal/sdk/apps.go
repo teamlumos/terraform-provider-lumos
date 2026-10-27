@@ -3481,12 +3481,12 @@ func (s *Apps) GetAppApprovalWorkflow(ctx context.Context, request operations.Ge
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppApprovalWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppApprovalWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3742,12 +3742,12 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppApprovalWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppApprovalWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -3996,12 +3996,12 @@ func (s *Apps) GetAppProvisioningWorkflow(ctx context.Context, request operation
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppProvisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppProvisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -4257,12 +4257,12 @@ func (s *Apps) SetAppProvisioningWorkflow(ctx context.Context, request operation
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppProvisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppProvisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -4511,12 +4511,12 @@ func (s *Apps) GetAppDeprovisioningWorkflow(ctx context.Context, request operati
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppDeprovisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppDeprovisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {
@@ -4772,12 +4772,12 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 				return nil, err
 			}
 
-			var out shared.Workflow
+			var out shared.AppDeprovisioningWorkflowBinding
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out, ""); err != nil {
 				return nil, err
 			}
 
-			res.Workflow = &out
+			res.AppDeprovisioningWorkflowBinding = &out
 		default:
 			rawBody, err := utils.ConsumeRawBody(httpRes)
 			if err != nil {

@@ -10,14 +10,14 @@ import (
 
 type GetAppApprovalWorkflowRequest struct {
 	// The app's ID, which `GET /v1/apps` returns as `id`.
-	AppUUID string `pathParam:"style=simple,explode=false,name=app_uuid"`
+	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 }
 
-func (g *GetAppApprovalWorkflowRequest) GetAppUUID() string {
+func (g *GetAppApprovalWorkflowRequest) GetAppID() string {
 	if g == nil {
 		return ""
 	}
-	return g.AppUUID
+	return g.AppID
 }
 
 type GetAppApprovalWorkflowResponse struct {
@@ -28,7 +28,7 @@ type GetAppApprovalWorkflowResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	Workflow *shared.Workflow
+	AppApprovalWorkflowBinding *shared.AppApprovalWorkflowBinding
 	// Bad Request
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
@@ -65,11 +65,11 @@ func (g *GetAppApprovalWorkflowResponse) GetRawResponse() *http.Response {
 	return g.RawResponse
 }
 
-func (g *GetAppApprovalWorkflowResponse) GetWorkflow() *shared.Workflow {
+func (g *GetAppApprovalWorkflowResponse) GetAppApprovalWorkflowBinding() *shared.AppApprovalWorkflowBinding {
 	if g == nil {
 		return nil
 	}
-	return g.Workflow
+	return g.AppApprovalWorkflowBinding
 }
 
 func (g *GetAppApprovalWorkflowResponse) GetAPIErrorEnvelope() *shared.APIErrorEnvelope {
