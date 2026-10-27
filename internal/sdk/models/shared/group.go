@@ -36,7 +36,7 @@ func (e *GroupLifecycle) UnmarshalJSON(data []byte) error {
 // Group - A v1 group, unprefixed on purpose (see `codegen_openapi_v1.py`).
 type Group struct {
 	// The ID of this group.
-	ID *string `json:"id,omitzero"`
+	ID string `json:"id"`
 	// The ID of the app this group is synced from.
 	AppID *string `json:"app_id,omitzero"`
 	// The ID of this group, specific to the integration.
@@ -51,9 +51,9 @@ type Group struct {
 	SourceAppID *string `json:"source_app_id,omitzero"`
 }
 
-func (g *Group) GetID() *string {
+func (g *Group) GetID() string {
 	if g == nil {
-		return nil
+		return ""
 	}
 	return g.ID
 }
