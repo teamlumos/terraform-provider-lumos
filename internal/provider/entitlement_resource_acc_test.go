@@ -25,7 +25,7 @@ resource "lumos_entitlement" "test" {
 `, label)
 	}
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -151,6 +151,11 @@ resource "lumos_entitlement_appstore_settings" "test" {
 			Check:  resource.TestCheckNoResourceAttr("lumos_entitlement_appstore_settings.test", "allowed_requester_group_uuids_override"),
 		})
 	}
+
+	// See TestAccAppStoreListing for why this locks after t.Parallel.
+	t.Parallel()
+	testAccAppStoreAppMu.Lock()
+	defer testAccAppStoreAppMu.Unlock()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },

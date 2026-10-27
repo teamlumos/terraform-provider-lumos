@@ -42,7 +42,7 @@ func TestAccWorkflowAssignees(t *testing.T) {
     },`, i+1, a)
 	}
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -73,6 +73,7 @@ resource "lumos_workflow" "chain" {
 // duration is written in the ISO 8601 form the API reads back. Each type
 // gets its own app, so the types run in parallel.
 func TestAccWorkflowProvisioningTypes(t *testing.T) {
+	t.Parallel()
 	for _, workflowType := range []string{
 		"account-provisioning",
 		"account-deprovisioning",
@@ -80,7 +81,6 @@ func TestAccWorkflowProvisioningTypes(t *testing.T) {
 		"entitlement-deprovisioning",
 	} {
 		t.Run(workflowType, func(t *testing.T) {
-			t.Parallel()
 			prefix := "tf-acc-" + acctest.RandString(8)
 			config := func(duration string) string {
 				return providerConfig() + testAccCustomApp("app", prefix, "Workflow test") + fmt.Sprintf(`
@@ -96,7 +96,7 @@ resource "lumos_workflow" "test" {
 `, workflowType, prefix, duration)
 			}
 
-			resource.Test(t, resource.TestCase{
+			resource.ParallelTest(t, resource.TestCase{
 				PreCheck:                 func() { testAccPreCheck(t) },
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{
@@ -176,7 +176,7 @@ resource "lumos_workflow" "template" {
 `, chainName, groupID, prefix)
 	}
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

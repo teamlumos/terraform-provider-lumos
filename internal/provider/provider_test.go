@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"sort"
+	"sync"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -121,6 +122,11 @@ func testAccOptionalEnv(t *testing.T, name string) string {
 	}
 	return value
 }
+
+// testAccAppStoreAppMu runs the tests that list the app in
+// LUMOS_TEST_APPSTORE_APP_ID one at a time: each leaves the app unlisted,
+// which would break another test still relying on the listing.
+var testAccAppStoreAppMu sync.Mutex
 
 var (
 	// testAccProtoV6ProviderFactories are used to instantiate a provider during

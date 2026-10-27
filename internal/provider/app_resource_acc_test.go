@@ -42,7 +42,7 @@ resource "lumos_app" "test" {
 `, label, description)
 	}
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -201,7 +201,7 @@ resource "lumos_app_appstore_settings" "test" {
 		Check: resource.TestCheckResourceAttrPair("lumos_app_appstore_settings.test", "app_id", "lumos_app.second", "id"),
 	})
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps:                    steps,
@@ -217,6 +217,12 @@ resource "lumos_app_appstore_settings" "test" {
 func TestAccAppStoreListing(t *testing.T) {
 	appID := testAccOptionalEnv(t, "LUMOS_TEST_APPSTORE_APP_ID")
 	label := "tf-acc-" + acctest.RandString(8)
+	// Lock only once the test runs in parallel: holding the lock while
+	// t.Parallel waits would block the other App Store app test before it
+	// can wait too.
+	t.Parallel()
+	testAccAppStoreAppMu.Lock()
+	defer testAccAppStoreAppMu.Unlock()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
