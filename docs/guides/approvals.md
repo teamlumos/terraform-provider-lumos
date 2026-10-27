@@ -117,7 +117,7 @@ resource "lumos_app_approval_workflow" "deploy_dashboard" {
 }
 ```
 
-* An app always has an approval workflow. To change it, set `workflow_id` to a different template; removing the binding from the configuration fails the plan rather than leaving the template bound while Terraform reports it gone. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`.
+* An app always has an approval workflow. To change it, set `workflow_id` to a different template. Removing the binding from the configuration fails the plan. To stop managing it without changing Lumos, use a `removed` block with `lifecycle { destroy = false }`.
 * To give one entitlement a different approval process, bind another template with `lumos_entitlement_approval_workflow`. That turns the entitlement's override on; destroying the binding turns it off again, so the entitlement goes back to the app's template.
 * A template can be bound to only one app or entitlement.
 * Changing a binding's `app_id` fails the plan, including when the new app isn't known until apply, for example an app created or replaced in the same apply. Changing it would replace the binding, and Lumos can't empty the old app's slot, so the old app would keep the template.
@@ -134,7 +134,6 @@ resource "lumos_app_approval_workflow" "b" {
 ```
 
 * If app `a` shouldn't keep its template, set its binding's `workflow_id` to a different workflow. An app's slot can't be emptied.
-* **Replacing the app itself,** for example a `lumos_app` change that forces a new app, fails the plan while a binding points at it. Stop managing the binding first with a `removed` block with `lifecycle { destroy = false }`, replace the app, then add the binding back.
 
 ## Limitations
 
