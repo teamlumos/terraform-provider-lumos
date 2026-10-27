@@ -1263,7 +1263,11 @@ actions:
           until apply, fails the plan. To change the workflow, set
           `workflow_id` to a different one. To stop managing the binding
           without changing Lumos, use a `removed` block with `destroy =
-          false`.
+          false`. Lumos refuses to delete a workflow while it's bound
+          to an app, so the app can't be destroyed in the same pass as
+          this binding and its workflow. Stop managing both with
+          `removed` blocks first, then destroy the app. The workflow
+          stays in Lumos.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppProvisioningWorkflowBinding:
@@ -1283,7 +1287,11 @@ actions:
           a different app, even one not known until apply, fails the
           plan. To change the workflow, set `workflow_id` to a different
           one. To stop managing the binding without changing Lumos, use
-          a `removed` block with `destroy = false`.
+          a `removed` block with `destroy = false`. Lumos refuses to
+          delete a workflow while it's bound to an app, so the app
+          can't be destroyed in the same pass as this binding and its
+          workflow. Stop managing both with `removed` blocks first,
+          then destroy the app. The workflow stays in Lumos.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       AppDeprovisioningWorkflowBinding:
@@ -1304,7 +1312,11 @@ actions:
           it to a different app, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`.
+          Lumos, use a `removed` block with `destroy = false`. Lumos
+          refuses to delete a workflow while it's bound to an app, so
+          the app can't be destroyed in the same pass as this binding
+          and its workflow. Stop managing both with `removed` blocks
+          first, then destroy the app. The workflow stays in Lumos.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementApprovalWorkflowBinding:
@@ -1344,7 +1356,12 @@ actions:
           different entitlement, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`.
+          Lumos, use a `removed` block with `destroy = false`. Lumos
+          refuses to delete a workflow while it's bound to an
+          entitlement, so the entitlement can't be destroyed in the
+          same pass as this binding and its workflow. Stop managing
+          both with `removed` blocks first, then destroy the
+          entitlement. The workflow stays in Lumos.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
       EntitlementDeprovisioningWorkflowBinding:
@@ -1365,6 +1382,11 @@ actions:
           a different entitlement, even one not known until apply, fails
           the plan. To change the workflow, set `workflow_id` to a
           different one. To stop managing the binding without changing
-          Lumos, use a `removed` block with `destroy = false`.
+          Lumos, use a `removed` block with `destroy = false`. Lumos
+          refuses to delete a workflow while it's bound to an
+          entitlement, so the entitlement can't be destroyed in the
+          same pass as this binding and its workflow. Stop managing
+          both with `removed` blocks first, then destroy the
+          entitlement. The workflow stays in Lumos.
         x-speakeasy-transform-from-api:
           jq: '{workflow_id: .id}'
