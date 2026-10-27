@@ -17,27 +17,27 @@ import (
 func testAccCustomApp(name, label, description string) string {
 	return fmt.Sprintf(`
 resource "lumos_app" %q {
-  label       = %q
-  category    = "Developers"
-  description = %q
+  label_override       = %q
+  category_override    = "Developers"
+  description_override = %q
 }
 `, name, label, description)
 }
 
 // TestAccAppCustom creates a custom app with a logo and website, edits only
 // its description, removes the logo and website, then imports it. The edit
-// must plan that one field and nothing else (GOV-4388), and removing the
-// logo and website must clear them.
+// must plan that one field and the description it shows, and nothing else
+// (GOV-4388), and removing the logo and website must clear their overrides.
 func TestAccAppCustom(t *testing.T) {
 	label := "tf-acc-" + acctest.RandString(8)
 	withLinks := func(description string) string {
 		return fmt.Sprintf(`
 resource "lumos_app" "test" {
-  label       = %q
-  category    = "Developers"
-  description = %q
-  logo_url    = "https://example.com/tf-acc-logo.png"
-  website_url = "https://example.com/tf-acc"
+  label_override       = %q
+  category_override    = "Developers"
+  description_override = %q
+  logo_url_override    = "https://example.com/tf-acc-logo.png"
+  website_url_override = "https://example.com/tf-acc"
 }
 `, label, description)
 	}
@@ -60,7 +60,7 @@ resource "lumos_app" "test" {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_app.test", plancheck.ResourceActionUpdate),
-						expectOnlyAttributesChange("lumos_app.test", "description"),
+						expectOnlyAttributesChange("lumos_app.test", "description_override", "description"),
 					},
 				},
 				Check: resource.TestCheckResourceAttr("lumos_app.test", "description", "Edited by an acceptance test"),
@@ -69,12 +69,12 @@ resource "lumos_app" "test" {
 				Config: providerConfig() + testAccCustomApp("test", label, "Edited by an acceptance test"),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						expectOnlyAttributesChange("lumos_app.test", "logo_url", "website_url"),
+						expectOnlyAttributesChange("lumos_app.test", "logo_url_override", "website_url_override", "logo_url", "website_url"),
 					},
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckNoResourceAttr("lumos_app.test", "logo_url"),
-					resource.TestCheckNoResourceAttr("lumos_app.test", "website_url"),
+					resource.TestCheckNoResourceAttr("lumos_app.test", "logo_url_override"),
+					resource.TestCheckNoResourceAttr("lumos_app.test", "website_url_override"),
 				),
 			},
 			{

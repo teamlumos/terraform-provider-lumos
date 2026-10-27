@@ -18,28 +18,28 @@ func TestAppUpdateBody(t *testing.T) {
 		want        string
 	}{
 		{
-			name:        "sends null for a custom app's unset logo and website",
+			name:        "sends null for a custom app's unset overrides",
 			operationID: "v1UpdateApp",
-			body:        `{"app_class_id":"custom","label":"Wiki","category":"Developers","description":"Docs"}`,
-			want:        `{"label":"Wiki","category":"Developers","description":"Docs","logo_url":null,"website_url":null}`,
+			body:        `{"app_class_id":"custom","label_override":"Wiki","category_override":"Developers","description_override":"Docs"}`,
+			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":null,"website_url_override":null}`,
 		},
 		{
-			name:        "keeps a custom app's configured logo and website",
+			name:        "keeps a custom app's configured overrides",
 			operationID: "v1UpdateApp",
-			body:        `{"app_class_id":"custom","label":"Wiki","category":"Developers","description":"Docs","logo_url":"https://example.com/logo.png","website_url":"https://example.com"}`,
-			want:        `{"label":"Wiki","category":"Developers","description":"Docs","logo_url":"https://example.com/logo.png","website_url":"https://example.com"}`,
+			body:        `{"app_class_id":"custom","label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":"https://example.com/logo.png","website_url_override":"https://example.com"}`,
+			want:        `{"label_override":"Wiki","category_override":"Developers","description_override":"Docs","logo_url_override":"https://example.com/logo.png","website_url_override":"https://example.com"}`,
 		},
 		{
-			name:        "drops a connected app's metadata and keeps its credentials",
+			name:        "sends a connected app's credentials and configured overrides, and null for the rest",
 			operationID: "v1UpdateApp",
-			body:        `{"app_class_id":"slack.com","auth":{"token":"x"},"label":"Slack","category":"Communication","description":"Team chat","logo_url":"https://example.com/slack.png","website_url":"https://slack.com"}`,
-			want:        `{"auth":{"token":"x"}}`,
+			body:        `{"app_class_id":"slack.com","auth":{"token":"x"},"label_override":"Slack"}`,
+			want:        `{"auth":{"token":"x"},"label_override":"Slack","description_override":null,"category_override":null,"logo_url_override":null,"website_url_override":null}`,
 		},
 		{
 			name:        "leaves other operations alone",
 			operationID: "v1CreateApp",
-			body:        `{"app_class_id":"slack.com","label":"Slack"}`,
-			want:        `{"app_class_id":"slack.com","label":"Slack"}`,
+			body:        `{"app_class_id":"slack.com","label_override":"Slack"}`,
+			want:        `{"app_class_id":"slack.com","label_override":"Slack"}`,
 		},
 	}
 	for _, tt := range tests {

@@ -26,28 +26,37 @@ provider "lumos" {
 `, serverURL)
 }
 
-// TestAppConflictingFields checks a config that both connects an
-// integration and sets custom-app fields fails at plan time. The check runs
+// TestAppConflictingFields checks a custom app config that sets credentials
+// fails at plan time, whether it leaves app_class_id out or sets it to
+// "custom": the API won't take credentials for a custom app. The check runs
 // before any API call, so the server URL is never contacted.
 func TestAppConflictingFields(t *testing.T) {
-	resource.UnitTest(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{{
-			Config: fakeProviderConfig("http://127.0.0.1:1") + `
-resource "lumos_app" "mixed" {
-  app_class_id = "okta.com"
-  auth         = jsonencode({ api_key = "x" })
-  description  = "Our Okta tenant"
+	for name, appClassID := range map[string]string{"omitted": "", "custom": `app_class_id = "custom"`} {
+		t.Run(name, func(t *testing.T) {
+			resource.UnitTest(t, resource.TestCase{
+				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+				Steps: []resource.TestStep{{
+					Config: fakeProviderConfig("http://127.0.0.1:1") + fmt.Sprintf(`
+resource "lumos_app" "wiki" {
+  %s
+  auth                 = jsonencode({ api_key = "x" })
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Docs"
 }
-`,
-			PlanOnly:    true,
-			ExpectError: regexp.MustCompile(`(?s)Invalid Attribute Combination.*app_class_id`),
-		}},
-	})
+`, appClassID),
+					PlanOnly:    true,
+					ExpectError: regexp.MustCompile(`(?s)Field needs an integration.*auth only applies`),
+				}},
+			})
+		})
+	}
 }
 
 // fakeAPI records every request it receives and serves App Store settings
-// for app "app1", applying PATCHes the way the API's merge patch does.
+// for app "app1", applying PATCHes the way the API's merge patch does. app
+// holds the app's display defaults under label, logo_url and so on, and
+// reads back as withEffectiveDisplay shows it.
 type fakeAPI struct {
 	t        *testing.T
 	mu       sync.Mutex
@@ -88,6 +97,13 @@ func newFakeAPI(t *testing.T) *fakeAPI {
 			"instance_id":                     "acme.slack.com",
 			"category":                        "Communication",
 			"description":                     "Team chat",
+			"logo_url":                        nil,
+			"website_url":                     nil,
+			"label_override":                  nil,
+			"description_override":            nil,
+			"category_override":               nil,
+			"logo_url_override":               nil,
+			"website_url_override":            nil,
 			"status":                          "approved",
 			"disconnected":                    false,
 			"sync_status":                     "success",
@@ -135,16 +151,47 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			f.appPatches = append(f.appPatches, patch)
+			// Like the API, the overrides change; credentials are never
+			// read back.
+			for _, k := range appDisplayOverrides {
+				if v, ok := patch[k]; ok {
+					f.app[k] = v
+				}
+			}
 		}
-		app := map[string]any{"appstore_settings": f.settings}
-		for k, v := range f.app {
-			app[k] = v
-		}
+		app := withEffectiveDisplay(f.app)
+		app["appstore_settings"] = f.settings
 		json.NewEncoder(w).Encode(app)
 	default:
 		f.t.Errorf("unexpected request %s %s", r.Method, r.URL.Path)
 		http.Error(w, "unexpected request", http.StatusNotFound)
 	}
+}
+
+// appDisplayOverrides maps each display field to the override the API shows
+// in it where one is set.
+var appDisplayOverrides = map[string]string{
+	"label":       "label_override",
+	"description": "description_override",
+	"category":    "category_override",
+	"logo_url":    "logo_url_override",
+	"website_url": "website_url_override",
+}
+
+// withEffectiveDisplay copies app, which holds the app's display defaults
+// under label, logo_url and so on, and reads each display field as the API
+// does: its override where one is set, otherwise the default.
+func withEffectiveDisplay(app map[string]any) map[string]any {
+	read := map[string]any{}
+	for k, v := range app {
+		read[k] = v
+	}
+	for field, override := range appDisplayOverrides {
+		if v := app[override]; v != nil {
+			read[field] = v
+		}
+	}
+	return read
 }
 
 // withOptionObjects turns written option labels into the objects the API
@@ -557,25 +604,6 @@ removed {
 	}
 }
 
-// TestAppCustomRequiresMetadata checks a custom app config must set label,
-// category and description: the API can't clear them, since null resets
-// them to the values the app was created with.
-func TestAppCustomRequiresMetadata(t *testing.T) {
-	resource.UnitTest(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{{
-			Config: fakeProviderConfig("http://127.0.0.1:1") + `
-resource "lumos_app" "wiki" {
-  label    = "Wiki"
-  category = "Developers"
-}
-`,
-			PlanOnly:    true,
-			ExpectError: regexp.MustCompile(`(?s)Invalid Attribute Combination.*description`),
-		}},
-	})
-}
-
 // TestAppIntegrationRemovalRejected imports a connected app, then drops
 // app_class_id from its config. There's no empty value to clear it to, so
 // the plan must fail rather than turn the integration into a custom app.
@@ -595,16 +623,15 @@ import {
 }
 
 resource "lumos_app" "slack" {
-  app_class_id = "slack.com"
+  app_class_id   = "slack.com"
+  label_override = "Slack (Acme)"
 }
 `,
 			},
 			{
 				Config: fakeProviderConfig(server.URL) + `
 resource "lumos_app" "slack" {
-  label       = "Slack"
-  category    = "Communication"
-  description = "Team chat"
+  label_override = "Slack (Acme)"
 }
 `,
 				ExpectError: regexp.MustCompile(`app_class_id can't be removed`),
@@ -625,11 +652,15 @@ removed {
 }
 
 // fakeCustomAppAPI serves custom app "custom1", applying PATCHes as the
-// API's merge patch does, and records each PATCH body.
+// API's merge patch does, and records each create and PATCH body. Like the
+// API, it creates the app from the label, category and description
+// overrides, which become its defaults too, and reads it back as
+// withEffectiveDisplay shows it.
 type fakeCustomAppAPI struct {
 	t       *testing.T
 	mu      sync.Mutex
 	app     map[string]any
+	creates []map[string]any
 	patches []map[string]any
 }
 
@@ -645,19 +676,21 @@ func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+		f.creates = append(f.creates, body)
 		f.app = map[string]any{
 			"id": "custom1", "app_class_id": "custom", "instance_id": "custom_app_import",
 			"status": "approved", "disconnected": false, "sync_status": nil,
 			"approval_workflow": nil, "default_provisioning_workflow": nil, "default_deprovisioning_workflow": nil,
-			"logo_url": nil, "website_url": nil, "appstore_settings": nil,
+			"appstore_settings": nil,
 		}
-		for k, v := range body {
-			f.app[k] = v
+		for field, override := range appDisplayOverrides {
+			f.app[field] = body[override]
+			f.app[override] = body[override]
 		}
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(f.app)
+		json.NewEncoder(w).Encode(withEffectiveDisplay(f.app))
 	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodGet:
-		json.NewEncoder(w).Encode(f.app)
+		json.NewEncoder(w).Encode(withEffectiveDisplay(f.app))
 	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodPatch:
 		var patch map[string]any
 		if err := json.NewDecoder(r.Body).Decode(&patch); err != nil {
@@ -668,7 +701,7 @@ func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		for k, v := range patch {
 			f.app[k] = v
 		}
-		json.NewEncoder(w).Encode(f.app)
+		json.NewEncoder(w).Encode(withEffectiveDisplay(f.app))
 	case r.URL.Path == "/v1/apps/custom1" && r.Method == http.MethodDelete:
 		w.WriteHeader(http.StatusNoContent)
 	default:
@@ -677,11 +710,12 @@ func (f *fakeCustomAppAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TestAppCustomClearsLogoAndWebsite creates a custom app with a logo and
-// website, then removes both from the config. The plan must show them
-// cleared, and the update must send null for each, the metadata the config
-// sets, and no app_class_id, which the API would reject for a custom app.
-func TestAppCustomClearsLogoAndWebsite(t *testing.T) {
+// TestAppCustomClearsOverrides creates a custom app with a logo and website,
+// then removes both from the config. The create must plan the label it
+// shows. Removing the logo and website must plan their overrides cleared,
+// and the update must send null for each, the overrides the config sets,
+// and no app_class_id, which the API would reject for a custom app.
+func TestAppCustomClearsOverrides(t *testing.T) {
 	api := &fakeCustomAppAPI{t: t}
 	server := httptest.NewServer(api)
 	defer server.Close()
@@ -689,9 +723,9 @@ func TestAppCustomClearsLogoAndWebsite(t *testing.T) {
 	config := func(extra string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app" "wiki" {
-  label       = "Wiki"
-  category    = "Developers"
-  description = "Docs"
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Docs"
   %s
 }
 `, extra)
@@ -703,23 +737,28 @@ resource "lumos_app" "wiki" {
 		Steps: []resource.TestStep{
 			{
 				Config: config(`
-  logo_url    = "https://example.com/logo.png"
-  website_url = "https://example.com"
+  logo_url_override    = "https://example.com/logo.png"
+  website_url_override = "https://example.com"
 `),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("label"), knownvalue.StringExact("Wiki")),
+					},
+				},
 				Check: resource.TestCheckResourceAttr(addr, "website_url", "https://example.com"),
 			},
 			{
 				Config: config(""),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						expectOnlyAttributesChange(addr, "logo_url", "website_url"),
-						plancheck.ExpectKnownValue(addr, tfjsonpath.New("logo_url"), knownvalue.Null()),
-						plancheck.ExpectKnownValue(addr, tfjsonpath.New("website_url"), knownvalue.Null()),
+						expectOnlyAttributesChange(addr, "logo_url_override", "website_url_override", "logo_url", "website_url"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("logo_url_override"), knownvalue.Null()),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("website_url_override"), knownvalue.Null()),
 					},
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckNoResourceAttr(addr, "logo_url"),
-					resource.TestCheckNoResourceAttr(addr, "website_url"),
+					resource.TestCheckNoResourceAttr(addr, "logo_url_override"),
+					resource.TestCheckNoResourceAttr(addr, "website_url_override"),
 				),
 			},
 		},
@@ -730,32 +769,123 @@ resource "lumos_app" "wiki" {
 	if len(api.patches) != 1 {
 		t.Fatalf("got %d PATCHes, want one update: %v", len(api.patches), api.patches)
 	}
-	got := map[string]string{}
-	for k, v := range api.patches[0] {
-		encoded, _ := json.Marshal(v)
-		got[k] = string(encoded)
-	}
 	want := map[string]string{
-		"label":       `"Wiki"`,
-		"category":    `"Developers"`,
-		"description": `"Docs"`,
-		"logo_url":    `null`,
-		"website_url": `null`,
+		"label_override":       `"Wiki"`,
+		"category_override":    `"Developers"`,
+		"description_override": `"Docs"`,
+		"logo_url_override":    `null`,
+		"website_url_override": `null`,
 	}
-	if fmt.Sprint(got) != fmt.Sprint(want) {
+	if got := encodeFields(api.patches[0]); fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Errorf("update sent %v, want %v", got, want)
 	}
 }
 
-// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app that
-// shows a logo and website from its integration, then rotates its
-// credentials. Each plan must change only auth and the fields a reconnect
-// recomputes, and each update must send only the credentials: never the
-// integration's metadata, which would become overrides, or app_class_id.
+// TestAppCustomClassID creates a custom app whose config sets app_class_id =
+// "custom", the value a custom app reads back with, then drops it from the
+// config and puts it back. Neither form plans a change, and the create must
+// leave app_class_id out, since the API takes any app_class_id on create as
+// an integration to connect.
+func TestAppCustomClassID(t *testing.T) {
+	api := &fakeCustomAppAPI{t: t}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(appClassID string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "wiki" {
+  %s
+  label_override       = "Wiki"
+  category_override    = "Developers"
+  description_override = "Docs"
+}
+`, appClassID)
+	}
+	const addr = "lumos_app.wiki"
+	noop := resource.ConfigPlanChecks{
+		PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction(addr, plancheck.ResourceActionNoop)},
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`app_class_id = "custom"`),
+				Check:  resource.TestCheckResourceAttr(addr, "app_class_id", "custom"),
+			},
+			{Config: config(""), ConfigPlanChecks: noop},
+			{Config: config(`app_class_id = "custom"`), ConfigPlanChecks: noop},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.creates) != 1 {
+		t.Fatalf("got %d creates, want 1: %v", len(api.creates), api.creates)
+	}
+	if v, ok := api.creates[0]["app_class_id"]; ok {
+		t.Errorf("create sent app_class_id = %v; want it left out: %v", v, api.creates[0])
+	}
+	if len(api.patches) != 0 {
+		t.Errorf("got %d updates, want none: %v", len(api.patches), api.patches)
+	}
+}
+
+// TestAppCustomClassIDImported imports a custom app created in the UI, which
+// has no overrides, with a config that copies app_class_id = "custom" from
+// its state, and expects no change. The API requires overrides only to
+// create a custom app, so the config doesn't need them.
+func TestAppCustomClassIDImported(t *testing.T) {
+	api := &fakeCustomAppAPI{t: t, app: map[string]any{
+		"id": "custom1", "app_class_id": "custom", "instance_id": "custom_app_import",
+		"label": "Wiki", "category": "Developers", "description": "Docs",
+		"logo_url": nil, "website_url": nil,
+		"label_override": nil, "category_override": nil, "description_override": nil,
+		"logo_url_override": nil, "website_url_override": nil,
+		"status": "approved", "disconnected": false, "sync_status": nil,
+		"approval_workflow": nil, "default_provisioning_workflow": nil, "default_deprovisioning_workflow": nil,
+		"appstore_settings": nil,
+	}}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: fakeProviderConfig(server.URL) + `
+import {
+  to = lumos_app.wiki
+  id = "custom1"
+}
+
+resource "lumos_app" "wiki" {
+  app_class_id = "custom"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("lumos_app.wiki", plancheck.ResourceActionNoop),
+					},
+				},
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.patches) != 0 {
+		t.Errorf("got %d updates, want none: %v", len(api.patches), api.patches)
+	}
+}
+
+// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app, then
+// rotates its credentials. Each plan must change only auth, the fields a
+// reconnect recomputes, and the display fields, whose defaults a reconnect
+// can change. Each update sends the credentials, null for every override
+// the config leaves out, and never app_class_id.
 func TestAppConnectedUpdatePlansOnlyCredentials(t *testing.T) {
 	api := newFakeAPI(t)
-	api.app["logo_url"] = "https://example.com/slack.png"
-	api.app["website_url"] = "https://slack.com"
 	server := httptest.NewServer(api)
 	defer server.Close()
 
@@ -767,7 +897,10 @@ resource "lumos_app" "slack" {
 }
 `, token)
 	}
-	reconnect := []string{"auth", "sync_status", "disconnected", "instance_id"}
+	reconnect := []string{
+		"auth", "sync_status", "disconnected", "instance_id",
+		"label", "description", "category", "logo_url", "website_url",
+	}
 
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -783,7 +916,6 @@ import {
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange("lumos_app.slack", reconnect...)},
 				},
-				Check: resource.TestCheckResourceAttr("lumos_app.slack", "website_url", "https://slack.com"),
 			},
 			{
 				Config: config("v2"),
@@ -810,11 +942,124 @@ removed {
 	if len(api.appPatches) != 2 {
 		t.Fatalf("got %d app updates, want 2: %v", len(api.appPatches), api.appPatches)
 	}
-	for i, patch := range api.appPatches {
-		for k := range patch {
-			if k != "auth" {
-				t.Errorf("update %d sent %s; want only auth: %v", i+1, k, patch)
-			}
+	for i, token := range []string{"v1", "v2"} {
+		want := map[string]string{
+			"auth":                 fmt.Sprintf(`{"token":%q}`, token),
+			"label_override":       `null`,
+			"category_override":    `null`,
+			"description_override": `null`,
+			"logo_url_override":    `null`,
+			"website_url_override": `null`,
+		}
+		if got := encodeFields(api.appPatches[i]); fmt.Sprint(got) != fmt.Sprint(want) {
+			t.Errorf("update %d sent %v, want %v", i+1, got, want)
 		}
 	}
+}
+
+// TestAppConnectedDisplayOverrides imports a connected app whose logo was
+// set in the Lumos UI, with a config that renames it, sets a website and
+// leaves the logo out. The plan must show the new name and website and the
+// logo override cleared, while the category and description keep the
+// integration's defaults. Removing the website from the config then clears
+// it too.
+func TestAppConnectedDisplayOverrides(t *testing.T) {
+	api := newFakeAPI(t)
+	api.app["logo_url_override"] = "https://example.com/slack.png"
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := func(extra string) string {
+		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
+resource "lumos_app" "slack" {
+  app_class_id   = "slack.com"
+  label_override = "Slack (Acme)"
+  %s
+}
+`, extra)
+	}
+	const addr = "lumos_app.slack"
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`website_url_override = "https://acme.slack.com"`) + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr,
+							"label_override", "logo_url_override", "website_url_override",
+							"label", "logo_url", "website_url"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("label"), knownvalue.StringExact("Slack (Acme)")),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("website_url"), knownvalue.StringExact("https://acme.slack.com")),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("logo_url_override"), knownvalue.Null()),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(addr, "label", "Slack (Acme)"),
+					resource.TestCheckResourceAttr(addr, "category", "Communication"),
+					resource.TestCheckNoResourceAttr(addr, "logo_url"),
+					resource.TestCheckResourceAttr(addr, "website_url", "https://acme.slack.com"),
+				),
+			},
+			{
+				Config: config(""),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr, "website_url_override", "website_url"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("website_url_override"), knownvalue.Null()),
+					},
+				},
+				Check: resource.TestCheckNoResourceAttr(addr, "website_url"),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 2 {
+		t.Fatalf("got %d app updates, want 2: %v", len(api.appPatches), api.appPatches)
+	}
+	overrides := map[string]string{
+		"label_override":       `"Slack (Acme)"`,
+		"category_override":    `null`,
+		"description_override": `null`,
+		"logo_url_override":    `null`,
+	}
+	for i, website := range []string{`"https://acme.slack.com"`, `null`} {
+		want := map[string]string{"website_url_override": website}
+		for k, v := range overrides {
+			want[k] = v
+		}
+		if got := encodeFields(api.appPatches[i]); fmt.Sprint(got) != fmt.Sprint(want) {
+			t.Errorf("update %d sent %v, want %v", i+1, got, want)
+		}
+	}
+}
+
+// encodeFields JSON-encodes each value of a request body, for comparing
+// bodies field by field.
+func encodeFields(body map[string]any) map[string]string {
+	encoded := map[string]string{}
+	for k, v := range body {
+		b, _ := json.Marshal(v)
+		encoded[k] = string(b)
+	}
+	return encoded
 }
