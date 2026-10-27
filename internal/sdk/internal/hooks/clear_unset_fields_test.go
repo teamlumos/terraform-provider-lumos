@@ -20,6 +20,18 @@ func TestClearUnsetFields(t *testing.T) {
 		want        string
 	}{
 		{
+			name:        "sends null for an unset description and approval message",
+			operationID: "updateEntitlement",
+			body:        `{"label":"Admin"}`,
+			want:        `{"label":"Admin","description_override":null,"custom_approval_message_override":null}`,
+		},
+		{
+			name:        "keeps a configured description and approval message",
+			operationID: "updateEntitlement",
+			body:        `{"label":"Admin","description_override":"Ask first.","custom_approval_message_override":"Approved."}`,
+			want:        `{"label":"Admin","description_override":"Ask first.","custom_approval_message_override":"Approved."}`,
+		},
+		{
 			name:        "sends null for every unset override",
 			operationID: "updateEntitlementAppStoreSettings",
 			body:        `{}`,
