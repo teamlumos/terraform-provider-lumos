@@ -164,6 +164,7 @@ data "lumos_workflow_steps" "test" {
 			},
 		},
 	}
+	t.Parallel()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			env := map[string]string{}
@@ -173,7 +174,7 @@ data "lumos_workflow_steps" "test" {
 					t.Skipf("%s isn't set", name)
 				}
 			}
-			resource.Test(t, resource.TestCase{
+			resource.ParallelTest(t, resource.TestCase{
 				PreCheck:                 func() { testAccPreCheck(t) },
 				ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 				Steps: []resource.TestStep{{

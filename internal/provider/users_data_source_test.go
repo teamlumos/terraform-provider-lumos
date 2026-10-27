@@ -183,7 +183,7 @@ data "lumos_users" "all" {
 // TestAccUsersDataSource looks up the token's own user by email, so it
 // needs no fixture users in the test domain.
 func TestAccUsersDataSource(t *testing.T) {
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{{
