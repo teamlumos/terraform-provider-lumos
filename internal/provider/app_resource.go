@@ -24,6 +24,7 @@ import (
 	speakeasy_stringplanmodifier "github.com/teamlumos/terraform-provider-lumos/internal/planmodifiers/stringplanmodifier"
 	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
+	custom_stringvalidators "github.com/teamlumos/terraform-provider-lumos/internal/validators/stringvalidators"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -47,20 +48,25 @@ type AppResourceModel struct {
 	AppstoreSettings              *tfTypes.AppstoreSettingsAppStoreSettingsResponse `tfsdk:"appstore_settings"`
 	Auth                          jsontypes.Normalized                              `tfsdk:"auth"`
 	Category                      types.String                                      `tfsdk:"category"`
+	CategoryOverride              types.String                                      `tfsdk:"category_override"`
 	DefaultDeprovisioningWorkflow *tfTypes.EntitlementRefInput                      `tfsdk:"default_deprovisioning_workflow"`
 	DefaultProvisioningWorkflow   *tfTypes.EntitlementRefInput                      `tfsdk:"default_provisioning_workflow"`
 	Description                   types.String                                      `tfsdk:"description"`
+	DescriptionOverride           types.String                                      `tfsdk:"description_override"`
 	Disconnected                  types.Bool                                        `tfsdk:"disconnected"`
 	ID                            types.String                                      `tfsdk:"id"`
 	InstanceID                    types.String                                      `tfsdk:"instance_id"`
 	Label                         types.String                                      `tfsdk:"label"`
+	LabelOverride                 types.String                                      `tfsdk:"label_override"`
 	LogoURL                       types.String                                      `tfsdk:"logo_url"`
+	LogoURLOverride               types.String                                      `tfsdk:"logo_url_override"`
 	PostApprovalMessage           types.String                                      `tfsdk:"post_approval_message"`
 	Settings                      jsontypes.Normalized                              `tfsdk:"settings"`
 	Status                        types.String                                      `tfsdk:"status"`
 	SyncStatus                    types.String                                      `tfsdk:"sync_status"`
 	Version                       types.String                                      `tfsdk:"version"`
 	WebsiteURL                    types.String                                      `tfsdk:"website_url"`
+	WebsiteURLOverride            types.String                                      `tfsdk:"website_url_override"`
 }
 
 func (r *AppResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -79,15 +85,9 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 					stringplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `Canonical identifier of an integration, e.g. ` + "`" + `okta.com` + "`" + `. Setting it connects that integration with ` + "`" + `auth` + "`" + `/` + "`" + `settings` + "`" + `; leaving it out creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.`,
+				Description: `Canonical identifier of an integration, e.g. ` + "`" + `okta.com` + "`" + `. Setting it connects that integration with ` + "`" + `auth` + "`" + `/` + "`" + `settings` + "`" + `; leaving it out, or setting ` + "`" + `"custom"` + "`" + `, the value a custom app reads back with, creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.`,
 				Validators: []validator.String{
-					stringvalidator.ConflictsWith(path.Expressions{
-						path.MatchRelative().AtParent().AtName("label"),
-						path.MatchRelative().AtParent().AtName("category"),
-						path.MatchRelative().AtParent().AtName("description"),
-						path.MatchRelative().AtParent().AtName("logo_url"),
-						path.MatchRelative().AtParent().AtName("website_url"),
-					}...),
+					custom_stringvalidators.ConnectFieldsNeedIntegration(),
 				},
 			},
 			"approval_workflow": schema.SingleNestedAttribute{
@@ -261,16 +261,14 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"category": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.ShowsOverride(),
 				},
-				Description: `The app's category. Required for a custom app; a connected app can't set it. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
-				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRelative().AtParent().AtName("app_class_id"),
-					}...),
-				},
+				Description: `The category this app belongs to.`,
+			},
+			"category_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `The app's category in your organization, shown as ` + "`" + `category` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `category` + "`" + ` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
 			},
 			"default_deprovisioning_workflow": schema.SingleNestedAttribute{
 				Computed: true,
@@ -306,16 +304,16 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"description": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.ShowsOverride(),
 				},
-				Description: `The app's description. Required for a custom app; a connected app can't set it.`,
+				Description: `A description of the app.`,
+			},
+			"description_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `The app's description in your organization, shown as ` + "`" + `description` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `description` + "`" + ` shows the app's default description. At most 1,000 characters.`,
 				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRelative().AtParent().AtName("app_class_id"),
-					}...),
-					stringvalidator.UTF8LengthAtMost(8191),
+					stringvalidator.UTF8LengthBetween(1, 1000),
 				},
 			},
 			"disconnected": schema.BoolAttribute{
@@ -341,32 +339,38 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"label": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+					custom_stringplanmodifier.ShowsOverride(),
 				},
-				Description: `The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.`,
+				Description: `The display name of the app.`,
+			},
+			"label_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `The app's display name in your organization, shown as ` + "`" + `label` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `label` + "`" + ` shows the app's default name. At most 255 characters.`,
 				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(path.Expressions{
-						path.MatchRelative().AtParent().AtName("app_class_id"),
-					}...),
-					stringvalidator.UTF8LengthAtMost(255),
+					stringvalidator.UTF8LengthBetween(1, 255),
 				},
 			},
 			"logo_url": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.NullIfOmittedOnCustomApp(),
+					custom_stringplanmodifier.ShowsOverride(),
 				},
-				Description: `URL of the app's logo. On a custom app, omitted or set to ` + "`" + `null` + "`" + `, the logo is cleared. A connected app can't set it.`,
+				Description: `URL of the app logo image.`,
+			},
+			"logo_url_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `URL of the app's logo in your organization, shown as ` + "`" + `logo_url` + "`" + `. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `logo_url` + "`" + ` shows the app's default logo. At most 2,048 characters.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthBetween(1, 2048),
+				},
 			},
 			"post_approval_message": schema.StringAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
-				Description: `Custom message shown to the requester after their access request is approved.`,
+				Description: `Custom message shown to the requester after their access request is approved. Omitted when none is set.`,
 			},
 			"settings": schema.StringAttribute{
 				CustomType:  jsontypes.NormalizedType{},
@@ -394,11 +398,17 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"website_url": schema.StringAttribute{
 				Computed: true,
-				Optional: true,
 				PlanModifiers: []planmodifier.String{
-					custom_stringplanmodifier.NullIfOmittedOnCustomApp(),
+					custom_stringplanmodifier.ShowsOverride(),
 				},
-				Description: `URL of the app's website. On a custom app, omitted or set to ` + "`" + `null` + "`" + `, the website is cleared. A connected app can't set it.`,
+				Description: `URL of the app's official website.`,
+			},
+			"website_url_override": schema.StringAttribute{
+				Optional:    true,
+				Description: `URL of the app's website in your organization, shown as ` + "`" + `website_url` + "`" + `. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `website_url` + "`" + ` shows the app's default website, if it has one. At most 2,048 characters.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthBetween(1, 2048),
+				},
 			},
 		},
 	}

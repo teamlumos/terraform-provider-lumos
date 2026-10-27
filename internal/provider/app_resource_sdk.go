@@ -85,6 +85,7 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 			}
 		}
 		r.Category = types.StringPointerValue(resp.Category)
+		r.CategoryOverride = types.StringPointerValue(resp.CategoryOverride)
 		if resp.DefaultDeprovisioningWorkflow == nil {
 			r.DefaultDeprovisioningWorkflow = nil
 		} else {
@@ -98,11 +99,14 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 			r.DefaultProvisioningWorkflow.ID = types.StringValue(resp.DefaultProvisioningWorkflow.ID)
 		}
 		r.Description = types.StringPointerValue(resp.Description)
+		r.DescriptionOverride = types.StringPointerValue(resp.DescriptionOverride)
 		r.Disconnected = types.BoolPointerValue(resp.Disconnected)
 		r.ID = types.StringValue(resp.ID)
 		r.InstanceID = types.StringPointerValue(resp.InstanceID)
 		r.Label = types.StringPointerValue(resp.Label)
+		r.LabelOverride = types.StringPointerValue(resp.LabelOverride)
 		r.LogoURL = types.StringPointerValue(resp.LogoURL)
+		r.LogoURLOverride = types.StringPointerValue(resp.LogoURLOverride)
 		r.PostApprovalMessage = types.StringPointerValue(resp.PostApprovalMessage)
 		if resp.Status != nil {
 			r.Status = types.StringValue(string(*resp.Status))
@@ -115,6 +119,7 @@ func (r *AppResourceModel) RefreshFromSharedAppResponse(ctx context.Context, res
 			r.SyncStatus = types.StringNull()
 		}
 		r.WebsiteURL = types.StringPointerValue(resp.WebsiteURL)
+		r.WebsiteURLOverride = types.StringPointerValue(resp.WebsiteURLOverride)
 	}
 
 	return diags
@@ -190,46 +195,46 @@ func (r *AppResourceModel) ToSharedAppCreateInput(ctx context.Context) (*shared.
 	} else {
 		version = nil
 	}
-	label := new(string)
-	if !r.Label.IsUnknown() && !r.Label.IsNull() {
-		*label = r.Label.ValueString()
+	labelOverride := new(string)
+	if !r.LabelOverride.IsUnknown() && !r.LabelOverride.IsNull() {
+		*labelOverride = r.LabelOverride.ValueString()
 	} else {
-		label = nil
+		labelOverride = nil
 	}
-	category := new(string)
-	if !r.Category.IsUnknown() && !r.Category.IsNull() {
-		*category = r.Category.ValueString()
+	descriptionOverride := new(string)
+	if !r.DescriptionOverride.IsUnknown() && !r.DescriptionOverride.IsNull() {
+		*descriptionOverride = r.DescriptionOverride.ValueString()
 	} else {
-		category = nil
+		descriptionOverride = nil
 	}
-	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() {
-		*description = r.Description.ValueString()
+	categoryOverride := new(string)
+	if !r.CategoryOverride.IsUnknown() && !r.CategoryOverride.IsNull() {
+		*categoryOverride = r.CategoryOverride.ValueString()
 	} else {
-		description = nil
+		categoryOverride = nil
 	}
-	logoURL := new(string)
-	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
-		*logoURL = r.LogoURL.ValueString()
+	logoURLOverride := new(string)
+	if !r.LogoURLOverride.IsUnknown() && !r.LogoURLOverride.IsNull() {
+		*logoURLOverride = r.LogoURLOverride.ValueString()
 	} else {
-		logoURL = nil
+		logoURLOverride = nil
 	}
-	websiteURL := new(string)
-	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
-		*websiteURL = r.WebsiteURL.ValueString()
+	websiteURLOverride := new(string)
+	if !r.WebsiteURLOverride.IsUnknown() && !r.WebsiteURLOverride.IsNull() {
+		*websiteURLOverride = r.WebsiteURLOverride.ValueString()
 	} else {
-		websiteURL = nil
+		websiteURLOverride = nil
 	}
 	out := shared.AppCreateInput{
-		AppClassID:  appClassID,
-		Auth:        auth,
-		Settings:    settings,
-		Version:     version,
-		Label:       label,
-		Category:    category,
-		Description: description,
-		LogoURL:     logoURL,
-		WebsiteURL:  websiteURL,
+		AppClassID:          appClassID,
+		Auth:                auth,
+		Settings:            settings,
+		Version:             version,
+		LabelOverride:       labelOverride,
+		DescriptionOverride: descriptionOverride,
+		CategoryOverride:    categoryOverride,
+		LogoURLOverride:     logoURLOverride,
+		WebsiteURLOverride:  websiteURLOverride,
 	}
 
 	return &out, diags
@@ -258,46 +263,46 @@ func (r *AppResourceModel) ToSharedAppUpdateInput(ctx context.Context) (*shared.
 	} else {
 		version = nil
 	}
-	label := new(string)
-	if !r.Label.IsUnknown() && !r.Label.IsNull() {
-		*label = r.Label.ValueString()
+	labelOverride := new(string)
+	if !r.LabelOverride.IsUnknown() && !r.LabelOverride.IsNull() {
+		*labelOverride = r.LabelOverride.ValueString()
 	} else {
-		label = nil
+		labelOverride = nil
 	}
-	category := new(string)
-	if !r.Category.IsUnknown() && !r.Category.IsNull() {
-		*category = r.Category.ValueString()
+	descriptionOverride := new(string)
+	if !r.DescriptionOverride.IsUnknown() && !r.DescriptionOverride.IsNull() {
+		*descriptionOverride = r.DescriptionOverride.ValueString()
 	} else {
-		category = nil
+		descriptionOverride = nil
 	}
-	description := new(string)
-	if !r.Description.IsUnknown() && !r.Description.IsNull() {
-		*description = r.Description.ValueString()
+	categoryOverride := new(string)
+	if !r.CategoryOverride.IsUnknown() && !r.CategoryOverride.IsNull() {
+		*categoryOverride = r.CategoryOverride.ValueString()
 	} else {
-		description = nil
+		categoryOverride = nil
 	}
-	logoURL := new(string)
-	if !r.LogoURL.IsUnknown() && !r.LogoURL.IsNull() {
-		*logoURL = r.LogoURL.ValueString()
+	logoURLOverride := new(string)
+	if !r.LogoURLOverride.IsUnknown() && !r.LogoURLOverride.IsNull() {
+		*logoURLOverride = r.LogoURLOverride.ValueString()
 	} else {
-		logoURL = nil
+		logoURLOverride = nil
 	}
-	websiteURL := new(string)
-	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
-		*websiteURL = r.WebsiteURL.ValueString()
+	websiteURLOverride := new(string)
+	if !r.WebsiteURLOverride.IsUnknown() && !r.WebsiteURLOverride.IsNull() {
+		*websiteURLOverride = r.WebsiteURLOverride.ValueString()
 	} else {
-		websiteURL = nil
+		websiteURLOverride = nil
 	}
 	out := shared.AppUpdateInput{
-		AppClassID:  appClassID,
-		Auth:        auth,
-		Settings:    settings,
-		Version:     version,
-		Label:       label,
-		Category:    category,
-		Description: description,
-		LogoURL:     logoURL,
-		WebsiteURL:  websiteURL,
+		AppClassID:          appClassID,
+		Auth:                auth,
+		Settings:            settings,
+		Version:             version,
+		LabelOverride:       labelOverride,
+		DescriptionOverride: descriptionOverride,
+		CategoryOverride:    categoryOverride,
+		LogoURLOverride:     logoURLOverride,
+		WebsiteURLOverride:  websiteURLOverride,
 	}
 
 	return &out, diags

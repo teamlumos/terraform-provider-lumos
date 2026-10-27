@@ -15,22 +15,24 @@ A custom app, or a connected integration. App Store settings show here read-only
 # A custom app: one Lumos has no connector for, whose accounts you
 # maintain yourself.
 resource "lumos_app" "deploy_dashboard" {
-  label       = "Deploy dashboard"
-  category    = "Developers"
-  description = "Internal tool for tracking deploys."
-  website_url = "https://deploys.example.com"
+  label_override       = "Deploy dashboard"
+  category_override    = "Developers"
+  description_override = "Internal tool for tracking deploys."
+  website_url_override = "https://deploys.example.com"
 }
 
 # A connected integration. The keys auth and settings take depend on the
 # integration; read them from its connection schema
-# (GET /v1/integrations/{app_class_id}/connection-schema).
+# (GET /v1/integrations/{app_class_id}/connection-schema). label_override
+# replaces the integration's name, as shown in Lumos.
 variable "okta_api_token" {
   type      = string
   sensitive = true
 }
 
 resource "lumos_app" "okta" {
-  app_class_id = "okta.com"
+  app_class_id   = "okta.com"
+  label_override = "Okta (Workforce)"
   auth = jsonencode({
     api_key = var.okta_api_token
   })
@@ -45,28 +47,33 @@ resource "lumos_app" "okta" {
 
 ### Optional
 
-- `app_class_id` (String) Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.
+- `app_class_id` (String) Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out, or setting `"custom"`, the value a custom app reads back with, creates a custom app. It can't be removed from a connected app's config. Requires replacement if changed.
 - `auth` (String, Sensitive) Credentials for the integration, as a JSON object — **all secrets go here**. The accepted keys depend on the integration; read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. Some integrations connect in-band from these credentials; others require browser consent and are finished in the Lumos UI — for those, send `{}`. Missing or wrong-shaped credentials are rejected with 400, and so are credentials the third party rejects. Only applies to integrations. On update this field is required whenever `settings` or `version` is sent, because the credential group is replaced rather than merged. Parsed as JSON.
-- `category` (String) The app's category. Required for a custom app; a connected app can't set it. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
-- `description` (String) The app's description. Required for a custom app; a connected app can't set it.
-- `label` (String) The app's display name in your organization. Required for a custom app; a connected app can't set it. At most 255 characters.
-- `logo_url` (String) URL of the app's logo. On a custom app, omitted or set to `null`, the logo is cleared. A connected app can't set it.
+- `category_override` (String) The app's category in your organization, shown as `category`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+- `description_override` (String) The app's description in your organization, shown as `description`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
+- `label_override` (String) The app's display name in your organization, shown as `label`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
+- `logo_url_override` (String) URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
 - `settings` (String, Sensitive) Non-secret configuration for the integration, as a JSON object — e.g. host, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Only applies to integrations. Parsed as JSON.
 - `version` (String) Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations.
-- `website_url` (String) URL of the app's website. On a custom app, omitted or set to `null`, the website is cleared. A connected app can't set it.
+- `website_url_override` (String) URL of the app's website in your organization, shown as `website_url`. Omitted or set to `null`, it's cleared, and `website_url` shows the app's default website, if it has one. At most 2,048 characters.
 
 ### Read-Only
 
 - `approval_workflow` (Attributes) The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates. (see [below for nested schema](#nestedatt--approval_workflow))
 - `appstore_settings` (Attributes) AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object. (see [below for nested schema](#nestedatt--appstore_settings))
+- `category` (String) The category this app belongs to.
 - `default_deprovisioning_workflow` (Attributes) The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow))
 - `default_provisioning_workflow` (Attributes) The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_provisioning_workflow))
+- `description` (String) A description of the app.
 - `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 - `id` (String) The unique identifier of the app.
 - `instance_id` (String) The app-instance identifier distinguishing multiple instances of the same app.
-- `post_approval_message` (String) Custom message shown to the requester after their access request is approved.
+- `label` (String) The display name of the app.
+- `logo_url` (String) URL of the app logo image.
+- `post_approval_message` (String) Custom message shown to the requester after their access request is approved. Omitted when none is set.
 - `status` (String) The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
 - `sync_status` (String) The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
+- `website_url` (String) URL of the app's official website.
 
 <a id="nestedatt--approval_workflow"></a>
 ### Nested Schema for `approval_workflow`
@@ -141,11 +148,11 @@ Read-Only:
 
 ## Behavior
 
-* **Connecting or creating:** set `app_class_id` with `auth` (and `settings` if the integration needs them) to connect an integration, or `label`, `category` and `description` to create a custom app. A config can't mix the two.
-* **Editing a connected app reconnects it.** Every update resends `auth` and `settings`, so the API reconnects the integration and starts a sync, even for a metadata-only change. `sync_status`, `disconnected` and `instance_id` show as known after apply on those updates.
-* **The config is authoritative.** A custom app must set `label`, `category` and `description`. Leaving out `logo_url` or `website_url`, or setting it to `null`, clears it, and the plan shows `-> null`. A connected app shows its integration's metadata and can't set it; set a connected app's display overrides in the Lumos UI.
+* **Connecting or creating:** set `app_class_id` with `auth` (and `settings` if the integration needs them) to connect an integration. Leave `app_class_id` out, or set it to `"custom"`, the value a custom app reads back with, to create a custom app. A custom app needs `label_override`, `category_override` and `description_override` to be created, and can't set `auth`, `settings` or `version`.
+* **Editing a connected app reconnects it.** Every update resends `auth` and `settings`, so the API reconnects the integration and starts a sync, even for a change to an override. `sync_status`, `disconnected` and `instance_id` show as known after apply on those updates, and so do the display fields without an override, since a sync can change their defaults.
+* **Display fields are read-only; set them through their overrides.** `label`, `description`, `category`, `logo_url` and `website_url` show the matching `*_override` where one is set, and the app's default otherwise: the integration's for a connected app, and what a custom app was created with.
+* **The config is authoritative.** Leaving out an `*_override`, or setting it to `null`, clears it, replacing any value set in the Lumos UI, and the plan shows `-> null`. The display field then shows the app's default.
 * **`app_class_id` can't be removed** from a connected app's config, since an app without it is a custom app. To stop managing the app, remove the resource or use a `removed` block.
-* **Imported custom apps with an uploaded logo:** for a custom app created in the Lumos UI with an uploaded logo, clearing `logo_url` brings back the uploaded logo, and the apply fails with an inconsistent result. Set `logo_url` in the config to keep a logo.
 * **App Store settings** appear read-only in `appstore_settings`. Change them with `lumos_app_appstore_settings`.
 
 ## Destroy behavior

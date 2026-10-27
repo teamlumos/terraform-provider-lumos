@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 6af0fec178b2bf5e3f3ba6587e90dc2a
+  docChecksum: ce320c3b38b592b2ef4d0e3a28931b23
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -331,6 +331,7 @@ trackedFiles:
   internal/sdk/models/operations/createtaskcomment.go: {}
   internal/sdk/models/operations/createworkflow.go: {}
   internal/sdk/models/operations/deleteentitlement.go: {}
+  internal/sdk/models/operations/deleteentitlementapprovalworkflowoverride.go: {}
   internal/sdk/models/operations/deleteknowledgecontext.go: {}
   internal/sdk/models/operations/deletepreapprovalrule.go: {}
   internal/sdk/models/operations/deleteworkflow.go: {}
@@ -404,6 +405,7 @@ trackedFiles:
   internal/sdk/models/operations/v1getaccesspolicy.go: {}
   internal/sdk/models/operations/v1getaccessrequest.go: {}
   internal/sdk/models/operations/v1getapp.go: {}
+  internal/sdk/models/operations/v1getappadmins.go: {}
   internal/sdk/models/operations/v1getappentitlementappstorecatalog.go: {}
   internal/sdk/models/operations/v1getappstorecatalog.go: {}
   internal/sdk/models/operations/v1getappstoresettings.go: {}
@@ -423,6 +425,7 @@ trackedFiles:
   internal/sdk/models/operations/v1patchappstoresettings.go: {}
   internal/sdk/models/operations/v1removeappfromappstore.go: {}
   internal/sdk/models/operations/v1removeentitlementfromappstore.go: {}
+  internal/sdk/models/operations/v1setappadmins.go: {}
   internal/sdk/models/operations/v1updateaccesspolicy.go: {}
   internal/sdk/models/operations/v1updateapp.go: {}
   internal/sdk/models/operations/v1uploadaccounts.go: {}
@@ -463,10 +466,13 @@ trackedFiles:
   internal/sdk/models/shared/activitylogrollupproductarea.go: {}
   internal/sdk/models/shared/addcommentinput.go: {}
   internal/sdk/models/shared/adminassignee.go: {}
+  internal/sdk/models/shared/adminassigneeinput.go: {}
   internal/sdk/models/shared/airecommendation.go: {}
   internal/sdk/models/shared/apierror.go: {}
   internal/sdk/models/shared/apierrorenvelope.go: {}
   internal/sdk/models/shared/apierrorfield.go: {}
+  internal/sdk/models/shared/appadminsinput.go: {}
+  internal/sdk/models/shared/appadminsresponse.go: {}
   internal/sdk/models/shared/appbase.go: {}
   internal/sdk/models/shared/appcategory.go: {}
   internal/sdk/models/shared/appcategorylistoutput.go: {}
@@ -1772,7 +1778,7 @@ examples:
   v1CreateApp:
     speakeasy-default-v1-create-app:
       requestBody:
-        application/json: {"label": "My internal tool", "category": "Developers", "description": "Hand-rolled deploy dashboard."}
+        application/json: {"label_override": "My internal tool", "description_override": "Hand-rolled deploy dashboard.", "category_override": "Developers"}
       responses:
         "201":
           application/json: {"id": "<id>"}
@@ -1810,7 +1816,7 @@ examples:
         path:
           app_uuid: "<id>"
       requestBody:
-        application/json: {"label": "My internal tool", "description": "Hand-rolled deploy dashboard."}
+        application/json: {"label_override": "My internal tool", "description_override": "Hand-rolled deploy dashboard."}
       responses:
         "200":
           application/json: {"id": "<id>"}
@@ -2655,6 +2661,42 @@ examples:
       parameters:
         path:
           entitlement_uuid: "<id>"
+  v1GetAppAdmins:
+    speakeasy-default-v1-get-app-admins:
+      parameters:
+        path:
+          app_uuid: "<id>"
+      responses:
+        "200":
+          application/json: {"admins": []}
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+  v1SetAppAdmins:
+    speakeasy-default-v1-set-app-admins:
+      parameters:
+        path:
+          app_uuid: "<id>"
+      requestBody:
+        application/json: {"admins": [{"id": "1a2b3c4d-5e6f-7081-92a3-b4c5d6e7f809", "type": "user"}, {"id": "4d5e6f70-8192-0123-def0-234567890123", "type": "group"}]}
+      responses:
+        "200":
+          application/json: {"admins": []}
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+  deleteEntitlementApprovalWorkflowOverride:
+    speakeasy-default-delete-entitlement-approval-workflow-override:
+      parameters:
+        path:
+          entitlement_uuid: "<id>"
+      responses:
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
 examplesVersion: 1.0.2
 generatedTests: {}
 generatedFiles:

@@ -99,6 +99,7 @@ func (r *AppsDataSourceModel) RefreshFromSharedAppListOutput(ctx context.Context
 				}
 			}
 			apps.Category = types.StringPointerValue(appsItem.Category)
+			apps.CategoryOverride = types.StringPointerValue(appsItem.CategoryOverride)
 			if appsItem.DefaultDeprovisioningWorkflow == nil {
 				apps.DefaultDeprovisioningWorkflow = nil
 			} else {
@@ -112,11 +113,14 @@ func (r *AppsDataSourceModel) RefreshFromSharedAppListOutput(ctx context.Context
 				apps.DefaultProvisioningWorkflow.ID = types.StringValue(appsItem.DefaultProvisioningWorkflow.ID)
 			}
 			apps.Description = types.StringPointerValue(appsItem.Description)
+			apps.DescriptionOverride = types.StringPointerValue(appsItem.DescriptionOverride)
 			apps.Disconnected = types.BoolPointerValue(appsItem.Disconnected)
 			apps.ID = types.StringValue(appsItem.ID)
 			apps.InstanceID = types.StringPointerValue(appsItem.InstanceID)
 			apps.Label = types.StringPointerValue(appsItem.Label)
+			apps.LabelOverride = types.StringPointerValue(appsItem.LabelOverride)
 			apps.LogoURL = types.StringPointerValue(appsItem.LogoURL)
+			apps.LogoURLOverride = types.StringPointerValue(appsItem.LogoURLOverride)
 			apps.PostApprovalMessage = types.StringPointerValue(appsItem.PostApprovalMessage)
 			if appsItem.Status != nil {
 				apps.Status = types.StringValue(string(*appsItem.Status))
@@ -129,6 +133,7 @@ func (r *AppsDataSourceModel) RefreshFromSharedAppListOutput(ctx context.Context
 				apps.SyncStatus = types.StringNull()
 			}
 			apps.WebsiteURL = types.StringPointerValue(appsItem.WebsiteURL)
+			apps.WebsiteURLOverride = types.StringPointerValue(appsItem.WebsiteURLOverride)
 
 			r.Apps = append(r.Apps, apps)
 		}

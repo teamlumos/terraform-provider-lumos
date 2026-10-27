@@ -47,18 +47,23 @@ Read-Only:
 - `approval_workflow` (Attributes) The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates. (see [below for nested schema](#nestedatt--apps--approval_workflow))
 - `appstore_settings` (Attributes) AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object. (see [below for nested schema](#nestedatt--apps--appstore_settings))
 - `category` (String) The category this app belongs to.
+- `category_override` (String) The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category.
 - `default_deprovisioning_workflow` (Attributes) The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--apps--default_deprovisioning_workflow))
 - `default_provisioning_workflow` (Attributes) The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--apps--default_provisioning_workflow))
 - `description` (String) A description of the app.
+- `description_override` (String) The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description.
 - `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 - `id` (String) The unique identifier of the app.
 - `instance_id` (String) The app-instance identifier distinguishing multiple instances of the same app.
 - `label` (String) The display name of the app.
+- `label_override` (String) The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name.
 - `logo_url` (String) URL of the app logo image.
-- `post_approval_message` (String) Custom message shown to the requester after their access request is approved.
+- `logo_url_override` (String) The logo URL set for this app in your organization, exactly as written. `logo_url` shows it when set. Null when the app uses its default logo.
+- `post_approval_message` (String) Custom message shown to the requester after their access request is approved. Omitted when none is set.
 - `status` (String) The lifecycle status of this app. One of `discovered`, `in-review`, `needs-review`, `approved`, `blocklisted`, `deprecated`.
 - `sync_status` (String) The state of this app's most recent sync: `syncing` while one is running, `success` or `failed` once it finished. Omitted when no sync result is recorded — the app has never synced, or was disconnected.
 - `website_url` (String) URL of the app's official website.
+- `website_url_override` (String) The website URL set for this app in your organization, exactly as written. `website_url` shows it when set. Null when the app uses its default website, if any.
 
 <a id="nestedatt--apps--approval_workflow"></a>
 ### Nested Schema for `apps.approval_workflow`

@@ -332,7 +332,17 @@ type AppResponse struct {
 	Status *AppResponseStatus `json:"status,omitzero"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `json:"disconnected,omitzero"`
-	// Custom message shown to the requester after their access request is approved.
+	// The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name.
+	LabelOverride *string `json:"label_override,omitzero"`
+	// The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description.
+	DescriptionOverride *string `json:"description_override,omitzero"`
+	// The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category.
+	CategoryOverride *string `json:"category_override,omitzero"`
+	// The logo URL set for this app in your organization, exactly as written. `logo_url` shows it when set. Null when the app uses its default logo.
+	LogoURLOverride *string `json:"logo_url_override,omitzero"`
+	// The website URL set for this app in your organization, exactly as written. `website_url` shows it when set. Null when the app uses its default website, if any.
+	WebsiteURLOverride *string `json:"website_url_override,omitzero"`
+	// Custom message shown to the requester after their access request is approved. Omitted when none is set.
 	PostApprovalMessage *string `json:"post_approval_message,omitzero"`
 	// Users and groups that administer this app. Only present when expand=admins is requested.
 	Admins []AdminAssignee `json:"admins,omitzero"`
@@ -429,6 +439,41 @@ func (a *AppResponse) GetDisconnected() *bool {
 		return nil
 	}
 	return a.Disconnected
+}
+
+func (a *AppResponse) GetLabelOverride() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LabelOverride
+}
+
+func (a *AppResponse) GetDescriptionOverride() *string {
+	if a == nil {
+		return nil
+	}
+	return a.DescriptionOverride
+}
+
+func (a *AppResponse) GetCategoryOverride() *string {
+	if a == nil {
+		return nil
+	}
+	return a.CategoryOverride
+}
+
+func (a *AppResponse) GetLogoURLOverride() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LogoURLOverride
+}
+
+func (a *AppResponse) GetWebsiteURLOverride() *string {
+	if a == nil {
+		return nil
+	}
+	return a.WebsiteURLOverride
 }
 
 func (a *AppResponse) GetPostApprovalMessage() *string {
