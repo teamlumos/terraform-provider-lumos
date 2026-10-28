@@ -15,8 +15,9 @@ var _ planmodifier.String = StringShowsOverridePlanModifier{}
 // label, that the API reads back as its <name>_override where one is set
 // and as the app's default otherwise. A set override is what the field will
 // show. Without one, the field keeps its current value, unless the update
-// clears the override or changes the credentials, which reconnects the
-// integration; either can change the default it shows.
+// clears the override or reconnects the integration, by changing the
+// credentials or because it's disconnected; either can change the default
+// it shows.
 type StringShowsOverridePlanModifier struct{}
 
 // Description describes the plan modification in plain text formatting.
@@ -31,7 +32,7 @@ func (v StringShowsOverridePlanModifier) MarkdownDescription(ctx context.Context
 
 // PlanModifyString performs the plan modification.
 func (v StringShowsOverridePlanModifier) PlanModifyString(ctx context.Context, req planmodifier.StringRequest, resp *planmodifier.StringResponse) {
-	if req.Plan.Raw.IsNull() || !req.PlanValue.IsUnknown() {
+	if req.Plan.Raw.IsNull() {
 		return
 	}
 	overridePath := path.Root(req.Path.String() + "_override")
@@ -39,6 +40,17 @@ func (v StringShowsOverridePlanModifier) PlanModifyString(ctx context.Context, r
 	var override types.String
 	resp.Diagnostics.Append(req.Config.GetAttribute(ctx, overridePath, &override)...)
 	if resp.Diagnostics.HasError() || override.IsUnknown() {
+		return
+	}
+	if !req.PlanValue.IsUnknown() {
+		if !override.IsNull() || req.State.Raw.IsNull() {
+			return
+		}
+		plansReconnect, diags := utils.AppPlansReconnect(ctx, req.Plan, req.State)
+		resp.Diagnostics.Append(diags...)
+		if !diags.HasError() && plansReconnect {
+			resp.PlanValue = types.StringUnknown()
+		}
 		return
 	}
 	if !override.IsNull() {
@@ -54,7 +66,7 @@ func (v StringShowsOverridePlanModifier) PlanModifyString(ctx context.Context, r
 	if resp.Diagnostics.HasError() || !priorOverride.IsNull() {
 		return
 	}
-	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config, req.State)
+	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Plan, req.State)
 	resp.Diagnostics.Append(diags...)
 	if diags.HasError() || reconnects {
 		return
