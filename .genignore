@@ -67,3 +67,5 @@ examples/data-sources/lumos_user/
 examples/data-sources/lumos_group/
 examples/data-sources/lumos_entitlement/
 internal/provider/workflow_binding_destroy.go
+internal/provider/app_credentials.go
+internal/planmodifiers/utils/reconnect_test.go

@@ -275,8 +275,8 @@ actions:
     update:
       x-speakeasy-param-suppress-computed-diff: true
   # These change only when an update reconnects the integration. Updates
-  # resend auth and settings whenever they're set, so a connected app
-  # reconnects on every update and a custom app never does.
+  # send auth, settings and version only when one of them changed or the
+  # app is disconnected, so only those updates reconnect.
   - target: $["components"]["schemas"]["AppResponse"]["properties"]["sync_status","disconnected","instance_id"]
     update:
       x-speakeasy-plan-modifiers: UnknownOnReconnect

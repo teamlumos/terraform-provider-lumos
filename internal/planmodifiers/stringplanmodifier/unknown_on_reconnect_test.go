@@ -15,17 +15,23 @@ import (
 func TestUnknownOnReconnect(t *testing.T) {
 	ctx := context.Background()
 	s := schema.Schema{Attributes: map[string]schema.Attribute{
-		"auth":        schema.StringAttribute{Optional: true, Sensitive: true, CustomType: jsontypes.NormalizedType{}},
-		"settings":    schema.StringAttribute{Optional: true, Sensitive: true, CustomType: jsontypes.NormalizedType{}},
-		"sync_status": schema.StringAttribute{Computed: true},
+		"auth":         schema.StringAttribute{Optional: true, Sensitive: true, CustomType: jsontypes.NormalizedType{}},
+		"settings":     schema.StringAttribute{Optional: true, Sensitive: true, CustomType: jsontypes.NormalizedType{}},
+		"version":      schema.StringAttribute{Optional: true},
+		"disconnected": schema.BoolAttribute{Computed: true},
+		"sync_status":  schema.StringAttribute{Computed: true},
 	}}
 	objectType := s.Type().TerraformType(ctx)
 	app := func(auth, settings, syncStatus tftypes.Value) tftypes.Value {
-		return tftypes.NewValue(objectType, map[string]tftypes.Value{"auth": auth, "settings": settings, "sync_status": syncStatus})
+		return tftypes.NewValue(objectType, map[string]tftypes.Value{
+			"auth": auth, "settings": settings, "version": tftypes.NewValue(tftypes.String, nil),
+			"disconnected": tftypes.NewValue(tftypes.Bool, false), "sync_status": syncStatus,
+		})
 	}
 	none := tftypes.NewValue(tftypes.String, nil)
 	unknown := tftypes.NewValue(tftypes.String, tftypes.UnknownValue)
 	creds := tftypes.NewValue(tftypes.String, `{"api_key":"x"}`)
+	rotated := tftypes.NewValue(tftypes.String, `{"api_key":"y"}`)
 	success := tftypes.NewValue(tftypes.String, "success")
 
 	tests := []struct {
@@ -35,8 +41,9 @@ func TestUnknownOnReconnect(t *testing.T) {
 		planValue types.String
 		want      types.String
 	}{
-		{name: "connected app update stays unknown", config: app(creds, none, none), state: app(creds, none, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
-		{name: "settings alone count as credentials", config: app(none, creds, none), state: app(none, creds, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
+		{name: "credential change stays unknown", config: app(rotated, none, none), state: app(creds, none, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
+		{name: "settings change stays unknown", config: app(creds, rotated, none), state: app(creds, creds, success), planValue: types.StringUnknown(), want: types.StringUnknown()},
+		{name: "connected app update without a credential change keeps the current value", config: app(creds, creds, none), state: app(creds, creds, success), planValue: types.StringUnknown(), want: types.StringValue("success")},
 		{name: "custom app update keeps the current value", config: app(none, none, none), state: app(none, none, success), planValue: types.StringUnknown(), want: types.StringValue("success")},
 		{name: "create stays unknown", config: app(none, none, none), state: tftypes.NewValue(objectType, nil), planValue: types.StringUnknown(), want: types.StringUnknown()},
 		{name: "a known plan value is left alone", config: app(none, none, none), state: app(none, none, success), planValue: types.StringValue("failed"), want: types.StringValue("failed")},

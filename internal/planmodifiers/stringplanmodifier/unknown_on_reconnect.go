@@ -10,9 +10,9 @@ import (
 var _ planmodifier.String = StringUnknownOnReconnectPlanModifier{}
 
 // StringUnknownOnReconnectPlanModifier plans a lumos_app attribute that only
-// a reconnect changes. A connected app reconnects on every update, so the
-// value stays unknown until the API answers; a custom app never reconnects,
-// so it keeps its current value.
+// a reconnect changes. An update that changes the credentials reconnects,
+// so the value stays unknown until the API answers; any other update keeps
+// the current value.
 type StringUnknownOnReconnectPlanModifier struct{}
 
 // Description describes the plan modification in plain text formatting.
@@ -30,7 +30,7 @@ func (v StringUnknownOnReconnectPlanModifier) PlanModifyString(ctx context.Conte
 	if req.State.Raw.IsNull() || req.Plan.Raw.IsNull() || !req.PlanValue.IsUnknown() {
 		return
 	}
-	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config)
+	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config, req.State)
 	resp.Diagnostics.Append(diags...)
 	if diags.HasError() || reconnects {
 		return
