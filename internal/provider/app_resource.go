@@ -270,7 +270,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"category_override": schema.StringAttribute{
 				Optional:    true,
-				Description: `The app's category in your organization, shown as ` + "`" + `category` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `category` + "`" + ` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
+				Description: `The app's category in your organization, shown as ` + "`" + `category` + "`" + `. Required on a custom app, which has no default category, so it can't be removed from a custom app's config. On any other app, omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `category` + "`" + ` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'`,
 			},
 			"custom_attributes": schema.MapNestedAttribute{
 				Computed: true,
@@ -379,7 +379,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"description_override": schema.StringAttribute{
 				Optional:    true,
-				Description: `The app's description in your organization, shown as ` + "`" + `description` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `description` + "`" + ` shows the app's default description. At most 1,000 characters.`,
+				Description: `The app's description in your organization, shown as ` + "`" + `description` + "`" + `. Required on a custom app, which has no default description, so it can't be removed from a custom app's config. On any other app, omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `description` + "`" + ` shows the app's default description. At most 1,000 characters.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthBetween(1, 1000),
 				},
@@ -414,7 +414,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"label_override": schema.StringAttribute{
 				Optional:    true,
-				Description: `The app's display name in your organization, shown as ` + "`" + `label` + "`" + `. Required to create a custom app. Omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `label` + "`" + ` shows the app's default name. At most 255 characters.`,
+				Description: `The app's display name in your organization, shown as ` + "`" + `label` + "`" + `. Required on a custom app, which has no default name, so it can't be removed from a custom app's config. On any other app, omitted or set to ` + "`" + `null` + "`" + `, it's cleared, and ` + "`" + `label` + "`" + ` shows the app's default name. At most 255 characters.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthBetween(1, 255),
 				},
