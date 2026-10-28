@@ -1,0 +1,8 @@
+# expect: error
+# version only applies to integrations, so the API refuses it on a custom app.
+resource "lumos_app" "this" {
+  label_override       = "bb-${var.run_id} Version"
+  category_override    = "Developers"
+  description_override = "Snapshot test custom app"
+  version              = "1"
+}
