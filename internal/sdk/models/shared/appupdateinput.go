@@ -15,11 +15,11 @@ type AppUpdateInput struct {
 	Settings any `json:"settings,omitzero"`
 	// Optional integration version override. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Only applies to integrations.
 	Version *string `json:"version,omitzero"`
-	// The app's display name in your organization, shown as `label`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
+	// The app's display name in your organization, shown as `label`. Required on a custom app, which has no default name, so it can't be removed from a custom app's config. On any other app, omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
 	LabelOverride *string `json:"label_override,omitzero"`
-	// The app's description in your organization, shown as `description`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
+	// The app's description in your organization, shown as `description`. Required on a custom app, which has no default description, so it can't be removed from a custom app's config. On any other app, omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
 	DescriptionOverride *string `json:"description_override,omitzero"`
-	// The app's category in your organization, shown as `category`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
+	// The app's category in your organization, shown as `category`. Required on a custom app, which has no default category, so it can't be removed from a custom app's config. On any other app, omitted or set to `null`, it's cleared, and `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
 	CategoryOverride *string `json:"category_override,omitzero"`
 	// URL of the app's logo in your organization, shown as `logo_url`. Omitted or set to `null`, it's cleared, and `logo_url` shows the app's default logo. At most 2,048 characters.
 	LogoURLOverride *string `json:"logo_url_override,omitzero"`
