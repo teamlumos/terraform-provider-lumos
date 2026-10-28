@@ -690,6 +690,7 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	keepUnchangedAppCredentials(ctx, req, resp, data)
 
 	ctx = withSensitiveValues(ctx, req.Config, req.Plan, req.State)
 
