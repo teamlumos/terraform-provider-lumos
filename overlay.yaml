@@ -231,15 +231,16 @@ actions:
           setting `"custom"`, the value a custom app reads back with, creates
           a custom app. It can't be removed from a connected app's config.
       label_override:
-        description: The app's display name in your organization, shown as `label`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
+        description: The app's display name in your organization, shown as `label`. Required on a custom app, which has no default name, so it can't be removed from a custom app's config. On any other app, omitted or set to `null`, it's cleared, and `label` shows the app's default name. At most 255 characters.
       description_override:
-        description: The app's description in your organization, shown as `description`. Required to create a custom app. Omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
+        description: The app's description in your organization, shown as `description`. Required on a custom app, which has no default description, so it can't be removed from a custom app's config. On any other app, omitted or set to `null`, it's cleared, and `description` shows the app's default description. At most 1,000 characters.
       category_override:
         description: >-
           The app's category in your organization, shown as `category`.
-          Required to create a custom app. Omitted or set to `null`, it's
-          cleared, and `category` shows the app's default category. Possible
-          values: 'Accounting & Finance', 'Marketing & Analytics', 'Content &
+          Required on a custom app, which has no default category, so it can't
+          be removed from a custom app's config. On any other app, omitted or
+          set to `null`, it's cleared, and `category` shows the app's default
+          category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content &
           Social Media', 'Sales & Support', 'Design & Creativity', 'IT &
           Security', 'Developers', 'HR & Learning', 'Office & Legal',
           'Communication', 'Collaboration', 'Commerce & Marketplaces',
