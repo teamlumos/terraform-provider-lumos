@@ -62,6 +62,26 @@ func AppReconnectsOnUpdate(ctx context.Context, desired, prior attributeGetter) 
 	return !version.Equal(priorVersion), diags
 }
 
+// AppPlansReconnect reports whether a plan reconnects a disconnected
+// lumos_app with no other change: an integration whose plan holds auth and
+// whose state, refreshed from the API, shows it disconnected. The plan then
+// changes disconnected to false, so Terraform plans an update, and
+// AppReconnectsOnUpdate sends the credentials. A custom app is left alone.
+func AppPlansReconnect(ctx context.Context, plan, prior attributeGetter) (bool, diag.Diagnostics) {
+	var diags diag.Diagnostics
+	var appClassID types.String
+	var auth jsontypes.Normalized
+	var disconnected types.Bool
+	diags.Append(plan.GetAttribute(ctx, path.Root("app_class_id"), &appClassID)...)
+	diags.Append(plan.GetAttribute(ctx, path.Root("auth"), &auth)...)
+	diags.Append(prior.GetAttribute(ctx, path.Root("disconnected"), &disconnected)...)
+	if diags.HasError() {
+		return false, diags
+	}
+	integration := !appClassID.IsNull() && !appClassID.IsUnknown() && appClassID.ValueString() != CustomAppClassID
+	return integration && !auth.IsNull() && disconnected.ValueBool(), diags
+}
+
 // jsonEqual compares two JSON values, ignoring whitespace and key order.
 func jsonEqual(ctx context.Context, a, b jsontypes.Normalized) (bool, diag.Diagnostics) {
 	if a.IsNull() || b.IsNull() {
