@@ -1513,8 +1513,8 @@ removed {
 
 // TestAppDisconnectedUpdateReconnects imports an app disconnected in the
 // Lumos UI and renames it. An update of a disconnected app sends its
-// credentials, reconnecting it, so the plan leaves the fields a reconnect
-// recomputes unknown.
+// credentials, reconnecting it, so the plan changes disconnected to false
+// and leaves the other fields a reconnect recomputes unknown.
 func TestAppDisconnectedUpdateReconnects(t *testing.T) {
 	api := newFakeAPI(t)
 	api.app["disconnected"] = true
@@ -1541,7 +1541,7 @@ import {
 `,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectUnknownValue(addr, tfjsonpath.New("disconnected")),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("disconnected"), knownvalue.Bool(false)),
 						plancheck.ExpectUnknownValue(addr, tfjsonpath.New("sync_status")),
 					},
 				},
@@ -1571,6 +1571,232 @@ removed {
 	}
 	if got := encodeFields(api.appPatches[0])["auth"]; got != `{"token":"v1"}` {
 		t.Errorf("update sent auth %s, want {\"token\":\"v1\"}", got)
+	}
+}
+
+// TestAppDisconnectedPlansReconnect connects an integration, then
+// disconnects it outside Terraform. With no change to the config, the plan
+// must change disconnected to false and leave the other fields a reconnect
+// recomputes unknown, and the update must send auth and settings. Once
+// reconnected, the plan is empty.
+func TestAppDisconnectedPlansReconnect(t *testing.T) {
+	api := newFakeAPI(t)
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	const addr = "lumos_app.slack"
+	config := fakeProviderConfig(server.URL) + `
+resource "lumos_app" "slack" {
+  app_class_id = "slack.com"
+  auth         = jsonencode({ token = "v1" })
+  settings     = jsonencode({ region = "us" })
+}
+`
+	disconnect := func() {
+		api.mu.Lock()
+		defer api.mu.Unlock()
+		api.app["disconnected"] = true
+		api.app["sync_status"] = nil
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+			},
+			{
+				PreConfig: disconnect,
+				Config:    config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						expectOnlyAttributesChange(addr,
+							"disconnected", "sync_status", "instance_id",
+							"label", "description", "category", "logo_url", "website_url"),
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("disconnected"), knownvalue.Bool(false)),
+						plancheck.ExpectUnknownValue(addr, tfjsonpath.New("sync_status")),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(addr, "disconnected", "false"),
+					resource.TestCheckResourceAttr(addr, "sync_status", "syncing"),
+				),
+			},
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 2 {
+		t.Fatalf("got %d app updates, want 2: %v", len(api.appPatches), api.appPatches)
+	}
+	if _, ok := api.appPatches[0]["auth"]; ok {
+		t.Errorf("import update sent auth: %v", api.appPatches[0])
+	}
+	got := encodeFields(api.appPatches[1])
+	if got["auth"] != `{"token":"v1"}` || got["settings"] != `{"region":"us"}` {
+		t.Errorf("reconnect sent %v, want the configured auth and settings", got)
+	}
+}
+
+// TestAppIgnoreAuthChanges connects an integration, then drops auth from
+// the config and lists it in ignore_changes. Renaming the app must then
+// plan no auth change and send no credentials. Once the app is disconnected
+// outside Terraform, the plan reconnects it with the auth in state.
+func TestAppIgnoreAuthChanges(t *testing.T) {
+	api := newFakeAPI(t)
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	const addr = "lumos_app.slack"
+	config := func(body string) string {
+		return fakeProviderConfig(server.URL) + `
+resource "lumos_app" "slack" {
+  app_class_id = "slack.com"
+  settings     = jsonencode({ region = "us" })
+` + body + `
+}
+`
+	}
+	ignored := config(`
+  label_override = "Slack (Acme)"
+
+  lifecycle {
+    ignore_changes = [auth]
+  }`)
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config(`  auth = jsonencode({ token = "v1" })`) + `
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+			},
+			{
+				Config: ignored,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange(addr, "label_override", "label")},
+				},
+			},
+			{
+				PreConfig: func() {
+					api.mu.Lock()
+					defer api.mu.Unlock()
+					api.app["disconnected"] = true
+				},
+				Config: ignored,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectKnownValue(addr, tfjsonpath.New("disconnected"), knownvalue.Bool(false)),
+					},
+				},
+				Check: resource.TestCheckResourceAttr(addr, "disconnected", "false"),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 3 {
+		t.Fatalf("got %d app updates, want 3: %v", len(api.appPatches), api.appPatches)
+	}
+	for i, patch := range api.appPatches[:2] {
+		if _, ok := patch["auth"]; ok {
+			t.Errorf("update %d sent auth: %v", i+1, patch)
+		}
+	}
+	if got := encodeFields(api.appPatches[2])["auth"]; got != `{"token":"v1"}` {
+		t.Errorf("reconnect sent auth %s, want the auth in state", got)
+	}
+}
+
+// TestAppDisconnectedCustomApp imports a custom app that reads back
+// disconnected. A custom app has nothing to reconnect, so the plan is empty.
+func TestAppDisconnectedCustomApp(t *testing.T) {
+	api := &fakeCustomAppAPI{t: t, app: map[string]any{
+		"id": "custom1", "app_class_id": "custom", "instance_id": "custom_app_import",
+		"label": "Wiki", "category": "Developers", "description": "Docs",
+		"logo_url": nil, "website_url": nil,
+		"label_override": nil, "category_override": nil, "description_override": nil,
+		"logo_url_override": nil, "website_url_override": nil,
+		"status": "approved", "disconnected": true, "sync_status": nil,
+		"approval_workflow": nil, "default_provisioning_workflow": nil, "default_deprovisioning_workflow": nil,
+		"appstore_settings": nil,
+	}}
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	config := fakeProviderConfig(server.URL) + `
+resource "lumos_app" "wiki" {
+  app_class_id = "custom"
+}
+`
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config + `
+import {
+  to = lumos_app.wiki
+  id = "custom1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectResourceAction("lumos_app.wiki", plancheck.ResourceActionNoop),
+					},
+				},
+			},
+			{
+				Config: config,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectEmptyPlan()},
+				},
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.patches) != 0 {
+		t.Errorf("got %d updates, want none: %v", len(api.patches), api.patches)
 	}
 }
 

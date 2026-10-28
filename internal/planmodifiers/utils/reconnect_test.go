@@ -66,3 +66,47 @@ func TestAppReconnectsOnUpdate(t *testing.T) {
 		})
 	}
 }
+
+func TestAppPlansReconnect(t *testing.T) {
+	ctx := context.Background()
+	s := schema.Schema{Attributes: map[string]schema.Attribute{
+		"app_class_id": schema.StringAttribute{Optional: true},
+		"auth":         schema.StringAttribute{Optional: true, Sensitive: true, CustomType: jsontypes.NormalizedType{}},
+		"disconnected": schema.BoolAttribute{Computed: true},
+	}}
+	objectType := s.Type().TerraformType(ctx)
+	value := func(classID, auth tftypes.Value, disconnected bool) tftypes.Value {
+		return tftypes.NewValue(objectType, map[string]tftypes.Value{
+			"app_class_id": classID, "auth": auth,
+			"disconnected": tftypes.NewValue(tftypes.Bool, disconnected),
+		})
+	}
+	none := tftypes.NewValue(tftypes.String, nil)
+	slack := tftypes.NewValue(tftypes.String, "slack.com")
+	custom := tftypes.NewValue(tftypes.String, "custom")
+	creds := tftypes.NewValue(tftypes.String, `{"token":"v1"}`)
+
+	tests := []struct {
+		name  string
+		plan  tftypes.Value
+		prior tftypes.Value
+		want  bool
+	}{
+		{name: "disconnected integration", plan: value(slack, creds, false), prior: value(slack, creds, true), want: true},
+		{name: "connected integration", plan: value(slack, creds, false), prior: value(slack, creds, false), want: false},
+		{name: "disconnected integration without auth", plan: value(slack, none, false), prior: value(slack, none, true), want: false},
+		{name: "disconnected custom app", plan: value(custom, none, false), prior: value(custom, none, true), want: false},
+		{name: "disconnected app without app_class_id", plan: value(none, none, false), prior: value(custom, none, true), want: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, diags := AppPlansReconnect(ctx, tfsdk.Plan{Schema: s, Raw: tt.plan}, tfsdk.State{Schema: s, Raw: tt.prior})
+			if diags.HasError() {
+				t.Fatalf("diagnostics: %v", diags)
+			}
+			if got != tt.want {
+				t.Errorf("AppPlansReconnect = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
