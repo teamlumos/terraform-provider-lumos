@@ -163,8 +163,20 @@ func (f *fakeAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			f.appPatches = append(f.appPatches, patch)
-			// Like the API, the overrides change; credentials are never
-			// read back.
+			// Like the API, settings or version need auth, and credentials
+			// reconnect the integration and start a sync.
+			_, hasAuth := patch["auth"]
+			_, hasSettings := patch["settings"]
+			_, hasVersion := patch["version"]
+			if (hasSettings || hasVersion) && !hasAuth {
+				http.Error(w, "auth is required with settings or version", http.StatusBadRequest)
+				return
+			}
+			if hasAuth {
+				f.app["disconnected"] = false
+				f.app["sync_status"] = "syncing"
+			}
+			// The overrides change; credentials are never read back.
 			for _, k := range appDisplayOverrides {
 				if v, ok := patch[k]; ok {
 					f.app[k] = v
@@ -1368,51 +1380,87 @@ removed {
 	}
 }
 
-// TestAppConnectedUpdatePlansOnlyCredentials imports a connected app with a
-// post-approval message its config keeps, then rotates its credentials. Each
-// plan must change only auth, the fields a reconnect recomputes, and the
-// display fields, whose defaults a reconnect can change. Each update sends
-// the credentials, the configured message, null for every override the
-// config leaves out, and never app_class_id.
-func TestAppConnectedUpdatePlansOnlyCredentials(t *testing.T) {
+// TestAppConnectedCredentialChanges imports a connected app with a
+// post-approval message its config keeps, renames it, then changes its
+// auth, settings and version in turn. Importing and renaming must keep the
+// connection: those updates send no credentials, and the fields a
+// reconnect recomputes keep their values in the plan. Each credential
+// change must plan those fields, and the display fields without an
+// override, as unknown, and send auth, settings and version together. Every
+// update sends the configured message and null for each override the
+// config leaves out.
+func TestAppConnectedCredentialChanges(t *testing.T) {
 	api := newFakeAPI(t)
 	api.app["post_approval_message"] = "Welcome aboard."
 	server := httptest.NewServer(api)
 	defer server.Close()
 
-	config := func(token string) string {
+	config := func(credentials string) string {
 		return fakeProviderConfig(server.URL) + fmt.Sprintf(`
 resource "lumos_app" "slack" {
   app_class_id          = "slack.com"
-  auth                  = jsonencode({ token = %q })
+  label_override        = "Slack (Acme)"
   post_approval_message = "Welcome aboard."
+  %s
 }
-`, token)
+`, credentials)
 	}
+	const addr = "lumos_app.slack"
 	reconnect := []string{
-		"auth", "sync_status", "disconnected", "instance_id",
-		"label", "description", "category", "logo_url", "website_url",
+		"sync_status", "disconnected", "instance_id",
+		"description", "category", "logo_url", "website_url",
+	}
+	keepsConnection := []plancheck.PlanCheck{
+		plancheck.ExpectKnownValue(addr, tfjsonpath.New("sync_status"), knownvalue.StringExact("success")),
+		plancheck.ExpectKnownValue(addr, tfjsonpath.New("disconnected"), knownvalue.Bool(false)),
+		plancheck.ExpectKnownValue(addr, tfjsonpath.New("instance_id"), knownvalue.StringExact("acme.slack.com")),
 	}
 
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				// auth is write-only, so an import that sets it plans an update.
-				Config: config("v1") + `
+				// An imported app has no auth in state, and its first
+				// update records the configured auth without sending it.
+				Config: strings.Replace(config(`auth = jsonencode({ token = "v1" })`), `label_override        = "Slack (Acme)"`, "", 1) + `
 import {
   to = lumos_app.slack
   id = "app1"
 }
 `,
 				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange("lumos_app.slack", reconnect...)},
+					PreApply: append([]plancheck.PlanCheck{expectOnlyAttributesChange(addr, "auth")}, keepsConnection...),
 				},
 			},
 			{
-				Config: config("v2"),
+				Config: config(`auth = jsonencode({ token = "v1" })`),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
-					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange("lumos_app.slack", reconnect...)},
+					PreApply: append([]plancheck.PlanCheck{expectOnlyAttributesChange(addr, "label_override", "label")}, keepsConnection...),
+				},
+				Check: resource.TestCheckResourceAttr(addr, "sync_status", "success"),
+			},
+			{
+				Config: config(`auth = jsonencode({ token = "v2" })`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange(addr, append(reconnect, "auth")...)},
+				},
+				Check: resource.TestCheckResourceAttr(addr, "sync_status", "syncing"),
+			},
+			{
+				Config: config(`
+  auth     = jsonencode({ token = "v2" })
+  settings = jsonencode({ region = "us" })`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange(addr, append(reconnect, "settings")...)},
+				},
+			},
+			{
+				Config: config(`
+  auth     = jsonencode({ token = "v2" })
+  settings = jsonencode({ region = "us" })
+  version  = "2"`),
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{expectOnlyAttributesChange(addr, append(reconnect, "version")...)},
 				},
 			},
 			{
@@ -1431,13 +1479,19 @@ removed {
 
 	api.mu.Lock()
 	defer api.mu.Unlock()
-	if len(api.appPatches) != 2 {
-		t.Fatalf("got %d app updates, want 2: %v", len(api.appPatches), api.appPatches)
+	if len(api.appPatches) != 5 {
+		t.Fatalf("got %d app updates, want 5: %v", len(api.appPatches), api.appPatches)
 	}
-	for i, token := range []string{"v1", "v2"} {
+	credentials := []map[string]string{
+		{},
+		{},
+		{"auth": `{"token":"v2"}`},
+		{"auth": `{"token":"v2"}`, "settings": `{"region":"us"}`},
+		{"auth": `{"token":"v2"}`, "settings": `{"region":"us"}`, "version": `"2"`},
+	}
+	for i, sent := range credentials {
 		want := map[string]string{
-			"auth":                 fmt.Sprintf(`{"token":%q}`, token),
-			"label_override":       `null`,
+			"label_override":       `"Slack (Acme)"`,
 			"category_override":    `null`,
 			"description_override": `null`,
 			"logo_url_override":    `null`,
@@ -1445,9 +1499,78 @@ removed {
 
 			"post_approval_message": `"Welcome aboard."`,
 		}
+		if i == 0 {
+			want["label_override"] = `null`
+		}
+		for k, v := range sent {
+			want[k] = v
+		}
 		if got := encodeFields(api.appPatches[i]); fmt.Sprint(got) != fmt.Sprint(want) {
 			t.Errorf("update %d sent %v, want %v", i+1, got, want)
 		}
+	}
+}
+
+// TestAppDisconnectedUpdateReconnects imports an app disconnected in the
+// Lumos UI and renames it. An update of a disconnected app sends its
+// credentials, reconnecting it, so the plan leaves the fields a reconnect
+// recomputes unknown.
+func TestAppDisconnectedUpdateReconnects(t *testing.T) {
+	api := newFakeAPI(t)
+	api.app["disconnected"] = true
+	api.app["sync_status"] = nil
+	server := httptest.NewServer(api)
+	defer server.Close()
+
+	const addr = "lumos_app.slack"
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: fakeProviderConfig(server.URL) + `
+resource "lumos_app" "slack" {
+  app_class_id   = "slack.com"
+  auth           = jsonencode({ token = "v1" })
+  label_override = "Slack (Acme)"
+}
+
+import {
+  to = lumos_app.slack
+  id = "app1"
+}
+`,
+				ConfigPlanChecks: resource.ConfigPlanChecks{
+					PreApply: []plancheck.PlanCheck{
+						plancheck.ExpectUnknownValue(addr, tfjsonpath.New("disconnected")),
+						plancheck.ExpectUnknownValue(addr, tfjsonpath.New("sync_status")),
+					},
+				},
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr(addr, "disconnected", "false"),
+					resource.TestCheckResourceAttr(addr, "sync_status", "syncing"),
+				),
+			},
+			{
+				Config: fakeProviderConfig(server.URL) + `
+removed {
+  from = lumos_app.slack
+
+  lifecycle {
+    destroy = false
+  }
+}
+`,
+			},
+		},
+	})
+
+	api.mu.Lock()
+	defer api.mu.Unlock()
+	if len(api.appPatches) != 1 {
+		t.Fatalf("got %d app updates, want 1: %v", len(api.appPatches), api.appPatches)
+	}
+	if got := encodeFields(api.appPatches[0])["auth"]; got != `{"token":"v1"}` {
+		t.Errorf("update sent auth %s, want {\"token\":\"v1\"}", got)
 	}
 }
 
