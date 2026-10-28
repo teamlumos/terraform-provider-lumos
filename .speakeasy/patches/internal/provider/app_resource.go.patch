@@ -1,0 +1,12 @@
+diff --git a/internal/provider/app_resource.go b/internal/provider/app_resource.go
+index 97f7127..b4ed8de 100644
+--- a/internal/provider/app_resource.go
++++ b/internal/provider/app_resource.go
+@@ -690,6 +690,7 @@ func (r *AppResource) Update(ctx context.Context, req resource.UpdateRequest, re
+ 	if resp.Diagnostics.HasError() {
+ 		return
+ 	}
++	keepUnchangedAppCredentials(ctx, req, resp, data)
+ 
+ 	ctx = withSensitiveValues(ctx, req.Config, req.Plan, req.State)
+ 

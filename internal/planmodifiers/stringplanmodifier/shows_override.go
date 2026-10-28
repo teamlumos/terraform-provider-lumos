@@ -15,8 +15,8 @@ var _ planmodifier.String = StringShowsOverridePlanModifier{}
 // label, that the API reads back as its <name>_override where one is set
 // and as the app's default otherwise. A set override is what the field will
 // show. Without one, the field keeps its current value, unless the update
-// clears the override or reconnects the integration, either of which can
-// change the default it shows.
+// clears the override or changes the credentials, which reconnects the
+// integration; either can change the default it shows.
 type StringShowsOverridePlanModifier struct{}
 
 // Description describes the plan modification in plain text formatting.
@@ -54,7 +54,7 @@ func (v StringShowsOverridePlanModifier) PlanModifyString(ctx context.Context, r
 	if resp.Diagnostics.HasError() || !priorOverride.IsNull() {
 		return
 	}
-	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config)
+	reconnects, diags := utils.AppReconnectsOnUpdate(ctx, req.Config, req.State)
 	resp.Diagnostics.Append(diags...)
 	if diags.HasError() || reconnects {
 		return
