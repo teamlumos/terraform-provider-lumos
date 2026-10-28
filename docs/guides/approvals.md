@@ -20,9 +20,9 @@ The template and its chains belong to one app. Here, a custom app:
 
 ```terraform
 resource "lumos_app" "deploy_dashboard" {
-  label       = "Deploy Dashboard"
-  category    = "Developers"
-  description = "Internal deploy tool"
+  label_override       = "Deploy Dashboard"
+  category_override    = "Developers"
+  description_override = "Internal deploy tool"
 }
 ```
 
