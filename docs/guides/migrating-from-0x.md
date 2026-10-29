@@ -84,7 +84,7 @@ To stop managing either one without changing Lumos, use a `removed` block.
 terraform state list | grep '^lumos_'
 ```
 
-Note each resource's ID (`terraform state show <address>`). For `lumos_app_store_app`, the ID to import is its `app_id`.
+Note each resource's ID (`terraform state show <address>`). For `lumos_app_store_app`, the ID to import is its `app_id`. For `lumos_requestable_permission`, note its `app_id` and `label` too, to [find its entitlement](#finding-entitlement-ids).
 
 ### 2. Stop managing the 0.x resources, without changing Lumos
 
@@ -396,9 +396,23 @@ Rules can also pre-approve by on-call schedule in 1.x. As in 0.x, rules created 
 
 ## Finding entitlement IDs
 
-<TODO>
+An entitlement's ID isn't its 0.x permission's ID, and you don't need to convert one to the other. Look the entitlement up on 1.x instead, by the app and label you noted in [step 1](#1-list-what-terraform-manages).
 
-<!-- GOV-4405: likely an `entitlement_uuid` field on 0.x requestable permissions in the API, so each permission ID can be looked up to its entitlement ID. -->
+List each app's entitlements with `lumos_app_entitlements`:
+
+```terraform
+data "lumos_app_entitlements" "aws" {
+  app_id = "<app id>"
+}
+
+output "aws_entitlement_ids" {
+  value = { for e in data.lumos_app_entitlements.aws.entitlements : e.label => e.id... }
+}
+```
+
+`terraform plan` prints each label with its entitlement IDs. Use the ID in the permission's `import` block, then delete the data source and the output.
+
+A label with more than one ID belongs to more than one entitlement. Tell them apart by `entitlement_type_label`, `description` and `source`. A permission created in Lumos (0.x `type = "NATIVE"`) has `source = "manual"`. A permission synced from an integration has that integration's source.
 
 ## `lumos_apps` filters
 
