@@ -8,5 +8,6 @@ import (
 )
 
 type AccessPolicyPermissionInput struct {
-	ID types.String `tfsdk:"id"`
+	ID    types.String `tfsdk:"id"`
+	Label types.String `tfsdk:"label"`
 }

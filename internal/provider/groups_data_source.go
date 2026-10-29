@@ -72,7 +72,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 					Attributes: map[string]schema.Attribute{
 						"app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that sources this group.`,
+							Description: `The ID of the app this group is synced from.`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -96,7 +96,7 @@ func (r *GroupsDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 						},
 						"source_app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that sources this group.`,
+							Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 						},
 					},
 				},

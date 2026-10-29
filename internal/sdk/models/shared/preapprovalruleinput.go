@@ -8,20 +8,20 @@ import (
 )
 
 type PreApprovalRuleInput struct {
-	// The justification of this preapproval rule.
-	Justification string `json:"justification"`
-	// Preapproval rule time access length,
-	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 	// The ID of the app associated with this pre-approval rule.
 	AppID string `json:"app_id"`
+	// The justification of this preapproval rule.
+	Justification string `json:"justification"`
+	// The preapproval webhooks of this preapproval rule.
+	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks"`
 	// The preapproved groups of this preapproval rule.
 	PreapprovedGroups []BaseGroup `json:"preapproved_groups"`
 	// The preapproved permissions of this preapproval rule.
 	PreapprovedPermissions []RequestablePermissionBase `json:"preapproved_permissions"`
 	// The set of users this pre-approval rule applies to, defined by attributes that must be true about the user
 	PreapprovedUsersByAttribute []AttributeEqualityRule `json:"preapproved_users_by_attribute,omitempty"`
-	// The preapproval webhooks of this preapproval rule.
-	PreapprovalWebhooks []BaseInlineWebhook `json:"preapproval_webhooks"`
+	// Preapproval rule time access length,
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 }
 
 func (p PreApprovalRuleInput) MarshalJSON() ([]byte, error) {
@@ -35,6 +35,13 @@ func (p *PreApprovalRuleInput) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (p *PreApprovalRuleInput) GetAppID() string {
+	if p == nil {
+		return ""
+	}
+	return p.AppID
+}
+
 func (p *PreApprovalRuleInput) GetJustification() string {
 	if p == nil {
 		return ""
@@ -42,18 +49,11 @@ func (p *PreApprovalRuleInput) GetJustification() string {
 	return p.Justification
 }
 
-func (p *PreApprovalRuleInput) GetTimeBasedAccess() []string {
+func (p *PreApprovalRuleInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
 	if p == nil {
 		return nil
 	}
-	return p.TimeBasedAccess
-}
-
-func (p *PreApprovalRuleInput) GetAppID() string {
-	if p == nil {
-		return ""
-	}
-	return p.AppID
+	return p.PreapprovalWebhooks
 }
 
 func (p *PreApprovalRuleInput) GetPreapprovedGroups() []BaseGroup {
@@ -77,9 +77,9 @@ func (p *PreApprovalRuleInput) GetPreapprovedUsersByAttribute() []AttributeEqual
 	return p.PreapprovedUsersByAttribute
 }
 
-func (p *PreApprovalRuleInput) GetPreapprovalWebhooks() []BaseInlineWebhook {
+func (p *PreApprovalRuleInput) GetTimeBasedAccess() []string {
 	if p == nil {
 		return nil
 	}
-	return p.PreapprovalWebhooks
+	return p.TimeBasedAccess
 }

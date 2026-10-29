@@ -4,27 +4,34 @@
 package shared
 
 type RequestConfigOutput struct {
-	// The appstore visibility of this request config.
-	AppstoreVisibility *AppStoreVisibilityOption `json:"appstore_visibility,omitempty"`
-	// Indicates if allowed groups is overriden from the app-level settings.
-	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
+	// A deprovisioning webhook can be optionally associated with this config.
+	AccessRemovalInlineWebhook *InlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// The allowed groups config associated with this config.
 	AllowedGroups *AllowedGroupsConfigOutput `json:"allowed_groups,omitempty"`
+	// Indicates if allowed groups is overriden from the app-level settings.
+	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
+	// The appstore visibility of this request config.
+	AppstoreVisibility *AppStoreVisibilityOption `json:"appstore_visibility,omitempty"`
 	// A request approval config can be optionally associated with this config
 	RequestApprovalConfig *RequestApprovalConfigOutput `json:"request_approval_config,omitempty"`
 	// A request fulfillment config can be optionally associated with this config
 	RequestFulfillmentConfig *RequestFulfillmentConfigOutput `json:"request_fulfillment_config,omitempty"`
-	// A deprovisioning webhook can be optionally associated with this config.
-	AccessRemovalInlineWebhook *InlineWebhook `json:"access_removal_inline_webhook,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
-func (r *RequestConfigOutput) GetAppstoreVisibility() *AppStoreVisibilityOption {
+func (r *RequestConfigOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
 	if r == nil {
 		return nil
 	}
-	return r.AppstoreVisibility
+	return r.AccessRemovalInlineWebhook
+}
+
+func (r *RequestConfigOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
+	if r == nil {
+		return nil
+	}
+	return r.AllowedGroups
 }
 
 func (r *RequestConfigOutput) GetAllowedGroupsOverride() *bool {
@@ -34,11 +41,11 @@ func (r *RequestConfigOutput) GetAllowedGroupsOverride() *bool {
 	return r.AllowedGroupsOverride
 }
 
-func (r *RequestConfigOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
+func (r *RequestConfigOutput) GetAppstoreVisibility() *AppStoreVisibilityOption {
 	if r == nil {
 		return nil
 	}
-	return r.AllowedGroups
+	return r.AppstoreVisibility
 }
 
 func (r *RequestConfigOutput) GetRequestApprovalConfig() *RequestApprovalConfigOutput {
@@ -53,13 +60,6 @@ func (r *RequestConfigOutput) GetRequestFulfillmentConfig() *RequestFulfillmentC
 		return nil
 	}
 	return r.RequestFulfillmentConfig
-}
-
-func (r *RequestConfigOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
-	if r == nil {
-		return nil
-	}
-	return r.AccessRemovalInlineWebhook
 }
 
 func (r *RequestConfigOutput) GetRequestValidationInlineWebhook() *InlineWebhook {

@@ -4,25 +4,18 @@
 package shared
 
 type RequestFulfillmentConfigInput struct {
-	// Whether manual steps are needed.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// The manual instructions that go along.
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
-	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []string `json:"time_based_access,omitempty"`
-	// Indicates if time based access is overriden.
-	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
+	// Whether manual steps are needed.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// The provisioning group optionally associated with this config.
 	ProvisioningGroup *BaseGroup `json:"provisioning_group,omitempty"`
 	// The provisioning webhook optionally associated with this config.
 	ProvisioningWebhook *BaseInlineWebhook `json:"provisioning_webhook,omitempty"`
-}
-
-func (r *RequestFulfillmentConfigInput) GetManualStepsNeeded() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.ManualStepsNeeded
+	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
+	// Indicates if time based access is overriden.
+	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
 }
 
 func (r *RequestFulfillmentConfigInput) GetManualInstructions() *string {
@@ -32,18 +25,11 @@ func (r *RequestFulfillmentConfigInput) GetManualInstructions() *string {
 	return r.ManualInstructions
 }
 
-func (r *RequestFulfillmentConfigInput) GetTimeBasedAccess() []string {
+func (r *RequestFulfillmentConfigInput) GetManualStepsNeeded() *bool {
 	if r == nil {
 		return nil
 	}
-	return r.TimeBasedAccess
-}
-
-func (r *RequestFulfillmentConfigInput) GetTimeBasedAccessOverride() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.TimeBasedAccessOverride
+	return r.ManualStepsNeeded
 }
 
 func (r *RequestFulfillmentConfigInput) GetProvisioningGroup() *BaseGroup {
@@ -58,4 +44,18 @@ func (r *RequestFulfillmentConfigInput) GetProvisioningWebhook() *BaseInlineWebh
 		return nil
 	}
 	return r.ProvisioningWebhook
+}
+
+func (r *RequestFulfillmentConfigInput) GetTimeBasedAccess() []string {
+	if r == nil {
+		return nil
+	}
+	return r.TimeBasedAccess
+}
+
+func (r *RequestFulfillmentConfigInput) GetTimeBasedAccessOverride() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.TimeBasedAccessOverride
 }

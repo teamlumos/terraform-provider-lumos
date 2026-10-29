@@ -5,10 +5,10 @@ package shared
 
 type PageAppWithCustomAttributes struct {
 	Items []AppWithCustomAttributes `json:"items"`
-	Total *int64                    `json:"total"`
 	Page  *int64                    `json:"page"`
-	Size  *int64                    `json:"size"`
 	Pages *int64                    `json:"pages,omitempty"`
+	Size  *int64                    `json:"size"`
+	Total *int64                    `json:"total"`
 }
 
 func (p *PageAppWithCustomAttributes) GetItems() []AppWithCustomAttributes {
@@ -18,18 +18,18 @@ func (p *PageAppWithCustomAttributes) GetItems() []AppWithCustomAttributes {
 	return p.Items
 }
 
-func (p *PageAppWithCustomAttributes) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageAppWithCustomAttributes) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageAppWithCustomAttributes) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageAppWithCustomAttributes) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageAppWithCustomAttributes) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageAppWithCustomAttributes) GetPages() *int64 {
+func (p *PageAppWithCustomAttributes) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

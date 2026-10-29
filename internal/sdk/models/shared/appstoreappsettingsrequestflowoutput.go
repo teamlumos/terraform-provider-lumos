@@ -4,50 +4,29 @@
 package shared
 
 type AppStoreAppSettingsRequestFlowOutput struct {
-	Discoverability *AppStoreVisibility `json:"discoverability,omitempty"`
-	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
-	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
-	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
-	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
-	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	Admins *AppAdminsOutput `json:"admins,omitempty"`
 	// The allowed groups config associated with this config.
 	AllowedGroups   *AllowedGroupsConfigOutput `json:"allowed_groups,omitempty"`
 	Approvers       *AppApproversOutput        `json:"approvers,omitempty"`
 	ApproversStage2 *AppApproversOutput        `json:"approvers_stage_2,omitempty"`
-	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
-	ResponseDescribesEntireApprovalWorkflow *bool            `json:"response_describes_entire_approval_workflow,omitempty"`
-	Admins                                  *AppAdminsOutput `json:"admins,omitempty"`
+	// After the approval step, send a custom message to requesters. Markdown for links and text formatting is supported.
+	CustomApprovalMessage *string             `json:"custom_approval_message,omitempty"`
+	Discoverability       *AppStoreVisibility `json:"discoverability,omitempty"`
 	// A request validation webhook can be optionally associated with this config.
 	RequestValidationInlineWebhook *InlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
+	// When a user makes an access request, require that their manager approves the request before moving on to additional approvals.
+	RequireManagerApproval *bool `json:"require_manager_approval,omitempty"`
+	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
+	ResponseDescribesEntireApprovalWorkflow *bool `json:"response_describes_entire_approval_workflow,omitempty"`
 }
 
-func (a *AppStoreAppSettingsRequestFlowOutput) GetDiscoverability() *AppStoreVisibility {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetAdmins() *AppAdminsOutput {
 	if a == nil {
 		return nil
 	}
-	return a.Discoverability
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutput) GetCustomApprovalMessage() *string {
-	if a == nil {
-		return nil
-	}
-	return a.CustomApprovalMessage
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireManagerApproval() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.RequireManagerApproval
-}
-
-func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireAdditionalApproval() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.RequireAdditionalApproval
+	return a.Admins
 }
 
 func (a *AppStoreAppSettingsRequestFlowOutput) GetAllowedGroups() *AllowedGroupsConfigOutput {
@@ -71,18 +50,18 @@ func (a *AppStoreAppSettingsRequestFlowOutput) GetApproversStage2() *AppApprover
 	return a.ApproversStage2
 }
 
-func (a *AppStoreAppSettingsRequestFlowOutput) GetResponseDescribesEntireApprovalWorkflow() *bool {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetCustomApprovalMessage() *string {
 	if a == nil {
 		return nil
 	}
-	return a.ResponseDescribesEntireApprovalWorkflow
+	return a.CustomApprovalMessage
 }
 
-func (a *AppStoreAppSettingsRequestFlowOutput) GetAdmins() *AppAdminsOutput {
+func (a *AppStoreAppSettingsRequestFlowOutput) GetDiscoverability() *AppStoreVisibility {
 	if a == nil {
 		return nil
 	}
-	return a.Admins
+	return a.Discoverability
 }
 
 func (a *AppStoreAppSettingsRequestFlowOutput) GetRequestValidationInlineWebhook() *InlineWebhook {
@@ -90,4 +69,25 @@ func (a *AppStoreAppSettingsRequestFlowOutput) GetRequestValidationInlineWebhook
 		return nil
 	}
 	return a.RequestValidationInlineWebhook
+}
+
+func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireAdditionalApproval() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.RequireAdditionalApproval
+}
+
+func (a *AppStoreAppSettingsRequestFlowOutput) GetRequireManagerApproval() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.RequireManagerApproval
+}
+
+func (a *AppStoreAppSettingsRequestFlowOutput) GetResponseDescribesEntireApprovalWorkflow() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ResponseDescribesEntireApprovalWorkflow
 }

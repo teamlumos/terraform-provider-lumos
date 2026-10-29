@@ -5,10 +5,10 @@ package shared
 
 type LimitOffsetPageActivityLog struct {
 	Items  []ActivityLog `json:"items"`
-	Total  *int64        `json:"total"`
 	Limit  *int64        `json:"limit"`
-	Offset *int64        `json:"offset"`
 	Links  Links         `json:"links"`
+	Offset *int64        `json:"offset"`
+	Total  *int64        `json:"total"`
 }
 
 func (l *LimitOffsetPageActivityLog) GetItems() []ActivityLog {
@@ -18,18 +18,18 @@ func (l *LimitOffsetPageActivityLog) GetItems() []ActivityLog {
 	return l.Items
 }
 
-func (l *LimitOffsetPageActivityLog) GetTotal() *int64 {
-	if l == nil {
-		return nil
-	}
-	return l.Total
-}
-
 func (l *LimitOffsetPageActivityLog) GetLimit() *int64 {
 	if l == nil {
 		return nil
 	}
 	return l.Limit
+}
+
+func (l *LimitOffsetPageActivityLog) GetLinks() Links {
+	if l == nil {
+		return Links{}
+	}
+	return l.Links
 }
 
 func (l *LimitOffsetPageActivityLog) GetOffset() *int64 {
@@ -39,9 +39,9 @@ func (l *LimitOffsetPageActivityLog) GetOffset() *int64 {
 	return l.Offset
 }
 
-func (l *LimitOffsetPageActivityLog) GetLinks() Links {
+func (l *LimitOffsetPageActivityLog) GetTotal() *int64 {
 	if l == nil {
-		return Links{}
+		return nil
 	}
-	return l.Links
+	return l.Total
 }

@@ -168,11 +168,15 @@ func (r *AppResourceModel) ToOperationsReconnectAppRequest(ctx context.Context) 
 func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.AppInputCreate, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	name := new(string)
-	if !r.Name.IsUnknown() && !r.Name.IsNull() {
-		*name = r.Name.ValueString()
+	appClassID := new(string)
+	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
+		*appClassID = r.AppClassID.ValueString()
 	} else {
-		name = nil
+		appClassID = nil
+	}
+	var auth interface{}
+	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
+		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
 	}
 	category := new(string)
 	if !r.Category.IsUnknown() && !r.Category.IsNull() {
@@ -192,27 +196,17 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 	} else {
 		logoURL = nil
 	}
-	websiteURL := new(string)
-	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
-		*websiteURL = r.WebsiteURL.ValueString()
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
 	} else {
-		websiteURL = nil
+		name = nil
 	}
 	requestInstructions := new(string)
 	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
 		*requestInstructions = r.RequestInstructions.ValueString()
 	} else {
 		requestInstructions = nil
-	}
-	appClassID := new(string)
-	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
-		*appClassID = r.AppClassID.ValueString()
-	} else {
-		appClassID = nil
-	}
-	var auth interface{}
-	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
-		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
 	}
 	var settings interface{}
 	if !r.Settings.IsUnknown() && !r.Settings.IsNull() {
@@ -224,17 +218,23 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 	} else {
 		version = nil
 	}
+	websiteURL := new(string)
+	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
+		*websiteURL = r.WebsiteURL.ValueString()
+	} else {
+		websiteURL = nil
+	}
 	out := shared.AppInputCreate{
-		Name:                name,
+		AppClassID:          appClassID,
+		Auth:                auth,
 		Category:            category,
 		Description:         description,
 		LogoURL:             logoURL,
-		WebsiteURL:          websiteURL,
+		Name:                name,
 		RequestInstructions: requestInstructions,
-		AppClassID:          appClassID,
-		Auth:                auth,
 		Settings:            settings,
 		Version:             version,
+		WebsiteURL:          websiteURL,
 	}
 
 	return &out, diags
@@ -243,11 +243,15 @@ func (r *AppResourceModel) ToSharedAppInputCreate(ctx context.Context) (*shared.
 func (r *AppResourceModel) ToSharedAppInputPut(ctx context.Context) (*shared.AppInputPut, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	name := new(string)
-	if !r.Name.IsUnknown() && !r.Name.IsNull() {
-		*name = r.Name.ValueString()
+	appClassID := new(string)
+	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
+		*appClassID = r.AppClassID.ValueString()
 	} else {
-		name = nil
+		appClassID = nil
+	}
+	var auth interface{}
+	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
+		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
 	}
 	category := new(string)
 	if !r.Category.IsUnknown() && !r.Category.IsNull() {
@@ -267,27 +271,17 @@ func (r *AppResourceModel) ToSharedAppInputPut(ctx context.Context) (*shared.App
 	} else {
 		logoURL = nil
 	}
-	websiteURL := new(string)
-	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
-		*websiteURL = r.WebsiteURL.ValueString()
+	name := new(string)
+	if !r.Name.IsUnknown() && !r.Name.IsNull() {
+		*name = r.Name.ValueString()
 	} else {
-		websiteURL = nil
+		name = nil
 	}
 	requestInstructions := new(string)
 	if !r.RequestInstructions.IsUnknown() && !r.RequestInstructions.IsNull() {
 		*requestInstructions = r.RequestInstructions.ValueString()
 	} else {
 		requestInstructions = nil
-	}
-	appClassID := new(string)
-	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
-		*appClassID = r.AppClassID.ValueString()
-	} else {
-		appClassID = nil
-	}
-	var auth interface{}
-	if !r.Auth.IsUnknown() && !r.Auth.IsNull() {
-		_ = json.Unmarshal([]byte(r.Auth.ValueString()), &auth)
 	}
 	var settings interface{}
 	if !r.Settings.IsUnknown() && !r.Settings.IsNull() {
@@ -299,17 +293,23 @@ func (r *AppResourceModel) ToSharedAppInputPut(ctx context.Context) (*shared.App
 	} else {
 		version = nil
 	}
+	websiteURL := new(string)
+	if !r.WebsiteURL.IsUnknown() && !r.WebsiteURL.IsNull() {
+		*websiteURL = r.WebsiteURL.ValueString()
+	} else {
+		websiteURL = nil
+	}
 	out := shared.AppInputPut{
-		Name:                name,
+		AppClassID:          appClassID,
+		Auth:                auth,
 		Category:            category,
 		Description:         description,
 		LogoURL:             logoURL,
-		WebsiteURL:          websiteURL,
+		Name:                name,
 		RequestInstructions: requestInstructions,
-		AppClassID:          appClassID,
-		Auth:                auth,
 		Settings:            settings,
 		Version:             version,
+		WebsiteURL:          websiteURL,
 	}
 
 	return &out, diags

@@ -4,27 +4,20 @@
 package shared
 
 type Group struct {
-	// The ID of this group.
-	ID *string `json:"id,omitempty"`
-	// The ID of the app that sources this group.
+	// The ID of the app this group is synced from.
 	AppID *string `json:"app_id,omitempty"`
-	// The ID of this group, specific to the integration.
-	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
-	// The name of this group.
-	Name *string `json:"name,omitempty"`
 	// The description of this group.
 	Description *string `json:"description,omitempty"`
 	// The lifecycle of this group.
 	GroupLifecycle *Lifecycle `json:"group_lifecycle,omitempty"`
-	// The ID of the app that sources this group.
+	// The ID of this group.
+	ID *string `json:"id,omitempty"`
+	// The ID of this group, specific to the integration.
+	IntegrationSpecificID *string `json:"integration_specific_id,omitempty"`
+	// The name of this group.
+	Name *string `json:"name,omitempty"`
+	// The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 	SourceAppID *string `json:"source_app_id,omitempty"`
-}
-
-func (g *Group) GetID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.ID
 }
 
 func (g *Group) GetAppID() *string {
@@ -32,20 +25,6 @@ func (g *Group) GetAppID() *string {
 		return nil
 	}
 	return g.AppID
-}
-
-func (g *Group) GetIntegrationSpecificID() *string {
-	if g == nil {
-		return nil
-	}
-	return g.IntegrationSpecificID
-}
-
-func (g *Group) GetName() *string {
-	if g == nil {
-		return nil
-	}
-	return g.Name
 }
 
 func (g *Group) GetDescription() *string {
@@ -60,6 +39,27 @@ func (g *Group) GetGroupLifecycle() *Lifecycle {
 		return nil
 	}
 	return g.GroupLifecycle
+}
+
+func (g *Group) GetID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.ID
+}
+
+func (g *Group) GetIntegrationSpecificID() *string {
+	if g == nil {
+		return nil
+	}
+	return g.IntegrationSpecificID
+}
+
+func (g *Group) GetName() *string {
+	if g == nil {
+		return nil
+	}
+	return g.Name
 }
 
 func (g *Group) GetSourceAppID() *string {

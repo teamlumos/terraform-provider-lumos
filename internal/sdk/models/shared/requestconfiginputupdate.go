@@ -4,48 +4,20 @@
 package shared
 
 type RequestConfigInputUpdate struct {
-	// The appstore visibility of this request config.
-	AppstoreVisibility *AppStoreVisibilityOption `json:"appstore_visibility,omitempty"`
-	// Indicates if allowed groups is overriden from the app-level settings.
-	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
-	// Refers to which group(s) can make requests to this permission.
-	AllowedGroups *AllowedGroupsConfigInput `json:"allowed_groups,omitempty"`
-	// A request approval config can be optionally associated with this config
-	RequestApprovalConfig *RequestApprovalConfigInput `json:"request_approval_config,omitempty"`
 	// A deprovisioning webhook can be optionally associated with this config.
 	AccessRemovalInlineWebhook *BaseInlineWebhook `json:"access_removal_inline_webhook,omitempty"`
-	// A request validation webhook can be optionally associated with this config.
-	RequestValidationInlineWebhook *BaseInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
+	// Refers to which group(s) can make requests to this permission.
+	AllowedGroups *AllowedGroupsConfigInput `json:"allowed_groups,omitempty"`
+	// Indicates if allowed groups is overriden from the app-level settings.
+	AllowedGroupsOverride *bool `json:"allowed_groups_override,omitempty"`
+	// The appstore visibility of this request config.
+	AppstoreVisibility *AppStoreVisibilityOption `json:"appstore_visibility,omitempty"`
+	// A request approval config can be optionally associated with this config
+	RequestApprovalConfig *RequestApprovalConfigInput `json:"request_approval_config,omitempty"`
 	// A request fulfillment config can be optionally associated with this config
 	RequestFulfillmentConfig *RequestFulfillmentConfigInputUpdate `json:"request_fulfillment_config,omitempty"`
-}
-
-func (r *RequestConfigInputUpdate) GetAppstoreVisibility() *AppStoreVisibilityOption {
-	if r == nil {
-		return nil
-	}
-	return r.AppstoreVisibility
-}
-
-func (r *RequestConfigInputUpdate) GetAllowedGroupsOverride() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.AllowedGroupsOverride
-}
-
-func (r *RequestConfigInputUpdate) GetAllowedGroups() *AllowedGroupsConfigInput {
-	if r == nil {
-		return nil
-	}
-	return r.AllowedGroups
-}
-
-func (r *RequestConfigInputUpdate) GetRequestApprovalConfig() *RequestApprovalConfigInput {
-	if r == nil {
-		return nil
-	}
-	return r.RequestApprovalConfig
+	// A request validation webhook can be optionally associated with this config.
+	RequestValidationInlineWebhook *BaseInlineWebhook `json:"request_validation_inline_webhook,omitempty"`
 }
 
 func (r *RequestConfigInputUpdate) GetAccessRemovalInlineWebhook() *BaseInlineWebhook {
@@ -55,11 +27,32 @@ func (r *RequestConfigInputUpdate) GetAccessRemovalInlineWebhook() *BaseInlineWe
 	return r.AccessRemovalInlineWebhook
 }
 
-func (r *RequestConfigInputUpdate) GetRequestValidationInlineWebhook() *BaseInlineWebhook {
+func (r *RequestConfigInputUpdate) GetAllowedGroups() *AllowedGroupsConfigInput {
 	if r == nil {
 		return nil
 	}
-	return r.RequestValidationInlineWebhook
+	return r.AllowedGroups
+}
+
+func (r *RequestConfigInputUpdate) GetAllowedGroupsOverride() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.AllowedGroupsOverride
+}
+
+func (r *RequestConfigInputUpdate) GetAppstoreVisibility() *AppStoreVisibilityOption {
+	if r == nil {
+		return nil
+	}
+	return r.AppstoreVisibility
+}
+
+func (r *RequestConfigInputUpdate) GetRequestApprovalConfig() *RequestApprovalConfigInput {
+	if r == nil {
+		return nil
+	}
+	return r.RequestApprovalConfig
 }
 
 func (r *RequestConfigInputUpdate) GetRequestFulfillmentConfig() *RequestFulfillmentConfigInputUpdate {
@@ -67,4 +60,11 @@ func (r *RequestConfigInputUpdate) GetRequestFulfillmentConfig() *RequestFulfill
 		return nil
 	}
 	return r.RequestFulfillmentConfig
+}
+
+func (r *RequestConfigInputUpdate) GetRequestValidationInlineWebhook() *BaseInlineWebhook {
+	if r == nil {
+		return nil
+	}
+	return r.RequestValidationInlineWebhook
 }

@@ -62,7 +62,7 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				Description: `The Lumos Condition object determining which identities qualify for this policy. Required unless ` + "`" + `is_everyone_condition` + "`" + ` is ` + "`" + `true` + "`" + `. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like ` + "`" + `equals` + "`" + `, ` + "`" + `in` + "`" + `, ` + "`" + `and` + "`" + `, ` + "`" + `or` + "`" + `, and ` + "`" + `not` + "`" + `. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.`,
+				Description: `The Lumos Condition object determining which identities qualify for this policy. Required unless ` + "`" + `is_everyone_condition` + "`" + ` is ` + "`" + `true` + "`" + `. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like ` + "`" + `equals` + "`" + `, ` + "`" + `in` + "`" + `, ` + "`" + `and` + "`" + `, ` + "`" + `or` + "`" + `, and ` + "`" + `not` + "`" + `. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos). Parsed as JSON.`,
 			},
 			"apps": schema.ListNestedAttribute{
 				Required: true,
@@ -82,7 +82,11 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 						"is_preapproved": schema.BoolAttribute{
 							Computed:    true,
 							Optional:    true,
-							Description: `Whether approval is required for this app grant.`,
+							Description: `Whether requests created through this policy for this app are pre-approved.`,
+						},
+						"label": schema.StringAttribute{
+							Computed:    true,
+							Description: `The human-readable label of this app.`,
 						},
 						"permissions": schema.ListNestedAttribute{
 							Computed: true,
@@ -96,6 +100,10 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 										Computed:    true,
 										Optional:    true,
 										Description: `The ID of this requestable permission.`,
+									},
+									"label": schema.StringAttribute{
+										Computed:    true,
+										Description: `The human-readable label of this permission.`,
 									},
 								},
 							},
@@ -111,6 +119,9 @@ func (r *AccessPolicyResource) Schema(ctx context.Context, req resource.SchemaRe
 			"business_justification": schema.StringAttribute{
 				Required:    true,
 				Description: `Explanation for why this policy exists.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(500),
+				},
 			},
 			"id": schema.StringAttribute{
 				Computed: true,

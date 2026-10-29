@@ -27,6 +27,7 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 
 			apps.ID = types.StringValue(appsItem.ID)
 			apps.IsPreapproved = types.BoolValue(appsItem.IsPreapproved)
+			apps.Label = types.StringValue(appsItem.Label)
 			if appsItem.Permissions != nil {
 				apps.Permissions = []tfTypes.AccessPolicyPermissionInput{}
 
@@ -34,6 +35,7 @@ func (r *AccessPolicyResourceModel) RefreshFromSharedAccessPolicyOutput(ctx cont
 					var permissions tfTypes.AccessPolicyPermissionInput
 
 					permissions.ID = types.StringPointerValue(permissionsItem.ID)
+					permissions.Label = types.StringValue(permissionsItem.Label)
 
 					apps.Permissions = append(apps.Permissions, permissions)
 				}
@@ -102,23 +104,9 @@ func (r *AccessPolicyResourceModel) ToOperationsUpdateAccessPolicyRequest(ctx co
 func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Context) (*shared.AccessPolicyInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var name string
-	name = r.Name.ValueString()
-
-	var businessJustification string
-	businessJustification = r.BusinessJustification.ValueString()
-
-	status := new(shared.Status)
-	if !r.Status.IsUnknown() && !r.Status.IsNull() {
-		*status = shared.Status(r.Status.ValueString())
-	} else {
-		status = nil
-	}
-	isEnabled := new(bool)
-	if !r.IsEnabled.IsUnknown() && !r.IsEnabled.IsNull() {
-		*isEnabled = r.IsEnabled.ValueBool()
-	} else {
-		isEnabled = nil
+	var accessCondition interface{}
+	if !r.AccessCondition.IsUnknown() && !r.AccessCondition.IsNull() {
+		_ = json.Unmarshal([]byte(r.AccessCondition.ValueString()), &accessCondition)
 	}
 	apps := make([]shared.AccessPolicyAppInput, 0, len(r.Apps))
 	for appsIndex := range r.Apps {
@@ -152,9 +140,14 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 			Permissions:   permissions,
 		})
 	}
-	var accessCondition interface{}
-	if !r.AccessCondition.IsUnknown() && !r.AccessCondition.IsNull() {
-		_ = json.Unmarshal([]byte(r.AccessCondition.ValueString()), &accessCondition)
+	var businessJustification string
+	businessJustification = r.BusinessJustification.ValueString()
+
+	isEnabled := new(bool)
+	if !r.IsEnabled.IsUnknown() && !r.IsEnabled.IsNull() {
+		*isEnabled = r.IsEnabled.ValueBool()
+	} else {
+		isEnabled = nil
 	}
 	isEveryoneCondition := new(bool)
 	if !r.IsEveryoneCondition.IsUnknown() && !r.IsEveryoneCondition.IsNull() {
@@ -162,14 +155,23 @@ func (r *AccessPolicyResourceModel) ToSharedAccessPolicyInput(ctx context.Contex
 	} else {
 		isEveryoneCondition = nil
 	}
+	var name string
+	name = r.Name.ValueString()
+
+	status := new(shared.Status)
+	if !r.Status.IsUnknown() && !r.Status.IsNull() {
+		*status = shared.Status(r.Status.ValueString())
+	} else {
+		status = nil
+	}
 	out := shared.AccessPolicyInput{
-		Name:                  name,
-		BusinessJustification: businessJustification,
-		Status:                status,
-		IsEnabled:             isEnabled,
-		Apps:                  apps,
 		AccessCondition:       accessCondition,
+		Apps:                  apps,
+		BusinessJustification: businessJustification,
+		IsEnabled:             isEnabled,
 		IsEveryoneCondition:   isEveryoneCondition,
+		Name:                  name,
+		Status:                status,
 	}
 
 	return &out, diags

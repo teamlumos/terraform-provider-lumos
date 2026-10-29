@@ -4,25 +4,18 @@
 package shared
 
 type AppInputUpdate struct {
-	// The updated domain-specific display name of the app. Set to null to reset to the app's default name.
-	Name *string `json:"name,omitempty"`
 	// The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
 	Category *string `json:"category,omitempty"`
 	// The updated domain-specific description of the app. Set to null to reset to the app's default description.
 	Description *string `json:"description,omitempty"`
 	// The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo.
 	LogoURL *string `json:"logo_url,omitempty"`
-	// The updated URL of the website of the app. Set to null to clear it.
-	WebsiteURL *string `json:"website_url,omitempty"`
+	// The updated domain-specific display name of the app. Set to null to reset to the app's default name.
+	Name *string `json:"name,omitempty"`
 	// The updated request instructions.
 	RequestInstructions *string `json:"request_instructions,omitempty"`
-}
-
-func (a *AppInputUpdate) GetName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Name
+	// The updated URL of the website of the app. Set to null to clear it.
+	WebsiteURL *string `json:"website_url,omitempty"`
 }
 
 func (a *AppInputUpdate) GetCategory() *string {
@@ -46,11 +39,11 @@ func (a *AppInputUpdate) GetLogoURL() *string {
 	return a.LogoURL
 }
 
-func (a *AppInputUpdate) GetWebsiteURL() *string {
+func (a *AppInputUpdate) GetName() *string {
 	if a == nil {
 		return nil
 	}
-	return a.WebsiteURL
+	return a.Name
 }
 
 func (a *AppInputUpdate) GetRequestInstructions() *string {
@@ -58,4 +51,11 @@ func (a *AppInputUpdate) GetRequestInstructions() *string {
 		return nil
 	}
 	return a.RequestInstructions
+}
+
+func (a *AppInputUpdate) GetWebsiteURL() *string {
+	if a == nil {
+		return nil
+	}
+	return a.WebsiteURL
 }

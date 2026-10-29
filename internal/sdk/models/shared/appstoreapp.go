@@ -4,78 +4,36 @@
 package shared
 
 type AppStoreApp struct {
-	// The ID of this app.
-	ID string `json:"id"`
-	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
-	AppClassID string `json:"app_class_id"`
-	// The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
-	InstanceID string `json:"instance_id"`
-	// The user-friendly label of this app.
-	UserFriendlyLabel string          `json:"user_friendly_label"`
-	Status            DomainAppStatus `json:"status"`
-	// The sources of this app.
-	Sources []DiscoverySource `json:"sources"`
 	// Determines whether users can request multiple permissions at once.This field will be removed in subsequent API versions.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
-	// The URL of the logo of this app.
-	LogoURL *string `json:"logo_url,omitempty"`
-	// The URL of the website of this app.
-	WebsiteURL *string `json:"website_url,omitempty"`
-	// The request instructions.
-	RequestInstructions *string `json:"request_instructions,omitempty"`
-	// The user-facing description of the app
-	Description *string `json:"description,omitempty"`
+	// The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.
+	AppClassID string `json:"app_class_id"`
 	// The category of the app, as shown in the AppStore
 	Category *string `json:"category,omitempty"`
-	// Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
-	Disconnected bool     `json:"disconnected"`
-	Links        AppLinks `json:"links"`
-	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
-	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
 	// Custom attributes configured on the app
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
-}
-
-func (a *AppStoreApp) GetID() string {
-	if a == nil {
-		return ""
-	}
-	return a.ID
-}
-
-func (a *AppStoreApp) GetAppClassID() string {
-	if a == nil {
-		return ""
-	}
-	return a.AppClassID
-}
-
-func (a *AppStoreApp) GetInstanceID() string {
-	if a == nil {
-		return ""
-	}
-	return a.InstanceID
-}
-
-func (a *AppStoreApp) GetUserFriendlyLabel() string {
-	if a == nil {
-		return ""
-	}
-	return a.UserFriendlyLabel
-}
-
-func (a *AppStoreApp) GetStatus() DomainAppStatus {
-	if a == nil {
-		return DomainAppStatus("")
-	}
-	return a.Status
-}
-
-func (a *AppStoreApp) GetSources() []DiscoverySource {
-	if a == nil {
-		return []DiscoverySource{}
-	}
-	return a.Sources
+	// The user-facing description of the app
+	Description *string `json:"description,omitempty"`
+	// Whether this app has been disconnected (its stored credentials removed via `DELETE /apps/{app_id}`). A disconnected app is excluded from `GET /apps?disconnected=false`; reconnect it with `PUT /apps/{app_id}`.
+	Disconnected bool `json:"disconnected"`
+	// The ID of this app.
+	ID string `json:"id"`
+	// The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.
+	InstanceID string   `json:"instance_id"`
+	Links      AppLinks `json:"links"`
+	// The URL of the logo of this app.
+	LogoURL *string `json:"logo_url,omitempty"`
+	// The request instructions.
+	RequestInstructions *string `json:"request_instructions,omitempty"`
+	// The sources of this app.
+	Sources []DiscoverySource `json:"sources"`
+	Status  DomainAppStatus   `json:"status"`
+	// The state of this app's most recent sync: `SYNCING` while one is running, `SUCCESS` or `FAILED` once it finished. Poll this after `POST /apps/{app_id}/sync` to follow that sync. `null` when no sync result is recorded — the app has never synced, or was disconnected.
+	SyncStatus *SyncStatus `json:"sync_status,omitempty"`
+	// The user-friendly label of this app.
+	UserFriendlyLabel string `json:"user_friendly_label"`
+	// The URL of the website of this app.
+	WebsiteURL *string `json:"website_url,omitempty"`
 }
 
 func (a *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
@@ -85,32 +43,11 @@ func (a *AppStoreApp) GetAllowMultiplePermissionSelection() bool {
 	return a.AllowMultiplePermissionSelection
 }
 
-func (a *AppStoreApp) GetLogoURL() *string {
+func (a *AppStoreApp) GetAppClassID() string {
 	if a == nil {
-		return nil
+		return ""
 	}
-	return a.LogoURL
-}
-
-func (a *AppStoreApp) GetWebsiteURL() *string {
-	if a == nil {
-		return nil
-	}
-	return a.WebsiteURL
-}
-
-func (a *AppStoreApp) GetRequestInstructions() *string {
-	if a == nil {
-		return nil
-	}
-	return a.RequestInstructions
-}
-
-func (a *AppStoreApp) GetDescription() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Description
+	return a.AppClassID
 }
 
 func (a *AppStoreApp) GetCategory() *string {
@@ -120,11 +57,39 @@ func (a *AppStoreApp) GetCategory() *string {
 	return a.Category
 }
 
+func (a *AppStoreApp) GetCustomAttributes() map[string]CustomAttribute {
+	if a == nil {
+		return nil
+	}
+	return a.CustomAttributes
+}
+
+func (a *AppStoreApp) GetDescription() *string {
+	if a == nil {
+		return nil
+	}
+	return a.Description
+}
+
 func (a *AppStoreApp) GetDisconnected() bool {
 	if a == nil {
 		return false
 	}
 	return a.Disconnected
+}
+
+func (a *AppStoreApp) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
+}
+
+func (a *AppStoreApp) GetInstanceID() string {
+	if a == nil {
+		return ""
+	}
+	return a.InstanceID
 }
 
 func (a *AppStoreApp) GetLinks() AppLinks {
@@ -134,6 +99,34 @@ func (a *AppStoreApp) GetLinks() AppLinks {
 	return a.Links
 }
 
+func (a *AppStoreApp) GetLogoURL() *string {
+	if a == nil {
+		return nil
+	}
+	return a.LogoURL
+}
+
+func (a *AppStoreApp) GetRequestInstructions() *string {
+	if a == nil {
+		return nil
+	}
+	return a.RequestInstructions
+}
+
+func (a *AppStoreApp) GetSources() []DiscoverySource {
+	if a == nil {
+		return []DiscoverySource{}
+	}
+	return a.Sources
+}
+
+func (a *AppStoreApp) GetStatus() DomainAppStatus {
+	if a == nil {
+		return DomainAppStatus("")
+	}
+	return a.Status
+}
+
 func (a *AppStoreApp) GetSyncStatus() *SyncStatus {
 	if a == nil {
 		return nil
@@ -141,9 +134,16 @@ func (a *AppStoreApp) GetSyncStatus() *SyncStatus {
 	return a.SyncStatus
 }
 
-func (a *AppStoreApp) GetCustomAttributes() map[string]CustomAttribute {
+func (a *AppStoreApp) GetUserFriendlyLabel() string {
+	if a == nil {
+		return ""
+	}
+	return a.UserFriendlyLabel
+}
+
+func (a *AppStoreApp) GetWebsiteURL() *string {
 	if a == nil {
 		return nil
 	}
-	return a.CustomAttributes
+	return a.WebsiteURL
 }
