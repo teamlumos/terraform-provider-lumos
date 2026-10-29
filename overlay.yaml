@@ -345,6 +345,13 @@ actions:
   - target: $["paths"]["/appstore/apps/{app_id}"]["delete"]
     update:
       "x-speakeasy-entity-operation": "AppStoreApp#delete"
+  # Naming the app by its id in the integration that manages it picks a different app.
+  - target: $["components"]["schemas"]["AddAppToAppStoreInput"]["properties"]["source_app_id"]
+    update:
+      "x-speakeasy-param-force-new": true
+  - target: $["components"]["schemas"]["AddAppToAppStoreInput"]["properties"]["integration_specific_id"]
+    update:
+      "x-speakeasy-param-force-new": true
 
   # Apps
   - target: $["components"]["schemas"]["App"]
@@ -366,6 +373,9 @@ actions:
     update:
       "x-speakeasy-param-suppress-computed-diff": true
   - target: $["components"]["schemas"]["AppStoreAppSettingsOutput"]
+    update:
+      "x-speakeasy-param-suppress-computed-diff": true
+  - target: $["components"]["schemas"]["AddAppToAppStoreOutput"]
     update:
       "x-speakeasy-param-suppress-computed-diff": true
 
@@ -520,6 +530,8 @@ actions:
   # RequestConfigInputValidator depends on. Drop these removals in the change
   # that maps the fields and updates that validator together.
   - target: $["components"]["schemas"]["AddAppToAppStoreInput"]["properties"]["redirect_url"]
+    remove: true
+  - target: $["components"]["schemas"]["AddAppToAppStoreOutput"]["properties"]["redirect_url"]
     remove: true
   - target: $["components"]["schemas"]["AppSettingInput"]["properties"]["redirect_url"]
     remove: true
