@@ -5,10 +5,10 @@ package shared
 
 type PageAccessPolicyOutput struct {
 	Items []AccessPolicyOutput `json:"items"`
-	Total *int64               `json:"total"`
 	Page  *int64               `json:"page"`
-	Size  *int64               `json:"size"`
 	Pages *int64               `json:"pages,omitempty"`
+	Size  *int64               `json:"size"`
+	Total *int64               `json:"total"`
 }
 
 func (p *PageAccessPolicyOutput) GetItems() []AccessPolicyOutput {
@@ -18,18 +18,18 @@ func (p *PageAccessPolicyOutput) GetItems() []AccessPolicyOutput {
 	return p.Items
 }
 
-func (p *PageAccessPolicyOutput) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageAccessPolicyOutput) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageAccessPolicyOutput) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageAccessPolicyOutput) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageAccessPolicyOutput) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageAccessPolicyOutput) GetPages() *int64 {
+func (p *PageAccessPolicyOutput) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

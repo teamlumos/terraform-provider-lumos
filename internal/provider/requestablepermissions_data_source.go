@@ -106,7 +106,8 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Description: `The description of this inline webhook.`,
 										},
 										"hook_type": schema.StringAttribute{
-											Computed: true,
+											Computed:    true,
+											Description: `What an inline webhook is wired into.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,
@@ -128,7 +129,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 												Attributes: map[string]schema.Attribute{
 													"app_id": schema.StringAttribute{
 														Computed:    true,
-														Description: `The ID of the app that sources this group.`,
+														Description: `The ID of the app this group is synced from.`,
 													},
 													"description": schema.StringAttribute{
 														Computed:    true,
@@ -152,7 +153,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 													},
 													"source_app_id": schema.StringAttribute{
 														Computed:    true,
-														Description: `The ID of the app that sources this group.`,
+														Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 													},
 												},
 											},
@@ -184,7 +185,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 														Attributes: map[string]schema.Attribute{
 															"app_id": schema.StringAttribute{
 																Computed:    true,
-																Description: `The ID of the app that sources this group.`,
+																Description: `The ID of the app this group is synced from.`,
 															},
 															"description": schema.StringAttribute{
 																Computed:    true,
@@ -208,7 +209,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"source_app_id": schema.StringAttribute{
 																Computed:    true,
-																Description: `The ID of the app that sources this group.`,
+																Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 															},
 														},
 													},
@@ -254,7 +255,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 														Attributes: map[string]schema.Attribute{
 															"app_id": schema.StringAttribute{
 																Computed:    true,
-																Description: `The ID of the app that sources this group.`,
+																Description: `The ID of the app this group is synced from.`,
 															},
 															"description": schema.StringAttribute{
 																Computed:    true,
@@ -278,7 +279,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 															},
 															"source_app_id": schema.StringAttribute{
 																Computed:    true,
-																Description: `The ID of the app that sources this group.`,
+																Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 															},
 														},
 													},
@@ -358,7 +359,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Attributes: map[string]schema.Attribute{
 												"app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that sources this group.`,
+													Description: `The ID of the app this group is synced from.`,
 												},
 												"description": schema.StringAttribute{
 													Computed:    true,
@@ -382,7 +383,7 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 												},
 												"source_app_id": schema.StringAttribute{
 													Computed:    true,
-													Description: `The ID of the app that sources this group.`,
+													Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 												},
 											},
 											Description: `The provisioning group optionally assocated with this config.`,
@@ -395,7 +396,8 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 													Description: `The description of this inline webhook.`,
 												},
 												"hook_type": schema.StringAttribute{
-													Computed: true,
+													Computed:    true,
+													Description: `What an inline webhook is wired into.`,
 												},
 												"id": schema.StringAttribute{
 													Computed:    true,
@@ -428,7 +430,8 @@ func (r *RequestablePermissionsDataSource) Schema(ctx context.Context, req datas
 											Description: `The description of this inline webhook.`,
 										},
 										"hook_type": schema.StringAttribute{
-											Computed: true,
+											Computed:    true,
+											Description: `What an inline webhook is wired into.`,
 										},
 										"id": schema.StringAttribute{
 											Computed:    true,

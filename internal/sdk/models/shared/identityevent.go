@@ -10,18 +10,18 @@ import (
 
 // IdentityEvent - API representation of a identity event.
 type IdentityEvent struct {
-	// Unique identifier for this identity event.
-	ID string `json:"id"`
-	// UUID of the user whose attribute changed.
-	UserID string `json:"user_id"`
-	// Timestamp (ISO-8601) when the change was detected.
-	DetectedTime time.Time `json:"detected_time"`
 	// The field that changed.
 	ChangedField string `json:"changed_field"`
-	// Previous value of the changed field.
-	OldFieldValue *string `json:"old_field_value,omitempty"`
+	// Timestamp (ISO-8601) when the change was detected.
+	DetectedTime time.Time `json:"detected_time"`
+	// Unique identifier for this identity event.
+	ID string `json:"id"`
 	// New value of the changed field.
 	NewFieldValue *string `json:"new_field_value,omitempty"`
+	// Previous value of the changed field.
+	OldFieldValue *string `json:"old_field_value,omitempty"`
+	// UUID of the user whose attribute changed.
+	UserID string `json:"user_id"`
 }
 
 func (i IdentityEvent) MarshalJSON() ([]byte, error) {
@@ -35,18 +35,11 @@ func (i *IdentityEvent) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (i *IdentityEvent) GetID() string {
+func (i *IdentityEvent) GetChangedField() string {
 	if i == nil {
 		return ""
 	}
-	return i.ID
-}
-
-func (i *IdentityEvent) GetUserID() string {
-	if i == nil {
-		return ""
-	}
-	return i.UserID
+	return i.ChangedField
 }
 
 func (i *IdentityEvent) GetDetectedTime() time.Time {
@@ -56,11 +49,18 @@ func (i *IdentityEvent) GetDetectedTime() time.Time {
 	return i.DetectedTime
 }
 
-func (i *IdentityEvent) GetChangedField() string {
+func (i *IdentityEvent) GetID() string {
 	if i == nil {
 		return ""
 	}
-	return i.ChangedField
+	return i.ID
+}
+
+func (i *IdentityEvent) GetNewFieldValue() *string {
+	if i == nil {
+		return nil
+	}
+	return i.NewFieldValue
 }
 
 func (i *IdentityEvent) GetOldFieldValue() *string {
@@ -70,9 +70,9 @@ func (i *IdentityEvent) GetOldFieldValue() *string {
 	return i.OldFieldValue
 }
 
-func (i *IdentityEvent) GetNewFieldValue() *string {
+func (i *IdentityEvent) GetUserID() string {
 	if i == nil {
-		return nil
+		return ""
 	}
-	return i.NewFieldValue
+	return i.UserID
 }

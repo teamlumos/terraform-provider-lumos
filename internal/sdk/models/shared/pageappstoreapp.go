@@ -5,10 +5,10 @@ package shared
 
 type PageAppStoreApp struct {
 	Items []AppStoreApp `json:"items"`
-	Total *int64        `json:"total"`
 	Page  *int64        `json:"page"`
-	Size  *int64        `json:"size"`
 	Pages *int64        `json:"pages,omitempty"`
+	Size  *int64        `json:"size"`
+	Total *int64        `json:"total"`
 }
 
 func (p *PageAppStoreApp) GetItems() []AppStoreApp {
@@ -18,18 +18,18 @@ func (p *PageAppStoreApp) GetItems() []AppStoreApp {
 	return p.Items
 }
 
-func (p *PageAppStoreApp) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageAppStoreApp) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageAppStoreApp) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageAppStoreApp) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageAppStoreApp) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageAppStoreApp) GetPages() *int64 {
+func (p *PageAppStoreApp) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

@@ -4,17 +4,10 @@
 package shared
 
 type ActivityRecordAccountInput struct {
-	// The external app's user ID for the account.
-	ExternalID *string `json:"external_id,omitempty"`
 	// The email associated with the account
 	Email *string `json:"email,omitempty"`
-}
-
-func (a *ActivityRecordAccountInput) GetExternalID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.ExternalID
+	// The external app's user ID for the account.
+	ExternalID *string `json:"external_id,omitempty"`
 }
 
 func (a *ActivityRecordAccountInput) GetEmail() *string {
@@ -22,4 +15,11 @@ func (a *ActivityRecordAccountInput) GetEmail() *string {
 		return nil
 	}
 	return a.Email
+}
+
+func (a *ActivityRecordAccountInput) GetExternalID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.ExternalID
 }

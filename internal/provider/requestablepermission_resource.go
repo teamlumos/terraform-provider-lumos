@@ -126,6 +126,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
+								Description: `What an inline webhook is wired into.`,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -175,7 +176,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The ID of the app this group is synced from.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -219,11 +220,11 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 										},
 									},
 								},
-								Description: `The groups allowed to request this permission.`,
+								Description: `The groups allowed to request this permission. At most 100 groups when type is SPECIFIED_GROUPS.`,
 							},
 							"type": schema.StringAttribute{
 								Computed: true,
@@ -298,7 +299,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The ID of the app that sources this group.`,
+													Description: `The ID of the app this group is synced from.`,
 												},
 												"description": schema.StringAttribute{
 													Computed: true,
@@ -342,7 +343,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The ID of the app that sources this group.`,
+													Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 												},
 											},
 										},
@@ -435,7 +436,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The ID of the app that sources this group.`,
+													Description: `The ID of the app this group is synced from.`,
 												},
 												"description": schema.StringAttribute{
 													Computed: true,
@@ -479,7 +480,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 													PlanModifiers: []planmodifier.String{
 														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
-													Description: `The ID of the app that sources this group.`,
+													Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 												},
 											},
 										},
@@ -639,7 +640,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 											stringplanmodifier.RequiresReplaceIfConfigured(),
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `The ID of the app that sources this group. Requires replacement if changed.`,
+										Description: `The ID of the app this group is synced from. Requires replacement if changed.`,
 									},
 									"description": schema.StringAttribute{
 										Computed: true,
@@ -685,7 +686,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
-										Description: `The ID of the app that sources this group.`,
+										Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 									},
 								},
 								Description: `The provisioning group optionally associated with this config. Requires replacement if changed.`,
@@ -709,6 +710,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 										PlanModifiers: []planmodifier.String{
 											speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 										},
+										Description: `What an inline webhook is wired into.`,
 									},
 									"id": schema.StringAttribute{
 										Computed: true,
@@ -770,6 +772,7 @@ func (r *RequestablePermissionResource) Schema(ctx context.Context, req resource
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
+								Description: `What an inline webhook is wired into.`,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,

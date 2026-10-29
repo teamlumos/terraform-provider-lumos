@@ -10,6 +10,8 @@ type AccessPolicyAppOutput struct {
 	ID string `json:"id"`
 	// Whether requests created via this access policy are pre-approved.
 	IsPreapproved bool `json:"is_preapproved"`
+	// The human-readable label of this app.
+	Label string `json:"label"`
 	// List of permissions granted for this app. Empty list means app-level grant.
 	Permissions []AccessPolicyPermissionOutput `json:"permissions"`
 }
@@ -26,6 +28,13 @@ func (a *AccessPolicyAppOutput) GetIsPreapproved() bool {
 		return false
 	}
 	return a.IsPreapproved
+}
+
+func (a *AccessPolicyAppOutput) GetLabel() string {
+	if a == nil {
+		return ""
+	}
+	return a.Label
 }
 
 func (a *AccessPolicyAppOutput) GetPermissions() []AccessPolicyPermissionOutput {

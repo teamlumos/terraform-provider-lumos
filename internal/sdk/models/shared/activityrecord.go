@@ -10,13 +10,13 @@ import (
 
 type ActivityRecord struct {
 	Account ActivityRecordAccountInput `json:"account"`
-	Event   ActivityRecordEventInput   `json:"event"`
-	// The timestamp of this event, in ISO 8601 format.
-	Timestamp time.Time `json:"timestamp"`
+	// Metadata that Lumos can use to match the activity record to an application within Lumos.
+	App   *ActivityRecordAppInput  `json:"app,omitempty"`
+	Event ActivityRecordEventInput `json:"event"`
 	// UUID of the application in Lumos where this activity record was sourced (e.g. the ID of Okta within Lumos found by going to Apps > Find your app in the list > Click '...' > Copy Stable Identifier)
 	SourceAppID string `json:"source_app_id"`
-	// Metadata that Lumos can use to match the activity record to an application within Lumos.
-	App *ActivityRecordAppInput `json:"app,omitempty"`
+	// The timestamp of this event, in ISO 8601 format.
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func (a ActivityRecord) MarshalJSON() ([]byte, error) {
@@ -37,18 +37,18 @@ func (a *ActivityRecord) GetAccount() ActivityRecordAccountInput {
 	return a.Account
 }
 
+func (a *ActivityRecord) GetApp() *ActivityRecordAppInput {
+	if a == nil {
+		return nil
+	}
+	return a.App
+}
+
 func (a *ActivityRecord) GetEvent() ActivityRecordEventInput {
 	if a == nil {
 		return ActivityRecordEventInput{}
 	}
 	return a.Event
-}
-
-func (a *ActivityRecord) GetTimestamp() time.Time {
-	if a == nil {
-		return time.Time{}
-	}
-	return a.Timestamp
 }
 
 func (a *ActivityRecord) GetSourceAppID() string {
@@ -58,9 +58,9 @@ func (a *ActivityRecord) GetSourceAppID() string {
 	return a.SourceAppID
 }
 
-func (a *ActivityRecord) GetApp() *ActivityRecordAppInput {
+func (a *ActivityRecord) GetTimestamp() time.Time {
 	if a == nil {
-		return nil
+		return time.Time{}
 	}
-	return a.App
+	return a.Timestamp
 }

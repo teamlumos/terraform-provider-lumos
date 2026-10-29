@@ -103,7 +103,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String)
+- `hook_type` (String) What an inline webhook is wired into.
 - `name` (String) The name of this inline webhook.
 
 
@@ -112,7 +112,7 @@ Read-Only:
 
 Optional:
 
-- `groups` (Attributes Set) The groups allowed to request this permission. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
+- `groups` (Attributes Set) The groups allowed to request this permission. At most 100 groups when type is SPECIFIED_GROUPS. (see [below for nested schema](#nestedatt--request_config--allowed_groups--groups))
 - `type` (String) must be one of ["ALL_GROUPS", "SPECIFIED_GROUPS"]
 
 <a id="nestedatt--request_config--allowed_groups--groups"></a>
@@ -120,7 +120,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group.
+- `app_id` (String) The ID of the app this group is synced from.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -129,7 +129,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 
 
 
@@ -163,7 +163,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group.
+- `app_id` (String) The ID of the app this group is synced from.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -172,7 +172,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 
 
 <a id="nestedatt--request_config--request_approval_config--approvers--users"></a>
@@ -204,7 +204,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group.
+- `app_id` (String) The ID of the app this group is synced from.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -213,7 +213,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 
 
 <a id="nestedatt--request_config--request_approval_config--approvers_stage_2--users"></a>
@@ -250,7 +250,7 @@ Optional:
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group. Requires replacement if changed.
+- `app_id` (String) The ID of the app this group is synced from. Requires replacement if changed.
 - `id` (String) The ID of this group. Requires replacement if changed.
 - `integration_specific_id` (String) The ID of this group, specific to the integration. Requires replacement if changed.
 
@@ -259,7 +259,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 
 
 <a id="nestedatt--request_config--request_fulfillment_config--provisioning_webhook"></a>
@@ -272,7 +272,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String)
+- `hook_type` (String) What an inline webhook is wired into.
 - `name` (String) The name of this inline webhook.
 
 
@@ -287,7 +287,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String)
+- `hook_type` (String) What an inline webhook is wired into.
 - `name` (String) The name of this inline webhook.
 
 ## Import

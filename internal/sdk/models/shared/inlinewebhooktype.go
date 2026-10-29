@@ -8,6 +8,7 @@ import (
 	"fmt"
 )
 
+// InlineWebhookType - What an inline webhook is wired into.
 type InlineWebhookType string
 
 const (

@@ -36,20 +36,20 @@ func (e *Status) UnmarshalJSON(data []byte) error {
 }
 
 type AccessPolicyInput struct {
-	// The name of the access policy.
-	Name string `json:"name"`
-	// Explanation for why this policy exists.
-	BusinessJustification string `json:"business_justification"`
-	// The status of the access policy. Defaults to DRAFT when supported.
-	Status *Status `json:"status,omitempty"`
-	// Whether the access policy is enabled. Defaults to false when supported.
-	IsEnabled *bool `json:"is_enabled,omitempty"`
+	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+	AccessCondition any `json:"access_condition,omitempty"`
 	// List of apps granted by this access policy.
 	Apps []AccessPolicyAppInput `json:"apps"`
-	// The Lumos Condition object determining which identities qualify for this policy. Required unless `is_everyone_condition` is `true`. This is a recursive JSON structure that allows you to define complex rules for filtering and matching identities using operators like `equals`, `in`, `and`, `or`, and `not`. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
-	AccessCondition any `json:"access_condition,omitempty"`
+	// Explanation for why this policy exists.
+	BusinessJustification string `json:"business_justification"`
+	// Whether the access policy is enabled. Defaults to false when supported.
+	IsEnabled *bool `json:"is_enabled,omitempty"`
 	// Whether the access policy applies to everyone. If true, `access_condition` is ignored. Otherwise, `access_condition` must be provided.
 	IsEveryoneCondition *bool `default:"false" json:"is_everyone_condition"`
+	// The name of the access policy.
+	Name string `json:"name"`
+	// The status of the access policy. Defaults to DRAFT when supported.
+	Status *Status `json:"status,omitempty"`
 }
 
 func (a AccessPolicyInput) MarshalJSON() ([]byte, error) {
@@ -63,32 +63,11 @@ func (a *AccessPolicyInput) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AccessPolicyInput) GetName() string {
-	if a == nil {
-		return ""
-	}
-	return a.Name
-}
-
-func (a *AccessPolicyInput) GetBusinessJustification() string {
-	if a == nil {
-		return ""
-	}
-	return a.BusinessJustification
-}
-
-func (a *AccessPolicyInput) GetStatus() *Status {
+func (a *AccessPolicyInput) GetAccessCondition() any {
 	if a == nil {
 		return nil
 	}
-	return a.Status
-}
-
-func (a *AccessPolicyInput) GetIsEnabled() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.IsEnabled
+	return a.AccessCondition
 }
 
 func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {
@@ -98,11 +77,18 @@ func (a *AccessPolicyInput) GetApps() []AccessPolicyAppInput {
 	return a.Apps
 }
 
-func (a *AccessPolicyInput) GetAccessCondition() any {
+func (a *AccessPolicyInput) GetBusinessJustification() string {
+	if a == nil {
+		return ""
+	}
+	return a.BusinessJustification
+}
+
+func (a *AccessPolicyInput) GetIsEnabled() *bool {
 	if a == nil {
 		return nil
 	}
-	return a.AccessCondition
+	return a.IsEnabled
 }
 
 func (a *AccessPolicyInput) GetIsEveryoneCondition() *bool {
@@ -110,4 +96,18 @@ func (a *AccessPolicyInput) GetIsEveryoneCondition() *bool {
 		return nil
 	}
 	return a.IsEveryoneCondition
+}
+
+func (a *AccessPolicyInput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessPolicyInput) GetStatus() *Status {
+	if a == nil {
+		return nil
+	}
+	return a.Status
 }

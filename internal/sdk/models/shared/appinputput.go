@@ -11,33 +11,40 @@ package shared
 // `version`, which require the matching `app_class_id`) additionally
 // reconnects the integration with those credentials.
 type AppInputPut struct {
-	// The updated domain-specific display name of the app. Set to null to reset to the app's default name.
-	Name *string `json:"name,omitempty"`
+	// Canonical identifier of the integration this app belongs to, e.g. `okta.com`. Must match the existing app (a mismatch is rejected with 400); required when rotating credentials via `auth`/`settings`/`version`.
+	AppClassID *string `json:"app_class_id,omitempty"`
+	// New credentials for the integration, as a JSON object — **all secrets go here**. Providing credentials reconnects the app: they are always overwritten and re-validated, and a sync is triggered. The accepted keys depend on the integration and are validated server-side. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Requires `app_class_id`.
+	Auth any `json:"auth,omitempty"`
 	// The updated domain-specific category of the app. Set to null to reset to the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'
 	Category *string `json:"category,omitempty"`
 	// The updated domain-specific description of the app. Set to null to reset to the app's default description.
 	Description *string `json:"description,omitempty"`
 	// The updated domain-specific URL of the logo of the app. Set to null to reset to the app's default logo.
 	LogoURL *string `json:"logo_url,omitempty"`
-	// The updated URL of the website of the app. Set to null to clear it.
-	WebsiteURL *string `json:"website_url,omitempty"`
+	// The updated domain-specific display name of the app. Set to null to reset to the app's default name.
+	Name *string `json:"name,omitempty"`
 	// The updated request instructions.
 	RequestInstructions *string `json:"request_instructions,omitempty"`
-	// Canonical identifier of the integration this app belongs to, e.g. `okta.com`. Must match the existing app (a mismatch is rejected with 400); required when rotating credentials via `auth`/`settings`/`version`.
-	AppClassID *string `json:"app_class_id,omitempty"`
-	// New credentials for the integration, as a JSON object — **all secrets go here**. Providing credentials reconnects the app: they are always overwritten and re-validated, and a sync is triggered. The accepted keys depend on the integration and are validated server-side. Missing or wrong-shaped credentials are rejected with 400; credentials the third party rejects return 502. Requires `app_class_id`.
-	Auth any `json:"auth,omitempty"`
 	// Non-secret configuration for the integration being reconnected, as a JSON object — e.g. host, port, region, or tenant / instance URL. The accepted keys vary by integration and some integrations need none. Requires `app_class_id`.
 	Settings any `json:"settings,omitempty"`
 	// Optional integration version override for the reconnect. Pins the connection to a specific integration implementation/version instead of the current default; leave unset (`null`) unless directed otherwise. Requires `app_class_id`.
 	Version *string `json:"version,omitempty"`
+	// The updated URL of the website of the app. Set to null to clear it.
+	WebsiteURL *string `json:"website_url,omitempty"`
 }
 
-func (a *AppInputPut) GetName() *string {
+func (a *AppInputPut) GetAppClassID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Name
+	return a.AppClassID
+}
+
+func (a *AppInputPut) GetAuth() any {
+	if a == nil {
+		return nil
+	}
+	return a.Auth
 }
 
 func (a *AppInputPut) GetCategory() *string {
@@ -61,11 +68,11 @@ func (a *AppInputPut) GetLogoURL() *string {
 	return a.LogoURL
 }
 
-func (a *AppInputPut) GetWebsiteURL() *string {
+func (a *AppInputPut) GetName() *string {
 	if a == nil {
 		return nil
 	}
-	return a.WebsiteURL
+	return a.Name
 }
 
 func (a *AppInputPut) GetRequestInstructions() *string {
@@ -73,20 +80,6 @@ func (a *AppInputPut) GetRequestInstructions() *string {
 		return nil
 	}
 	return a.RequestInstructions
-}
-
-func (a *AppInputPut) GetAppClassID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.AppClassID
-}
-
-func (a *AppInputPut) GetAuth() any {
-	if a == nil {
-		return nil
-	}
-	return a.Auth
 }
 
 func (a *AppInputPut) GetSettings() any {
@@ -101,4 +94,11 @@ func (a *AppInputPut) GetVersion() *string {
 		return nil
 	}
 	return a.Version
+}
+
+func (a *AppInputPut) GetWebsiteURL() *string {
+	if a == nil {
+		return nil
+	}
+	return a.WebsiteURL
 }

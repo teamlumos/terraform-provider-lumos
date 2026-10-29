@@ -32,12 +32,14 @@ func (r *AccessPoliciesDataSourceModel) RefreshFromSharedPageAccessPolicyOutput(
 
 				apps.ID = types.StringValue(appsItem.ID)
 				apps.IsPreapproved = types.BoolValue(appsItem.IsPreapproved)
+				apps.Label = types.StringValue(appsItem.Label)
 				apps.Permissions = []tfTypes.AccessPolicyPermissionInput{}
 
 				for _, permissionsItem := range appsItem.Permissions {
 					var permissions tfTypes.AccessPolicyPermissionInput
 
 					permissions.ID = types.StringPointerValue(permissionsItem.ID)
+					permissions.Label = types.StringValue(permissionsItem.Label)
 
 					apps.Permissions = append(apps.Permissions, permissions)
 				}

@@ -313,15 +313,15 @@ func (r *RequestablePermissionResourceModel) ToOperationsUpdateAppstorePermissio
 func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(ctx context.Context) (*shared.RequestablePermissionInput, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var appID string
-	appID = r.AppID.ValueString()
-
 	appClassID := new(string)
 	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
 		*appClassID = r.AppClassID.ValueString()
 	} else {
 		appClassID = nil
 	}
+	var appID string
+	appID = r.AppID.ValueString()
+
 	appInstanceID := new(string)
 	if !r.AppInstanceID.IsUnknown() && !r.AppInstanceID.IsNull() {
 		*appInstanceID = r.AppInstanceID.ValueString()
@@ -333,39 +333,30 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 
 	var requestConfig *shared.RequestConfigInputCreate
 	if r.RequestConfig != nil {
-		appstoreVisibility := new(shared.AppStoreVisibilityOption)
-		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
-			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
-		} else {
-			appstoreVisibility = nil
-		}
-		allowedGroupsOverride := new(bool)
-		if !r.RequestConfig.AllowedGroupsOverride.IsUnknown() && !r.RequestConfig.AllowedGroupsOverride.IsNull() {
-			*allowedGroupsOverride = r.RequestConfig.AllowedGroupsOverride.ValueBool()
-		} else {
-			allowedGroupsOverride = nil
+		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
+		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
+			var id string
+			id = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+
+			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
+				ID: id,
+			}
 		}
 		var allowedGroups *shared.AllowedGroupsConfigInput
 		if r.RequestConfig.AllowedGroups != nil {
-			typeVar := new(shared.AllowedGroupsConfigType)
-			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.AllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
-			} else {
-				typeVar = nil
-			}
 			groups := make([]shared.BaseGroup, 0, len(r.RequestConfig.AllowedGroups.Groups))
 			for groupsIndex := range r.RequestConfig.AllowedGroups.Groups {
-				id := new(string)
-				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsNull() {
-					*id = r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.ValueString()
-				} else {
-					id = nil
-				}
 				appId1 := new(string)
 				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.IsNull() {
 					*appId1 = r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.ValueString()
 				} else {
 					appId1 = nil
+				}
+				id1 := new(string)
+				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsNull() {
+					*id1 = r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.ValueString()
+				} else {
+					id1 = nil
 				}
 				integrationSpecificID := new(string)
 				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].IntegrationSpecificID.IsNull() {
@@ -374,35 +365,119 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 					integrationSpecificID = nil
 				}
 				groups = append(groups, shared.BaseGroup{
-					ID:                    id,
 					AppID:                 appId1,
+					ID:                    id1,
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			allowedGroups = &shared.AllowedGroupsConfigInput{
-				Type:   typeVar,
-				Groups: groups,
+			typeVar := new(shared.AllowedGroupsConfigType)
+			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
+				*typeVar = shared.AllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
+			} else {
+				typeVar = nil
 			}
+			allowedGroups = &shared.AllowedGroupsConfigInput{
+				Groups: groups,
+				Type:   typeVar,
+			}
+		}
+		allowedGroupsOverride := new(bool)
+		if !r.RequestConfig.AllowedGroupsOverride.IsUnknown() && !r.RequestConfig.AllowedGroupsOverride.IsNull() {
+			*allowedGroupsOverride = r.RequestConfig.AllowedGroupsOverride.ValueBool()
+		} else {
+			allowedGroupsOverride = nil
+		}
+		appstoreVisibility := new(shared.AppStoreVisibilityOption)
+		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
+			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
+		} else {
+			appstoreVisibility = nil
 		}
 		var requestApprovalConfig *shared.RequestApprovalConfigInput
 		if r.RequestConfig.RequestApprovalConfig != nil {
-			requestApprovalConfigOverride := new(bool)
-			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
-				*requestApprovalConfigOverride = r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool()
-			} else {
-				requestApprovalConfigOverride = nil
+			var approvers *shared.AppApproversInput
+			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
+				groups1 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups))
+				for groupsIndex1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
+					appId2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsNull() {
+						*appId2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.ValueString()
+					} else {
+						appId2 = nil
+					}
+					id2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsNull() {
+						*id2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.ValueString()
+					} else {
+						id2 = nil
+					}
+					integrationSpecificId1 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsNull() {
+						*integrationSpecificId1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.ValueString()
+					} else {
+						integrationSpecificId1 = nil
+					}
+					groups1 = append(groups1, shared.BaseGroup{
+						AppID:                 appId2,
+						ID:                    id2,
+						IntegrationSpecificID: integrationSpecificId1,
+					})
+				}
+				users := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Users))
+				for usersIndex := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
+					var id3 string
+					id3 = r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersIndex].ID.ValueString()
+
+					users = append(users, shared.BaseUser{
+						ID: id3,
+					})
+				}
+				approvers = &shared.AppApproversInput{
+					Groups: groups1,
+					Users:  users,
+				}
 			}
-			managerApproval := new(shared.ManagerApprovalOption)
-			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
-				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
-			} else {
-				managerApproval = nil
-			}
-			requireAdditionalApproval := new(bool)
-			if !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsNull() {
-				*requireAdditionalApproval = r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.ValueBool()
-			} else {
-				requireAdditionalApproval = nil
+			var approversStage2 *shared.AppApproversInput
+			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
+				groups2 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups))
+				for groupsIndex2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
+					appId3 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsNull() {
+						*appId3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.ValueString()
+					} else {
+						appId3 = nil
+					}
+					id4 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsNull() {
+						*id4 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.ValueString()
+					} else {
+						id4 = nil
+					}
+					integrationSpecificId2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsNull() {
+						*integrationSpecificId2 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.ValueString()
+					} else {
+						integrationSpecificId2 = nil
+					}
+					groups2 = append(groups2, shared.BaseGroup{
+						AppID:                 appId3,
+						ID:                    id4,
+						IntegrationSpecificID: integrationSpecificId2,
+					})
+				}
+				users1 := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users))
+				for usersIndex1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
+					var id5 string
+					id5 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersIndex1].ID.ValueString()
+
+					users1 = append(users1, shared.BaseUser{
+						ID: id5,
+					})
+				}
+				approversStage2 = &shared.AppApproversInput{
+					Groups: groups2,
+					Users:  users1,
+				}
 			}
 			customApprovalMessage := new(string)
 			if !r.RequestConfig.RequestApprovalConfig.CustomApprovalMessage.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
@@ -416,131 +491,82 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				customApprovalMessageOverride = nil
 			}
-			var approvers *shared.AppApproversInput
-			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
-				groups1 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups))
-				for groupsIndex1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
-					id1 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsNull() {
-						*id1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.ValueString()
-					} else {
-						id1 = nil
-					}
-					appId2 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsNull() {
-						*appId2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.ValueString()
-					} else {
-						appId2 = nil
-					}
-					integrationSpecificId1 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsNull() {
-						*integrationSpecificId1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.ValueString()
-					} else {
-						integrationSpecificId1 = nil
-					}
-					groups1 = append(groups1, shared.BaseGroup{
-						ID:                    id1,
-						AppID:                 appId2,
-						IntegrationSpecificID: integrationSpecificId1,
-					})
-				}
-				users := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Users))
-				for usersIndex := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
-					var id2 string
-					id2 = r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersIndex].ID.ValueString()
-
-					users = append(users, shared.BaseUser{
-						ID: id2,
-					})
-				}
-				approvers = &shared.AppApproversInput{
-					Groups: groups1,
-					Users:  users,
-				}
+			managerApproval := new(shared.ManagerApprovalOption)
+			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
+				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
+			} else {
+				managerApproval = nil
 			}
-			var approversStage2 *shared.AppApproversInput
-			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
-				groups2 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups))
-				for groupsIndex2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
-					id3 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsNull() {
-						*id3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.ValueString()
-					} else {
-						id3 = nil
-					}
-					appId3 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsNull() {
-						*appId3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.ValueString()
-					} else {
-						appId3 = nil
-					}
-					integrationSpecificId2 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsNull() {
-						*integrationSpecificId2 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.ValueString()
-					} else {
-						integrationSpecificId2 = nil
-					}
-					groups2 = append(groups2, shared.BaseGroup{
-						ID:                    id3,
-						AppID:                 appId3,
-						IntegrationSpecificID: integrationSpecificId2,
-					})
-				}
-				users1 := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users))
-				for usersIndex1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-					var id4 string
-					id4 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersIndex1].ID.ValueString()
-
-					users1 = append(users1, shared.BaseUser{
-						ID: id4,
-					})
-				}
-				approversStage2 = &shared.AppApproversInput{
-					Groups: groups2,
-					Users:  users1,
-				}
+			requestApprovalConfigOverride := new(bool)
+			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
+				*requestApprovalConfigOverride = r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool()
+			} else {
+				requestApprovalConfigOverride = nil
+			}
+			requireAdditionalApproval := new(bool)
+			if !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsNull() {
+				*requireAdditionalApproval = r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.ValueBool()
+			} else {
+				requireAdditionalApproval = nil
 			}
 			requestApprovalConfig = &shared.RequestApprovalConfigInput{
-				RequestApprovalConfigOverride: requestApprovalConfigOverride,
-				ManagerApproval:               managerApproval,
-				RequireAdditionalApproval:     requireAdditionalApproval,
-				CustomApprovalMessage:         customApprovalMessage,
-				CustomApprovalMessageOverride: customApprovalMessageOverride,
 				Approvers:                     approvers,
 				ApproversStage2:               approversStage2,
-			}
-		}
-		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
-		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
-			var id5 string
-			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
-
-			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
-				ID: id5,
-			}
-		}
-		var requestValidationInlineWebhook *shared.BaseInlineWebhook
-		if r.RequestConfig.RequestValidationInlineWebhook != nil {
-			var id6 string
-			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
-
-			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
-				ID: id6,
+				CustomApprovalMessage:         customApprovalMessage,
+				CustomApprovalMessageOverride: customApprovalMessageOverride,
+				ManagerApproval:               managerApproval,
+				RequestApprovalConfigOverride: requestApprovalConfigOverride,
+				RequireAdditionalApproval:     requireAdditionalApproval,
 			}
 		}
 		var requestFulfillmentConfig *shared.RequestFulfillmentConfigInput
 		if r.RequestConfig.RequestFulfillmentConfig != nil {
+			manualInstructions := new(string)
+			if !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsNull() {
+				*manualInstructions = r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.ValueString()
+			} else {
+				manualInstructions = nil
+			}
 			manualStepsNeeded := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsNull() {
 				*manualStepsNeeded = r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.ValueBool()
 			} else {
 				manualStepsNeeded = nil
 			}
-			manualInstructions := new(string)
-			if !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsNull() {
-				*manualInstructions = r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.ValueString()
-			} else {
-				manualInstructions = nil
+			var provisioningGroup *shared.BaseGroup
+			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup != nil {
+				appId4 := new(string)
+				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.IsNull() {
+					*appId4 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.ValueString()
+				} else {
+					appId4 = nil
+				}
+				id6 := new(string)
+				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsNull() {
+					*id6 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.ValueString()
+				} else {
+					id6 = nil
+				}
+				integrationSpecificId3 := new(string)
+				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.IsNull() {
+					*integrationSpecificId3 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.ValueString()
+				} else {
+					integrationSpecificId3 = nil
+				}
+				provisioningGroup = &shared.BaseGroup{
+					AppID:                 appId4,
+					ID:                    id6,
+					IntegrationSpecificID: integrationSpecificId3,
+				}
+			}
+			var provisioningWebhook *shared.BaseInlineWebhook
+			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
+				var id7 string
+				id7 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+
+				provisioningWebhook = &shared.BaseInlineWebhook{
+					ID: id7,
+				}
 			}
 			var timeBasedAccess []string
 			if r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
@@ -555,63 +581,37 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 			} else {
 				timeBasedAccessOverride = nil
 			}
-			var provisioningGroup *shared.BaseGroup
-			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup != nil {
-				id7 := new(string)
-				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.IsNull() {
-					*id7 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.ID.ValueString()
-				} else {
-					id7 = nil
-				}
-				appId4 := new(string)
-				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.IsNull() {
-					*appId4 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.AppID.ValueString()
-				} else {
-					appId4 = nil
-				}
-				integrationSpecificId3 := new(string)
-				if !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.IsNull() {
-					*integrationSpecificId3 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningGroup.IntegrationSpecificID.ValueString()
-				} else {
-					integrationSpecificId3 = nil
-				}
-				provisioningGroup = &shared.BaseGroup{
-					ID:                    id7,
-					AppID:                 appId4,
-					IntegrationSpecificID: integrationSpecificId3,
-				}
-			}
-			var provisioningWebhook *shared.BaseInlineWebhook
-			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
-				var id8 string
-				id8 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
-
-				provisioningWebhook = &shared.BaseInlineWebhook{
-					ID: id8,
-				}
-			}
 			requestFulfillmentConfig = &shared.RequestFulfillmentConfigInput{
-				ManualStepsNeeded:       manualStepsNeeded,
 				ManualInstructions:      manualInstructions,
-				TimeBasedAccess:         timeBasedAccess,
-				TimeBasedAccessOverride: timeBasedAccessOverride,
+				ManualStepsNeeded:       manualStepsNeeded,
 				ProvisioningGroup:       provisioningGroup,
 				ProvisioningWebhook:     provisioningWebhook,
+				TimeBasedAccess:         timeBasedAccess,
+				TimeBasedAccessOverride: timeBasedAccessOverride,
+			}
+		}
+		var requestValidationInlineWebhook *shared.BaseInlineWebhook
+		if r.RequestConfig.RequestValidationInlineWebhook != nil {
+			var id8 string
+			id8 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+
+			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
+				ID: id8,
 			}
 		}
 		requestConfig = &shared.RequestConfigInputCreate{
-			AppstoreVisibility:             appstoreVisibility,
-			AllowedGroupsOverride:          allowedGroupsOverride,
-			AllowedGroups:                  allowedGroups,
-			RequestApprovalConfig:          requestApprovalConfig,
 			AccessRemovalInlineWebhook:     accessRemovalInlineWebhook,
-			RequestValidationInlineWebhook: requestValidationInlineWebhook,
+			AllowedGroups:                  allowedGroups,
+			AllowedGroupsOverride:          allowedGroupsOverride,
+			AppstoreVisibility:             appstoreVisibility,
+			RequestApprovalConfig:          requestApprovalConfig,
 			RequestFulfillmentConfig:       requestFulfillmentConfig,
+			RequestValidationInlineWebhook: requestValidationInlineWebhook,
 		}
 	}
 	out := shared.RequestablePermissionInput{
-		AppID:         appID,
 		AppClassID:    appClassID,
+		AppID:         appID,
 		AppInstanceID: appInstanceID,
 		Label:         label,
 		RequestConfig: requestConfig,
@@ -623,17 +623,17 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInput(
 func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputUpdate(ctx context.Context) (*shared.RequestablePermissionInputUpdate, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	appID := new(string)
-	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
-		*appID = r.AppID.ValueString()
-	} else {
-		appID = nil
-	}
 	appClassID := new(string)
 	if !r.AppClassID.IsUnknown() && !r.AppClassID.IsNull() {
 		*appClassID = r.AppClassID.ValueString()
 	} else {
 		appClassID = nil
+	}
+	appID := new(string)
+	if !r.AppID.IsUnknown() && !r.AppID.IsNull() {
+		*appID = r.AppID.ValueString()
+	} else {
+		appID = nil
 	}
 	appInstanceID := new(string)
 	if !r.AppInstanceID.IsUnknown() && !r.AppInstanceID.IsNull() {
@@ -649,39 +649,30 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 	}
 	var requestConfig *shared.RequestConfigInputUpdate
 	if r.RequestConfig != nil {
-		appstoreVisibility := new(shared.AppStoreVisibilityOption)
-		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
-			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
-		} else {
-			appstoreVisibility = nil
-		}
-		allowedGroupsOverride := new(bool)
-		if !r.RequestConfig.AllowedGroupsOverride.IsUnknown() && !r.RequestConfig.AllowedGroupsOverride.IsNull() {
-			*allowedGroupsOverride = r.RequestConfig.AllowedGroupsOverride.ValueBool()
-		} else {
-			allowedGroupsOverride = nil
+		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
+		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
+			var id string
+			id = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
+
+			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
+				ID: id,
+			}
 		}
 		var allowedGroups *shared.AllowedGroupsConfigInput
 		if r.RequestConfig.AllowedGroups != nil {
-			typeVar := new(shared.AllowedGroupsConfigType)
-			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
-				*typeVar = shared.AllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
-			} else {
-				typeVar = nil
-			}
 			groups := make([]shared.BaseGroup, 0, len(r.RequestConfig.AllowedGroups.Groups))
 			for groupsIndex := range r.RequestConfig.AllowedGroups.Groups {
-				id := new(string)
-				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsNull() {
-					*id = r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.ValueString()
-				} else {
-					id = nil
-				}
 				appId1 := new(string)
 				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.IsNull() {
 					*appId1 = r.RequestConfig.AllowedGroups.Groups[groupsIndex].AppID.ValueString()
 				} else {
 					appId1 = nil
+				}
+				id1 := new(string)
+				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.IsNull() {
+					*id1 = r.RequestConfig.AllowedGroups.Groups[groupsIndex].ID.ValueString()
+				} else {
+					id1 = nil
 				}
 				integrationSpecificID := new(string)
 				if !r.RequestConfig.AllowedGroups.Groups[groupsIndex].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.AllowedGroups.Groups[groupsIndex].IntegrationSpecificID.IsNull() {
@@ -690,35 +681,119 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 					integrationSpecificID = nil
 				}
 				groups = append(groups, shared.BaseGroup{
-					ID:                    id,
 					AppID:                 appId1,
+					ID:                    id1,
 					IntegrationSpecificID: integrationSpecificID,
 				})
 			}
-			allowedGroups = &shared.AllowedGroupsConfigInput{
-				Type:   typeVar,
-				Groups: groups,
+			typeVar := new(shared.AllowedGroupsConfigType)
+			if !r.RequestConfig.AllowedGroups.Type.IsUnknown() && !r.RequestConfig.AllowedGroups.Type.IsNull() {
+				*typeVar = shared.AllowedGroupsConfigType(r.RequestConfig.AllowedGroups.Type.ValueString())
+			} else {
+				typeVar = nil
 			}
+			allowedGroups = &shared.AllowedGroupsConfigInput{
+				Groups: groups,
+				Type:   typeVar,
+			}
+		}
+		allowedGroupsOverride := new(bool)
+		if !r.RequestConfig.AllowedGroupsOverride.IsUnknown() && !r.RequestConfig.AllowedGroupsOverride.IsNull() {
+			*allowedGroupsOverride = r.RequestConfig.AllowedGroupsOverride.ValueBool()
+		} else {
+			allowedGroupsOverride = nil
+		}
+		appstoreVisibility := new(shared.AppStoreVisibilityOption)
+		if !r.RequestConfig.AppstoreVisibility.IsUnknown() && !r.RequestConfig.AppstoreVisibility.IsNull() {
+			*appstoreVisibility = shared.AppStoreVisibilityOption(r.RequestConfig.AppstoreVisibility.ValueString())
+		} else {
+			appstoreVisibility = nil
 		}
 		var requestApprovalConfig *shared.RequestApprovalConfigInput
 		if r.RequestConfig.RequestApprovalConfig != nil {
-			requestApprovalConfigOverride := new(bool)
-			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
-				*requestApprovalConfigOverride = r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool()
-			} else {
-				requestApprovalConfigOverride = nil
+			var approvers *shared.AppApproversInput
+			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
+				groups1 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups))
+				for groupsIndex1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
+					appId2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsNull() {
+						*appId2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.ValueString()
+					} else {
+						appId2 = nil
+					}
+					id2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsNull() {
+						*id2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.ValueString()
+					} else {
+						id2 = nil
+					}
+					integrationSpecificId1 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsNull() {
+						*integrationSpecificId1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.ValueString()
+					} else {
+						integrationSpecificId1 = nil
+					}
+					groups1 = append(groups1, shared.BaseGroup{
+						AppID:                 appId2,
+						ID:                    id2,
+						IntegrationSpecificID: integrationSpecificId1,
+					})
+				}
+				users := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Users))
+				for usersIndex := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
+					var id3 string
+					id3 = r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersIndex].ID.ValueString()
+
+					users = append(users, shared.BaseUser{
+						ID: id3,
+					})
+				}
+				approvers = &shared.AppApproversInput{
+					Groups: groups1,
+					Users:  users,
+				}
 			}
-			managerApproval := new(shared.ManagerApprovalOption)
-			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
-				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
-			} else {
-				managerApproval = nil
-			}
-			requireAdditionalApproval := new(bool)
-			if !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsNull() {
-				*requireAdditionalApproval = r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.ValueBool()
-			} else {
-				requireAdditionalApproval = nil
+			var approversStage2 *shared.AppApproversInput
+			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
+				groups2 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups))
+				for groupsIndex2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
+					appId3 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsNull() {
+						*appId3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.ValueString()
+					} else {
+						appId3 = nil
+					}
+					id4 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsNull() {
+						*id4 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.ValueString()
+					} else {
+						id4 = nil
+					}
+					integrationSpecificId2 := new(string)
+					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsNull() {
+						*integrationSpecificId2 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.ValueString()
+					} else {
+						integrationSpecificId2 = nil
+					}
+					groups2 = append(groups2, shared.BaseGroup{
+						AppID:                 appId3,
+						ID:                    id4,
+						IntegrationSpecificID: integrationSpecificId2,
+					})
+				}
+				users1 := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users))
+				for usersIndex1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
+					var id5 string
+					id5 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersIndex1].ID.ValueString()
+
+					users1 = append(users1, shared.BaseUser{
+						ID: id5,
+					})
+				}
+				approversStage2 = &shared.AppApproversInput{
+					Groups: groups2,
+					Users:  users1,
+				}
 			}
 			customApprovalMessage := new(string)
 			if !r.RequestConfig.RequestApprovalConfig.CustomApprovalMessage.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.CustomApprovalMessage.IsNull() {
@@ -732,131 +807,56 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				customApprovalMessageOverride = nil
 			}
-			var approvers *shared.AppApproversInput
-			if r.RequestConfig.RequestApprovalConfig.Approvers != nil {
-				groups1 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Groups))
-				for groupsIndex1 := range r.RequestConfig.RequestApprovalConfig.Approvers.Groups {
-					id1 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.IsNull() {
-						*id1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].ID.ValueString()
-					} else {
-						id1 = nil
-					}
-					appId2 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.IsNull() {
-						*appId2 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].AppID.ValueString()
-					} else {
-						appId2 = nil
-					}
-					integrationSpecificId1 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.IsNull() {
-						*integrationSpecificId1 = r.RequestConfig.RequestApprovalConfig.Approvers.Groups[groupsIndex1].IntegrationSpecificID.ValueString()
-					} else {
-						integrationSpecificId1 = nil
-					}
-					groups1 = append(groups1, shared.BaseGroup{
-						ID:                    id1,
-						AppID:                 appId2,
-						IntegrationSpecificID: integrationSpecificId1,
-					})
-				}
-				users := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.Approvers.Users))
-				for usersIndex := range r.RequestConfig.RequestApprovalConfig.Approvers.Users {
-					var id2 string
-					id2 = r.RequestConfig.RequestApprovalConfig.Approvers.Users[usersIndex].ID.ValueString()
-
-					users = append(users, shared.BaseUser{
-						ID: id2,
-					})
-				}
-				approvers = &shared.AppApproversInput{
-					Groups: groups1,
-					Users:  users,
-				}
+			managerApproval := new(shared.ManagerApprovalOption)
+			if !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ManagerApproval.IsNull() {
+				*managerApproval = shared.ManagerApprovalOption(r.RequestConfig.RequestApprovalConfig.ManagerApproval.ValueString())
+			} else {
+				managerApproval = nil
 			}
-			var approversStage2 *shared.AppApproversInput
-			if r.RequestConfig.RequestApprovalConfig.ApproversStage2 != nil {
-				groups2 := make([]shared.BaseGroup, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups))
-				for groupsIndex2 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups {
-					id3 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.IsNull() {
-						*id3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].ID.ValueString()
-					} else {
-						id3 = nil
-					}
-					appId3 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.IsNull() {
-						*appId3 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].AppID.ValueString()
-					} else {
-						appId3 = nil
-					}
-					integrationSpecificId2 := new(string)
-					if !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.IsNull() {
-						*integrationSpecificId2 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Groups[groupsIndex2].IntegrationSpecificID.ValueString()
-					} else {
-						integrationSpecificId2 = nil
-					}
-					groups2 = append(groups2, shared.BaseGroup{
-						ID:                    id3,
-						AppID:                 appId3,
-						IntegrationSpecificID: integrationSpecificId2,
-					})
-				}
-				users1 := make([]shared.BaseUser, 0, len(r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users))
-				for usersIndex1 := range r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users {
-					var id4 string
-					id4 = r.RequestConfig.RequestApprovalConfig.ApproversStage2.Users[usersIndex1].ID.ValueString()
-
-					users1 = append(users1, shared.BaseUser{
-						ID: id4,
-					})
-				}
-				approversStage2 = &shared.AppApproversInput{
-					Groups: groups2,
-					Users:  users1,
-				}
+			requestApprovalConfigOverride := new(bool)
+			if !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.IsNull() {
+				*requestApprovalConfigOverride = r.RequestConfig.RequestApprovalConfig.RequestApprovalConfigOverride.ValueBool()
+			} else {
+				requestApprovalConfigOverride = nil
+			}
+			requireAdditionalApproval := new(bool)
+			if !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsUnknown() && !r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.IsNull() {
+				*requireAdditionalApproval = r.RequestConfig.RequestApprovalConfig.RequireAdditionalApproval.ValueBool()
+			} else {
+				requireAdditionalApproval = nil
 			}
 			requestApprovalConfig = &shared.RequestApprovalConfigInput{
-				RequestApprovalConfigOverride: requestApprovalConfigOverride,
-				ManagerApproval:               managerApproval,
-				RequireAdditionalApproval:     requireAdditionalApproval,
-				CustomApprovalMessage:         customApprovalMessage,
-				CustomApprovalMessageOverride: customApprovalMessageOverride,
 				Approvers:                     approvers,
 				ApproversStage2:               approversStage2,
-			}
-		}
-		var accessRemovalInlineWebhook *shared.BaseInlineWebhook
-		if r.RequestConfig.AccessRemovalInlineWebhook != nil {
-			var id5 string
-			id5 = r.RequestConfig.AccessRemovalInlineWebhook.ID.ValueString()
-
-			accessRemovalInlineWebhook = &shared.BaseInlineWebhook{
-				ID: id5,
-			}
-		}
-		var requestValidationInlineWebhook *shared.BaseInlineWebhook
-		if r.RequestConfig.RequestValidationInlineWebhook != nil {
-			var id6 string
-			id6 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
-
-			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
-				ID: id6,
+				CustomApprovalMessage:         customApprovalMessage,
+				CustomApprovalMessageOverride: customApprovalMessageOverride,
+				ManagerApproval:               managerApproval,
+				RequestApprovalConfigOverride: requestApprovalConfigOverride,
+				RequireAdditionalApproval:     requireAdditionalApproval,
 			}
 		}
 		var requestFulfillmentConfig *shared.RequestFulfillmentConfigInputUpdate
 		if r.RequestConfig.RequestFulfillmentConfig != nil {
+			manualInstructions := new(string)
+			if !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsNull() {
+				*manualInstructions = r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.ValueString()
+			} else {
+				manualInstructions = nil
+			}
 			manualStepsNeeded := new(bool)
 			if !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.IsNull() {
 				*manualStepsNeeded = r.RequestConfig.RequestFulfillmentConfig.ManualStepsNeeded.ValueBool()
 			} else {
 				manualStepsNeeded = nil
 			}
-			manualInstructions := new(string)
-			if !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsUnknown() && !r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.IsNull() {
-				*manualInstructions = r.RequestConfig.RequestFulfillmentConfig.ManualInstructions.ValueString()
-			} else {
-				manualInstructions = nil
+			var provisioningWebhook *shared.BaseInlineWebhook
+			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
+				var id6 string
+				id6 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
+
+				provisioningWebhook = &shared.BaseInlineWebhook{
+					ID: id6,
+				}
 			}
 			var timeBasedAccess []string
 			if r.RequestConfig.RequestFulfillmentConfig.TimeBasedAccess != nil {
@@ -871,36 +871,36 @@ func (r *RequestablePermissionResourceModel) ToSharedRequestablePermissionInputU
 			} else {
 				timeBasedAccessOverride = nil
 			}
-			var provisioningWebhook *shared.BaseInlineWebhook
-			if r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook != nil {
-				var id7 string
-				id7 = r.RequestConfig.RequestFulfillmentConfig.ProvisioningWebhook.ID.ValueString()
-
-				provisioningWebhook = &shared.BaseInlineWebhook{
-					ID: id7,
-				}
-			}
 			requestFulfillmentConfig = &shared.RequestFulfillmentConfigInputUpdate{
-				ManualStepsNeeded:       manualStepsNeeded,
 				ManualInstructions:      manualInstructions,
+				ManualStepsNeeded:       manualStepsNeeded,
+				ProvisioningWebhook:     provisioningWebhook,
 				TimeBasedAccess:         timeBasedAccess,
 				TimeBasedAccessOverride: timeBasedAccessOverride,
-				ProvisioningWebhook:     provisioningWebhook,
+			}
+		}
+		var requestValidationInlineWebhook *shared.BaseInlineWebhook
+		if r.RequestConfig.RequestValidationInlineWebhook != nil {
+			var id7 string
+			id7 = r.RequestConfig.RequestValidationInlineWebhook.ID.ValueString()
+
+			requestValidationInlineWebhook = &shared.BaseInlineWebhook{
+				ID: id7,
 			}
 		}
 		requestConfig = &shared.RequestConfigInputUpdate{
-			AppstoreVisibility:             appstoreVisibility,
-			AllowedGroupsOverride:          allowedGroupsOverride,
-			AllowedGroups:                  allowedGroups,
-			RequestApprovalConfig:          requestApprovalConfig,
 			AccessRemovalInlineWebhook:     accessRemovalInlineWebhook,
-			RequestValidationInlineWebhook: requestValidationInlineWebhook,
+			AllowedGroups:                  allowedGroups,
+			AllowedGroupsOverride:          allowedGroupsOverride,
+			AppstoreVisibility:             appstoreVisibility,
+			RequestApprovalConfig:          requestApprovalConfig,
 			RequestFulfillmentConfig:       requestFulfillmentConfig,
+			RequestValidationInlineWebhook: requestValidationInlineWebhook,
 		}
 	}
 	out := shared.RequestablePermissionInputUpdate{
-		AppID:         appID,
 		AppClassID:    appClassID,
+		AppID:         appID,
 		AppInstanceID: appInstanceID,
 		Label:         label,
 		RequestConfig: requestConfig,

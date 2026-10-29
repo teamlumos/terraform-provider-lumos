@@ -10,5 +10,6 @@ import (
 type AccessPolicyAppInput struct {
 	ID            types.String                  `tfsdk:"id"`
 	IsPreapproved types.Bool                    `tfsdk:"is_preapproved"`
+	Label         types.String                  `tfsdk:"label"`
 	Permissions   []AccessPolicyPermissionInput `tfsdk:"permissions"`
 }

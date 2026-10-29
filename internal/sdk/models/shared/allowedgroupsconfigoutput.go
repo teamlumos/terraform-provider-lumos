@@ -8,9 +8,9 @@ import (
 )
 
 type AllowedGroupsConfigOutput struct {
-	Type *AllowedGroupsConfigType `json:"type,omitempty"`
 	// The groups allowed to request this permission.
-	Groups []Group `json:"groups"`
+	Groups []Group                  `json:"groups"`
+	Type   *AllowedGroupsConfigType `json:"type,omitempty"`
 }
 
 func (a AllowedGroupsConfigOutput) MarshalJSON() ([]byte, error) {
@@ -24,16 +24,16 @@ func (a *AllowedGroupsConfigOutput) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *AllowedGroupsConfigOutput) GetType() *AllowedGroupsConfigType {
-	if a == nil {
-		return nil
-	}
-	return a.Type
-}
-
 func (a *AllowedGroupsConfigOutput) GetGroups() []Group {
 	if a == nil {
 		return nil
 	}
 	return a.Groups
+}
+
+func (a *AllowedGroupsConfigOutput) GetType() *AllowedGroupsConfigType {
+	if a == nil {
+		return nil
+	}
+	return a.Type
 }

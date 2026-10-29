@@ -4,16 +4,23 @@
 package shared
 
 type RequestFulfillmentConfigInputUpdate struct {
-	// Whether manual steps are needed.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
 	// The manual instructions that go along.
 	ManualInstructions *string `json:"manual_instructions,omitempty"`
+	// Whether manual steps are needed.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
+	// The provisioning webhook optionally associated with this config.
+	ProvisioningWebhook *BaseInlineWebhook `json:"provisioning_webhook,omitempty"`
 	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
 	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 	// Indicates if time based access is overriden.
 	TimeBasedAccessOverride *bool `json:"time_based_access_override,omitempty"`
-	// The provisioning webhook optionally associated with this config.
-	ProvisioningWebhook *BaseInlineWebhook `json:"provisioning_webhook,omitempty"`
+}
+
+func (r *RequestFulfillmentConfigInputUpdate) GetManualInstructions() *string {
+	if r == nil {
+		return nil
+	}
+	return r.ManualInstructions
 }
 
 func (r *RequestFulfillmentConfigInputUpdate) GetManualStepsNeeded() *bool {
@@ -23,11 +30,11 @@ func (r *RequestFulfillmentConfigInputUpdate) GetManualStepsNeeded() *bool {
 	return r.ManualStepsNeeded
 }
 
-func (r *RequestFulfillmentConfigInputUpdate) GetManualInstructions() *string {
+func (r *RequestFulfillmentConfigInputUpdate) GetProvisioningWebhook() *BaseInlineWebhook {
 	if r == nil {
 		return nil
 	}
-	return r.ManualInstructions
+	return r.ProvisioningWebhook
 }
 
 func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccess() []string {
@@ -42,11 +49,4 @@ func (r *RequestFulfillmentConfigInputUpdate) GetTimeBasedAccessOverride() *bool
 		return nil
 	}
 	return r.TimeBasedAccessOverride
-}
-
-func (r *RequestFulfillmentConfigInputUpdate) GetProvisioningWebhook() *BaseInlineWebhook {
-	if r == nil {
-		return nil
-	}
-	return r.ProvisioningWebhook
 }
