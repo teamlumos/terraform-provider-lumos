@@ -524,6 +524,14 @@ actions:
   - target: $["paths"]["/apps/{app_id}/sync"]
     remove: true
 
+  # User offboardings have no Terraform resource, so they would generate unreachable SDK code.
+  - target: $["paths"]["/lifecycle-management/user-offboardings"]
+    remove: true
+  - target: $["paths"]["/lifecycle-management/user-offboardings/{user_offboarding_id}"]
+    remove: true
+  - target: $["paths"]["/lifecycle-management/user-offboardings/{user_offboarding_id}/cancel"]
+    remove: true
+
   # App Store redirect / default-permission settings are not mapped to Terraform
   # attributes yet. Generating them pulls RequestablePermissionBase into the
   # provisioning subtree, which renames the deduplicated tfTypes the
