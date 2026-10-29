@@ -4,17 +4,10 @@
 package shared
 
 type AppLinks struct {
-	// The canonical API URL for retrieving this specific application
-	Self string `json:"self"`
 	// A URL to access this application within the Lumos web UI
 	AdminURL string `json:"admin_url"`
-}
-
-func (a *AppLinks) GetSelf() string {
-	if a == nil {
-		return ""
-	}
-	return a.Self
+	// The canonical API URL for retrieving this specific application
+	Self string `json:"self"`
 }
 
 func (a *AppLinks) GetAdminURL() string {
@@ -22,4 +15,11 @@ func (a *AppLinks) GetAdminURL() string {
 		return ""
 	}
 	return a.AdminURL
+}
+
+func (a *AppLinks) GetSelf() string {
+	if a == nil {
+		return ""
+	}
+	return a.Self
 }

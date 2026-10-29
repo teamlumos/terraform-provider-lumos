@@ -4,50 +4,22 @@
 package shared
 
 type FoundDocumentsUpload struct {
-	// A value that can be used to uniquely identify this contract (e.g. PO number, file name, etc)
-	UniqueIdentifier string `json:"unique_identifier"`
-	// A list of URLs that resolve to files that should be attached to the Found Document
-	Files []FileUpload `json:"files"`
-	// The name of the vendor that this document is for
-	VendorName *string `json:"vendor_name,omitempty"`
-	// The start of the vendor agreement
-	StartDate *string `json:"start_date,omitempty"`
 	// The end of the vendor agreement
 	EndDate *string `json:"end_date,omitempty"`
-	// By passing the ID of an application within Lumos, it will appear as if this Found Document was sourced from that app
-	SourceAppID *string `json:"source_app_id,omitempty"`
-	// The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
-	TotalCost *Cost `json:"total_cost,omitempty"`
+	// A list of files that should be attached to the Found Document, each given as a publicly accessible URL or as base64-encoded PDF/PNG content
+	Files []FileUpload `json:"files"`
 	// The line items on the contract
 	LineItems []LineItemUpload `json:"line_items,omitempty"`
-}
-
-func (f *FoundDocumentsUpload) GetUniqueIdentifier() string {
-	if f == nil {
-		return ""
-	}
-	return f.UniqueIdentifier
-}
-
-func (f *FoundDocumentsUpload) GetFiles() []FileUpload {
-	if f == nil {
-		return []FileUpload{}
-	}
-	return f.Files
-}
-
-func (f *FoundDocumentsUpload) GetVendorName() *string {
-	if f == nil {
-		return nil
-	}
-	return f.VendorName
-}
-
-func (f *FoundDocumentsUpload) GetStartDate() *string {
-	if f == nil {
-		return nil
-	}
-	return f.StartDate
+	// By passing the ID of an application within Lumos, it will appear as if this Found Document was sourced from that app
+	SourceAppID *string `json:"source_app_id,omitempty"`
+	// The start of the vendor agreement
+	StartDate *string `json:"start_date,omitempty"`
+	// The total cost of the contract. If this is a multi-year contract, this should include the cost for future years
+	TotalCost *Cost `json:"total_cost,omitempty"`
+	// A value that can be used to uniquely identify this contract (e.g. PO number, file name, etc)
+	UniqueIdentifier string `json:"unique_identifier"`
+	// The name of the vendor that this document is for
+	VendorName *string `json:"vendor_name,omitempty"`
 }
 
 func (f *FoundDocumentsUpload) GetEndDate() *string {
@@ -57,11 +29,32 @@ func (f *FoundDocumentsUpload) GetEndDate() *string {
 	return f.EndDate
 }
 
+func (f *FoundDocumentsUpload) GetFiles() []FileUpload {
+	if f == nil {
+		return []FileUpload{}
+	}
+	return f.Files
+}
+
+func (f *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
+	if f == nil {
+		return nil
+	}
+	return f.LineItems
+}
+
 func (f *FoundDocumentsUpload) GetSourceAppID() *string {
 	if f == nil {
 		return nil
 	}
 	return f.SourceAppID
+}
+
+func (f *FoundDocumentsUpload) GetStartDate() *string {
+	if f == nil {
+		return nil
+	}
+	return f.StartDate
 }
 
 func (f *FoundDocumentsUpload) GetTotalCost() *Cost {
@@ -71,9 +64,16 @@ func (f *FoundDocumentsUpload) GetTotalCost() *Cost {
 	return f.TotalCost
 }
 
-func (f *FoundDocumentsUpload) GetLineItems() []LineItemUpload {
+func (f *FoundDocumentsUpload) GetUniqueIdentifier() string {
+	if f == nil {
+		return ""
+	}
+	return f.UniqueIdentifier
+}
+
+func (f *FoundDocumentsUpload) GetVendorName() *string {
 	if f == nil {
 		return nil
 	}
-	return f.LineItems
+	return f.VendorName
 }

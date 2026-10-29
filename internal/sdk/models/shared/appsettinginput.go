@@ -9,11 +9,11 @@ import (
 
 type AppSettingInput struct {
 	// AppStore App instructions that are shown to the requester.
-	CustomRequestInstructions *string                               `json:"custom_request_instructions,omitempty"`
-	RequestFlow               *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
-	Provisioning              *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
+	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
 	// Whether the app is in the app store.
-	InAppStore *bool `default:"false" json:"in_app_store"`
+	InAppStore   *bool                                 `default:"false" json:"in_app_store"`
+	Provisioning *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
+	RequestFlow  *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
 }
 
 func (a AppSettingInput) MarshalJSON() ([]byte, error) {
@@ -34,11 +34,11 @@ func (a *AppSettingInput) GetCustomRequestInstructions() *string {
 	return a.CustomRequestInstructions
 }
 
-func (a *AppSettingInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
+func (a *AppSettingInput) GetInAppStore() *bool {
 	if a == nil {
 		return nil
 	}
-	return a.RequestFlow
+	return a.InAppStore
 }
 
 func (a *AppSettingInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
@@ -48,9 +48,9 @@ func (a *AppSettingInput) GetProvisioning() *AppStoreAppSettingsProvisioningInpu
 	return a.Provisioning
 }
 
-func (a *AppSettingInput) GetInAppStore() *bool {
+func (a *AppSettingInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
 	if a == nil {
 		return nil
 	}
-	return a.InAppStore
+	return a.RequestFlow
 }

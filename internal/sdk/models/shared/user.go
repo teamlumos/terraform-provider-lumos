@@ -8,14 +8,14 @@ import (
 )
 
 type User struct {
-	// The ID of this user.
-	ID string `json:"id"`
 	// The email of this user.
 	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
 	// The family name of this user.
 	FamilyName *string `json:"family_name,omitempty"`
+	// The given name of this user.
+	GivenName *string `json:"given_name,omitempty"`
+	// The ID of this user.
+	ID string `json:"id"`
 	// The status of this user.
 	Status *UserLifecycleStatus `json:"status,omitempty"`
 }
@@ -31,18 +31,18 @@ func (u *User) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (u *User) GetID() string {
-	if u == nil {
-		return ""
-	}
-	return u.ID
-}
-
 func (u *User) GetEmail() *string {
 	if u == nil {
 		return nil
 	}
 	return u.Email
+}
+
+func (u *User) GetFamilyName() *string {
+	if u == nil {
+		return nil
+	}
+	return u.FamilyName
 }
 
 func (u *User) GetGivenName() *string {
@@ -52,11 +52,11 @@ func (u *User) GetGivenName() *string {
 	return u.GivenName
 }
 
-func (u *User) GetFamilyName() *string {
+func (u *User) GetID() string {
 	if u == nil {
-		return nil
+		return ""
 	}
-	return u.FamilyName
+	return u.ID
 }
 
 func (u *User) GetStatus() *UserLifecycleStatus {

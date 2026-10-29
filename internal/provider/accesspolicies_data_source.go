@@ -59,7 +59,7 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 						"access_condition": schema.StringAttribute{
 							CustomType:  jsontypes.NormalizedType{},
 							Computed:    true,
-							Description: `The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.`,
+							Description: `The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos). Parsed as JSON.`,
 						},
 						"apps": schema.ListNestedAttribute{
 							Computed: true,
@@ -73,6 +73,10 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 										Computed:    true,
 										Description: `Whether requests created via this access policy are pre-approved.`,
 									},
+									"label": schema.StringAttribute{
+										Computed:    true,
+										Description: `The human-readable label of this app.`,
+									},
 									"permissions": schema.ListNestedAttribute{
 										Computed: true,
 										NestedObject: schema.NestedAttributeObject{
@@ -80,6 +84,10 @@ func (r *AccessPoliciesDataSource) Schema(ctx context.Context, req datasource.Sc
 												"id": schema.StringAttribute{
 													Computed:    true,
 													Description: `The ID of this requestable permission.`,
+												},
+												"label": schema.StringAttribute{
+													Computed:    true,
+													Description: `The human-readable label of this permission.`,
 												},
 											},
 										},

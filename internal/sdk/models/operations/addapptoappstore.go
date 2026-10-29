@@ -16,7 +16,7 @@ type AddAppToAppStoreResponse struct {
 	// Raw HTTP response; suitable for custom response parsing
 	RawResponse *http.Response
 	// Successful Response
-	AppStoreAppSettingsOutput *shared.AppStoreAppSettingsOutput
+	AddAppToAppStoreOutput *shared.AddAppToAppStoreOutput
 	// Validation Error
 	HTTPValidationError *shared.HTTPValidationError
 }
@@ -42,11 +42,11 @@ func (a *AddAppToAppStoreResponse) GetRawResponse() *http.Response {
 	return a.RawResponse
 }
 
-func (a *AddAppToAppStoreResponse) GetAppStoreAppSettingsOutput() *shared.AppStoreAppSettingsOutput {
+func (a *AddAppToAppStoreResponse) GetAddAppToAppStoreOutput() *shared.AddAppToAppStoreOutput {
 	if a == nil {
 		return nil
 	}
-	return a.AppStoreAppSettingsOutput
+	return a.AddAppToAppStoreOutput
 }
 
 func (a *AddAppToAppStoreResponse) GetHTTPValidationError() *shared.HTTPValidationError {

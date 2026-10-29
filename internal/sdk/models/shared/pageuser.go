@@ -5,10 +5,10 @@ package shared
 
 type PageUser struct {
 	Items []User `json:"items"`
-	Total *int64 `json:"total"`
 	Page  *int64 `json:"page"`
-	Size  *int64 `json:"size"`
 	Pages *int64 `json:"pages,omitempty"`
+	Size  *int64 `json:"size"`
+	Total *int64 `json:"total"`
 }
 
 func (p *PageUser) GetItems() []User {
@@ -18,18 +18,18 @@ func (p *PageUser) GetItems() []User {
 	return p.Items
 }
 
-func (p *PageUser) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageUser) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageUser) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageUser) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageUser) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageUser) GetPages() *int64 {
+func (p *PageUser) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

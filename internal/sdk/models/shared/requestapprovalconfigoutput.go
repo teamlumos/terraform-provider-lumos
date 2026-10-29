@@ -4,59 +4,24 @@
 package shared
 
 type RequestApprovalConfigOutput struct {
-	// Indicates if approval flow is overridden.
-	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
-	// Manager approval can be configured as necessary to continue
-	ManagerApproval *ManagerApprovalOption `json:"manager_approval,omitempty"`
-	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
-	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
-	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
-	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
-	// Indicates if custom_approval_message is overridden.
-	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
 	// AppStore App approvers assigned.
 	Approvers *AppApproversOutput `json:"approvers,omitempty"`
 	// AppStore App stage 2 approvers assigned.
 	ApproversStage2 *AppApproversOutput `json:"approvers_stage_2,omitempty"`
+	// After the approval step, send a custom message to requesters. Note that the permission level approval message will override the App level approval message if custom_approval_message_override is set. Markdown for links and text formatting is supported.
+	CustomApprovalMessage *string `json:"custom_approval_message,omitempty"`
+	// Indicates if custom_approval_message is overridden.
+	CustomApprovalMessageOverride *bool `json:"custom_approval_message_override,omitempty"`
+	// Manager approval can be configured as necessary to continue
+	ManagerApproval *ManagerApprovalOption `json:"manager_approval,omitempty"`
+	// Indicates if approval flow is overridden.
+	RequestApprovalConfigOverride *bool `json:"request_approval_config_override,omitempty"`
 	// The stages of this request approval.
 	RequestApprovalStages []RequestApprovalStageOutput `json:"request_approval_stages"`
+	// When true, enables a second approval stage so requests require approval from both stage 1 and stage 2 approvers. When false, disables the second approval stage and merges any existing stage 2 approvers into stage 1. When omitted, the current multi-stage approval setting is left unchanged.
+	RequireAdditionalApproval *bool `json:"require_additional_approval,omitempty"`
 	// Indicates whether the approval configuration is fully represented by the existing API. If False, the approval configuration may contain additional stages or conditional approval chains not reflected in the v1 API.
 	ResponseDescribesEntireApprovalWorkflow *bool `json:"response_describes_entire_approval_workflow,omitempty"`
-}
-
-func (r *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.RequestApprovalConfigOverride
-}
-
-func (r *RequestApprovalConfigOutput) GetManagerApproval() *ManagerApprovalOption {
-	if r == nil {
-		return nil
-	}
-	return r.ManagerApproval
-}
-
-func (r *RequestApprovalConfigOutput) GetRequireAdditionalApproval() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.RequireAdditionalApproval
-}
-
-func (r *RequestApprovalConfigOutput) GetCustomApprovalMessage() *string {
-	if r == nil {
-		return nil
-	}
-	return r.CustomApprovalMessage
-}
-
-func (r *RequestApprovalConfigOutput) GetCustomApprovalMessageOverride() *bool {
-	if r == nil {
-		return nil
-	}
-	return r.CustomApprovalMessageOverride
 }
 
 func (r *RequestApprovalConfigOutput) GetApprovers() *AppApproversOutput {
@@ -73,11 +38,46 @@ func (r *RequestApprovalConfigOutput) GetApproversStage2() *AppApproversOutput {
 	return r.ApproversStage2
 }
 
+func (r *RequestApprovalConfigOutput) GetCustomApprovalMessage() *string {
+	if r == nil {
+		return nil
+	}
+	return r.CustomApprovalMessage
+}
+
+func (r *RequestApprovalConfigOutput) GetCustomApprovalMessageOverride() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.CustomApprovalMessageOverride
+}
+
+func (r *RequestApprovalConfigOutput) GetManagerApproval() *ManagerApprovalOption {
+	if r == nil {
+		return nil
+	}
+	return r.ManagerApproval
+}
+
+func (r *RequestApprovalConfigOutput) GetRequestApprovalConfigOverride() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.RequestApprovalConfigOverride
+}
+
 func (r *RequestApprovalConfigOutput) GetRequestApprovalStages() []RequestApprovalStageOutput {
 	if r == nil {
 		return nil
 	}
 	return r.RequestApprovalStages
+}
+
+func (r *RequestApprovalConfigOutput) GetRequireAdditionalApproval() *bool {
+	if r == nil {
+		return nil
+	}
+	return r.RequireAdditionalApproval
 }
 
 func (r *RequestApprovalConfigOutput) GetResponseDescribesEntireApprovalWorkflow() *bool {

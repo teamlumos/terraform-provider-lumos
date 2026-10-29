@@ -9,17 +9,17 @@ import (
 )
 
 type LineItem struct {
-	// The name of the line item as stored in Lumos
-	Name string `json:"name"`
-	// The type of purchase that this line item refers to
-	Type string `json:"type"`
-	// The number of units purchased for this line item
-	Quantity int64            `json:"quantity"`
-	UnitCost LineItemUnitCost `json:"unit_cost"`
-	// The start of the line item
-	StartDate *types.Date `json:"start_date"`
 	// The end of the line item. Null for monthly line items.
 	EndDate *types.Date `json:"end_date"`
+	// The name of the line item as stored in Lumos
+	Name string `json:"name"`
+	// The number of units purchased for this line item
+	Quantity int64 `json:"quantity"`
+	// The start of the line item
+	StartDate *types.Date `json:"start_date"`
+	// The type of purchase that this line item refers to
+	Type     string           `json:"type"`
+	UnitCost LineItemUnitCost `json:"unit_cost"`
 }
 
 func (l LineItem) MarshalJSON() ([]byte, error) {
@@ -33,18 +33,18 @@ func (l *LineItem) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (l *LineItem) GetEndDate() *types.Date {
+	if l == nil {
+		return nil
+	}
+	return l.EndDate
+}
+
 func (l *LineItem) GetName() string {
 	if l == nil {
 		return ""
 	}
 	return l.Name
-}
-
-func (l *LineItem) GetType() string {
-	if l == nil {
-		return ""
-	}
-	return l.Type
 }
 
 func (l *LineItem) GetQuantity() int64 {
@@ -54,13 +54,6 @@ func (l *LineItem) GetQuantity() int64 {
 	return l.Quantity
 }
 
-func (l *LineItem) GetUnitCost() LineItemUnitCost {
-	if l == nil {
-		return LineItemUnitCost{}
-	}
-	return l.UnitCost
-}
-
 func (l *LineItem) GetStartDate() *types.Date {
 	if l == nil {
 		return nil
@@ -68,9 +61,16 @@ func (l *LineItem) GetStartDate() *types.Date {
 	return l.StartDate
 }
 
-func (l *LineItem) GetEndDate() *types.Date {
+func (l *LineItem) GetType() string {
 	if l == nil {
-		return nil
+		return ""
 	}
-	return l.EndDate
+	return l.Type
+}
+
+func (l *LineItem) GetUnitCost() LineItemUnitCost {
+	if l == nil {
+		return LineItemUnitCost{}
+	}
+	return l.UnitCost
 }

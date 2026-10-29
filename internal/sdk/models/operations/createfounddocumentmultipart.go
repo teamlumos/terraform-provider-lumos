@@ -30,18 +30,18 @@ func (f *Files) GetContent() []byte {
 }
 
 type CreateFoundDocumentMultipartRequestBody struct {
-	// A unique identifier for the contract being uploaded. This can be an ID from an external system like Coupa, an internal ID such as a PO number, or simply the name of the file.
-	UniqueIdentifier string `multipartForm:"name=unique_identifier"`
-	// A list of files related to a vendor agreement. For example, the Order Form, Quote, MSA, or Terms and Conditions.
-	Files []Files `multipartForm:"file,name=files"`
-	// The name of the vendor associated with this document
-	VendorName *string `multipartForm:"name=vendor_name"`
-	// The start date of the attached contract
-	StartDate *types.Date `multipartForm:"name=start_date"`
 	// The end date of the attached contract
 	EndDate *types.Date `multipartForm:"name=end_date"`
+	// A list of files related to a vendor agreement. For example, the Order Form, Quote, MSA, or Terms and Conditions.
+	Files []Files `multipartForm:"file,name=files"`
 	// The ID of the app that sourced this document. For example, if you are using this API to create a custom Google Drive integration, you might include the ID for the Google Workspaceapp in Lumos. This determines which app's logo is displayed in Lumos.
 	SourceAppID *string `multipartForm:"name=source_app_id"`
+	// The start date of the attached contract
+	StartDate *types.Date `multipartForm:"name=start_date"`
+	// A unique identifier for the contract being uploaded. This can be an ID from an external system like Coupa, an internal ID such as a PO number, or simply the name of the file.
+	UniqueIdentifier string `multipartForm:"name=unique_identifier"`
+	// The name of the vendor associated with this document
+	VendorName *string `multipartForm:"name=vendor_name"`
 }
 
 func (c CreateFoundDocumentMultipartRequestBody) MarshalJSON() ([]byte, error) {
@@ -55,11 +55,11 @@ func (c *CreateFoundDocumentMultipartRequestBody) UnmarshalJSON(data []byte) err
 	return nil
 }
 
-func (c *CreateFoundDocumentMultipartRequestBody) GetUniqueIdentifier() string {
+func (c *CreateFoundDocumentMultipartRequestBody) GetEndDate() *types.Date {
 	if c == nil {
-		return ""
+		return nil
 	}
-	return c.UniqueIdentifier
+	return c.EndDate
 }
 
 func (c *CreateFoundDocumentMultipartRequestBody) GetFiles() []Files {
@@ -69,11 +69,11 @@ func (c *CreateFoundDocumentMultipartRequestBody) GetFiles() []Files {
 	return c.Files
 }
 
-func (c *CreateFoundDocumentMultipartRequestBody) GetVendorName() *string {
+func (c *CreateFoundDocumentMultipartRequestBody) GetSourceAppID() *string {
 	if c == nil {
 		return nil
 	}
-	return c.VendorName
+	return c.SourceAppID
 }
 
 func (c *CreateFoundDocumentMultipartRequestBody) GetStartDate() *types.Date {
@@ -83,18 +83,18 @@ func (c *CreateFoundDocumentMultipartRequestBody) GetStartDate() *types.Date {
 	return c.StartDate
 }
 
-func (c *CreateFoundDocumentMultipartRequestBody) GetEndDate() *types.Date {
+func (c *CreateFoundDocumentMultipartRequestBody) GetUniqueIdentifier() string {
 	if c == nil {
-		return nil
+		return ""
 	}
-	return c.EndDate
+	return c.UniqueIdentifier
 }
 
-func (c *CreateFoundDocumentMultipartRequestBody) GetSourceAppID() *string {
+func (c *CreateFoundDocumentMultipartRequestBody) GetVendorName() *string {
 	if c == nil {
 		return nil
 	}
-	return c.SourceAppID
+	return c.VendorName
 }
 
 type CreateFoundDocumentMultipartResponse struct {

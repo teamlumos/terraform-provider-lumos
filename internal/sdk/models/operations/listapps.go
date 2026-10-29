@@ -45,7 +45,7 @@ type ListAppsRequest struct {
 	ExactMatch *bool `default:"false" queryParam:"style=form,explode=true,name=exact_match"`
 	// Filter to integration apps connected via this source (`API` or `UI`).
 	ConnectionSource *ConnectionSource `default:"API" queryParam:"style=form,explode=true,name=connection_source"`
-	// Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps — combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).
+	// Filter on whether the app has been disconnected. `false` excludes disconnected apps, `true` returns only disconnected apps whose record Lumos still holds, and omitting it lists every app. Pair `false` with `connection_source=API` to list only the connected apps you manage through the API.
 	Disconnected *bool `default:"false" queryParam:"style=form,explode=true,name=disconnected"`
 	// Fields to expand. Supported fields: custom_attributes.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`

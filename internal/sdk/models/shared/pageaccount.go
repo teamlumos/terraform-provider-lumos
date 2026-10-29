@@ -5,10 +5,10 @@ package shared
 
 type PageAccount struct {
 	Items []Account `json:"items"`
-	Total *int64    `json:"total"`
 	Page  *int64    `json:"page"`
-	Size  *int64    `json:"size"`
 	Pages *int64    `json:"pages,omitempty"`
+	Size  *int64    `json:"size"`
+	Total *int64    `json:"total"`
 }
 
 func (p *PageAccount) GetItems() []Account {
@@ -18,18 +18,18 @@ func (p *PageAccount) GetItems() []Account {
 	return p.Items
 }
 
-func (p *PageAccount) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageAccount) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageAccount) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageAccount) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageAccount) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageAccount) GetPages() *int64 {
+func (p *PageAccount) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

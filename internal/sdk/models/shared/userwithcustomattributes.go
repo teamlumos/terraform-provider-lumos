@@ -4,25 +4,25 @@
 package shared
 
 type UserWithCustomAttributes struct {
-	// The ID of this user.
-	ID string `json:"id"`
-	// The email of this user.
-	Email *string `json:"email,omitempty"`
-	// The given name of this user.
-	GivenName *string `json:"given_name,omitempty"`
-	// The family name of this user.
-	FamilyName *string `json:"family_name,omitempty"`
-	// The status of this user.
-	Status *UserLifecycleStatus `json:"status,omitempty"`
 	// Custom attributes configured on the user
 	CustomAttributes map[string]CustomAttribute `json:"custom_attributes,omitempty"`
+	// The email of this user.
+	Email *string `json:"email,omitempty"`
+	// The family name of this user.
+	FamilyName *string `json:"family_name,omitempty"`
+	// The given name of this user.
+	GivenName *string `json:"given_name,omitempty"`
+	// The ID of this user.
+	ID string `json:"id"`
+	// The status of this user.
+	Status *UserLifecycleStatus `json:"status,omitempty"`
 }
 
-func (u *UserWithCustomAttributes) GetID() string {
+func (u *UserWithCustomAttributes) GetCustomAttributes() map[string]CustomAttribute {
 	if u == nil {
-		return ""
+		return nil
 	}
-	return u.ID
+	return u.CustomAttributes
 }
 
 func (u *UserWithCustomAttributes) GetEmail() *string {
@@ -32,13 +32,6 @@ func (u *UserWithCustomAttributes) GetEmail() *string {
 	return u.Email
 }
 
-func (u *UserWithCustomAttributes) GetGivenName() *string {
-	if u == nil {
-		return nil
-	}
-	return u.GivenName
-}
-
 func (u *UserWithCustomAttributes) GetFamilyName() *string {
 	if u == nil {
 		return nil
@@ -46,16 +39,23 @@ func (u *UserWithCustomAttributes) GetFamilyName() *string {
 	return u.FamilyName
 }
 
+func (u *UserWithCustomAttributes) GetGivenName() *string {
+	if u == nil {
+		return nil
+	}
+	return u.GivenName
+}
+
+func (u *UserWithCustomAttributes) GetID() string {
+	if u == nil {
+		return ""
+	}
+	return u.ID
+}
+
 func (u *UserWithCustomAttributes) GetStatus() *UserLifecycleStatus {
 	if u == nil {
 		return nil
 	}
 	return u.Status
-}
-
-func (u *UserWithCustomAttributes) GetCustomAttributes() map[string]CustomAttribute {
-	if u == nil {
-		return nil
-	}
-	return u.CustomAttributes
 }

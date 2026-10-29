@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -52,11 +53,13 @@ type AppStoreAppResourceModel struct {
 	Disconnected                     types.Bool                                    `tfsdk:"disconnected"`
 	ID                               types.String                                  `tfsdk:"id"`
 	InstanceID                       types.String                                  `tfsdk:"instance_id"`
+	IntegrationSpecificID            types.String                                  `tfsdk:"integration_specific_id"`
 	Links                            tfTypes.AppLinks                              `tfsdk:"links"`
 	LogoURL                          types.String                                  `tfsdk:"logo_url"`
 	Provisioning                     *tfTypes.AppStoreAppSettingsProvisioningInput `tfsdk:"provisioning"`
 	RequestFlow                      *tfTypes.AppStoreAppSettingsRequestFlowInput  `tfsdk:"request_flow"`
 	RequestInstructions              types.String                                  `tfsdk:"request_instructions"`
+	SourceAppID                      types.String                                  `tfsdk:"source_app_id"`
 	Sources                          []types.String                                `tfsdk:"sources"`
 	Status                           types.String                                  `tfsdk:"status"`
 	SyncStatus                       types.String                                  `tfsdk:"sync_status"`
@@ -87,7 +90,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				Description: `The non-unique ID of the service associated with this requestable permission. Depending on how it is sourced in Lumos, this may be the app's name, website, or other identifier.`,
 			},
 			"app_id": schema.StringAttribute{
-				Required:    true,
+				Computed: true,
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+				},
 				Description: `The ID of the app to add to the app store.`,
 			},
 			"category": schema.StringAttribute{
@@ -198,6 +205,13 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 				},
 				Description: `The non-unique ID of the instance associated with this app. This will be the Okta app id if it’s an Okta app, or will be marked as custom_app_import if manually uploaded into Lumos.`,
 			},
+			"integration_specific_id": schema.StringAttribute{
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Description: `The app's ID in that integration. Requires replacement if changed.`,
+			},
 			"links": schema.SingleNestedAttribute{
 				Computed: true,
 				PlanModifiers: []planmodifier.Object{
@@ -253,6 +267,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
+								Description: `What an inline webhook is wired into.`,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -333,6 +348,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
+								Description: `What an inline webhook is wired into.`,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -400,7 +416,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The ID of the app this group is synced from.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -444,7 +460,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 										},
 									},
 								},
@@ -536,7 +552,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The ID of the app this group is synced from.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -580,11 +596,11 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 										},
 									},
 								},
-								Description: `The groups allowed to request this permission.`,
+								Description: `The groups allowed to request this permission. At most 100 groups when type is SPECIFIED_GROUPS.`,
 							},
 							"type": schema.StringAttribute{
 								Computed: true,
@@ -630,7 +646,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The ID of the app this group is synced from.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -674,7 +690,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 										},
 									},
 								},
@@ -766,7 +782,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The ID of the app this group is synced from.`,
 										},
 										"description": schema.StringAttribute{
 											Computed: true,
@@ -810,7 +826,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 											PlanModifiers: []planmodifier.String{
 												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
-											Description: `The ID of the app that sources this group.`,
+											Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 										},
 									},
 								},
@@ -917,6 +933,7 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 								PlanModifiers: []planmodifier.String{
 									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 								},
+								Description: `What an inline webhook is wired into.`,
 							},
 							"id": schema.StringAttribute{
 								Computed: true,
@@ -970,6 +987,13 @@ func (r *AppStoreAppResource) Schema(ctx context.Context, req resource.SchemaReq
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `The request instructions.`,
+			},
+			"source_app_id": schema.StringAttribute{
+				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+				Description: `The Lumos ID of the integration app that manages the app. Requires replacement if changed.`,
 			},
 			"sources": schema.ListAttribute{
 				Computed: true,
@@ -1070,11 +1094,11 @@ func (r *AppStoreAppResource) Create(ctx context.Context, req resource.CreateReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if !(res.AppStoreAppSettingsOutput != nil) {
+	if !(res.AddAppToAppStoreOutput != nil) {
 		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
 		return
 	}
-	resp.Diagnostics.Append(data.RefreshFromSharedAppStoreAppSettingsOutput(ctx, res.AppStoreAppSettingsOutput)...)
+	resp.Diagnostics.Append(data.RefreshFromSharedAddAppToAppStoreOutput(ctx, res.AddAppToAppStoreOutput)...)
 
 	if resp.Diagnostics.HasError() {
 		return

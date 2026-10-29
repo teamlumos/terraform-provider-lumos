@@ -9,29 +9,29 @@ import (
 )
 
 type Account struct {
-	// The ID of this account.
-	ID string `json:"id"`
-	// The ID of the app that owns this account.
-	AppID       string      `json:"app_id"`
 	AccountType AccountType `json:"account_type"`
-	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
 	// The app this account is for
 	App *App `json:"app,omitempty"`
-	// The stable identifier of this account from the associated service.
-	UniqueIdentifier string `json:"unique_identifier"`
-	// The email of this account.
-	Email *string `json:"email,omitempty"`
-	// The ID of the user associated with this account.
-	UserID *string `json:"user_id,omitempty"`
+	// The ID of the app that owns this account.
+	AppID string `json:"app_id"`
 	// The time that Lumos first discovered this account, in ISO 8601 format
 	DiscoveredAt *time.Time `json:"discovered_at,omitempty"`
-	// The last time a user logged into this app, in ISO 8601 format
-	LastLogin *time.Time `json:"last_login,omitempty"`
+	// The email of this account.
+	Email *string `json:"email,omitempty"`
+	// The ID of this account.
+	ID string `json:"id"`
 	// The last time a user completed an action tracked by Lumos, in ISO 8601 format
 	LastActivity *time.Time `json:"last_activity,omitempty"`
+	// The last time a user logged into this app, in ISO 8601 format
+	LastLogin *time.Time `json:"last_login,omitempty"`
 	// The discovery methods through which Lumos identified this account
 	Sources []DiscoverySource `json:"sources,omitempty"`
+	// The status of the account.
+	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	// The stable identifier of this account from the associated service.
+	UniqueIdentifier string `json:"unique_identifier"`
+	// The ID of the user associated with this account.
+	UserID *string `json:"user_id,omitempty"`
 }
 
 func (a Account) MarshalJSON() ([]byte, error) {
@@ -45,32 +45,11 @@ func (a *Account) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (a *Account) GetID() string {
-	if a == nil {
-		return ""
-	}
-	return a.ID
-}
-
-func (a *Account) GetAppID() string {
-	if a == nil {
-		return ""
-	}
-	return a.AppID
-}
-
 func (a *Account) GetAccountType() AccountType {
 	if a == nil {
 		return AccountType("")
 	}
 	return a.AccountType
-}
-
-func (a *Account) GetStatus() *AccountLifecycleStatus {
-	if a == nil {
-		return nil
-	}
-	return a.Status
 }
 
 func (a *Account) GetApp() *App {
@@ -80,25 +59,11 @@ func (a *Account) GetApp() *App {
 	return a.App
 }
 
-func (a *Account) GetUniqueIdentifier() string {
+func (a *Account) GetAppID() string {
 	if a == nil {
 		return ""
 	}
-	return a.UniqueIdentifier
-}
-
-func (a *Account) GetEmail() *string {
-	if a == nil {
-		return nil
-	}
-	return a.Email
-}
-
-func (a *Account) GetUserID() *string {
-	if a == nil {
-		return nil
-	}
-	return a.UserID
+	return a.AppID
 }
 
 func (a *Account) GetDiscoveredAt() *time.Time {
@@ -108,11 +73,18 @@ func (a *Account) GetDiscoveredAt() *time.Time {
 	return a.DiscoveredAt
 }
 
-func (a *Account) GetLastLogin() *time.Time {
+func (a *Account) GetEmail() *string {
 	if a == nil {
 		return nil
 	}
-	return a.LastLogin
+	return a.Email
+}
+
+func (a *Account) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
 }
 
 func (a *Account) GetLastActivity() *time.Time {
@@ -122,9 +94,37 @@ func (a *Account) GetLastActivity() *time.Time {
 	return a.LastActivity
 }
 
+func (a *Account) GetLastLogin() *time.Time {
+	if a == nil {
+		return nil
+	}
+	return a.LastLogin
+}
+
 func (a *Account) GetSources() []DiscoverySource {
 	if a == nil {
 		return nil
 	}
 	return a.Sources
+}
+
+func (a *Account) GetStatus() *AccountLifecycleStatus {
+	if a == nil {
+		return nil
+	}
+	return a.Status
+}
+
+func (a *Account) GetUniqueIdentifier() string {
+	if a == nil {
+		return ""
+	}
+	return a.UniqueIdentifier
+}
+
+func (a *Account) GetUserID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UserID
 }

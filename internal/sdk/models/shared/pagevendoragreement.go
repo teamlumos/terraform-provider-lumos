@@ -5,10 +5,10 @@ package shared
 
 type PageVendorAgreement struct {
 	Items []VendorAgreement `json:"items"`
-	Total *int64            `json:"total"`
 	Page  *int64            `json:"page"`
-	Size  *int64            `json:"size"`
 	Pages *int64            `json:"pages,omitempty"`
+	Size  *int64            `json:"size"`
+	Total *int64            `json:"total"`
 }
 
 func (p *PageVendorAgreement) GetItems() []VendorAgreement {
@@ -18,18 +18,18 @@ func (p *PageVendorAgreement) GetItems() []VendorAgreement {
 	return p.Items
 }
 
-func (p *PageVendorAgreement) GetTotal() *int64 {
-	if p == nil {
-		return nil
-	}
-	return p.Total
-}
-
 func (p *PageVendorAgreement) GetPage() *int64 {
 	if p == nil {
 		return nil
 	}
 	return p.Page
+}
+
+func (p *PageVendorAgreement) GetPages() *int64 {
+	if p == nil {
+		return nil
+	}
+	return p.Pages
 }
 
 func (p *PageVendorAgreement) GetSize() *int64 {
@@ -39,9 +39,9 @@ func (p *PageVendorAgreement) GetSize() *int64 {
 	return p.Size
 }
 
-func (p *PageVendorAgreement) GetPages() *int64 {
+func (p *PageVendorAgreement) GetTotal() *int64 {
 	if p == nil {
 		return nil
 	}
-	return p.Pages
+	return p.Total
 }

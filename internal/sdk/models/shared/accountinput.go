@@ -4,31 +4,31 @@
 package shared
 
 type AccountInput struct {
-	// A unique identifier for this account, such as an account ID or email.
-	UniqueIdentifier *string `json:"unique_identifier"`
+	// The attributes of the account.
+	Attributes []AttributeInput `json:"attributes,omitempty"`
 	// The email of this account.
 	Email *string `json:"email,omitempty"`
 	// The first name of the user.
 	FirstName *string `json:"first_name,omitempty"`
-	// The last name of the user.
-	LastName *string `json:"last_name,omitempty"`
 	// The datetime of last activity of the user.
 	LastActivity *string `json:"last_activity,omitempty"`
 	// The datetime of last login of the user.
 	LastLogin *string `json:"last_login,omitempty"`
-	// The status of the account.
-	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	// The last name of the user.
+	LastName *string `json:"last_name,omitempty"`
 	// The permissions of the account.
 	Permissions []PermissionInput `json:"permissions,omitempty"`
-	// The attributes of the account.
-	Attributes []AttributeInput `json:"attributes,omitempty"`
+	// The status of the account.
+	Status *AccountLifecycleStatus `json:"status,omitempty"`
+	// A unique identifier for this account, such as an account ID or email.
+	UniqueIdentifier *string `json:"unique_identifier"`
 }
 
-func (a *AccountInput) GetUniqueIdentifier() *string {
+func (a *AccountInput) GetAttributes() []AttributeInput {
 	if a == nil {
 		return nil
 	}
-	return a.UniqueIdentifier
+	return a.Attributes
 }
 
 func (a *AccountInput) GetEmail() *string {
@@ -45,13 +45,6 @@ func (a *AccountInput) GetFirstName() *string {
 	return a.FirstName
 }
 
-func (a *AccountInput) GetLastName() *string {
-	if a == nil {
-		return nil
-	}
-	return a.LastName
-}
-
 func (a *AccountInput) GetLastActivity() *string {
 	if a == nil {
 		return nil
@@ -66,11 +59,11 @@ func (a *AccountInput) GetLastLogin() *string {
 	return a.LastLogin
 }
 
-func (a *AccountInput) GetStatus() *AccountLifecycleStatus {
+func (a *AccountInput) GetLastName() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Status
+	return a.LastName
 }
 
 func (a *AccountInput) GetPermissions() []PermissionInput {
@@ -80,9 +73,16 @@ func (a *AccountInput) GetPermissions() []PermissionInput {
 	return a.Permissions
 }
 
-func (a *AccountInput) GetAttributes() []AttributeInput {
+func (a *AccountInput) GetStatus() *AccountLifecycleStatus {
 	if a == nil {
 		return nil
 	}
-	return a.Attributes
+	return a.Status
+}
+
+func (a *AccountInput) GetUniqueIdentifier() *string {
+	if a == nil {
+		return nil
+	}
+	return a.UniqueIdentifier
 }

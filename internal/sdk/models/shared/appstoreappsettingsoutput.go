@@ -6,8 +6,8 @@ package shared
 type AppStoreAppSettingsOutput struct {
 	// AppStore App instructions that are shown to the requester.
 	CustomRequestInstructions *string                                `json:"custom_request_instructions,omitempty"`
-	RequestFlow               *AppStoreAppSettingsRequestFlowOutput  `json:"request_flow,omitempty"`
 	Provisioning              *AppStoreAppSettingsProvisioningOutput `json:"provisioning,omitempty"`
+	RequestFlow               *AppStoreAppSettingsRequestFlowOutput  `json:"request_flow,omitempty"`
 }
 
 func (a *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
@@ -17,16 +17,16 @@ func (a *AppStoreAppSettingsOutput) GetCustomRequestInstructions() *string {
 	return a.CustomRequestInstructions
 }
 
-func (a *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsRequestFlowOutput {
-	if a == nil {
-		return nil
-	}
-	return a.RequestFlow
-}
-
 func (a *AppStoreAppSettingsOutput) GetProvisioning() *AppStoreAppSettingsProvisioningOutput {
 	if a == nil {
 		return nil
 	}
 	return a.Provisioning
+}
+
+func (a *AppStoreAppSettingsOutput) GetRequestFlow() *AppStoreAppSettingsRequestFlowOutput {
+	if a == nil {
+		return nil
+	}
+	return a.RequestFlow
 }

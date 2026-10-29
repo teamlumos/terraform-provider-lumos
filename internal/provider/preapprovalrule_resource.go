@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -83,6 +84,9 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 			"justification": schema.StringAttribute{
 				Required:    true,
 				Description: `The justification of this preapproval rule.`,
+				Validators: []validator.String{
+					stringvalidator.UTF8LengthAtMost(500),
+				},
 			},
 			"preapproval_webhooks": schema.SetNestedAttribute{
 				Computed: true,
@@ -97,7 +101,8 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 							Description: `The description of this inline webhook.`,
 						},
 						"hook_type": schema.StringAttribute{
-							Computed: true,
+							Computed:    true,
+							Description: `What an inline webhook is wired into.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,
@@ -126,7 +131,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						"app_id": schema.StringAttribute{
 							Computed:    true,
 							Optional:    true,
-							Description: `The ID of the app that sources this group.`,
+							Description: `The ID of the app this group is synced from.`,
 						},
 						"description": schema.StringAttribute{
 							Computed:    true,
@@ -152,7 +157,7 @@ func (r *PreApprovalRuleResource) Schema(ctx context.Context, req resource.Schem
 						},
 						"source_app_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the app that sources this group.`,
+							Description: `The catalog identifier of the integration this group is synced from, such as ` + "`" + `okta.com` + "`" + `. It is the integration's ` + "`" + `app_class_id` + "`" + `, not the app's ID.`,
 						},
 					},
 				},

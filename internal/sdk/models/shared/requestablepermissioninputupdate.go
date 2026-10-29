@@ -4,10 +4,10 @@
 package shared
 
 type RequestablePermissionInputUpdate struct {
-	// The ID of the app associated with this requestable permission.
-	AppID *string `json:"app_id,omitempty"`
 	// The ID of the service associated with this requestable permission.
 	AppClassID *string `json:"app_class_id,omitempty"`
+	// The ID of the app associated with this requestable permission.
+	AppID *string `json:"app_id,omitempty"`
 	// Optionally, an app has an identifer associated with it's particular instance.
 	AppInstanceID *string `json:"app_instance_id,omitempty"`
 	// The label of this requestable permission.
@@ -16,18 +16,18 @@ type RequestablePermissionInputUpdate struct {
 	RequestConfig *RequestConfigInputUpdate `json:"request_config,omitempty"`
 }
 
-func (r *RequestablePermissionInputUpdate) GetAppID() *string {
-	if r == nil {
-		return nil
-	}
-	return r.AppID
-}
-
 func (r *RequestablePermissionInputUpdate) GetAppClassID() *string {
 	if r == nil {
 		return nil
 	}
 	return r.AppClassID
+}
+
+func (r *RequestablePermissionInputUpdate) GetAppID() *string {
+	if r == nil {
+		return nil
+	}
+	return r.AppID
 }
 
 func (r *RequestablePermissionInputUpdate) GetAppInstanceID() *string {
