@@ -27,7 +27,7 @@ data "lumos_access_policy" "my_accesspolicy" {
 
 ### Read-Only
 
-- `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos). Parsed as JSON.
+- `access_condition` (String) The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos). Parsed as JSON.
 - `apps` (Attributes List) The list of apps and permissions granted by this access policy. (see [below for nested schema](#nestedatt--apps))
 - `business_justification` (String) Explanation for why this policy exists.
 - `is_enabled` (Boolean) Whether the access policy is enabled.
@@ -42,6 +42,7 @@ Read-Only:
 
 - `id` (String) The ID of this app.
 - `is_preapproved` (Boolean) Whether requests created via this access policy are pre-approved.
+- `label` (String) The human-readable label of this app.
 - `permissions` (Attributes List) List of permissions granted for this app. Empty list means app-level grant. (see [below for nested schema](#nestedatt--apps--permissions))
 
 <a id="nestedatt--apps--permissions"></a>
@@ -50,3 +51,4 @@ Read-Only:
 Read-Only:
 
 - `id` (String) The ID of this requestable permission.
+- `label` (String) The human-readable label of this permission.

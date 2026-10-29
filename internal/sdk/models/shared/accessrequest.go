@@ -10,24 +10,26 @@ import (
 
 // AccessRequest - API version of DomainAppSupportRequest.
 type AccessRequest struct {
-	// The ID of the access request.
-	ID string `json:"id"`
 	// The ID of the app the request is for.
 	AppID string `json:"app_id"`
 	// The name of the app the request is for.
-	AppName       string               `json:"app_name"`
-	RequesterUser User                 `json:"requester_user"`
-	TargetUser    User                 `json:"target_user"`
-	SupporterUser *User                `json:"supporter_user,omitempty"`
-	Status        SupportRequestStatus `json:"status"`
-	// The reason the user wrote for putting the access request into the given state.
-	Notes     map[string]*string `json:"notes,omitempty"`
-	ExpiresAt *time.Time         `json:"expires_at,omitempty"`
+	AppName      string                            `json:"app_name"`
+	CustomFields []CustomIntakeFieldResponseOutput `json:"custom_fields,omitempty"`
 	// For time-based access requests, the number of seconds after provisioning at which access should be removed. None for permanent requests.
-	ExpirationInSeconds    *int64                            `json:"expiration_in_seconds,omitempty"`
-	RequestablePermissions []RequestablePermissionOutput     `json:"requestable_permissions,omitempty"`
-	RequestedAt            *time.Time                        `json:"requested_at,omitempty"`
-	CustomFields           []CustomIntakeFieldResponseOutput `json:"custom_fields,omitempty"`
+	ExpirationInSeconds *int64     `json:"expiration_in_seconds,omitempty"`
+	ExpiresAt           *time.Time `json:"expires_at,omitempty"`
+	// The ID of the access request.
+	ID string `json:"id"`
+	// The reason the user wrote for putting the access request into the given state.
+	Notes                  map[string]*string            `json:"notes,omitempty"`
+	RequestablePermissions []RequestablePermissionOutput `json:"requestable_permissions,omitempty"`
+	RequestedAt            *time.Time                    `json:"requested_at,omitempty"`
+	// The user who requested access. It's possible for one user to request access on another's behalf. None for system-initiated requests, such as automated onboarding policies, that have no human requester.
+	RequesterUser *User                `json:"requester_user,omitempty"`
+	Status        SupportRequestStatus `json:"status"`
+	// The last approver, other than a manager, who approved or denied this request. None until such an approver acts.
+	SupporterUser *User `json:"supporter_user,omitempty"`
+	TargetUser    User  `json:"target_user"`
 }
 
 func (a AccessRequest) MarshalJSON() ([]byte, error) {
@@ -39,13 +41,6 @@ func (a *AccessRequest) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	return nil
-}
-
-func (a *AccessRequest) GetID() string {
-	if a == nil {
-		return ""
-	}
-	return a.ID
 }
 
 func (a *AccessRequest) GetAppID() string {
@@ -62,39 +57,18 @@ func (a *AccessRequest) GetAppName() string {
 	return a.AppName
 }
 
-func (a *AccessRequest) GetRequesterUser() User {
-	if a == nil {
-		return User{}
-	}
-	return a.RequesterUser
-}
-
-func (a *AccessRequest) GetTargetUser() User {
-	if a == nil {
-		return User{}
-	}
-	return a.TargetUser
-}
-
-func (a *AccessRequest) GetSupporterUser() *User {
+func (a *AccessRequest) GetCustomFields() []CustomIntakeFieldResponseOutput {
 	if a == nil {
 		return nil
 	}
-	return a.SupporterUser
+	return a.CustomFields
 }
 
-func (a *AccessRequest) GetStatus() SupportRequestStatus {
-	if a == nil {
-		return SupportRequestStatus("")
-	}
-	return a.Status
-}
-
-func (a *AccessRequest) GetNotes() map[string]*string {
+func (a *AccessRequest) GetExpirationInSeconds() *int64 {
 	if a == nil {
 		return nil
 	}
-	return a.Notes
+	return a.ExpirationInSeconds
 }
 
 func (a *AccessRequest) GetExpiresAt() *time.Time {
@@ -104,11 +78,18 @@ func (a *AccessRequest) GetExpiresAt() *time.Time {
 	return a.ExpiresAt
 }
 
-func (a *AccessRequest) GetExpirationInSeconds() *int64 {
+func (a *AccessRequest) GetID() string {
+	if a == nil {
+		return ""
+	}
+	return a.ID
+}
+
+func (a *AccessRequest) GetNotes() map[string]*string {
 	if a == nil {
 		return nil
 	}
-	return a.ExpirationInSeconds
+	return a.Notes
 }
 
 func (a *AccessRequest) GetRequestablePermissions() []RequestablePermissionOutput {
@@ -125,9 +106,30 @@ func (a *AccessRequest) GetRequestedAt() *time.Time {
 	return a.RequestedAt
 }
 
-func (a *AccessRequest) GetCustomFields() []CustomIntakeFieldResponseOutput {
+func (a *AccessRequest) GetRequesterUser() *User {
 	if a == nil {
 		return nil
 	}
-	return a.CustomFields
+	return a.RequesterUser
+}
+
+func (a *AccessRequest) GetStatus() SupportRequestStatus {
+	if a == nil {
+		return SupportRequestStatus("")
+	}
+	return a.Status
+}
+
+func (a *AccessRequest) GetSupporterUser() *User {
+	if a == nil {
+		return nil
+	}
+	return a.SupporterUser
+}
+
+func (a *AccessRequest) GetTargetUser() User {
+	if a == nil {
+		return User{}
+	}
+	return a.TargetUser
 }

@@ -4,11 +4,18 @@
 package shared
 
 type ApproverOutput struct {
-	Type ApproverType `json:"type"`
+	// Optionally, the approver can be a group.
+	Group *Group       `json:"group,omitempty"`
+	Type  ApproverType `json:"type"`
 	// Optionally, the approver can be a user.
 	User *User `json:"user,omitempty"`
-	// Optionally, the approver can be a group.
-	Group *Group `json:"group,omitempty"`
+}
+
+func (a *ApproverOutput) GetGroup() *Group {
+	if a == nil {
+		return nil
+	}
+	return a.Group
 }
 
 func (a *ApproverOutput) GetType() ApproverType {
@@ -23,11 +30,4 @@ func (a *ApproverOutput) GetUser() *User {
 		return nil
 	}
 	return a.User
-}
-
-func (a *ApproverOutput) GetGroup() *Group {
-	if a == nil {
-		return nil
-	}
-	return a.Group
 }

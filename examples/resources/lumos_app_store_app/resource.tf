@@ -1,6 +1,7 @@
 resource "lumos_app_store_app" "my_appstoreapp" {
   app_id                      = "...my_app_id..."
   custom_request_instructions = "...my_custom_request_instructions..."
+  integration_specific_id     = "...my_integration_specific_id..."
   provisioning = {
     access_removal_inline_webhook = {
       id = "...my_id..."
@@ -77,4 +78,5 @@ resource "lumos_app_store_app" "my_appstoreapp" {
     require_additional_approval = true
     require_manager_approval    = true
   }
+  source_app_id = "...my_source_app_id..."
 }

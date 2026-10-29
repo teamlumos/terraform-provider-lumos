@@ -4,16 +4,9 @@
 package shared
 
 type AllowedGroupsConfigInput struct {
-	Type *AllowedGroupsConfigType `json:"type,omitempty"`
-	// The groups allowed to request this permission.
-	Groups []BaseGroup `json:"groups,omitempty"`
-}
-
-func (a *AllowedGroupsConfigInput) GetType() *AllowedGroupsConfigType {
-	if a == nil {
-		return nil
-	}
-	return a.Type
+	// The groups allowed to request this permission. At most 100 groups when type is SPECIFIED_GROUPS.
+	Groups []BaseGroup              `json:"groups,omitempty"`
+	Type   *AllowedGroupsConfigType `json:"type,omitempty"`
 }
 
 func (a *AllowedGroupsConfigInput) GetGroups() []BaseGroup {
@@ -21,4 +14,11 @@ func (a *AllowedGroupsConfigInput) GetGroups() []BaseGroup {
 		return nil
 	}
 	return a.Groups
+}
+
+func (a *AllowedGroupsConfigInput) GetType() *AllowedGroupsConfigType {
+	if a == nil {
+		return nil
+	}
+	return a.Type
 }

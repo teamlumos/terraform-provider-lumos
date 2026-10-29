@@ -77,7 +77,7 @@ Optional:
 Read-Only:
 
 - `description` (String) The description of this inline webhook.
-- `hook_type` (String)
+- `hook_type` (String) What an inline webhook is wired into.
 - `name` (String) The name of this inline webhook.
 
 
@@ -86,7 +86,7 @@ Read-Only:
 
 Optional:
 
-- `app_id` (String) The ID of the app that sources this group.
+- `app_id` (String) The ID of the app this group is synced from.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 
@@ -95,7 +95,7 @@ Read-Only:
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.
 
 
 <a id="nestedatt--preapproved_permissions"></a>

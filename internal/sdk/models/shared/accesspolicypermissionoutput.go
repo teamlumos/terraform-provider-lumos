@@ -8,6 +8,8 @@ package shared
 type AccessPolicyPermissionOutput struct {
 	// The ID of this requestable permission.
 	ID *string `json:"id,omitempty"`
+	// The human-readable label of this permission.
+	Label string `json:"label"`
 }
 
 func (a *AccessPolicyPermissionOutput) GetID() *string {
@@ -15,4 +17,11 @@ func (a *AccessPolicyPermissionOutput) GetID() *string {
 		return nil
 	}
 	return a.ID
+}
+
+func (a *AccessPolicyPermissionOutput) GetLabel() string {
+	if a == nil {
+		return ""
+	}
+	return a.Label
 }

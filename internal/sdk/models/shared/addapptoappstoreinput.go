@@ -4,12 +4,23 @@
 package shared
 
 type AddAppToAppStoreInput struct {
-	// AppStore App instructions that are shown to the requester.
-	CustomRequestInstructions *string                               `json:"custom_request_instructions,omitempty"`
-	RequestFlow               *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
-	Provisioning              *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
 	// The ID of the app to add to the app store.
-	AppID string `json:"app_id"`
+	AppID *string `json:"app_id,omitempty"`
+	// AppStore App instructions that are shown to the requester.
+	CustomRequestInstructions *string `json:"custom_request_instructions,omitempty"`
+	// The app's ID in that integration.
+	IntegrationSpecificID *string                               `json:"integration_specific_id,omitempty"`
+	Provisioning          *AppStoreAppSettingsProvisioningInput `json:"provisioning,omitempty"`
+	RequestFlow           *AppStoreAppSettingsRequestFlowInput  `json:"request_flow,omitempty"`
+	// The Lumos ID of the integration app that manages the app.
+	SourceAppID *string `json:"source_app_id,omitempty"`
+}
+
+func (a *AddAppToAppStoreInput) GetAppID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.AppID
 }
 
 func (a *AddAppToAppStoreInput) GetCustomRequestInstructions() *string {
@@ -19,11 +30,11 @@ func (a *AddAppToAppStoreInput) GetCustomRequestInstructions() *string {
 	return a.CustomRequestInstructions
 }
 
-func (a *AddAppToAppStoreInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
+func (a *AddAppToAppStoreInput) GetIntegrationSpecificID() *string {
 	if a == nil {
 		return nil
 	}
-	return a.RequestFlow
+	return a.IntegrationSpecificID
 }
 
 func (a *AddAppToAppStoreInput) GetProvisioning() *AppStoreAppSettingsProvisioningInput {
@@ -33,9 +44,16 @@ func (a *AddAppToAppStoreInput) GetProvisioning() *AppStoreAppSettingsProvisioni
 	return a.Provisioning
 }
 
-func (a *AddAppToAppStoreInput) GetAppID() string {
+func (a *AddAppToAppStoreInput) GetRequestFlow() *AppStoreAppSettingsRequestFlowInput {
 	if a == nil {
-		return ""
+		return nil
 	}
-	return a.AppID
+	return a.RequestFlow
+}
+
+func (a *AddAppToAppStoreInput) GetSourceAppID() *string {
+	if a == nil {
+		return nil
+	}
+	return a.SourceAppID
 }

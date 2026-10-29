@@ -5,7 +5,7 @@ package shared
 
 type FileUpload struct {
 	Type FileUploadType `json:"type"`
-	// The data to upload. This should be a publicly accessible URL that resolves to a file
+	// The data to upload. For type 'url', a publicly accessible URL that resolves to a file. For type 'base64', the base64-encoded contents of a PDF or PNG file; other file types are rejected
 	Value string `json:"value"`
 }
 

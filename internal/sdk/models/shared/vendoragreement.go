@@ -9,32 +9,32 @@ import (
 )
 
 type VendorAgreement struct {
-	// A unique identifier for this Vendor Agreement
-	ID     string `json:"id"`
-	Vendor Vendor `json:"vendor"`
-	// The user-defined label for this agreement
-	Label *string `json:"label,omitempty"`
-	// The start of the current term
-	StartDate *types.Date `json:"start_date"`
-	// The end of the current term
-	EndDate *types.Date `json:"end_date"`
-	// The date by which the vendor must be notified if you want to terminate the agreement
-	OptOutDate *types.Date `json:"opt_out_date"`
-	// The stage of the renewal process for this agreement
-	RenewalStage string `json:"renewal_stage"`
-	// The pricing model for this agreement
-	PricingModel string `json:"pricing_model"`
 	// The length of the contract in months
 	ContractLengthMonths *float64 `json:"contract_length_months"`
+	// Custom metadata tracked about each of your Vendor Agreements. The set of available options must be configured within the Lumos admin panel.
+	CustomAttributes map[string]VendorAgreementCustomAttributeOutput `json:"custom_attributes,omitempty"`
+	// The end of the current term
+	EndDate *types.Date `json:"end_date"`
+	// A unique identifier for this Vendor Agreement
+	ID string `json:"id"`
+	// The user-defined label for this agreement
+	Label *string `json:"label,omitempty"`
+	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
+	LineItems []LineItem `json:"line_items"`
+	// The date by which the vendor must be notified if you want to terminate the agreement
+	OptOutDate *types.Date `json:"opt_out_date"`
+	// The pricing model for this agreement
+	PricingModel string `json:"pricing_model"`
 	// The projected annualized cost of the currently active order on the agreement
 	ProjectedAnnualizedCost *Cost `json:"projected_annualized_cost"`
 	// The individuals responsible for managing renewals and true-ups for this agreement. They will receive all notifications configured in Lumos.
-	RenewalOwners     []User `json:"renewal_owners,omitempty"`
-	TotalContractCost Cost   `json:"total_contract_cost"`
-	// The list of currently active line items for this Vendor Agreement. If there are no currently active line items, the most recent set of line items is returned.
-	LineItems []LineItem `json:"line_items"`
-	// Custom metadata tracked about each of your Vendor Agreements. The set of available options must be configured within the Lumos admin panel.
-	CustomAttributes map[string]VendorAgreementCustomAttributeOutput `json:"custom_attributes,omitempty"`
+	RenewalOwners []User `json:"renewal_owners,omitempty"`
+	// The stage of the renewal process for this agreement
+	RenewalStage string `json:"renewal_stage"`
+	// The start of the current term
+	StartDate         *types.Date `json:"start_date"`
+	TotalContractCost Cost        `json:"total_contract_cost"`
+	Vendor            Vendor      `json:"vendor"`
 }
 
 func (v VendorAgreement) MarshalJSON() ([]byte, error) {
@@ -48,32 +48,18 @@ func (v *VendorAgreement) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *VendorAgreement) GetID() string {
-	if v == nil {
-		return ""
-	}
-	return v.ID
-}
-
-func (v *VendorAgreement) GetVendor() Vendor {
-	if v == nil {
-		return Vendor{}
-	}
-	return v.Vendor
-}
-
-func (v *VendorAgreement) GetLabel() *string {
+func (v *VendorAgreement) GetContractLengthMonths() *float64 {
 	if v == nil {
 		return nil
 	}
-	return v.Label
+	return v.ContractLengthMonths
 }
 
-func (v *VendorAgreement) GetStartDate() *types.Date {
+func (v *VendorAgreement) GetCustomAttributes() map[string]VendorAgreementCustomAttributeOutput {
 	if v == nil {
 		return nil
 	}
-	return v.StartDate
+	return v.CustomAttributes
 }
 
 func (v *VendorAgreement) GetEndDate() *types.Date {
@@ -83,6 +69,27 @@ func (v *VendorAgreement) GetEndDate() *types.Date {
 	return v.EndDate
 }
 
+func (v *VendorAgreement) GetID() string {
+	if v == nil {
+		return ""
+	}
+	return v.ID
+}
+
+func (v *VendorAgreement) GetLabel() *string {
+	if v == nil {
+		return nil
+	}
+	return v.Label
+}
+
+func (v *VendorAgreement) GetLineItems() []LineItem {
+	if v == nil {
+		return []LineItem{}
+	}
+	return v.LineItems
+}
+
 func (v *VendorAgreement) GetOptOutDate() *types.Date {
 	if v == nil {
 		return nil
@@ -90,25 +97,11 @@ func (v *VendorAgreement) GetOptOutDate() *types.Date {
 	return v.OptOutDate
 }
 
-func (v *VendorAgreement) GetRenewalStage() string {
-	if v == nil {
-		return ""
-	}
-	return v.RenewalStage
-}
-
 func (v *VendorAgreement) GetPricingModel() string {
 	if v == nil {
 		return ""
 	}
 	return v.PricingModel
-}
-
-func (v *VendorAgreement) GetContractLengthMonths() *float64 {
-	if v == nil {
-		return nil
-	}
-	return v.ContractLengthMonths
 }
 
 func (v *VendorAgreement) GetProjectedAnnualizedCost() *Cost {
@@ -125,6 +118,20 @@ func (v *VendorAgreement) GetRenewalOwners() []User {
 	return v.RenewalOwners
 }
 
+func (v *VendorAgreement) GetRenewalStage() string {
+	if v == nil {
+		return ""
+	}
+	return v.RenewalStage
+}
+
+func (v *VendorAgreement) GetStartDate() *types.Date {
+	if v == nil {
+		return nil
+	}
+	return v.StartDate
+}
+
 func (v *VendorAgreement) GetTotalContractCost() Cost {
 	if v == nil {
 		return Cost{}
@@ -132,16 +139,9 @@ func (v *VendorAgreement) GetTotalContractCost() Cost {
 	return v.TotalContractCost
 }
 
-func (v *VendorAgreement) GetLineItems() []LineItem {
+func (v *VendorAgreement) GetVendor() Vendor {
 	if v == nil {
-		return []LineItem{}
+		return Vendor{}
 	}
-	return v.LineItems
-}
-
-func (v *VendorAgreement) GetCustomAttributes() map[string]VendorAgreementCustomAttributeOutput {
-	if v == nil {
-		return nil
-	}
-	return v.CustomAttributes
+	return v.Vendor
 }

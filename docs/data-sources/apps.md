@@ -32,7 +32,7 @@ data "lumos_apps" "my_apps" {
 ### Optional
 
 - `connection_source` (String) Filter to integration apps connected via this source (`API` or `UI`). must be one of ["API", "UI"]
-- `disconnected` (Boolean) Filter on whether the app has been disconnected (soft-deleted): `false` excludes disconnected apps — combine with `connection_source=API` to reconcile the integrations you manage via the API (e.g. from Terraform); `true` returns only disconnected apps whose record remains. Omit to list all apps (default).
+- `disconnected` (Boolean) Filter on whether the app has been disconnected. `false` excludes disconnected apps, `true` returns only disconnected apps whose record Lumos still holds, and omitting it lists every app. Pair `false` with `connection_source=API` to list only the connected apps you manage through the API.
 - `exact_match` (Boolean) Search filter should be an exact match.
 - `expand` (List of String) Fields to expand. Supported fields: custom_attributes.
 - `name_search` (String) Search against name, app instance identifier, and app class ID.

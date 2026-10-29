@@ -9,17 +9,17 @@ import (
 )
 
 type LineItemInput struct {
-	// The name of the line item as stored in Lumos
-	Name string `json:"name"`
-	// The type of purchase that this line item refers to
-	Type string `json:"type"`
-	// The number of units purchased for this line item
-	Quantity int64                 `json:"quantity"`
-	UnitCost LineItemUnitCostInput `json:"unit_cost"`
-	// The start date of the line item
-	StartDate types.Date `json:"start_date"`
 	// The end date of the line item.
 	EndDate *types.Date `json:"end_date"`
+	// The name of the line item as stored in Lumos
+	Name string `json:"name"`
+	// The number of units purchased for this line item
+	Quantity int64 `json:"quantity"`
+	// The start date of the line item
+	StartDate types.Date `json:"start_date"`
+	// The type of purchase that this line item refers to
+	Type     string                `json:"type"`
+	UnitCost LineItemUnitCostInput `json:"unit_cost"`
 }
 
 func (l LineItemInput) MarshalJSON() ([]byte, error) {
@@ -33,18 +33,18 @@ func (l *LineItemInput) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func (l *LineItemInput) GetEndDate() *types.Date {
+	if l == nil {
+		return nil
+	}
+	return l.EndDate
+}
+
 func (l *LineItemInput) GetName() string {
 	if l == nil {
 		return ""
 	}
 	return l.Name
-}
-
-func (l *LineItemInput) GetType() string {
-	if l == nil {
-		return ""
-	}
-	return l.Type
 }
 
 func (l *LineItemInput) GetQuantity() int64 {
@@ -54,13 +54,6 @@ func (l *LineItemInput) GetQuantity() int64 {
 	return l.Quantity
 }
 
-func (l *LineItemInput) GetUnitCost() LineItemUnitCostInput {
-	if l == nil {
-		return LineItemUnitCostInput{}
-	}
-	return l.UnitCost
-}
-
 func (l *LineItemInput) GetStartDate() types.Date {
 	if l == nil {
 		return types.Date{}
@@ -68,9 +61,16 @@ func (l *LineItemInput) GetStartDate() types.Date {
 	return l.StartDate
 }
 
-func (l *LineItemInput) GetEndDate() *types.Date {
+func (l *LineItemInput) GetType() string {
 	if l == nil {
-		return nil
+		return ""
 	}
-	return l.EndDate
+	return l.Type
+}
+
+func (l *LineItemInput) GetUnitCost() LineItemUnitCostInput {
+	if l == nil {
+		return LineItemUnitCostInput{}
+	}
+	return l.UnitCost
 }

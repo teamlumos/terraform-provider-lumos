@@ -27,10 +27,10 @@ data "lumos_group" "my_group" {
 
 ### Read-Only
 
-- `app_id` (String) The ID of the app that sources this group.
+- `app_id` (String) The ID of the app this group is synced from.
 - `description` (String) The description of this group.
 - `group_lifecycle` (String) The lifecycle of this group.
 - `id` (String) The ID of this group.
 - `integration_specific_id` (String) The ID of this group, specific to the integration.
 - `name` (String) The name of this group.
-- `source_app_id` (String) The ID of the app that sources this group.
+- `source_app_id` (String) The catalog identifier of the integration this group is synced from, such as `okta.com`. It is the integration's `app_class_id`, not the app's ID.

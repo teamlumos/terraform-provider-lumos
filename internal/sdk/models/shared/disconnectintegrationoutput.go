@@ -4,19 +4,12 @@
 package shared
 
 type DisconnectIntegrationOutput struct {
-	// The domain app UUID of the disconnected integration.
-	ID string `json:"id"`
 	// The canonical integration identifier.
 	AppClassID string `json:"app_class_id"`
 	// Confirms the app was disconnected. Always `true` on a successful response — the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained).
 	Disconnected bool `json:"disconnected"`
-}
-
-func (d *DisconnectIntegrationOutput) GetID() string {
-	if d == nil {
-		return ""
-	}
-	return d.ID
+	// The domain app UUID of the disconnected integration.
+	ID string `json:"id"`
 }
 
 func (d *DisconnectIntegrationOutput) GetAppClassID() string {
@@ -31,4 +24,11 @@ func (d *DisconnectIntegrationOutput) GetDisconnected() bool {
 		return false
 	}
 	return d.Disconnected
+}
+
+func (d *DisconnectIntegrationOutput) GetID() string {
+	if d == nil {
+		return ""
+	}
+	return d.ID
 }

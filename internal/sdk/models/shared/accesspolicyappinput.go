@@ -8,7 +8,7 @@ package shared
 type AccessPolicyAppInput struct {
 	// The ID of this app.
 	ID string `json:"id"`
-	// Whether approval is required for this app grant.
+	// Whether requests created through this policy for this app are pre-approved.
 	IsPreapproved *bool `json:"is_preapproved,omitempty"`
 	// List of permissions granted for this app. Empty list means app-level grant.
 	Permissions []AccessPolicyPermissionInput `json:"permissions,omitempty"`

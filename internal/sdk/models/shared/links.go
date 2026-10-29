@@ -6,9 +6,9 @@ package shared
 type Links struct {
 	First *string `json:"first"`
 	Last  *string `json:"last"`
-	Self  *string `json:"self"`
 	Next  *string `json:"next"`
 	Prev  *string `json:"prev"`
+	Self  *string `json:"self"`
 }
 
 func (l *Links) GetFirst() *string {
@@ -25,13 +25,6 @@ func (l *Links) GetLast() *string {
 	return l.Last
 }
 
-func (l *Links) GetSelf() *string {
-	if l == nil {
-		return nil
-	}
-	return l.Self
-}
-
 func (l *Links) GetNext() *string {
 	if l == nil {
 		return nil
@@ -44,4 +37,11 @@ func (l *Links) GetPrev() *string {
 		return nil
 	}
 	return l.Prev
+}
+
+func (l *Links) GetSelf() *string {
+	if l == nil {
+		return nil
+	}
+	return l.Self
 }

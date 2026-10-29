@@ -4,33 +4,26 @@
 package shared
 
 type AppStoreAppSettingsProvisioningOutput struct {
-	GroupsProvisioning *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
-	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
-	TimeBasedAccess []string `json:"time_based_access,omitempty"`
-	// Whether the app is configured to allow users to request multiple permissions in a single request
-	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
-	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
-	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
-	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
-	CustomProvisioningInstructions *string `json:"custom_provisioning_instructions,omitempty"`
-	// The provisioning webhook optionally associated with this config.
-	ProvisioningWebhook *InlineWebhook `json:"provisioning_webhook,omitempty"`
 	// A deprovisioning webhook can be optionally associated with this config.
 	AccessRemovalInlineWebhook *InlineWebhook `json:"access_removal_inline_webhook,omitempty"`
+	// Whether the app is configured to allow users to request multiple permissions in a single request
+	AllowMultiplePermissionSelection *bool `json:"allow_multiple_permission_selection,omitempty"`
+	// Only Available if manual steps is active. During the provisioning step, Lumos will send a custom message to app admins explaining how to provision a user to the app. Markdown for links and text formatting is supported.
+	CustomProvisioningInstructions *string                  `json:"custom_provisioning_instructions,omitempty"`
+	GroupsProvisioning             *GroupProvisioningOption `json:"groups_provisioning,omitempty"`
+	// If enabled, Lumos will notify the App Admin after initial access is granted to perform additional manual steps. Note that if this option is enabled, this action must be confirmed by the App Admin in order to resolve the request.
+	ManualStepsNeeded *bool `json:"manual_steps_needed,omitempty"`
+	// The provisioning webhook optionally associated with this config.
+	ProvisioningWebhook *InlineWebhook `json:"provisioning_webhook,omitempty"`
+	// If enabled, users can request an app for a selected duration. After expiry, Lumos will automatically remove user's access.
+	TimeBasedAccess []string `json:"time_based_access,omitempty"`
 }
 
-func (a *AppStoreAppSettingsProvisioningOutput) GetGroupsProvisioning() *GroupProvisioningOption {
+func (a *AppStoreAppSettingsProvisioningOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
 	if a == nil {
 		return nil
 	}
-	return a.GroupsProvisioning
-}
-
-func (a *AppStoreAppSettingsProvisioningOutput) GetTimeBasedAccess() []string {
-	if a == nil {
-		return nil
-	}
-	return a.TimeBasedAccess
+	return a.AccessRemovalInlineWebhook
 }
 
 func (a *AppStoreAppSettingsProvisioningOutput) GetAllowMultiplePermissionSelection() *bool {
@@ -40,18 +33,25 @@ func (a *AppStoreAppSettingsProvisioningOutput) GetAllowMultiplePermissionSelect
 	return a.AllowMultiplePermissionSelection
 }
 
-func (a *AppStoreAppSettingsProvisioningOutput) GetManualStepsNeeded() *bool {
-	if a == nil {
-		return nil
-	}
-	return a.ManualStepsNeeded
-}
-
 func (a *AppStoreAppSettingsProvisioningOutput) GetCustomProvisioningInstructions() *string {
 	if a == nil {
 		return nil
 	}
 	return a.CustomProvisioningInstructions
+}
+
+func (a *AppStoreAppSettingsProvisioningOutput) GetGroupsProvisioning() *GroupProvisioningOption {
+	if a == nil {
+		return nil
+	}
+	return a.GroupsProvisioning
+}
+
+func (a *AppStoreAppSettingsProvisioningOutput) GetManualStepsNeeded() *bool {
+	if a == nil {
+		return nil
+	}
+	return a.ManualStepsNeeded
 }
 
 func (a *AppStoreAppSettingsProvisioningOutput) GetProvisioningWebhook() *InlineWebhook {
@@ -61,9 +61,9 @@ func (a *AppStoreAppSettingsProvisioningOutput) GetProvisioningWebhook() *Inline
 	return a.ProvisioningWebhook
 }
 
-func (a *AppStoreAppSettingsProvisioningOutput) GetAccessRemovalInlineWebhook() *InlineWebhook {
+func (a *AppStoreAppSettingsProvisioningOutput) GetTimeBasedAccess() []string {
 	if a == nil {
 		return nil
 	}
-	return a.AccessRemovalInlineWebhook
+	return a.TimeBasedAccess
 }

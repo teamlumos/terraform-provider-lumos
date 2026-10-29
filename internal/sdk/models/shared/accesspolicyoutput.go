@@ -37,28 +37,35 @@ func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
 
 // AccessPolicyOutput - The full representation of an access policy returned by the API.
 type AccessPolicyOutput struct {
-	// The name of the access policy.
-	Name string `json:"name"`
+	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
+	AccessCondition any `json:"access_condition"`
+	// The list of apps and permissions granted by this access policy.
+	Apps []AccessPolicyAppOutput `json:"apps"`
 	// Explanation for why this policy exists.
 	BusinessJustification string `json:"business_justification"`
 	// The unique ID of the access policy.
 	ID string `json:"id"`
+	// Whether the access policy is enabled.
+	IsEnabled           bool `json:"is_enabled"`
+	IsEveryoneCondition bool `json:"is_everyone_condition"`
+	// The name of the access policy.
+	Name string `json:"name"`
 	// The status of the access policy.
 	Status AccessPolicyOutputStatus `json:"status"`
-	// Whether the access policy is enabled.
-	IsEnabled bool `json:"is_enabled"`
-	// The list of apps and permissions granted by this access policy.
-	Apps []AccessPolicyAppOutput `json:"apps"`
-	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://support.lumos.com/articles/8646284496-building-conditions-in-lumos).
-	AccessCondition     any  `json:"access_condition"`
-	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }
 
-func (a *AccessPolicyOutput) GetName() string {
+func (a *AccessPolicyOutput) GetAccessCondition() any {
 	if a == nil {
-		return ""
+		return nil
 	}
-	return a.Name
+	return a.AccessCondition
+}
+
+func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
+	if a == nil {
+		return []AccessPolicyAppOutput{}
+	}
+	return a.Apps
 }
 
 func (a *AccessPolicyOutput) GetBusinessJustification() string {
@@ -75,13 +82,6 @@ func (a *AccessPolicyOutput) GetID() string {
 	return a.ID
 }
 
-func (a *AccessPolicyOutput) GetStatus() AccessPolicyOutputStatus {
-	if a == nil {
-		return AccessPolicyOutputStatus("")
-	}
-	return a.Status
-}
-
 func (a *AccessPolicyOutput) GetIsEnabled() bool {
 	if a == nil {
 		return false
@@ -89,23 +89,23 @@ func (a *AccessPolicyOutput) GetIsEnabled() bool {
 	return a.IsEnabled
 }
 
-func (a *AccessPolicyOutput) GetApps() []AccessPolicyAppOutput {
-	if a == nil {
-		return []AccessPolicyAppOutput{}
-	}
-	return a.Apps
-}
-
-func (a *AccessPolicyOutput) GetAccessCondition() any {
-	if a == nil {
-		return nil
-	}
-	return a.AccessCondition
-}
-
 func (a *AccessPolicyOutput) GetIsEveryoneCondition() bool {
 	if a == nil {
 		return false
 	}
 	return a.IsEveryoneCondition
+}
+
+func (a *AccessPolicyOutput) GetName() string {
+	if a == nil {
+		return ""
+	}
+	return a.Name
+}
+
+func (a *AccessPolicyOutput) GetStatus() AccessPolicyOutputStatus {
+	if a == nil {
+		return AccessPolicyOutputStatus("")
+	}
+	return a.Status
 }

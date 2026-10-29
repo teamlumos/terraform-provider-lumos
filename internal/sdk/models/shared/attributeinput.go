@@ -4,19 +4,19 @@
 package shared
 
 type AttributeInput struct {
-	// The unique identifier of the custom attribute
-	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
-	// The type of the attribute.
-	Type *string `json:"type,omitempty"`
 	// The name of the attribute.
 	Name *string `json:"name,omitempty"`
+	// The type of the attribute.
+	Type *string `json:"type,omitempty"`
+	// The unique identifier of the custom attribute
+	UniqueIdentifier *string `json:"unique_identifier,omitempty"`
 }
 
-func (a *AttributeInput) GetUniqueIdentifier() *string {
+func (a *AttributeInput) GetName() *string {
 	if a == nil {
 		return nil
 	}
-	return a.UniqueIdentifier
+	return a.Name
 }
 
 func (a *AttributeInput) GetType() *string {
@@ -26,9 +26,9 @@ func (a *AttributeInput) GetType() *string {
 	return a.Type
 }
 
-func (a *AttributeInput) GetName() *string {
+func (a *AttributeInput) GetUniqueIdentifier() *string {
 	if a == nil {
 		return nil
 	}
-	return a.Name
+	return a.UniqueIdentifier
 }
