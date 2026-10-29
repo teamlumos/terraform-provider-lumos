@@ -7,7 +7,13 @@ description: |-
 
 # Migrating from 0.x to 1.x
 
-Version 1.x of the provider is built on the Lumos V1 API. Some resources were renamed or split, App Store approvals and provisioning moved into workflows, and permissions are managed directly as the entitlements behind them, so they're addressed by the entitlement's ID instead of the requestable permission's ID. Terraform can't carry 0.x state over to the new resource types, so migrating means removing the 0.x resources from state without touching Lumos, then importing the same objects as 1.x resources.
+Version 1.x of the provider is built on the Lumos V1 API. Compared to 0.x:
+
+* Some resources were renamed or split.
+* App Store approvals and provisioning moved into workflows.
+* Permissions are managed directly as the entitlements behind them, so they're addressed by the entitlement's ID instead of the requestable permission's ID.
+
+Terraform can't carry 0.x state over to the new resource types. Migrating means removing the 0.x resources from state without touching Lumos, then importing the same objects as 1.x resources.
 
 The migration itself doesn't create, change or delete anything in Lumos. The first `terraform apply` on 1.x should show no changes other than the ones listed under [What to expect on the first apply](#what-to-expect-on-the-first-apply).
 
@@ -25,21 +31,21 @@ The migration itself doesn't create, change or delete anything in Lumos. The fir
 | 0.x | 1.x | Same ID? |
 |---|---|---|
 | `lumos_app` | `lumos_app` | Yes |
-| `lumos_app_store_app` | `lumos_app_appstore_settings`, plus approval and provisioning workflows (see below) | Yes: the app's ID |
+| `lumos_app_store_app` | `lumos_app_appstore_settings`, plus approval and provisioning workflows (see below) | Yes (the app's ID) |
 | `lumos_requestable_permission` | `lumos_entitlement` + `lumos_entitlement_appstore_settings`, plus workflows for approval and provisioning overrides | **No** (see [Finding entitlement IDs](#finding-entitlement-ids)) |
 | `lumos_access_policy` | `lumos_access_policy` | Yes |
 | `lumos_pre_approval_rule` | `lumos_pre_approval_rule` | Yes |
-| Approvers, manager approval, stage 2 approvers, provisioning webhooks, manual provisioning steps (fields on `lumos_app_store_app` and `lumos_requestable_permission`) | `lumos_workflow` + a binding resource: `lumos_app_approval_workflow`, `lumos_app_provisioning_workflow`, `lumos_app_deprovisioning_workflow`, `lumos_entitlement_approval_workflow`, `lumos_entitlement_provisioning_workflow`, `lumos_entitlement_deprovisioning_workflow` | New resources. Import the workflows Lumos already has |
+| Approvers, manager approval, stage 2 approvers, provisioning webhooks, manual provisioning steps (fields on `lumos_app_store_app` and `lumos_requestable_permission`) | `lumos_workflow` + a binding resource: `lumos_app_approval_workflow`, `lumos_app_provisioning_workflow`, `lumos_app_deprovisioning_workflow`, `lumos_entitlement_approval_workflow`, `lumos_entitlement_provisioning_workflow`, `lumos_entitlement_deprovisioning_workflow` | N/A (new resources) |
 
 ### Data sources
 
 | 0.x | 1.x |
 |---|---|
 | `lumos_app` (`id`) | `lumos_app` (`id`) |
-| `lumos_apps` | `lumos_apps` (see [`lumos_apps` returns every app](#lumos_apps-returns-every-app)) |
+| `lumos_apps` | `lumos_apps` (see [`lumos_apps` filters](#lumos_apps-filters)) |
 | `lumos_app_store_app`, `lumos_app_store_app_settings` | `appstore_settings` on `lumos_app` or `lumos_apps` |
 | `lumos_requestable_permission` (`id`) | `lumos_entitlement` (`id`, the entitlement's ID) |
-| `lumos_requestable_permissions` | `lumos_app_entitlements` (one app) or `lumos_entitlements` (every app; `search` required) |
+| `lumos_requestable_permissions` | `lumos_app_entitlements` (one app) or `lumos_entitlements` (every app, `search` required) |
 | `lumos_user` (`user_id`) | `lumos_user` (`id`), plus `lumos_current_user` |
 | `lumos_users` | `lumos_users` (`search` required) |
 | `lumos_group` (`group_id`) | `lumos_group` (`id`) |
@@ -51,15 +57,24 @@ List data sources page through every result for you. `page`, `size`, `total` and
 
 New lookups: `lumos_integrations`, `lumos_integration_connection_schema`, `lumos_inline_webhooks`, `lumos_app_categories`, `lumos_custom_attribute_definitions`, `lumos_accounts`, `lumos_user_roles`, `lumos_workflow_steps`.
 
-### Values are lowercase
+### Enum values
 
 Enum values use the V1 API's lowercase, hyphenated spelling: `status = "published"` instead of `"PUBLISHED"`, `connection_source = "api"` instead of `"API"`, `catalog_visibility = "search-only"`.
 
-### Leaving a setting out clears it
+### Omitted settings
 
-In 0.x, a setting left out of the configuration kept its value in Lumos. In 1.x, the configuration is authoritative: a setting left out, or set to `null`, is cleared, including values set in the Lumos UI, and the plan shows it as `-> null` or `-> []`. This applies to `lumos_app_appstore_settings`, `lumos_entitlement_appstore_settings`, and the `*_override` fields and `post_approval_message` on `lumos_app` and `lumos_entitlement`.
+In 0.x, a setting left out of the configuration kept its value in Lumos. In 1.x, the configuration is authoritative. A setting that is left out, or set to `null`, is cleared, including values set in the Lumos UI, and the plan shows it as `-> null` or `-> []`. This applies to `lumos_app_appstore_settings`, `lumos_entitlement_appstore_settings`, and the `*_override` attributes and `post_approval_message` on `lumos_app` and `lumos_entitlement`.
 
-The steps below generate the 1.x configuration from what's in Lumos, rather than translating the 0.x configuration by hand, for this reason. To keep editing some settings in the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
+For this reason, the steps below generate the 1.x configuration from what's in Lumos, rather than translating the 0.x configuration by hand. To keep editing some settings in the Lumos UI, see [Leaving settings to the Lumos UI](#leaving-settings-to-the-lumos-ui).
+
+### Destroy
+
+Destroy now changes Lumos for two resources:
+
+* Destroying a `lumos_app` deletes a custom app or disconnects a connected app. In 0.10.x, destroy only removed the app from state.
+* Destroying a `lumos_entitlement` deletes the entitlement. In 0.x, destroying a permission left its entitlement behind.
+
+To stop managing either one without changing Lumos, use a `removed` block.
 
 ## Migration steps
 
@@ -73,7 +88,7 @@ Note each resource's ID (`terraform state show <address>`). For `lumos_app_store
 
 ### 2. Stop managing the 0.x resources, without changing Lumos
 
-Replace each 0.x `resource` block with a `removed` block, then apply while still on 0.x:
+While still on 0.x, replace each 0.x `resource` block with a `removed` block:
 
 ```terraform
 removed {
@@ -84,11 +99,13 @@ removed {
 }
 ```
 
+Then run `terraform apply`. Before you confirm, check that the plan lists each resource as no longer managed and destroys nothing.
+
 ```shell
 terraform apply
 ```
 
-The plan lists each resource as no longer managed and destroys nothing. Check that before applying. On Terraform older than 1.7, run `terraform state rm <address>` for each resource instead.
+On Terraform older than 1.7, run `terraform state rm <address>` for each resource instead.
 
 Then delete the `removed` blocks and any 0.x `lumos_*` data source blocks.
 
@@ -184,9 +201,9 @@ Terraform writes a resource block for every import with no matching block. Revie
 
 * **Connected apps:** `auth` is never read back from Lumos, so the generated `lumos_app` has no credentials. Add `auth`, and `settings` if the integration takes any, from the 0.x configuration.
 * **References:** replace hardcoded IDs with references, such as `app_id = lumos_app.okta.id`.
-* **Conditions** (`lumos_access_policy.access_condition`, `lumos_pre_approval_rule.condition`, workflow step `inputs`) come back as JSON strings. Rewrite them with `jsonencode(...)` if you like, keeping every attribute and value as `{ label, value }`.
+* **Conditions** (`lumos_access_policy.access_condition`, `lumos_pre_approval_rule.condition`, workflow step `inputs`) come back as JSON strings. You can rewrite them with `jsonencode(...)`. In each condition, write every attribute and value as a `{ label, value }` object.
 
-Move the blocks into your own files. Delete the `import` blocks after the first successful apply.
+Move the blocks into your own files.
 
 ### 6. Plan and apply
 
@@ -194,16 +211,18 @@ Move the blocks into your own files. Delete the `import` blocks after the first 
 terraform plan
 ```
 
-Apart from [What to expect on the first apply](#what-to-expect-on-the-first-apply), every resource should show as `will be imported` with no changes. A change on an imported resource means the configuration differs from Lumos: fix the configuration, unless the change is one you want.
+Apart from [What to expect on the first apply](#what-to-expect-on-the-first-apply), every resource should show as `will be imported` with no changes. If an imported resource shows a change, the configuration differs from Lumos. Fix the configuration unless the change is one you want.
 
 ```shell
 terraform apply
 ```
 
+After the first successful apply, delete the `import` blocks.
+
 ## What to expect on the first apply
 
-* **Connected integrations stay connected.** The imported state has no `auth`, so the first apply shows `auth` being added. Terraform records the credentials from the configuration without sending them, so the integration isn't reconnected and no sync starts. An app that's disconnected in Lumos is the exception: its first apply sends the credentials and reconnects it.
-* After that, an apply sends credentials only when `auth`, `settings` or `version` changes. A credential change reconnects the integration; for an integration that finishes connecting with browser consent, redo consent in the Lumos UI.
+* **Connected apps stay connected.** The imported state has no `auth`, so the first apply shows `auth` being added. Terraform records the credentials from the configuration without sending them, so the app isn't reconnected and no sync starts. An app that's disconnected in Lumos is the exception. Its first apply sends the credentials and reconnects it.
+* After that, an apply sends credentials only when `auth`, `settings` or `version` changes. A credential change reconnects the app. If the integration uses browser consent to connect, complete consent again in the Lumos UI.
 
 ## Resource notes
 
@@ -219,9 +238,9 @@ terraform apply
 | `links`, `sources`, `user_friendly_label` (read-only) | Removed |
 | `allow_multiple_permission_selection` (read-only) | `appstore_settings.allow_multiple_permission_selection` |
 
-* **Overrides work on connected integrations too.** An `*_override` replaces the integration's value in your organization; leaving it out shows the integration's default value. The read-only attributes without `_override` (`label`, `description`, `category`, `logo_url`, `website_url`) always show the effective value.
+* **Overrides work on connected apps too.** An `*_override` replaces the integration's value in your organization. Leaving it out shows the integration's default value. The read-only attributes without `_override` (`label`, `description`, `category`, `logo_url`, `website_url`) always show the effective value.
 * **Custom apps** need `label_override`, `category_override` and `description_override`. A custom app can leave `app_class_id` out or set it to `"custom"`, the value it reads back with.
-* **Destroy deletes the app** (custom apps) or disconnects it (integrations). In 0.10.x, destroy only removed the app from state. To stop managing an app without deleting it, use a `removed` block.
+* **Destroy deletes the app** (custom apps) or disconnects it (connected apps). In 0.10.x, destroy only removed the app from state. To stop managing an app without deleting it, use a `removed` block.
 
 ### `lumos_app_store_app` → `lumos_app_appstore_settings`, `lumos_app` and workflows
 
@@ -230,7 +249,7 @@ terraform apply
 | Listing the app (create) / unlisting it (destroy) | `in_app_store` (destroy also unlists) |
 | `request_flow.discoverability` (`FULL`, `LIMITED`, `NONE`) | `catalog_visibility` (`visible`, `search-only`, `hidden`) <!-- TODO: confirm the value mapping --> |
 | `request_flow.admins` | `admins`, each `{ id, type }` with `type` set to `"user"` or `"group"`. A listed app needs at least one |
-| `request_flow.allowed_groups` (`type`, `groups`) | `allowed_requester_group_uuids`. Empty lets anyone request. Groups are referenced by ID only: look one up by its integration ID with `data "lumos_groups"` |
+| `request_flow.allowed_groups` (`type`, `groups`) | `allowed_requester_group_uuids`. Empty lets anyone request. Groups are referenced by ID only. To find a group's ID from its integration ID, use `data "lumos_groups"` |
 | `custom_request_instructions` | `request_instructions` |
 | `request_flow.custom_approval_message` | `lumos_app.post_approval_message` |
 | `request_flow.request_validation_inline_webhook.id` | `request_validation_webhook_uuid` |
@@ -269,7 +288,7 @@ resource "lumos_app_store_app" "okta" {
 }
 ```
 
-In 1.x, this configuration maps to an approval template with a single fallback approval chain, itself a workflow. Manager approval maps to a first stage assigned to the `Manager` custom attribute; the 0.x approvers and stage 2 approvers become the stages after it:
+In 1.x, this configuration maps to an approval template with one fallback approval chain. The template and the chain are each a `lumos_workflow`. Manager approval maps to a first stage assigned to the `Manager` custom attribute. The 0.x approvers and stage 2 approvers become the stages after it:
 
 ```terraform
 # The approval template: a workflow that picks which chain a request goes through.
@@ -325,7 +344,7 @@ resource "lumos_app_approval_workflow" "okta" {
 
 For existing apps, you can import the templates and chains directly from Lumos (see [step 4](#4-write-import-blocks)) and generate their configuration (see [step 5](#5-generate-the-configuration)), rather than writing them by hand.
 
-**New in 1.x: conditional approvals.** 0.x could only manage one approval chain per app. A 1.x template can send different requests through different chains, for example requests from one team through a shorter chain, using `branches`. A template imported from an app whose approvals were set up in the Lumos UI may already have branches: import each chain it references as its own `lumos_workflow`. See the [approvals guide](approvals.md) for how to write branches.
+**New in 1.x: conditional approvals.** 0.x could only manage one approval chain per app. A 1.x template can send different requests through different chains, for example requests from one team through a shorter chain, using `branches`. A template imported from an app whose approvals were set up in the Lumos UI may already have branches. If it does, import each chain it references as its own `lumos_workflow`. See the [approvals guide](approvals.md) for how to write branches.
 
 <!-- TODO: confirm the 0.x manager stage reads back through GET /v1/workflows as `{ label = "Manager", type = "custom_attribute_definition" }`. -->
 
@@ -336,7 +355,7 @@ For existing apps, you can import the templates and chains directly from Lumos (
 | `app_id`, `label` | `lumos_entitlement.app_id`, `label` |
 | `request_config.request_approval_config.custom_approval_message` (+ `_override`) | `lumos_entitlement.custom_approval_message_override`. Leave it out to use the app's message |
 | `request_config.appstore_visibility` (`VISIBLE`, `HIDDEN`) | `lumos_entitlement_appstore_settings.visible_in_appstore` |
-| `request_config.allowed_groups` + `allowed_groups_override` | `allowed_requester_group_uuids_override`. Leave it out to inherit the app's groups; `[]` lets anyone request |
+| `request_config.allowed_groups` + `allowed_groups_override` | `allowed_requester_group_uuids_override`. Leave it out to inherit the app's groups. `[]` lets anyone request |
 | `request_fulfillment_config.time_based_access` + `time_based_access_override` | `time_based_access_override.options`. Leave it out to inherit the app's options |
 | `request_validation_inline_webhook.id` | `request_validation_webhook_uuid` |
 | `request_approval_config.*` with `request_approval_config_override` | An approval template bound with `lumos_entitlement_approval_workflow`. Destroying the binding turns the override off |
@@ -345,7 +364,7 @@ For existing apps, you can import the templates and chains directly from Lumos (
 | `include_inherited_configs`, `app_class_id`, `app_instance_id`, `type` | Removed. Entitlement settings show only the entitlement's own overrides |
 
 * `lumos_entitlement` creates only manual entitlements. Entitlements synced from an integration can be imported, to manage their settings, but not created or deleted.
-* `description_override` is new: a description shown to requesters that survives syncs.
+* `description_override` is new. It sets a description that requesters see, and syncs don't overwrite it.
 * Destroying a `lumos_entitlement` deletes the entitlement. In 0.x, destroying a permission left its entitlement behind.
 
 ### `lumos_access_policy`
@@ -353,7 +372,7 @@ For existing apps, you can import the templates and chains directly from Lumos (
 | 0.x | 1.x |
 |---|---|
 | `apps[].permissions[].id` (permission IDs) | `apps[].entitlements[].id` (entitlement IDs) |
-| `apps` (list) | `apps` (set; order doesn't matter) |
+| `apps` (list) | `apps` (set, so order doesn't matter) |
 | `status` (`DRAFT`, `PUBLISHED`), optional | `status` (`draft`, `published`), **required** |
 | `is_enabled`, optional | **Required** |
 | `access_condition`, `is_everyone_condition` | Same. Set exactly one. Write every attribute and value as `{ label, value }` |
@@ -381,9 +400,9 @@ Rules can also pre-approve by on-call schedule in 1.x. As in 0.x, rules created 
 
 <!-- GOV-4405: likely an `entitlement_uuid` field on 0.x requestable permissions in the API, so each permission ID can be looked up to its entitlement ID. -->
 
-## `lumos_apps` returns every app
+## `lumos_apps` filters
 
-In 0.11, `lumos_apps` returned only integrations connected through the API that weren't disconnected (`connection_source = "API"`, `disconnected = false`) unless those arguments were set. In 1.x it has no defaults and returns every app. To keep the 0.11 results, set both:
+In 0.11, `lumos_apps` defaulted to `connection_source = "API"` and `disconnected = false`. Unless you set those arguments, it returned only integrations that were connected through the API and not disconnected. In 1.x, `lumos_apps` has no defaults and returns every app. To keep the 0.11 results, set both:
 
 ```terraform
 data "lumos_apps" "managed" {
@@ -392,7 +411,7 @@ data "lumos_apps" "managed" {
 }
 ```
 
-`exact_match` is gone; `search` is a case-insensitive substring match against the label, instance identifier and app class ID. To require an exact match, filter the results:
+`exact_match` is gone. `search` is a case-insensitive substring match against the label, instance identifier and app class ID. To require an exact match, filter the results:
 
 ```terraform
 locals {
@@ -413,4 +432,4 @@ resource "lumos_app_appstore_settings" "okta" {
 }
 ```
 
-This works only once the settings are in state, so import them (step 4) rather than creating the resource. See [`lumos_app_appstore_settings`](../resources/app_appstore_settings.md#leaving-settings-to-the-lumos-ui) for details. The same works for `lumos_entitlement_appstore_settings` overrides and `lumos_app`'s `*_override` fields.
+This works only once the settings are in state, so import them (step 4) rather than creating the resource. See [`lumos_app_appstore_settings`](../resources/app_appstore_settings.md#leaving-settings-to-the-lumos-ui) for details. The same works for `lumos_entitlement_appstore_settings` overrides and `lumos_app`'s `*_override` attributes.
