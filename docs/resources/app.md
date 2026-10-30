@@ -91,7 +91,7 @@ Read-Only:
 
 - `allow_multiple_permission_selection` (Boolean) When true, requesters may select more than one permission in a single request.
 - `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
-- `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+- `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 - `catalog_visibility` (String) Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
 - `custom_intake_fields` (Attributes Set) Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured. (see [below for nested schema](#nestedatt--appstore_settings--custom_intake_fields))
 - `default_entitlement` (Attributes) The entitlement pre-selected by default when a user opens the request form. Null means no default is set. (see [below for nested schema](#nestedatt--appstore_settings--default_entitlement))

@@ -115,7 +115,7 @@ type AccessRequest struct {
 	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitzero"`
 	// When the request was made.
 	RequestedAt *time.Time `json:"requested_at,omitzero"`
-	// The entitlements requested. A requested permission that is not linked to an entitlement is left out.
+	// The entitlements requested.
 	Entitlements []AccessRequestEntitlement `json:"entitlements,omitzero"`
 	// The tasks on this request that the caller can see. Only returned with `expand=tasks`.
 	Tasks []Task `json:"tasks,omitzero"`

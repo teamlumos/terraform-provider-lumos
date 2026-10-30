@@ -50,7 +50,7 @@ Read-Only:
 
 Read-Only:
 
-- `entitlements` (Attributes Set) The entitlements granted for this app. A grant whose underlying request configuration is not yet linked to an entitlement is omitted, so this is not always the policy's complete set of grants. When more than one request configuration resolves to the same entitlement, only one entry is shown for it. Updating a policy replaces its apps wholesale, so an update built from this response drops any grant that was omitted or collapsed here. (see [below for nested schema](#nestedatt--access_policies--apps--entitlements))
+- `entitlements` (Attributes Set) The entitlements granted for this app. (see [below for nested schema](#nestedatt--access_policies--apps--entitlements))
 - `id` (String) The ID of this app.
 - `is_preapproved` (Boolean) Whether requests created via this access policy are pre-approved.
 

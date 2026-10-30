@@ -36,7 +36,8 @@ output "alice_account_ids" {
 - `app_id` (String) Filter to accounts on this app.
 - `discovered_after` (String) Filter to accounts whose `discovered_at` is at or after this time.
 - `discovered_before` (String) Filter to accounts whose `discovered_at` is at or before this time.
-- `email` (String) Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it.
+- `email` (String) Filter to accounts whose email (as reported by the app) matches this value. Matching is case-insensitive.
+- `has_user` (Boolean) `true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter.
 - `sources` (List of String) Filter to accounts discovered by these sources.
 - `status` (List of String) Filter to accounts in these lifecycle statuses.
 
@@ -60,7 +61,7 @@ Read-Only:
 - `sources` (List of String) The discovery methods through which Lumos identified this account.
 - `status` (String) The status of the account.
 - `unique_identifier` (String) The stable identifier of this account from the associated service.
-- `user_id` (String) The ID of the user associated with this account.
+- `user_id` (String) The ID of the user associated with this account, or `null` if the account matches no user.
 
 <a id="nestedatt--accounts--app"></a>
 ### Nested Schema for `accounts.app`

@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: c098221d93428b018089c1cab0909d6b
+  docChecksum: d5714149f4a215b97fb59f58ceb1dee0
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -555,6 +555,7 @@ trackedFiles:
   internal/sdk/models/shared/entitlementupdateinput.go: {}
   internal/sdk/models/shared/entitlementv1input.go: {}
   internal/sdk/models/shared/errortype.go: {}
+  internal/sdk/models/shared/evidencerequiredby.go: {}
   internal/sdk/models/shared/filterdatatype.go: {}
   internal/sdk/models/shared/filteroperator.go: {}
   internal/sdk/models/shared/filteroption.go: {}
@@ -594,9 +595,9 @@ trackedFiles:
     pristine_git_object: 35e3d12f1e4b065d09b78b29b12a5729a315adda
   internal/sdk/models/shared/reassigntaskinput.go: {}
   internal/sdk/models/shared/removalerror.go: {}
-  internal/sdk/models/shared/removalevidence.go: {}
   internal/sdk/models/shared/removalitsmticket.go: {}
   internal/sdk/models/shared/removalmethod.go: {}
+  internal/sdk/models/shared/removalstatus.go: {}
   internal/sdk/models/shared/scalarscopefilterinput.go: {}
   internal/sdk/models/shared/security.go:
     id: 9098af98367e
@@ -604,6 +605,7 @@ trackedFiles:
   internal/sdk/models/shared/subject.go: {}
   internal/sdk/models/shared/subjectassignee.go: {}
   internal/sdk/models/shared/subjectentitlement.go: {}
+  internal/sdk/models/shared/subjectevidence.go: {}
   internal/sdk/models/shared/subjectfiltersresponse.go: {}
   internal/sdk/models/shared/subjectremoval.go: {}
   internal/sdk/models/shared/subjecttype.go: {}

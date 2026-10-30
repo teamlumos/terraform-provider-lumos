@@ -82,7 +82,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 								"allowed_requester_group_uuids": schema.SetAttribute{
 									Computed:    true,
 									ElementType: types.StringType,
-									Description: `UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.`,
+									Description: `UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.`,
 								},
 								"catalog_visibility": schema.StringAttribute{
 									Computed:    true,
@@ -170,7 +170,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						},
 						"category_override": schema.StringAttribute{
 							Computed:    true,
-							Description: `The category set for this app in your organization, exactly as written. ` + "`" + `category` + "`" + ` shows it when set. Null when the app uses its default category.`,
+							Description: `The category set for this app in your organization, exactly as written. ` + "`" + `category` + "`" + ` shows it when set. Null when the app uses its default category. A custom app has no default category, so on one this is always the category it shows.`,
 						},
 						"custom_attributes": schema.MapNestedAttribute{
 							Computed: true,
@@ -252,7 +252,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						},
 						"description_override": schema.StringAttribute{
 							Computed:    true,
-							Description: `The description set for this app in your organization, exactly as written. ` + "`" + `description` + "`" + ` shows it when set. Null when the app uses its default description.`,
+							Description: `The description set for this app in your organization, exactly as written. ` + "`" + `description` + "`" + ` shows it when set. Null when the app uses its default description. A custom app has no default description, so on one this is always the description it shows.`,
 						},
 						"disconnected": schema.BoolAttribute{
 							Computed:    true,
@@ -272,7 +272,7 @@ func (r *AppsDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 						},
 						"label_override": schema.StringAttribute{
 							Computed:    true,
-							Description: `The display name set for this app in your organization, exactly as written. ` + "`" + `label` + "`" + ` shows it when set. Null when the app uses its default name.`,
+							Description: `The display name set for this app in your organization, exactly as written. ` + "`" + `label` + "`" + ` shows it when set. Null when the app uses its default name. A custom app has no default name, so on one this is always the name it shows.`,
 						},
 						"logo_url": schema.StringAttribute{
 							Computed:    true,

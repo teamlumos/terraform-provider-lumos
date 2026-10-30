@@ -37,6 +37,7 @@ type AccountsDataSourceModel struct {
 	DiscoveredAfter  types.String      `queryParam:"style=form,explode=true,name=discovered_after" tfsdk:"discovered_after"`
 	DiscoveredBefore types.String      `queryParam:"style=form,explode=true,name=discovered_before" tfsdk:"discovered_before"`
 	Email            types.String      `queryParam:"style=form,explode=true,name=email" tfsdk:"email"`
+	HasUser          types.Bool        `queryParam:"style=form,explode=true,name=has_user" tfsdk:"has_user"`
 	Sources          []types.String    `queryParam:"style=form,explode=true,name=sources" tfsdk:"sources"`
 	Status           []types.String    `queryParam:"style=form,explode=true,name=status" tfsdk:"status"`
 }
@@ -145,7 +146,7 @@ func (r *AccountsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 						},
 						"user_id": schema.StringAttribute{
 							Computed:    true,
-							Description: `The ID of the user associated with this account.`,
+							Description: `The ID of the user associated with this account, or ` + "`" + `null` + "`" + ` if the account matches no user.`,
 						},
 					},
 				},
@@ -171,10 +172,14 @@ func (r *AccountsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"email": schema.StringAttribute{
 				Optional:    true,
-				Description: `Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it.`,
+				Description: `Filter to accounts whose email (as reported by the app) matches this value. Matching is case-insensitive.`,
 				Validators: []validator.String{
 					stringvalidator.UTF8LengthAtLeast(1),
 				},
+			},
+			"has_user": schema.BoolAttribute{
+				Optional:    true,
+				Description: `` + "`" + `true` + "`" + ` lists only accounts matched to a user, ` + "`" + `false` + "`" + ` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter.`,
 			},
 			"sources": schema.ListAttribute{
 				Optional:    true,

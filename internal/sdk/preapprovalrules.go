@@ -30,8 +30,8 @@ import (
 // If the app has been merged into another app, these endpoints work on the rules of the app it was
 // merged into.
 //
-// These endpoints are enabled per organization, separately from the rest of v1, and return 404 where
-// condition-based pre-approval rules aren't turned on.
+// Lumos enables condition-based pre-approval rules per organization, separately from the rest of v1,
+// so contact your Lumos representative to turn them on.
 type PreApprovalRules struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -51,9 +51,7 @@ func newPreApprovalRules(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hook
 //
 // `condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none.
 //
-// Returns 409 if the rule covers access that has no entitlement ID, because this API can't describe that access.
-//
-// Returns 404 if condition-based pre-approval rules are not turned on for your organization.
+// Returns 409 if this API can't represent the access the rule covers.
 func (s *PreApprovalRules) GetPreApprovalRule(ctx context.Context, request operations.GetPreApprovalRuleRequest, opts ...operations.Option) (*operations.GetPreApprovalRuleResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -311,9 +309,7 @@ func (s *PreApprovalRules) GetPreApprovalRule(ctx context.Context, request opera
 //
 // Returns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.
 //
-// Returns 409 if the rule is limited by an access policy. Also returns 409 if the rule covers access that has no entitlement ID, unless the request replaces the rule's entitlements fields.
-//
-// Returns 404 if condition-based pre-approval rules are not turned on for your organization.
+// Returns 409 if the rule is limited by an access policy. Also returns 409 if this API can't represent the access the rule covers, unless the request replaces the rule's entitlements fields.
 func (s *PreApprovalRules) UpdatePreApprovalRule(ctx context.Context, request operations.UpdatePreApprovalRuleRequest, opts ...operations.Option) (*operations.UpdatePreApprovalRuleResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -573,8 +569,6 @@ func (s *PreApprovalRules) UpdatePreApprovalRule(ctx context.Context, request op
 
 // DeletePreApprovalRule - Delete Pre Approval Rule
 // Delete a pre-approval rule by ID.
-//
-// Returns 404 if condition-based pre-approval rules are not turned on for your organization.
 func (s *PreApprovalRules) DeletePreApprovalRule(ctx context.Context, request operations.DeletePreApprovalRuleRequest, opts ...operations.Option) (*operations.DeletePreApprovalRuleResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -813,9 +807,7 @@ func (s *PreApprovalRules) DeletePreApprovalRule(ctx context.Context, request op
 //
 // Results come in pages. To get the next page, pass the `next_page_token` from the previous response as the `page_token` query parameter. When `next_page_token` is `null`, there are no more pages.
 //
-// `condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules that cover access with no entitlement ID are left out of the page.
-//
-// Returns 404 if condition-based pre-approval rules are not turned on for your organization.
+// `condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules whose access this API can't represent are left out of the page.
 func (s *PreApprovalRules) ListPreApprovalRules(ctx context.Context, request operations.ListPreApprovalRulesRequest, opts ...operations.Option) (*operations.ListPreApprovalRulesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1121,8 +1113,6 @@ func (s *PreApprovalRules) ListPreApprovalRules(ctx context.Context, request ope
 // If the app has been merged into another app, the rule is created on the app it was merged into, and the response's `app_id` is that app's ID.
 //
 // Returns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.
-//
-// Returns 404 if condition-based pre-approval rules are not turned on for your organization.
 func (s *PreApprovalRules) CreatePreApprovalRule(ctx context.Context, request operations.CreatePreApprovalRuleRequest, opts ...operations.Option) (*operations.CreatePreApprovalRuleResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

@@ -77,7 +77,7 @@ func newApps(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Hoo
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// Filter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`) in place of the deprecated `GET /appstore/apps`. This is the admin-management flag (mirrors the AppStore admin table) rather than end-user catalog visibility — see `GET /v1/apps/appstore-catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.
+// Filter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`). This is the admin-management flag rather than end-user catalog visibility — see `GET /v1/apps/appstore-catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.
 func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequest, opts ...operations.Option) (*operations.V1ListAppsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -380,7 +380,7 @@ func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequ
 // V1CreateApp - Create App
 // Create a custom app, or connect an integration.
 //
-// A body without `app_class_id` creates a custom app — one Lumos has no connector for, whose accounts you maintain yourself — and needs `label_override`, `category_override` and `description_override`. A body with `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.
+// Omit `app_class_id`, or send `custom`, to create a custom app — one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply when connecting an integration, that is, with any `app_class_id` other than `custom`.
 //
 // Either kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.
 //
@@ -1173,9 +1173,9 @@ func (s *Apps) V1GetApp(ctx context.Context, request operations.V1GetAppRequest,
 // V1UpdateApp - Update App
 // Update an app in place: its domain-specific metadata overrides, its integration credentials, or both.
 //
-// The **metadata** fields are merge-patched: an omitted field keeps its current value. The `*_override` fields are stored exactly as sent and returned as written; send `null` to clear one, after which the response returns `null` for it and the matching read-only field (`label`, `description` and so on) shows the app's default. `request_instructions` ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog. `post_approval_message` has no default, so `null` removes it.
+// The **metadata** fields are merge-patched: an omitted field keeps its current value. The `*_override` fields are stored exactly as sent and returned as written; send `null` to clear one, after which the response returns `null` for it and the matching read-only field (`label`, `description` and so on) shows the app's default. A custom app has no default name, description or category, so those three can't be cleared on one. `request_instructions` ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog. `post_approval_message` has no default, so `null` removes it.
 //
-// The **credential** fields — `auth`, `settings` and `version` — are one group that is *replaced*, not merge-patched, because Lumos cannot read your stored credentials back to merge against. Sending any of the three reconnects the integration with exactly what you send and discards the rest of the stored set, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A body with none of the three never touches credentials.
+// The **credential** fields — `auth`, `settings` and `version` — are one group that is *replaced*, not merge-patched. Sending any of the three reconnects the integration with exactly what you send and discards any credentials you leave out, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A custom app has no integration, so it refuses all three with 400. A body with none of the three never touches credentials.
 //
 // On a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.
 func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRequest, opts ...operations.Option) (*operations.V1UpdateAppResponse, error) {
@@ -1444,7 +1444,7 @@ func (s *Apps) V1UpdateApp(ctx context.Context, request operations.V1UpdateAppRe
 // V1DeleteApp - Delete App
 // Delete an app — a custom app or a connected integration.
 //
-// A custom app is deleted in the request and the call returns 204. If accounts or other Lumos data still reference it, its record is kept, disconnected, and the call returns 409.
+// A custom app is deleted in the request, together with its own App Store settings, admins and custom attribute configuration, and the call returns 204. If it still has accounts, or other Lumos data still references it, the app is kept and the call returns 409 with code `app.delete_blocked`.
 //
 // An integration is disconnected in the request, removing its stored credentials, and the call returns `202 Accepted` with an operation. Its accounts are removed and its record deleted in the background; poll `GET /v1/operations/{id}` until `done` is true. The operation fails with `app_delete.record_retained` if other Lumos data still references the record.
 //
@@ -3045,11 +3045,11 @@ func (s *Apps) ListAppEntitlements(ctx context.Context, request operations.ListA
 }
 
 // V1GetAppEntitlementAppStoreCatalog - Get App Entitlement AppStore Catalog
-// List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore-catalog`, scoped to one app_uuid instead of the tenant-wide catalog.
+// List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore-catalog`, scoped to one app_uuid instead of your whole organization's catalog.
 //
-// Filters: an entitlement's own `visible_in_appstore` setting, and GBAC (its own allowed requester groups if overridden, otherwise the app's). The parent app's own AppStore enrollment is checked too -- an empty page (not 404) is returned when the app isn't in the AppStore or has no AppStore presence.
+// Filters: an entitlement's own `visible_in_appstore` setting, and its allowed requester groups (its own if overridden, otherwise the app's). The parent app's own AppStore enrollment is checked too -- an empty page (not 404) is returned when the app isn't in the AppStore.
 //
-// `target_user_uuid` defaults to the caller
+// `target_user_uuid` defaults to the caller.
 func (s *Apps) V1GetAppEntitlementAppStoreCatalog(ctx context.Context, request operations.V1GetAppEntitlementAppStoreCatalogRequest, opts ...operations.Option) (*operations.V1GetAppEntitlementAppStoreCatalogResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4850,7 +4850,7 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 }
 
 // V1DisconnectApp - Disconnect App
-// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`.
+// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`. A custom app with no accounts is instead deleted together with its App Store settings, admins and custom attribute configuration, as `DELETE` does.
 //
 // Use `DELETE /v1/apps/{app_uuid}` instead to remove the app outright; unlike this operation it reports whether the record actually went away. Returns 404 if `app_uuid` is unknown in the caller's organization.
 func (s *Apps) V1DisconnectApp(ctx context.Context, request operations.V1DisconnectAppRequest, opts ...operations.Option) (*operations.V1DisconnectAppResponse, error) {

@@ -3,7 +3,7 @@
 package shared
 
 type DisconnectIntegrationOutput struct {
-	// The domain app UUID of the disconnected integration.
+	// The app's `id`.
 	ID string `json:"id"`
 	// The canonical integration identifier.
 	AppClassID string `json:"app_class_id"`

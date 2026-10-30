@@ -1096,6 +1096,8 @@ func (s *Workflows) UpdateWorkflow(ctx context.Context, request operations.Updat
 // Delete a workflow definition by ID.
 //
 // Unbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.
+//
+// An app's default workflow can't be deleted; that returns 409 `workflow.default_delete_not_allowed`.
 func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.DeleteWorkflowRequest, opts ...operations.Option) (*operations.DeleteWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

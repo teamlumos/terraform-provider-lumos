@@ -6,13 +6,13 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// OperationError - Terminal failure of an operation, in the standard error model.
+// OperationError - Terminal failure of an operation, in the standard error shape.
 type OperationError struct {
 	// Stable machine-readable failure code.
 	Code string `json:"code"`
 	// Human-readable failure description.
 	Message string `json:"message"`
-	// Item-level failures for bulk operations (e.g. per-row upload errors). Empty when the failure is not itemized.
+	// Item-level failures for bulk operations, such as one entry for each uploaded account that failed. Empty when the failure is not itemized.
 	Errors []APIErrorField `json:"errors,omitzero"`
 }
 

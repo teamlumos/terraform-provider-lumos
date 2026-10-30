@@ -6,10 +6,10 @@ import (
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
 )
 
-// AppStoreCatalogSettingsResponse - `AppStoreSettingsBase` as-is — no `in_app_store`/`catalog_visibility`.
+// AppStoreCatalogSettingsResponse - An app's AppStore settings as the AppStore catalog shows them.
 //
-// Used by the appstore-catalog endpoint, where both are implied by appearing in the
-// catalog at all (in the store, at FULL/LIMITED visibility) rather than informative.
+// `in_app_store` and `catalog_visibility` are left out: every app in the catalog is in the
+// AppStore, and the catalog has already applied its visibility.
 type AppStoreCatalogSettingsResponse struct {
 	// Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
@@ -17,7 +17,7 @@ type AppStoreCatalogSettingsResponse struct {
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
 	// When true, requesters may select more than one permission in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
-	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+	// UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 	AllowedRequesterGroupUuids []string        `json:"allowed_requester_group_uuids,omitzero"`
 	TimeBasedAccess            TimeBasedAccess `json:"time_based_access"`
 	// UUID of the inline webhook called to validate access requests before approval. Null means no validation webhook is configured.

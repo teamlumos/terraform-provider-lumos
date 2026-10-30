@@ -174,7 +174,7 @@ type Account struct {
 	UniqueIdentifier string `json:"unique_identifier"`
 	// The email of this account.
 	Email *string `json:"email,omitzero"`
-	// The ID of the user associated with this account.
+	// The ID of the user associated with this account, or `null` if the account matches no user.
 	UserID *string `json:"user_id,omitzero"`
 	// The time that Lumos first discovered this account, in ISO 8601 format.
 	DiscoveredAt *time.Time `json:"discovered_at,omitzero"`

@@ -5,7 +5,8 @@ package shared
 // AppUpdateInput - Body of `PATCH /v1/apps/{app_uuid}`: update metadata overrides and/or rotate credentials.
 //
 // Metadata fields are merge-patched; `auth`, `settings` and `version` are replaced as one
-// group, so `auth` is required whenever either of the others is sent.
+// group. The router checks that group against the app, since only it knows whether the
+// app is connected to an integration.
 type AppUpdateInput struct {
 	// Canonical identifier of an integration, e.g. `okta.com`. Setting it connects that integration with `auth`/`settings`; leaving it out, or setting `"custom"`, the value a custom app reads back with, creates a custom app. It can't be removed from a connected app's config.
 	AppClassID *string `json:"app_class_id,omitzero"`

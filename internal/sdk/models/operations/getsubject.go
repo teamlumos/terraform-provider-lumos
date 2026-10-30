@@ -9,13 +9,13 @@ import (
 )
 
 type GetSubjectRequest struct {
-	// The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`.
+	// The access review's ID.
 	ReviewUUID string `pathParam:"style=simple,explode=false,name=review_uuid"`
-	// The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`.
+	// The app review's ID. An app review is one app within the access review that `review_uuid` names.
 	AppReviewUUID string `pathParam:"style=simple,explode=false,name=app_review_uuid"`
 	// The subject's ID. A subject is one thing under review in the app review that `app_review_uuid` names: an account, or one entitlement an account holds.
 	SubjectUUID string `pathParam:"style=simple,explode=false,name=subject_uuid"`
-	// Comma-separated related data to load: `ai_recommendation`, `removal.evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null.
+	// Comma-separated related data to load: `ai_recommendation`, `evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 }
 

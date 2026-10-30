@@ -189,11 +189,9 @@ actions:
   - target: $["components"]["schemas"]["AppCreateInput","AppUpdateInput"]["properties"]["app_class_id"]
     update:
       x-speakeasy-param-force-new: true
-  # A create body without app_class_id creates a custom app, and the API
-  # rejects credentials for one. Checking it here fails the plan instead of
-  # the apply. A custom app reads back with app_class_id = "custom", so that
-  # value means a custom app too, and the appCreateBody hook keeps it out of
-  # the create body.
+  # A create body without app_class_id, or with "custom", creates a custom
+  # app, and the API rejects credentials for one. Checking it here fails the
+  # plan instead of the apply.
   - target: $["components"]["schemas"]["AppCreateInput"]["properties"]["app_class_id"]
     update:
       x-speakeasy-plan-validators: ConnectFieldsNeedIntegration
@@ -558,22 +556,10 @@ actions:
             "200":
               description: The entitlement is no longer listed in the App Store.
 
-  # The settings read returns groups and the webhook as {id} refs and
-  # time-based access options as {label, value_seconds}, while the write
-  # takes UUIDs and labels. One attribute needs one shape, so the read is
-  # reshaped into the write's fields. null stays null: for groups and
-  # time-based access, null means the entitlement inherits the app's
-  # setting, and an empty group list is a different setting.
-  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["allowed_requester_groups_override","request_validation_webhook"]
-    remove: true
-  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]
-    update:
-      allowed_requester_group_uuids_override:
-        anyOf: [{"type": "array", "items": {"type": "string"}, "format": "set"}, {"type": "null"}]
-        description: UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
-      request_validation_webhook_uuid:
-        anyOf: [{"type": "string"}, {"type": "null"}]
-        description: UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
+  # The settings read returns time-based access options as
+  # {label, value_seconds}, while the write takes labels. One attribute needs
+  # one shape, so the read keeps only the labels. null stays null: it means
+  # the entitlement inherits the app's options.
   - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["time_based_access_override"]["anyOf"]
     remove: true
   - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["time_based_access_override"]
@@ -584,13 +570,18 @@ actions:
       x-speakeasy-transform-from-api:
         jq: |
           if . == null then . else
-            .allowed_requester_group_uuids_override = (.allowed_requester_groups_override | if . == null then null else map(.id) end)
-            | .request_validation_webhook_uuid = .request_validation_webhook.id
-            | .time_based_access_override |= (if . == null then null else {options: (.options | map(.label))} end)
-            | del(.allowed_requester_groups_override, .request_validation_webhook)
+            .time_based_access_override |= (if . == null then null else {options: (.options | map(.label))} end)
           end
+  # What a null read back means, worded like the other settings
+  # descriptions.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["allowed_requester_group_uuids_override"]
+    update:
+      description: UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings"]["properties"]["request_validation_webhook_uuid"]
+    update:
+      description: UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
   # Requester groups have no order and no duplicates in the API.
-  - target: $["components"]["schemas"]["EntitlementAppStoreSettingsPatchInput"]["properties"]["allowed_requester_group_uuids_override"]["anyOf"][?@.type=="array"]
+  - target: $["components"]["schemas"]["EntitlementAppStoreSettings","EntitlementAppStoreSettingsPatchInput"]["properties"]["allowed_requester_group_uuids_override"]["anyOf"][?@.type=="array"]
     update:
       format: set
   # The spec's descriptions tell API callers what null and [] do in a
@@ -781,16 +772,6 @@ actions:
     update:
       x-speakeasy-entity: Group
       x-speakeasy-entity-description: One group in the organization, by ID.
-  # The spec makes a group's id nullable, which would make the lookup's id
-  # optional. Every group has one.
-  - target: $["components"]["schemas"]["Group"]["properties"]["id"]["anyOf"]
-    remove: true
-  - target: $["components"]["schemas"]["Group"]["properties"]["id"]
-    update:
-      type: string
-  - target: $["components"]["schemas"]["Group"]
-    update:
-      required: [id]
 
   # data "lumos_inline_webhooks"
   - target: $["paths"]["/v1/inline-webhooks"]["get"]

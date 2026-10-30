@@ -13,7 +13,7 @@ type ListAppEntitlementsRequest struct {
 	AppID string `pathParam:"style=simple,explode=false,name=app_uuid"`
 	// Fields to expand. Supported fields: approval_workflow_override, provisioning_workflow, deprovisioning_workflow, appstore_settings.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
-	// Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.
+	// Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. While the app isn't in the AppStore, all of its entitlements count as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.
 	VisibleInAppstore *bool `queryParam:"style=form,explode=true,name=visible_in_appstore"`
 	// Case-insensitive substring match against the entitlement's label. Resend it with each `page_token`.
 	Search *string `queryParam:"style=form,explode=true,name=search"`

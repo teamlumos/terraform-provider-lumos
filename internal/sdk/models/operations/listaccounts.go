@@ -141,10 +141,12 @@ type ListAccountsRequest struct {
 	DiscoveredAfter *time.Time `queryParam:"style=form,explode=true,name=discovered_after"`
 	// Filter to accounts discovered by these sources.
 	Sources []Sources `queryParam:"style=form,explode=true,name=sources"`
-	// Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it.
+	// Filter to accounts whose email (as reported by the app) matches this value. Matching is case-insensitive.
 	Email *string `queryParam:"style=form,explode=true,name=email"`
 	// Filter to accounts in these lifecycle statuses.
 	Status []Status `queryParam:"style=form,explode=true,name=status"`
+	// `true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter.
+	HasUser *bool `queryParam:"style=form,explode=true,name=has_user"`
 	// Fields to expand. Supported fields: app.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
@@ -204,6 +206,13 @@ func (l *ListAccountsRequest) GetStatus() []Status {
 		return nil
 	}
 	return l.Status
+}
+
+func (l *ListAccountsRequest) GetHasUser() *bool {
+	if l == nil {
+		return nil
+	}
+	return l.HasUser
 }
 
 func (l *ListAccountsRequest) GetExpand() []string {

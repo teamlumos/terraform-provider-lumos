@@ -7,7 +7,7 @@ import (
 )
 
 type TimeBasedAccess struct {
-	// Time-based access options available for this app. Null means the app uses the domain-level defaults.
+	// Time-based access options available for this app. Null means the app uses your organization's defaults.
 	Options []TimeBasedAccessOption `json:"options,omitzero"`
 	// Label of the option pre-selected when a user opens the request form. Null means no option is pre-selected.
 	Default *string `json:"default,omitzero"`

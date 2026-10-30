@@ -304,7 +304,7 @@ func (s *AccessRequests) V1ListAccessRequests(ctx context.Context, request opera
 // V1CreateAccessRequest - Create Access Request
 // Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.
 //
-// Name entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement that can't be requested through `app_id`, or through an app merged with it, returns `400 access_request.entitlement_not_requestable`.
+// Name entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement you can't request on `app_id` returns `400 access_request.entitlement_not_requestable`.
 func (s *AccessRequests) V1CreateAccessRequest(ctx context.Context, request shared.AccessRequestCreateInput, opts ...operations.Option) (*operations.V1CreateAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

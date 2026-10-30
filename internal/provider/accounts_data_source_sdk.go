@@ -112,6 +112,12 @@ func (r *AccountsDataSourceModel) ToOperationsListAccountsRequest(ctx context.Co
 			status = append(status, operations.Status(statusItem.ValueString()))
 		}
 	}
+	hasUser := new(bool)
+	if !r.HasUser.IsUnknown() && !r.HasUser.IsNull() {
+		*hasUser = r.HasUser.ValueBool()
+	} else {
+		hasUser = nil
+	}
 	out := operations.ListAccountsRequest{
 		AppID:            appID,
 		DiscoveredBefore: discoveredBefore,
@@ -119,6 +125,7 @@ func (r *AccountsDataSourceModel) ToOperationsListAccountsRequest(ctx context.Co
 		Sources:          sources,
 		Email:            email,
 		Status:           status,
+		HasUser:          hasUser,
 	}
 
 	return &out, diags

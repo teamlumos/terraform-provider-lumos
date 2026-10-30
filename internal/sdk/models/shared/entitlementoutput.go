@@ -134,10 +134,10 @@ func (e *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEnti
 type AppstoreSettingsEntitlementAppStoreSettings struct {
 	// Whether this entitlement is visible in the AppStore catalog.
 	VisibleInAppstore bool `json:"visible_in_appstore"`
-	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
-	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
 	// UUIDs of the groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means the entitlement inherits the app's groups.
 	AllowedRequesterGroupUuidsOverride []string `json:"allowed_requester_group_uuids_override,omitzero"`
+	// This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options.
+	TimeBasedAccessOverride *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput `json:"time_based_access_override,omitzero"`
 	// UUID of the inline webhook called to validate access requests for this entitlement. Null means the entitlement has no webhook of its own.
 	RequestValidationWebhookUUID *string `json:"request_validation_webhook_uuid,omitzero"`
 }
@@ -147,7 +147,7 @@ func (a AppstoreSettingsEntitlementAppStoreSettings) MarshalJSON() ([]byte, erro
 }
 
 func (a *AppstoreSettingsEntitlementAppStoreSettings) UnmarshalJSON(data []byte) error {
-	if out, err := utils.RunJQBytes(data, "if . == null then . else .allowed_requester_group_uuids_override = (.allowed_requester_groups_override | if . == null then null else map(.id) end) | .request_validation_webhook_uuid = .request_validation_webhook.id | .time_based_access_override |= (if . == null then null else { options: (.options | map(.label)) } end) | del(.allowed_requester_groups_override, .request_validation_webhook) end"); err != nil {
+	if out, err := utils.RunJQBytes(data, "if . == null then . else .time_based_access_override |= (if . == null then null else { options: (.options | map(.label)) } end) end"); err != nil {
 		return err
 	} else {
 		data = out
@@ -165,18 +165,18 @@ func (a *AppstoreSettingsEntitlementAppStoreSettings) GetVisibleInAppstore() boo
 	return a.VisibleInAppstore
 }
 
-func (a *AppstoreSettingsEntitlementAppStoreSettings) GetTimeBasedAccessOverride() *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput {
-	if a == nil {
-		return nil
-	}
-	return a.TimeBasedAccessOverride
-}
-
 func (a *AppstoreSettingsEntitlementAppStoreSettings) GetAllowedRequesterGroupUuidsOverride() []string {
 	if a == nil {
 		return nil
 	}
 	return a.AllowedRequesterGroupUuidsOverride
+}
+
+func (a *AppstoreSettingsEntitlementAppStoreSettings) GetTimeBasedAccessOverride() *EntitlementTimeBasedAccessOverridePatchInputTimeBasedAccessOverrideEntitlementTimeBasedAccessOverridePatchInput {
+	if a == nil {
+		return nil
+	}
+	return a.TimeBasedAccessOverride
 }
 
 func (a *AppstoreSettingsEntitlementAppStoreSettings) GetRequestValidationWebhookUUID() *string {
