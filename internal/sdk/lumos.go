@@ -86,8 +86,8 @@ type Lumos struct {
 	//   import, optionally with new scope filters. It returns 202 with an operation. Poll
 	//   `GET /v1/operations/{operation_id}` until `done` is true.
 	//
-	// You can't create, list, or update campaigns in v1 yet. These endpoints are enabled per
-	// organization, separately from the rest of v1, and return 404 where they aren't enabled.
+	// You can't create, list, or update campaigns in v1 yet. Lumos enables these endpoints per
+	// organization, separately from the rest of v1, so contact your Lumos representative to turn them on.
 	//
 	AccessReviews *AccessReviews
 	// An account is a person's presence inside a connected app. Accounts arrive through sync; you cannot
@@ -158,18 +158,19 @@ type Lumos struct {
 	// - `POST /v1/entitlements` creates a requestable entitlement on an app.
 	// - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
 	// - `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.
-	// - `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change
-	//   today, and sending any other field returns 400.
+	// - `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and
+	//   `custom_approval_message_override`. Sending any other field returns 400.
 	// - `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,
 	//   returning 409 with an `active_accounts` count.
 	//
 	// ### Per-entitlement workflows
 	//
 	// An entitlement can have its own approval override, provisioning workflow, and deprovisioning
-	// workflow, bound to it rather than to the whole app. Each has a GET and a PUT.
+	// workflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval
+	// override also has a DELETE that turns it off.
 	//
-	// Not every entitlement supports them. An entitlement with no request configuration behind it
-	// returns 404 with `Workflows are not available for this entitlement.` on all six.
+	// An entitlement that can't be requested returns 404 with
+	// `Workflows are not available for this entitlement.` on each of these endpoints.
 	//
 	Entitlements *Entitlements
 	// Lumos syncs groups from your connected apps, such as your Okta groups, and these endpoints read
@@ -206,8 +207,8 @@ type Lumos struct {
 	// update, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`
 	// removes an existing file without uploading a replacement.
 	//
-	// `DELETE` archives rather than destroys. The entry stops appearing in list results and stays
-	// recoverable.
+	// `DELETE` deletes a knowledge entry. It no longer appears in list results, and you can't restore
+	// it through the API.
 	//
 	// Pages here are small: `page_size` defaults to 10 and is clamped to 25.
 	//
@@ -271,7 +272,7 @@ type Lumos struct {
 	// Use either to check your setup.
 	//
 	// Both require an API token. A 200 means your token works and v1 is enabled for your organization.
-	// Where v1 isn't enabled, every `/v1` path returns 404.
+	// Lumos enables v1 per organization, so contact your Lumos representative to turn it on.
 	//
 	Meta *Meta
 	// An operation tracks work that continues after the request that started it has returned. These
@@ -298,8 +299,8 @@ type Lumos struct {
 	// If the app has been merged into another app, these endpoints work on the rules of the app it was
 	// merged into.
 	//
-	// These endpoints are enabled per organization, separately from the rest of v1, and return 404 where
-	// condition-based pre-approval rules aren't turned on.
+	// Lumos enables condition-based pre-approval rules per organization, separately from the rest of v1,
+	// so contact your Lumos representative to turn them on.
 	//
 	PreApprovalRules *PreApprovalRules
 	// A task is work Lumos assigns to a person or group, such as approving an access request or
@@ -348,8 +349,8 @@ type Lumos struct {
 	// offboarding. Only organizations with the multiple offboarding workflows feature can send it. For
 	// any other organization, a request that includes it returns 400.
 	//
-	// These endpoints are enabled per organization, separately from the rest of v1, and return 404 where
-	// they aren't enabled.
+	// Lumos enables these endpoints per organization, separately from the rest of v1, so contact your
+	// Lumos representative to turn them on.
 	//
 	LifecycleManagement *LifecycleManagement
 	// Users are the people in your organization. These endpoints read them, and the only thing they

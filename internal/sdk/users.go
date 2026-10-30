@@ -54,7 +54,7 @@ func newUsers(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// A page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.
+// A page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.
 func (s *Users) V1ListUsers(ctx context.Context, request operations.V1ListUsersRequest, opts ...operations.Option) (*operations.V1ListUsersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

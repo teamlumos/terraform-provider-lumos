@@ -2,10 +2,7 @@
 
 package shared
 
-// EntitlementRefInput - The write-side entitlement ref: unknown fields reject instead of ignore.
-//
-// The shared ref stays open because it also serializes in responses, where a
-// closed schema would break generated clients on additive fields.
+// EntitlementRefInput - A reference to an entitlement. Unknown fields return 400.
 type EntitlementRefInput struct {
 	// The UUID of the entitlement.
 	ID string `json:"id"`

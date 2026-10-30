@@ -27,18 +27,19 @@ import (
 //   - `POST /v1/entitlements` creates a requestable entitlement on an app.
 //   - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
 //   - `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.
-//   - `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change
-//     today, and sending any other field returns 400.
+//   - `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and
+//     `custom_approval_message_override`. Sending any other field returns 400.
 //   - `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,
 //     returning 409 with an `active_accounts` count.
 //
 // ### Per-entitlement workflows
 //
 // An entitlement can have its own approval override, provisioning workflow, and deprovisioning
-// workflow, bound to it rather than to the whole app. Each has a GET and a PUT.
+// workflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval
+// override also has a DELETE that turns it off.
 //
-// Not every entitlement supports them. An entitlement with no request configuration behind it
-// returns 404 with `Workflows are not available for this entitlement.` on all six.
+// An entitlement that can't be requested returns 404 with
+// `Workflows are not available for this entitlement.` on each of these endpoints.
 type Entitlements struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -58,7 +59,7 @@ func newEntitlements(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// A page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.
+// A page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.
 //
 // A request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.
 func (s *Entitlements) ListEntitlements(ctx context.Context, request operations.ListEntitlementsRequest, opts ...operations.Option) (*operations.ListEntitlementsResponse, error) {
@@ -882,7 +883,7 @@ func (s *Entitlements) GetEntitlement(ctx context.Context, request operations.Ge
 // UpdateEntitlement - Update Entitlement
 // Update an entitlement's `label`, `description_override` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field, including the read-only `description`, returns 400.
 //
-// Only entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.
+// Only entitlements created in Lumos (`source` is `manual`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` on an entitlement that can't be requested returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.
 //
 // Returns 404 if the entitlement is unknown in the caller's organization.
 func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations.UpdateEntitlementRequest, opts ...operations.Option) (*operations.UpdateEntitlementResponse, error) {
@@ -1145,7 +1146,7 @@ func (s *Entitlements) UpdateEntitlement(ctx context.Context, request operations
 }
 
 // DeleteEntitlement - Delete Entitlement
-// Delete an entitlement, along with the request configuration that made it requestable in the AppStore.
+// Delete an entitlement.
 //
 // Refuses while anyone still holds the entitlement: that returns 409, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.
 func (s *Entitlements) DeleteEntitlement(ctx context.Context, request operations.DeleteEntitlementRequest, opts ...operations.Option) (*operations.DeleteEntitlementResponse, error) {
@@ -1640,7 +1641,7 @@ func (s *Entitlements) ListEntitlementAccounts(ctx context.Context, request oper
 }
 
 // GetEntitlementAppStoreSettings - Get Entitlement AppStore Settings
-// Get an entitlement's AppStore-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).
+// Get an entitlement's AppStore-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or the entitlement has no AppStore settings).
 func (s *Entitlements) GetEntitlementAppStoreSettings(ctx context.Context, request operations.GetEntitlementAppStoreSettingsRequest, opts ...operations.Option) (*operations.GetEntitlementAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1892,7 +1893,7 @@ func (s *Entitlements) GetEntitlementAppStoreSettings(ctx context.Context, reque
 }
 
 // UpdateEntitlementAppStoreSettings - Update Entitlement AppStore Settings
-// Update an entitlement's AppStore-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).
+// Update an entitlement's AppStore-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or the entitlement has no AppStore settings).
 func (s *Entitlements) UpdateEntitlementAppStoreSettings(ctx context.Context, request operations.UpdateEntitlementAppStoreSettingsRequest, opts ...operations.Option) (*operations.UpdateEntitlementAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2155,7 +2156,7 @@ func (s *Entitlements) UpdateEntitlementAppStoreSettings(ctx context.Context, re
 // GetEntitlementApprovalWorkflowOverride - Get Entitlement Approval Workflow Override
 // Get the approval workflow bound to this one entitlement, overriding the approval workflow on its app.
 //
-// Returns 404 when no override is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all (`Workflows are not available for this entitlement.`).
+// Returns 404 when no override is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested (`Workflows are not available for this entitlement.`).
 func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Context, request operations.GetEntitlementApprovalWorkflowOverrideRequest, opts ...operations.Option) (*operations.GetEntitlementApprovalWorkflowOverrideResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2409,7 +2410,7 @@ func (s *Entitlements) GetEntitlementApprovalWorkflowOverride(ctx context.Contex
 // SetEntitlementApprovalWorkflowOverride - Set Entitlement Approval Workflow Override
 // Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.
 //
-// The workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. Entitlements with no request configuration behind them cannot take an override and return 404.
+// The workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. An entitlement that can't be requested can't take an override and returns 404.
 func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Context, request operations.SetEntitlementApprovalWorkflowOverrideRequest, opts ...operations.Option) (*operations.SetEntitlementApprovalWorkflowOverrideResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2668,7 +2669,7 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 }
 
 // DeleteEntitlementApprovalWorkflowOverride - Remove Entitlement Approval Workflow Override
-// Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. Entitlements with no request configuration behind them return 404.
+// Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. An entitlement that can't be requested returns 404.
 func (s *Entitlements) DeleteEntitlementApprovalWorkflowOverride(ctx context.Context, request operations.DeleteEntitlementApprovalWorkflowOverrideRequest, opts ...operations.Option) (*operations.DeleteEntitlementApprovalWorkflowOverrideResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2903,7 +2904,7 @@ func (s *Entitlements) DeleteEntitlementApprovalWorkflowOverride(ctx context.Con
 // GetEntitlementProvisioningWorkflow - Get Entitlement Provisioning Workflow
 // Get the provisioning workflow bound to this one entitlement, which takes the place of the default provisioning workflow on its app.
 //
-// Returns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all.
+// Returns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested.
 func (s *Entitlements) GetEntitlementProvisioningWorkflow(ctx context.Context, request operations.GetEntitlementProvisioningWorkflowRequest, opts ...operations.Option) (*operations.GetEntitlementProvisioningWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3157,7 +3158,9 @@ func (s *Entitlements) GetEntitlementProvisioningWorkflow(ctx context.Context, r
 // SetEntitlementProvisioningWorkflow - Set Entitlement Provisioning Workflow
 // Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.
 //
-// The workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.
+// The workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.
+//
+// A workflow can be bound to one entitlement, and must include the step that grants this entitlement, aimed at it.
 func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, request operations.SetEntitlementProvisioningWorkflowRequest, opts ...operations.Option) (*operations.SetEntitlementProvisioningWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3418,7 +3421,7 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 // GetEntitlementDeprovisioningWorkflow - Get Entitlement Deprovisioning Workflow
 // Get the deprovisioning workflow bound to this one entitlement, which takes the place of the default deprovisioning workflow on its app.
 //
-// Returns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all.
+// Returns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested.
 func (s *Entitlements) GetEntitlementDeprovisioningWorkflow(ctx context.Context, request operations.GetEntitlementDeprovisioningWorkflowRequest, opts ...operations.Option) (*operations.GetEntitlementDeprovisioningWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3672,7 +3675,9 @@ func (s *Entitlements) GetEntitlementDeprovisioningWorkflow(ctx context.Context,
 // SetEntitlementDeprovisioningWorkflow - Set Entitlement Deprovisioning Workflow
 // Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.
 //
-// The workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.
+// The workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.
+//
+// A workflow can be bound to one entitlement.
 func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context, request operations.SetEntitlementDeprovisioningWorkflowRequest, opts ...operations.Option) (*operations.SetEntitlementDeprovisioningWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

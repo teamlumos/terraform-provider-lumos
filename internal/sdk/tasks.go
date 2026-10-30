@@ -1323,6 +1323,9 @@ func (s *Tasks) DismissTask(ctx context.Context, request operations.DismissTaskR
 // the returned `action_type` here. `transition_to` is optional when the action has one
 // target. It must be one of the transitions that action lists, otherwise the request is
 // rejected with `400 task.transition_not_allowed`.
+//
+// An action the task doesn't offer in its current status, such as approving a task that is
+// already approved, returns `400 task.no_action_for_status`.
 func (s *Tasks) PerformTaskAction(ctx context.Context, request operations.PerformTaskActionRequest, opts ...operations.Option) (*operations.PerformTaskActionResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

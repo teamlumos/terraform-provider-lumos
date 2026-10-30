@@ -42,11 +42,11 @@ func newAccounts(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks
 }
 
 // ListAccounts - List Accounts
-// List all accounts associated with apps at your company.
+// List all accounts associated with apps at your company, including accounts that match no user (their `user_id` is `null`), such as service accounts or uploaded accounts for people Lumos doesn't know. Use `has_user` to narrow the list to one kind.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// Without `expand=app` the `app` key is omitted from each item, matching the unversioned surface. Returns 404 if `app_id` is unknown.
+// Without `expand=app` the `app` key is omitted from each item. Returns 404 if `app_id` is unknown.
 func (s *Accounts) ListAccounts(ctx context.Context, request operations.ListAccountsRequest, opts ...operations.Option) (*operations.ListAccountsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -605,7 +605,7 @@ func (s *Accounts) ListAccountEntitlements(ctx context.Context, request operatio
 }
 
 // V1UploadAccounts - Upload Accounts
-// Uploads accounts to an app. The upload runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true to follow its status.
+// Uploads accounts to an app. The upload runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true to follow its status. Uploaded accounts whose email matches no user are still ingested; `GET /v1/accounts` lists them with a `null` `user_id`.
 func (s *Accounts) V1UploadAccounts(ctx context.Context, request shared.AccountsUploadV1Input, opts ...operations.Option) (*operations.V1UploadAccountsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

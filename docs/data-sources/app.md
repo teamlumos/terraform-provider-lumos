@@ -45,16 +45,16 @@ output "app_in_app_store" {
 - `approval_workflow` (Attributes) The approval workflow for this app. Returns {id} by default; expand with expand=approval_workflow for the full workflow object. Omitted entirely if the caller lacks read access to approval workflow templates. (see [below for nested schema](#nestedatt--approval_workflow))
 - `appstore_settings` (Attributes) AppStore membership and settings. Present when the caller has read access to AppStore items. Returns {in_app_store} by default; expand with expand=appstore_settings for the full settings object. (see [below for nested schema](#nestedatt--appstore_settings))
 - `category` (String) The category this app belongs to.
-- `category_override` (String) The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category.
+- `category_override` (String) The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category. A custom app has no default category, so on one this is always the category it shows.
 - `custom_attributes` (Attributes Map) Custom attributes configured on this app, keyed by the attribute's name. (see [below for nested schema](#nestedatt--custom_attributes))
 - `default_deprovisioning_workflow` (Attributes) The default deprovisioning workflow for this app. Returns {id} by default; expand with expand=default_deprovisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_deprovisioning_workflow))
 - `default_provisioning_workflow` (Attributes) The default provisioning workflow for this app. Returns {id} by default; expand with expand=default_provisioning_workflow for the full workflow object. Omitted entirely if the caller lacks read access to AppStore item workflows. (see [below for nested schema](#nestedatt--default_provisioning_workflow))
 - `description` (String) A description of the app.
-- `description_override` (String) The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description.
+- `description_override` (String) The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description. A custom app has no default description, so on one this is always the description it shows.
 - `disconnected` (Boolean) Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 - `instance_id` (String) The app-instance identifier distinguishing multiple instances of the same app.
 - `label` (String) The display name of the app.
-- `label_override` (String) The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name.
+- `label_override` (String) The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name. A custom app has no default name, so on one this is always the name it shows.
 - `logo_url` (String) URL of the app logo image.
 - `logo_url_override` (String) The logo URL set for this app in your organization, exactly as written. `logo_url` shows it when set. Null when the app uses its default logo.
 - `post_approval_message` (String) Custom message shown to the requester after their access request is approved. Omitted when none is set.
@@ -78,7 +78,7 @@ Read-Only:
 
 - `allow_multiple_permission_selection` (Boolean) When true, requesters may select more than one permission in a single request.
 - `allow_permission_selection` (Boolean) When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
-- `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+- `allowed_requester_group_uuids` (Set of String) UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 - `catalog_visibility` (String) Visibility of the app within the catalog. "visible" — shown in browse and search; "search-only" — returned only by search, not in browse; "hidden" — enrolled but not visible to requesters.
 - `custom_intake_fields` (Attributes Set) Custom form questions shown to requesters before they submit an access request. Null means no custom fields are configured. (see [below for nested schema](#nestedatt--appstore_settings--custom_intake_fields))
 - `default_entitlement` (Attributes) The entitlement pre-selected by default when a user opens the request form. Null means no default is set. (see [below for nested schema](#nestedatt--appstore_settings--default_entitlement))

@@ -70,7 +70,7 @@ func (r *AccessPolicyDataSource) Schema(ctx context.Context, req datasource.Sche
 									},
 								},
 							},
-							Description: `The entitlements granted for this app. A grant whose underlying request configuration is not yet linked to an entitlement is omitted, so this is not always the policy's complete set of grants. When more than one request configuration resolves to the same entitlement, only one entry is shown for it. Updating a policy replaces its apps wholesale, so an update built from this response drops any grant that was omitted or collapsed here.`,
+							Description: `The entitlements granted for this app.`,
 						},
 						"id": schema.StringAttribute{
 							Computed:    true,

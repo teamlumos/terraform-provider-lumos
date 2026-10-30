@@ -35,7 +35,7 @@ output "provisioning_steps" {
 
 - `app_id` (String) The app to list steps for. Omit to list only app-independent steps.
 - `search` (String) Case-insensitive substring filter over step names.
-- `type` (String) The type of workflow the steps are for. Some steps work in only one type: `manual_provisioning_task` in `account-provisioning` and `manual_deprovisioning_task` in `account-deprovisioning`. Without `type`, only the steps every type accepts are listed.
+- `type` (String) The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is not narrowed to one type and can hold steps the type you create refuses, so pass the type you will create.
 
 ### Read-Only
 

@@ -134,7 +134,7 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 							speakeasy_setplanmodifier.SuppressDiff(speakeasy_setplanmodifier.ExplicitSuppress),
 						},
 						ElementType: types.StringType,
-						Description: `UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.`,
+						Description: `UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.`,
 					},
 					"catalog_visibility": schema.StringAttribute{
 						Computed: true,

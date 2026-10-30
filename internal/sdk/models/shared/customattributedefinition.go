@@ -18,7 +18,6 @@ const (
 	AttributeTypeJSON         AttributeType = "json"
 	AttributeTypeUser         AttributeType = "user"
 	AttributeTypeGroup        AttributeType = "group"
-	AttributeTypeMultiSelect  AttributeType = "multi-select"
 	AttributeTypeSingleSelect AttributeType = "single-select"
 )
 
@@ -44,8 +43,6 @@ func (e *AttributeType) UnmarshalJSON(data []byte) error {
 	case "user":
 		fallthrough
 	case "group":
-		fallthrough
-	case "multi-select":
 		fallthrough
 	case "single-select":
 		*e = AttributeType(v)
@@ -109,13 +106,12 @@ func (e *SourceType) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// CustomAttributeDefinition - A custom-attribute definition (the schema behind custom-attribute values).
+// CustomAttributeDefinition - A custom-attribute definition: the schema behind custom-attribute values.
 //
-// Unified by “label“: one record per logical attribute (the N per-integration
-// “CustomAttributesConfig“ rows that share a label are coalesced into one). “label“ is the
-// stable public reference — there is no per-row “uuid“ in V1.
+// There is one definition per `label`, unified across every app that supplies it. `label` is
+// the stable reference; definitions have no `uuid`.
 type CustomAttributeDefinition struct {
-	// Stable public reference (unique per domain after unification).
+	// Stable reference, unique in your organization.
 	Label string `json:"label"`
 	// Representative machine/synced attribute name.
 	Name *string `json:"name,omitzero"`

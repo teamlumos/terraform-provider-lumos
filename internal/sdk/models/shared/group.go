@@ -33,7 +33,7 @@ func (e *GroupLifecycle) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Group - A v1 group, unprefixed on purpose (see `codegen_openapi_v1.py`).
+// Group - A group in your organization.
 type Group struct {
 	// The ID of this group.
 	ID string `json:"id"`

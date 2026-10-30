@@ -352,7 +352,7 @@ func (s *AccessPolicies) V1ListAccessPolicies(ctx context.Context, request opera
 //
 // An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
 //
-// A policy is created as a draft unless `status` is `published`. A draft can't be enabled, so sending `is_enabled: true` without `status: published` returns 400. Creating a published policy whose condition matches another published policy also returns 400. A draft with the same condition is allowed.
+// A policy is created as a draft unless `status` is `published`. A draft can't be enabled, so sending `is_enabled: true` without `status: published` returns 400. Creating a published policy whose condition matches another published policy also returns 400. A draft with the same condition is allowed. When your organization requires approval before publishing, `status: published` returns 400.
 //
 // Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
 func (s *AccessPolicies) V1CreateAccessPolicy(ctx context.Context, request shared.AccessPolicyInput, opts ...operations.Option) (*operations.V1CreateAccessPolicyResponse, error) {
@@ -1100,7 +1100,7 @@ func (s *AccessPolicies) V1DeleteAccessPolicy(ctx context.Context, request opera
 }
 
 // V1UpdateAccessPolicy - Update Access Policy
-// Replace an access policy. The `apps` you send become the policy's complete set of grants; anything omitted is removed, including grants that `GET` leaves out or collapses (see `apps[].entitlements`). Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
+// Replace an access policy. The `apps` you send become the policy's complete set of grants; anything omitted is removed. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
 //
 // An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
 func (s *AccessPolicies) V1UpdateAccessPolicy(ctx context.Context, request operations.V1UpdateAccessPolicyRequest, opts ...operations.Option) (*operations.V1UpdateAccessPolicyResponse, error) {
@@ -1361,7 +1361,7 @@ func (s *AccessPolicies) V1UpdateAccessPolicy(ctx context.Context, request opera
 }
 
 // V1PatchAccessPolicy - Patch Access Policy
-// Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant, including grants that `GET` omits or collapses (see `apps[].entitlements`). No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with a different `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
+// Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant. No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with a different `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.
 //
 // An `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.
 func (s *AccessPolicies) V1PatchAccessPolicy(ctx context.Context, request operations.V1PatchAccessPolicyRequest, opts ...operations.Option) (*operations.V1PatchAccessPolicyResponse, error) {

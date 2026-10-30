@@ -29,7 +29,7 @@ output "app_attribute_labels" {
 ### Optional
 
 - `app_id` (String) UUID of an app. Returns only the definitions that app supplies.
-- `attribute_type` (String) Filter by the type of value the attribute holds. must be one of ["string", "boolean", "integer", "datetime", "json", "user", "group", "multi-select", "single-select"]
+- `attribute_type` (String) Filter by the type of value the attribute holds. must be one of ["string", "boolean", "integer", "datetime", "json", "user", "group", "single-select"]
 - `config_type` (String) Filter by the entity type the attribute attaches to. Only `user` definitions are listed. must be "user"
 - `label` (String) Return the single unified definition for this exact label.
 - `source_type` (String) Filter by where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos. must be one of ["synced", "native", "ai-generated"]
@@ -45,6 +45,6 @@ Read-Only:
 
 - `attribute_type` (String) The type of value the attribute holds.
 - `config_type` (String) Entity type this attribute attaches to. Always `user`.
-- `label` (String) Stable public reference (unique per domain after unification).
+- `label` (String) Stable reference, unique in your organization.
 - `name` (String) Representative machine/synced attribute name.
 - `source_type` (String) Where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
