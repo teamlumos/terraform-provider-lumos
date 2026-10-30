@@ -163,7 +163,7 @@
           "Access Policies"
         ],
         "summary": "Create Access Policy",
-        "description": "Create an access policy. Returns 201 with the created policy. Grant entitlements by Entitlement UUID under `apps[].entitlements`, or leave them out to grant access to the app itself. Send `is_everyone_condition: true` for a policy that applies to everyone, or an `access_condition` for one that doesn't; sending both returns 400. The everyone condition a read returns in `access_condition` counts as `is_everyone_condition: true`, so a body built from a read can be sent back as is.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.\n\nA policy is created as a draft unless `status` is `published`. A draft can't be enabled, so sending `is_enabled: true` without `status: published` returns 400. Creating a published policy whose condition matches another published policy also returns 400. A draft with the same condition is allowed.\n\nListing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.",
+        "description": "Create an access policy. Returns 201 with the created policy. Grant entitlements by Entitlement UUID under `apps[].entitlements`, or leave them out to grant access to the app itself. Send `is_everyone_condition: true` for a policy that applies to everyone, or an `access_condition` for one that doesn't; sending both returns 400. The everyone condition a read returns in `access_condition` counts as `is_everyone_condition: true`, so a body built from a read can be sent back as is.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.\n\nA policy is created as a draft unless `status` is `published`. A draft can't be enabled, so sending `is_enabled: true` without `status: published` returns 400. Creating a published policy whose condition matches another published policy also returns 400. A draft with the same condition is allowed. When your organization requires approval before publishing, `status: published` returns 400.\n\nListing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.",
         "operationId": "v1CreateAccessPolicy",
         "security": [
           {
@@ -479,7 +479,7 @@
           "Access Policies"
         ],
         "summary": "Update Access Policy",
-        "description": "Replace an access policy. The `apps` you send become the policy's complete set of grants; anything omitted is removed, including grants that `GET` leaves out or collapses (see `apps[].entitlements`). Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.",
+        "description": "Replace an access policy. The `apps` you send become the policy's complete set of grants; anything omitted is removed. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.",
         "operationId": "v1UpdateAccessPolicy",
         "security": [
           {
@@ -597,7 +597,7 @@
           "Access Policies"
         ],
         "summary": "Patch Access Policy",
-        "description": "Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant, including grants that `GET` omits or collapses (see `apps[].entitlements`). No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with a different `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.",
+        "description": "Update an access policy; any field you omit keeps its value. `apps`, when sent, replaces the policy's complete set of grants wholesale, so leave it out to keep every grant. No field can be `null`. Send `is_everyone_condition: true` to reset the condition to everyone; sending it together with a different `access_condition` returns 400. Listing an app twice, or an entitlement twice under one app, returns 400. An app or entitlement that doesn't resolve returns 404 without saying which.\n\nAn `access_condition` may use only the attributes and operators the Lumos condition builder offers, with one operator per attribute, and a date-time value needs a time zone offset (`2026-01-01T00:00:00Z`). Any other condition returns 400 naming each problem.",
         "operationId": "v1PatchAccessPolicy",
         "security": [
           {
@@ -986,7 +986,7 @@
           "Access Requests"
         ],
         "summary": "Create Access Request",
-        "description": "Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.\n\nName entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement that can't be requested through `app_id`, or through an app merged with it, returns `400 access_request.entitlement_not_requestable`.",
+        "description": "Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.\n\nName entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement you can't request on `app_id` returns `400 access_request.entitlement_not_requestable`.",
         "operationId": "v1CreateAccessRequest",
         "security": [
           {
@@ -1363,10 +1363,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`.",
+              "description": "The access review's ID.",
               "title": "Review Uuid"
             },
-            "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`."
+            "description": "The access review's ID."
           },
           {
             "name": "app_review_uuid",
@@ -1374,10 +1374,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`.",
+              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names.",
               "title": "App Review Uuid"
             },
-            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`."
+            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names."
           }
         ],
         "requestBody": {
@@ -1432,7 +1432,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no campaign with this UUID in your domain (`access_review.not_found`), or the campaign holds no app review with this UUID (`app_review.not_found`). An app review under a different campaign reports the latter.",
+            "description": "Not found \u2014 no campaign with this UUID in your organization (`access_review.not_found`), or the campaign holds no app review with this UUID (`app_review.not_found`). An app review under a different campaign reports the latter.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1480,7 +1480,7 @@
           "Access Reviews"
         ],
         "summary": "List Subject Filters",
-        "description": "List the fields this app review's subjects can be filtered on, each with its datatype, the operators that datatype permits, and \u2014 for a field drawn from a fixed set \u2014 the values it accepts.\n\nRead this before building a `filters` array: the filterable set depends on what the app's data carries and on how far the review has progressed, so it is only known at runtime. A decision filter appears once the review has launched, and a removal filter once removals have started.\n\nCopy an option's `value` verbatim into `values`; `label` is display-only and is rejected as a value. Values are always strings, so a numeric or date argument is `[\"90\"]` rather than `[90]`.\n\nDeliberately unpaginated: the response is one discovery document whose size is bounded by the app review's schema rather than by its data.\n\nFields whose values are open-ended \u2014 permission, reviewer, manager, team, title, entitlement type \u2014 are not listed here yet.",
+        "description": "List the fields this app review's subjects can be filtered on, each with its datatype, the operators that datatype permits, and \u2014 for a field drawn from a fixed set \u2014 the values it accepts.\n\nRead this before building a `filters` array: the filterable set depends on what the app's data carries and on how far the review has progressed, so it is only known at runtime. A decision filter appears once the review has launched, and a removal filter once removals have started.\n\nCopy an option's `value` verbatim into `values`; `label` is display-only and is rejected as a value. Values are always strings, so a numeric or date argument is `[\"90\"]` rather than `[90]`.\n\nThis list isn't paginated.\n\nFields whose values are open-ended \u2014 permission, reviewer, manager, team, title, entitlement type \u2014 are not listed here yet.",
         "operationId": "listSubjectFilters",
         "security": [
           {
@@ -1494,10 +1494,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`.",
+              "description": "The access review's ID.",
               "title": "Review Uuid"
             },
-            "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`."
+            "description": "The access review's ID."
           },
           {
             "name": "app_review_uuid",
@@ -1505,10 +1505,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`.",
+              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names.",
               "title": "App Review Uuid"
             },
-            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`."
+            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names."
           }
         ],
         "responses": {
@@ -1553,7 +1553,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no campaign with this UUID in your domain (`access_review.not_found`), or the campaign holds no app review with this UUID (`app_review.not_found`). An app review under a different campaign reports the latter.",
+            "description": "Not found \u2014 no campaign with this UUID in your organization (`access_review.not_found`), or the campaign holds no app review with this UUID (`app_review.not_found`). An app review under a different campaign reports the latter.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1601,7 +1601,7 @@
           "Access Reviews"
         ],
         "summary": "Get Subject",
-        "description": "Read one subject: what is being reviewed, who is reviewing it, what they decided, and what removal that decision led to.\n\nWhat a subject is follows from the app review's type \u2014 an accounts review reviews accounts, an entitlements review reviews the entitlements an account holds \u2014 and `subject_type` says which. An entitlement subject also names the account it belongs to, so one shape serves both.\n\n`removal.status` is read from the workflow carrying the removal out rather than from a stored column, so it is current while the removal is still running.\n\n`removal.error` says which capability failed and what the integration reported. It does not say whether retrying will help; a removal waiting on a person clears only once that person acts.",
+        "description": "Read one subject: what is being reviewed, who is reviewing it, what they decided, and what removal that decision led to.\n\nWhat a subject is follows from the app review's type \u2014 an accounts review reviews accounts, an entitlements review reviews the entitlements an account holds \u2014 and `subject_type` says which. An entitlement subject also names the account it belongs to, so one shape serves both.\n\n`removal.status` is current even while the removal runs. Evidence is reported beside `removal` rather than in it (`is_evidence_attached`, `evidence_required_by`, and the files under `expand=evidence`), since an approved subject can owe evidence too.\n\n`removal.error` says which capability failed and what the integration reported. It does not say whether retrying will help; a removal waiting on a person clears only once that person acts.",
         "operationId": "getSubject",
         "security": [
           {
@@ -1615,10 +1615,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`.",
+              "description": "The access review's ID.",
               "title": "Review Uuid"
             },
-            "description": "The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`."
+            "description": "The access review's ID."
           },
           {
             "name": "app_review_uuid",
@@ -1626,10 +1626,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`.",
+              "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names.",
               "title": "App Review Uuid"
             },
-            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`."
+            "description": "The app review's ID. An app review is one app within the access review that `review_uuid` names."
           },
           {
             "name": "subject_uuid",
@@ -1658,10 +1658,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Comma-separated related data to load: `ai_recommendation`, `removal.evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null.",
+              "description": "Comma-separated related data to load: `ai_recommendation`, `evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null.",
               "title": "Expand"
             },
-            "description": "Comma-separated related data to load: `ai_recommendation`, `removal.evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null."
+            "description": "Comma-separated related data to load: `ai_recommendation`, `evidence`, `removal.itsm_ticket`. A field not asked for is absent from the response rather than null."
           }
         ],
         "responses": {
@@ -1706,7 +1706,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no campaign with this UUID in your domain (`access_review.not_found`), the campaign holds no app review with this UUID (`app_review.not_found`), or the app review holds no subject with this UUID (`subject.not_found`). A resource under a different parent reports the same code as one that never existed.",
+            "description": "Not found \u2014 no campaign with this UUID in your organization (`access_review.not_found`), the campaign holds no app review with this UUID (`app_review.not_found`), or the app review holds no subject with this UUID (`subject.not_found`). A resource under a different parent reports the same code as one that never existed.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1754,7 +1754,7 @@
           "Accounts"
         ],
         "summary": "List Accounts",
-        "description": "List all accounts associated with apps at your company.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nWithout `expand=app` the `app` key is omitted from each item, matching the unversioned surface. Returns 404 if `app_id` is unknown.",
+        "description": "List all accounts associated with apps at your company, including accounts that match no user (their `user_id` is `null`), such as service accounts or uploaded accounts for people Lumos doesn't know. Use `has_user` to narrow the list to one kind.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nWithout `expand=app` the `app` key is omitted from each item. Returns 404 if `app_id` is unknown.",
         "operationId": "listAccounts",
         "security": [
           {
@@ -1871,10 +1871,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it.",
+              "description": "Filter to accounts whose email (as reported by the app) matches this value. Matching is case-insensitive.",
               "title": "Email"
             },
-            "description": "Filter to accounts whose email (as reported by the app) matches this value; matching is case-insensitive, per the database collation. Note: the unversioned GET /accounts silently ignores this parameter; only /v1 filters by it."
+            "description": "Filter to accounts whose email (as reported by the app) matches this value. Matching is case-insensitive."
           },
           {
             "name": "status",
@@ -1909,6 +1909,24 @@
               "title": "Status"
             },
             "description": "Filter to accounts in these lifecycle statuses."
+          },
+          {
+            "name": "has_user",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter.",
+              "title": "Has User"
+            },
+            "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter."
           },
           {
             "name": "expand",
@@ -2215,7 +2233,7 @@
           "Accounts"
         ],
         "summary": "Upload Accounts",
-        "description": "Uploads accounts to an app. The upload runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true to follow its status.",
+        "description": "Uploads accounts to an app. The upload runs asynchronously: the request returns `202 Accepted` with an operation. Poll `GET /v1/operations/{id}` until `done` is true to follow its status. Uploaded accounts whose email matches no user are still ingested; `GET /v1/accounts` lists them with a `null` `user_id`.",
         "operationId": "v1UploadAccounts",
         "requestBody": {
           "content": {
@@ -2638,7 +2656,7 @@
           "Apps"
         ],
         "summary": "List Apps",
-        "description": "List apps in the caller's organization.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nFilter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`) in place of the deprecated `GET /appstore/apps`. This is the admin-management flag (mirrors the AppStore admin table) rather than end-user catalog visibility \u2014 see `GET /v1/apps/appstore-catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.",
+        "description": "List apps in the caller's organization.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nFilter to apps flagged for the AppStore with `in_app_store=true` (or apps not so flagged with `in_app_store=false`). This is the admin-management flag rather than end-user catalog visibility \u2014 see `GET /v1/apps/appstore-catalog` for the set of apps actually visible to a given user's AppStore. Per-entitlement catalog visibility is a separate setting: `visible_in_appstore` on `GET /v1/apps/{app_uuid}/entitlements`.",
         "operationId": "v1ListApps",
         "security": [
           {
@@ -2886,7 +2904,7 @@
           "Apps"
         ],
         "summary": "Create App",
-        "description": "Create a custom app, or connect an integration.\n\nA body without `app_class_id` creates a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself \u2014 and needs `label_override`, `category_override` and `description_override`. A body with `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.\n\nEither kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
+        "description": "Create a custom app, or connect an integration.\n\nOmit `app_class_id`, or send `custom`, to create a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.\n\nEither kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
         "operationId": "v1CreateApp",
         "security": [
           {
@@ -2935,7 +2953,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2945,7 +2963,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no integration with this `app_class_id` is available to your domain.",
+            "description": "Not found \u2014 no integration with this `app_class_id` is available to your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2955,7 +2973,7 @@
             }
           },
           "409": {
-            "description": "Conflict \u2014 an instance for this app already exists in the domain.",
+            "description": "Conflict \u2014 an instance for this app already exists in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3318,7 +3336,7 @@
           "Apps"
         ],
         "summary": "Update App",
-        "description": "Update an app in place: its domain-specific metadata overrides, its integration credentials, or both.\n\nThe **metadata** fields are merge-patched: an omitted field keeps its current value. The `*_override` fields are stored exactly as sent and returned as written; send `null` to clear one, after which the response returns `null` for it and the matching read-only field (`label`, `description` and so on) shows the app's default. `request_instructions` ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog. `post_approval_message` has no default, so `null` removes it.\n\nThe **credential** fields \u2014 `auth`, `settings` and `version` \u2014 are one group that is *replaced*, not merge-patched, because Lumos cannot read your stored credentials back to merge against. Sending any of the three reconnects the integration with exactly what you send and discards the rest of the stored set, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A body with none of the three never touches credentials.\n\nOn a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.",
+        "description": "Update an app in place: its domain-specific metadata overrides, its integration credentials, or both.\n\nThe **metadata** fields are merge-patched: an omitted field keeps its current value. The `*_override` fields are stored exactly as sent and returned as written; send `null` to clear one, after which the response returns `null` for it and the matching read-only field (`label`, `description` and so on) shows the app's default. A custom app has no default name, description or category, so those three can't be cleared on one. `request_instructions` ignores `null` and keeps its current value; there is no way to clear it through this endpoint. The overrides apply to your organization's copy of the app, not to the shared Lumos app catalog. `post_approval_message` has no default, so `null` removes it.\n\nThe **credential** fields \u2014 `auth`, `settings` and `version` \u2014 are one group that is *replaced*, not merge-patched. Sending any of the three reconnects the integration with exactly what you send and discards any credentials you leave out, so `auth` is required whenever you send any of them; a partial credential body is rejected with 400 rather than silently erasing credentials. A custom app has no integration, so it refuses all three with 400. A body with none of the three never touches credentials.\n\nOn a reconnect the credentials are re-validated and a sync is triggered, so the app either reconnects in-band or waits on browser consent in the Lumos UI. For an app that has never completed a sync, that triggered sync is held for match-rule review the same way a first connect is; `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true` releases it.",
         "operationId": "v1UpdateApp",
         "security": [
           {
@@ -3380,7 +3398,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3390,7 +3408,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no app with this UUID in your domain.",
+            "description": "Not found \u2014 no app with this UUID in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3440,7 +3458,7 @@
             }
           },
           "422": {
-            "description": "Unprocessable \u2014 credentials were supplied for an integration the API can't manage: a CSV/flatfile app, or one whose connection fields the API doesn't support yet. Manage it in the Lumos UI instead.",
+            "description": "Unprocessable \u2014 credentials were supplied for an integration the API can't manage: a CSV/flatfile app, or one whose connection fields the API doesn't support yet. Manage it in the Lumos UI instead. Or `null` was sent for a custom app's `label_override`, `description_override` or `category_override`, which a custom app has no default for.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3466,7 +3484,7 @@
           "Apps"
         ],
         "summary": "Delete App",
-        "description": "Delete an app \u2014 a custom app or a connected integration.\n\nA custom app is deleted in the request and the call returns 204. If accounts or other Lumos data still reference it, its record is kept, disconnected, and the call returns 409.\n\nAn integration is disconnected in the request, removing its stored credentials, and the call returns `202 Accepted` with an operation. Its accounts are removed and its record deleted in the background; poll `GET /v1/operations/{id}` until `done` is true. The operation fails with `app_delete.record_retained` if other Lumos data still references the record.\n\nReturns 404 if `app_uuid` is unknown in the caller's organization.",
+        "description": "Delete an app \u2014 a custom app or a connected integration.\n\nA custom app is deleted in the request, together with its own App Store settings, admins and custom attribute configuration, and the call returns 204. If it still has accounts, or other Lumos data still references it, the app is kept and the call returns 409 with code `app.delete_blocked`.\n\nAn integration is disconnected in the request, removing its stored credentials, and the call returns `202 Accepted` with an operation. Its accounts are removed and its record deleted in the background; poll `GET /v1/operations/{id}` until `done` is true. The operation fails with `app_delete.record_retained` if other Lumos data still references the record.\n\nReturns 404 if `app_uuid` is unknown in the caller's organization.",
         "operationId": "v1DeleteApp",
         "security": [
           {
@@ -3518,7 +3536,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3528,7 +3546,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no app with this UUID in your domain.",
+            "description": "Not found \u2014 no app with this UUID in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3538,7 +3556,7 @@
             }
           },
           "409": {
-            "description": "Conflict \u2014 the app is not managed via the API (`connection_source` is not `api`), or the custom app's record could not be deleted because other Lumos data still references it.",
+            "description": "Conflict \u2014 the app is not managed via the API (`connection_source` is not `api`), or the custom app can't be deleted (`app.delete_blocked`) because it still has accounts or other Lumos data still references it.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4118,10 +4136,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.",
+              "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. While the app isn't in the AppStore, all of its entitlements count as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.",
               "title": "Visible In Appstore"
             },
-            "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings."
+            "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. While the app isn't in the AppStore, all of its entitlements count as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings."
           },
           {
             "name": "search",
@@ -4263,7 +4281,7 @@
           "Apps"
         ],
         "summary": "Get App Entitlement AppStore Catalog",
-        "description": "List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore-catalog`, scoped to one app_uuid instead of the tenant-wide catalog.\n\nFilters: an entitlement's own `visible_in_appstore` setting, and GBAC (its own allowed requester groups if overridden, otherwise the app's). The parent app's own AppStore enrollment is checked too -- an empty page (not 404) is returned when the app isn't in the AppStore or has no AppStore presence.\n\n`target_user_uuid` defaults to the caller",
+        "description": "List the entitlement AppStore catalog for a single app, as seen by a specific user -- the entitlement-level analog of `GET /v1/apps/appstore-catalog`, scoped to one app_uuid instead of your whole organization's catalog.\n\nFilters: an entitlement's own `visible_in_appstore` setting, and its allowed requester groups (its own if overridden, otherwise the app's). The parent app's own AppStore enrollment is checked too -- an empty page (not 404) is returned when the app isn't in the AppStore.\n\n`target_user_uuid` defaults to the caller.",
         "operationId": "v1GetAppEntitlementAppStoreCatalog",
         "security": [
           {
@@ -5176,7 +5194,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5186,7 +5204,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no app with this UUID in your domain.",
+            "description": "Not found \u2014 no app with this UUID in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5306,7 +5324,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5316,7 +5334,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no app with this id in your domain.",
+            "description": "Not found \u2014 no app with this id in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5376,7 +5394,7 @@
             }
           },
           "502": {
-            "description": "Bad gateway \u2014 the downstream sync launch failed.",
+            "description": "Bad gateway \u2014 Lumos couldn't start the sync. Retry later.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5394,7 +5412,7 @@
           "Entitlements"
         ],
         "summary": "List Entitlements",
-        "description": "List every entitlement across your organization -- roles, licenses, groups, and permissions -- spanning every app.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.\n\nA request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.",
+        "description": "List every entitlement across your organization -- roles, licenses, groups, and permissions -- spanning every app.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.\n\nA request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.",
         "operationId": "listEntitlements",
         "security": [
           {
@@ -5436,10 +5454,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission, domain-wide.",
+              "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. An entitlement on an app that isn't in the AppStore counts as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission across your organization.",
               "title": "Visible In Appstore"
             },
-            "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission, domain-wide."
+            "description": "Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. An entitlement on an app that isn't in the AppStore counts as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission across your organization."
           },
           {
             "name": "search",
@@ -5825,7 +5843,7 @@
           "Entitlements"
         ],
         "summary": "Update Entitlement",
-        "description": "Update an entitlement's `label`, `description_override` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field, including the read-only `description`, returns 400.\n\nOnly entitlements created in Lumos (`source` is `MANUAL`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` needs the entitlement to have a request configuration; without one it returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
+        "description": "Update an entitlement's `label`, `description_override` and `custom_approval_message_override`. Fields you omit are left unchanged. Any other field, including the read-only `description`, returns 400.\n\nOnly entitlements created in Lumos (`source` is `manual`) can be renamed; sending a new `label` for a synced one returns 400 and changes nothing, while its current `label` is accepted and ignored. A `description_override` is stored as sent and kept across syncs, on synced entitlements too; `null` removes it, and is accepted and ignored when none is set. A non-null `custom_approval_message_override` on an entitlement that can't be requested returns 422 with code `entitlement.not_requestable`, while `null` is accepted and ignored.\n\nReturns 404 if the entitlement is unknown in the caller's organization.",
         "operationId": "updateEntitlement",
         "security": [
           {
@@ -5937,7 +5955,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 a non-null `custom_approval_message_override` was sent for an entitlement with no request configuration (code `entitlement.not_requestable`).",
+            "description": "Unprocessable \u2014 a non-null `custom_approval_message_override` was sent for an entitlement that can't be requested (code `entitlement.not_requestable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5953,7 +5971,7 @@
           "Entitlements"
         ],
         "summary": "Delete Entitlement",
-        "description": "Delete an entitlement, along with the request configuration that made it requestable in the AppStore.\n\nRefuses while anyone still holds the entitlement: that returns 409, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.",
+        "description": "Delete an entitlement.\n\nRefuses while anyone still holds the entitlement: that returns 409, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.",
         "operationId": "deleteEntitlement",
         "security": [
           {
@@ -6048,7 +6066,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 deletion is blocked: the entitlement isn't from a manual source, it has pending access requests, it has time-based access requests scheduled for removal, or a draft or published access policy references it. `detail` names the reason.",
+            "description": "Unprocessable \u2014 deletion is blocked: the entitlement wasn't created in Lumos (`source` isn't `manual`), it has pending access requests, it has time-based access requests scheduled for removal, or a draft or published access policy references it. `detail` names the reason.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6207,7 +6225,7 @@
           "Entitlements"
         ],
         "summary": "Get Entitlement AppStore Settings",
-        "description": "Get an entitlement's AppStore-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).",
+        "description": "Get an entitlement's AppStore-catalog settings. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or the entitlement has no AppStore settings).",
         "operationId": "getEntitlementAppStoreSettings",
         "security": [
           {
@@ -6315,7 +6333,7 @@
           "Entitlements"
         ],
         "summary": "Update Entitlement AppStore Settings",
-        "description": "Update an entitlement's AppStore-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or no AppStore request config exists for this entitlement).",
+        "description": "Update an entitlement's AppStore-catalog settings. Fields omitted from the request body are left unchanged. Sending an override field as `null` clears it so the entitlement inherits the app's setting. Returns 404 if the entitlement is unknown in the caller's organization, or if AppStore settings aren't available for it (parent app not enrolled in the AppStore, or the entitlement has no AppStore settings).",
         "operationId": "updateEntitlementAppStoreSettings",
         "security": [
           {
@@ -6427,7 +6445,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 a referenced value could not be resolved in your domain: an `allowed_requester_group_uuids_override` UUID that isn't a group, or a `request_validation_webhook_uuid` that doesn't exist.",
+            "description": "Unprocessable \u2014 a referenced value could not be resolved in your organization: an `allowed_requester_group_uuids_override` UUID that isn't a group, or a `request_validation_webhook_uuid` that doesn't exist.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6445,7 +6463,7 @@
           "Entitlements"
         ],
         "summary": "Get Entitlement Approval Workflow Override",
-        "description": "Get the approval workflow bound to this one entitlement, overriding the approval workflow on its app.\n\nReturns 404 when no override is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all (`Workflows are not available for this entitlement.`).",
+        "description": "Get the approval workflow bound to this one entitlement, overriding the approval workflow on its app.\n\nReturns 404 when no override is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested (`Workflows are not available for this entitlement.`).",
         "operationId": "getEntitlementApprovalWorkflowOverride",
         "security": [
           {
@@ -6553,7 +6571,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Approval Workflow Override",
-        "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. Entitlements with no request configuration behind them cannot take an override and return 404.",
+        "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. An entitlement that can't be requested can't take an override and returns 404.",
         "operationId": "setEntitlementApprovalWorkflowOverride",
         "security": [
           {
@@ -6671,7 +6689,7 @@
           "Entitlements"
         ],
         "summary": "Remove Entitlement Approval Workflow Override",
-        "description": "Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. Entitlements with no request configuration behind them return 404.",
+        "description": "Turn off this entitlement's approval workflow override, so it uses the approval workflow on its app again. The workflow that was bound stays in place, and returns 204 whether or not an override was on. An entitlement that can't be requested returns 404.",
         "operationId": "deleteEntitlementApprovalWorkflowOverride",
         "security": [
           {
@@ -6774,7 +6792,7 @@
           "Entitlements"
         ],
         "summary": "Get Entitlement Provisioning Workflow",
-        "description": "Get the provisioning workflow bound to this one entitlement, which takes the place of the default provisioning workflow on its app.\n\nReturns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all.",
+        "description": "Get the provisioning workflow bound to this one entitlement, which takes the place of the default provisioning workflow on its app.\n\nReturns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested.",
         "operationId": "getEntitlementProvisioningWorkflow",
         "security": [
           {
@@ -6882,7 +6900,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Provisioning Workflow",
-        "description": "Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.",
+        "description": "Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement, and must include the step that grants this entitlement, aimed at it.",
         "operationId": "setEntitlementProvisioningWorkflow",
         "security": [
           {
@@ -7002,7 +7020,7 @@
           "Entitlements"
         ],
         "summary": "Get Entitlement Deprovisioning Workflow",
-        "description": "Get the deprovisioning workflow bound to this one entitlement, which takes the place of the default deprovisioning workflow on its app.\n\nReturns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement has no request configuration behind it at all.",
+        "description": "Get the deprovisioning workflow bound to this one entitlement, which takes the place of the default deprovisioning workflow on its app.\n\nReturns 404 when nothing is bound, when the bound workflow contains steps this API cannot represent, and when the entitlement can't be requested.",
         "operationId": "getEntitlementDeprovisioningWorkflow",
         "security": [
           {
@@ -7110,7 +7128,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Deprovisioning Workflow",
-        "description": "Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. Entitlements with no request configuration behind them return 404.",
+        "description": "Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement.",
         "operationId": "setEntitlementDeprovisioningWorkflow",
         "security": [
           {
@@ -7230,7 +7248,7 @@
           "Groups"
         ],
         "summary": "List Groups",
-        "description": "List the groups synced from your connected integrations. Returns 404 if `app_id` is not an app in your organization.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List the groups synced from your connected integrations. Returns 404 if `app_id` is not an app in your organization.\n\nListing groups needs permission to read groups across the organization. Of the built-in roles, Admin, Read Only Admin, AppStore Read Only Admin, and App Admin have it. Anyone else gets 403.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "listGroups",
         "security": [
           {
@@ -7722,10 +7740,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An unrecognized label returns 400.",
+              "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An event whose custom attribute has been deleted shows `-`, which is not a filter value. An unrecognized label returns 400.",
               "title": "Changed Fields"
             },
-            "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An unrecognized label returns 400."
+            "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An event whose custom attribute has been deleted shows `-`, which is not a filter value. An unrecognized label returns 400."
           },
           {
             "name": "start_time",
@@ -8017,7 +8035,7 @@
           "Knowledge"
         ],
         "summary": "List Knowledge Context",
-        "description": "List knowledge entries for the caller's domain with optional filters and cursor pagination.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List knowledge entries in your organization with optional filters and cursor pagination.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "listKnowledgeContext",
         "security": [
           {
@@ -8184,7 +8202,7 @@
           "Knowledge"
         ],
         "summary": "Create Knowledge Context",
-        "description": "Create a new knowledge entry in the caller's domain.\n\nSend as `multipart/form-data`. The `file` field is optional \u2014 omit it to create an entry without an attachment.",
+        "description": "Create a new knowledge entry in your organization.\n\nSend as `multipart/form-data`. The `file` field is optional \u2014 omit it to create an entry without an attachment.",
         "operationId": "createKnowledgeContext",
         "security": [
           {
@@ -8291,7 +8309,7 @@
           "Knowledge"
         ],
         "summary": "Get Knowledge Context",
-        "description": "Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. An archived (deleted) entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.",
+        "description": "Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. A deleted entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.",
         "operationId": "getKnowledgeContext",
         "security": [
           {
@@ -8516,7 +8534,7 @@
           "Knowledge"
         ],
         "summary": "Delete Knowledge Context",
-        "description": "Archive (soft-delete) a knowledge entry. The entry is marked ARCHIVED and will no longer appear in list results. This action is reversible at the database level.",
+        "description": "Delete a knowledge entry. It no longer appears in list results, and you can't restore it through the API.",
         "operationId": "deleteKnowledgeContext",
         "security": [
           {
@@ -9116,7 +9134,7 @@
           "Workflows"
         ],
         "summary": "Delete Workflow",
-        "description": "Delete a workflow definition by ID.\n\nUnbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.",
+        "description": "Delete a workflow definition by ID.\n\nUnbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.\n\nAn app's default workflow can't be deleted; that returns 409 `workflow.default_delete_not_allowed`.",
         "operationId": "deleteWorkflow",
         "security": [
           {
@@ -9258,10 +9276,10 @@
                   "type": "null"
                 }
               ],
-              "description": "The type of workflow the steps are for. Some steps work in only one type: `manual_provisioning_task` in `account-provisioning` and `manual_deprovisioning_task` in `account-deprovisioning`. Without `type`, only the steps every type accepts are listed.",
+              "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is not narrowed to one type and can hold steps the type you create refuses, so pass the type you will create.",
               "title": "Type"
             },
-            "description": "The type of workflow the steps are for. Some steps work in only one type: `manual_provisioning_task` in `account-provisioning` and `manual_deprovisioning_task` in `account-deprovisioning`. Without `type`, only the steps every type accepts are listed."
+            "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is not narrowed to one type and can hold steps the type you create refuses, so pass the type you will create."
           },
           {
             "name": "search",
@@ -9403,7 +9421,7 @@
           "Custom Attribute Definitions"
         ],
         "summary": "List Custom Attribute Definitions",
-        "description": "List custom-attribute definitions for the domain, unified by label. Filter by label, config_type, source_type, attribute_type, and/or app.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List your organization's custom-attribute definitions, unified by label. Filter by label, config_type, source_type, attribute_type, and/or app. Multi-select attributes are not listed.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "listCustomAttributeDefinitions",
         "security": [
           {
@@ -9489,7 +9507,6 @@
                     "json",
                     "user",
                     "group",
-                    "multi-select",
                     "single-select"
                   ]
                 },
@@ -9643,7 +9660,7 @@
           "Integrations"
         ],
         "summary": "List Integrations",
-        "description": "List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned \u2014 catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only \u2014 name, category, and logo. Integrations you have connected are read via the Apps API.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List the integrations (apps) available to connect in your organization (paginated). Only connectable integrations are returned \u2014 catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only \u2014 name, category, and logo. Integrations you have connected are read via the Apps API.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "listIntegrationsV1",
         "security": [
           {
@@ -9733,7 +9750,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9843,7 +9860,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9853,7 +9870,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no integration with this `app_class_id` in your domain.",
+            "description": "Not found \u2014 no integration with this `app_class_id` in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9953,7 +9970,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain.",
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9963,7 +9980,7 @@
             }
           },
           "404": {
-            "description": "Not found \u2014 no integration with this `app_class_id` is accessible to your domain, or no connection schema is available for it yet.",
+            "description": "Not found \u2014 no integration with this `app_class_id` is accessible to your organization, or no connection schema is available for it yet.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10206,7 +10223,7 @@
           "Operations"
         ],
         "summary": "Get Operation",
-        "description": "Poll a long-running operation by the id returned from the launching endpoint (e.g. `POST /v1/apps/{app_uuid}:sync`). While `done` is false the work is still running; poll again later. When `done` is true, exactly one of `result` and `error` is set. An app-sync operation reflects the app's latest sync: its id is a per-app view, not a per-run record. Unknown, malformed, and out-of-tenant ids are indistinguishable: all return 404.",
+        "description": "Poll a long-running operation by the id returned from the launching endpoint (e.g. `POST /v1/apps/{app_uuid}:sync`). While `done` is false the work is still running; poll again later. When `done` is true, exactly one of `result` and `error` is set. An app-sync operation reflects the app's latest sync: its id is a per-app view, not a per-run record. Unknown and malformed ids, and ids from another organization, are indistinguishable: all return 404.",
         "operationId": "getOperation",
         "security": [
           {
@@ -10316,7 +10333,7 @@
           "Pre-Approval Rules"
         ],
         "summary": "Get Pre Approval Rule",
-        "description": "Get a pre-approval rule by ID.\n\n`condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none.\n\nReturns 409 if the rule covers access that has no entitlement ID, because this API can't describe that access.\n\nReturns 404 if condition-based pre-approval rules are not turned on for your organization.",
+        "description": "Get a pre-approval rule by ID.\n\n`condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none.\n\nReturns 409 if this API can't represent the access the rule covers.",
         "operationId": "getPreApprovalRule",
         "security": [
           {
@@ -10431,7 +10448,7 @@
           "Pre-Approval Rules"
         ],
         "summary": "Update Pre Approval Rule",
-        "description": "Update a pre-approval rule by ID.\n\nA field you leave out keeps the rule's current value, and a field you set to `null` is cleared. The three entitlements fields are replaced together. Send the one that applies, or send only `null` values to make the rule cover only a request for the app itself.\n\nReturns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.\n\nReturns 409 if the rule is limited by an access policy. Also returns 409 if the rule covers access that has no entitlement ID, unless the request replaces the rule's entitlements fields.\n\nReturns 404 if condition-based pre-approval rules are not turned on for your organization.",
+        "description": "Update a pre-approval rule by ID.\n\nA field you leave out keeps the rule's current value, and a field you set to `null` is cleared. The three entitlements fields are replaced together. Send the one that applies, or send only `null` values to make the rule cover only a request for the app itself.\n\nReturns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.\n\nReturns 409 if the rule is limited by an access policy. Also returns 409 if this API can't represent the access the rule covers, unless the request replaces the rule's entitlements fields.",
         "operationId": "updatePreApprovalRule",
         "security": [
           {
@@ -10556,7 +10573,7 @@
           "Pre-Approval Rules"
         ],
         "summary": "Delete Pre Approval Rule",
-        "description": "Delete a pre-approval rule by ID.\n\nReturns 404 if condition-based pre-approval rules are not turned on for your organization.",
+        "description": "Delete a pre-approval rule by ID.",
         "operationId": "deletePreApprovalRule",
         "security": [
           {
@@ -10666,7 +10683,7 @@
           "Pre-Approval Rules"
         ],
         "summary": "List Pre Approval Rules",
-        "description": "List the pre-approval rules for an app.\n\nIf the app has been merged into another app, this lists the rules of the app it was merged into, and each rule's `app_id` is that app's ID.\n\nResults come in pages. To get the next page, pass the `next_page_token` from the previous response as the `page_token` query parameter. When `next_page_token` is `null`, there are no more pages.\n\n`condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules that cover access with no entitlement ID are left out of the page.\n\nReturns 404 if condition-based pre-approval rules are not turned on for your organization.",
+        "description": "List the pre-approval rules for an app.\n\nIf the app has been merged into another app, this lists the rules of the app it was merged into, and each rule's `app_id` is that app's ID.\n\nResults come in pages. To get the next page, pass the `next_page_token` from the previous response as the `page_token` query parameter. When `next_page_token` is `null`, there are no more pages.\n\n`condition` is `null` when the rule is limited by an access policy, because this API can't show that limit. Every rule is returned with exactly one entitlements field. For a rule linked to an access policy, that field is `request_includes_entitlements` with the policy's entitlements for this app, or `request_has_entitlements: false` when the policy lists none. Rules whose access this API can't represent are left out of the page.",
         "operationId": "listPreApprovalRules",
         "security": [
           {
@@ -10803,7 +10820,7 @@
           "Pre-Approval Rules"
         ],
         "summary": "Create Pre Approval Rule",
-        "description": "Create a pre-approval rule.\n\nIf the app has been merged into another app, the rule is created on the app it was merged into, and the response's `app_id` is that app's ID.\n\nReturns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.\n\nReturns 404 if condition-based pre-approval rules are not turned on for your organization.",
+        "description": "Create a pre-approval rule.\n\nIf the app has been merged into another app, the rule is created on the app it was merged into, and the response's `app_id` is that app's ID.\n\nReturns 400 with `Entitlement ID invalid` if an entitlement ID doesn't exist, belongs to another app, or can't be requested.",
         "operationId": "createPreApprovalRule",
         "security": [
           {
@@ -11703,7 +11720,7 @@
           "Tasks"
         ],
         "summary": "Perform Task Action",
-        "description": "**Perform a custom action on a task** \u2014 the escape hatch for workflow-specific actions\nbeyond approve/deny, and for disambiguating when multiple actions produce the same\ntransition. Discover available actions via `GET /v1/tasks/{task_id}/actions`, then pass\nthe returned `action_type` here. `transition_to` is optional when the action has one\ntarget. It must be one of the transitions that action lists, otherwise the request is\nrejected with `400 task.transition_not_allowed`.",
+        "description": "**Perform a custom action on a task** \u2014 the escape hatch for workflow-specific actions\nbeyond approve/deny, and for disambiguating when multiple actions produce the same\ntransition. Discover available actions via `GET /v1/tasks/{task_id}/actions`, then pass\nthe returned `action_type` here. `transition_to` is optional when the action has one\ntarget. It must be one of the transitions that action lists, otherwise the request is\nrejected with `400 task.transition_not_allowed`.\n\nAn action the task doesn't offer in its current status, such as approving a task that is\nalready approved, returns `400 task.no_action_for_status`.",
         "operationId": "performTaskAction",
         "security": [
           {
@@ -12369,7 +12386,7 @@
           "Users"
         ],
         "summary": "List Users",
-        "description": "List all of your company's users.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.",
+        "description": "List all of your company's users.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.",
         "operationId": "v1ListUsers",
         "security": [
           {
@@ -13345,7 +13362,7 @@
             },
             "type": "array",
             "title": "Entitlements",
-            "description": "The entitlements granted for this app. A grant whose underlying request configuration is not yet linked to an entitlement is omitted, so this is not always the policy's complete set of grants. When more than one request configuration resolves to the same entitlement, only one entry is shown for it. Updating a policy replaces its apps wholesale, so an update built from this response drops any grant that was omitted or collapsed here."
+            "description": "The entitlements granted for this app."
           }
         },
         "type": "object",
@@ -13779,7 +13796,7 @@
             },
             "type": "array",
             "title": "Entitlements",
-            "description": "The entitlements requested. A requested permission that is not linked to an entitlement is left out."
+            "description": "The entitlements requested."
           },
           "tasks": {
             "anyOf": [
@@ -14104,7 +14121,7 @@
               }
             ],
             "title": "User Id",
-            "description": "The ID of the user associated with this account."
+            "description": "The ID of the user associated with this account, or `null` if the account matches no user."
           },
           "discovered_at": {
             "anyOf": [
@@ -14404,7 +14421,7 @@
           "unique_identifier"
         ],
         "title": "AccountV1Input",
-        "description": "One uploaded account row, with unknown fields rejected instead of ignored.\n\n`extra=\"forbid\"` is not recursive, so every nested row model is overridden\nwith its strict variant; the element types narrow only the validation\nconfig, so the invariance complaints don't apply to how these are used."
+        "description": "One uploaded account. Unknown fields return 400."
       },
       "AccountsUploadV1Input": {
         "properties": {
@@ -14978,7 +14995,7 @@
               }
             ],
             "title": "App Class Id",
-            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
+            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`; omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
           },
           "auth": {
             "anyOf": [
@@ -15028,7 +15045,7 @@
               }
             ],
             "title": "Label Override",
-            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app. Send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
+            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default name. On any other app, send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
           },
           "description_override": {
             "anyOf": [
@@ -15042,7 +15059,7 @@
               }
             ],
             "title": "Description Override",
-            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app. Send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
+            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default description. On any other app, send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
           },
           "category_override": {
             "anyOf": [
@@ -15054,7 +15071,7 @@
               }
             ],
             "title": "Category Override",
-            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app. Send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default category. On any other app, send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
           },
           "logo_url_override": {
             "anyOf": [
@@ -15290,7 +15307,7 @@
               }
             ],
             "title": "Label Override",
-            "description": "The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name."
+            "description": "The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name. A custom app has no default name, so on one this is always the name it shows."
           },
           "description_override": {
             "anyOf": [
@@ -15302,7 +15319,7 @@
               }
             ],
             "title": "Description Override",
-            "description": "The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description."
+            "description": "The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description. A custom app has no default description, so on one this is always the description it shows."
           },
           "category_override": {
             "anyOf": [
@@ -15314,7 +15331,7 @@
               }
             ],
             "title": "Category Override",
-            "description": "The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category."
+            "description": "The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category. A custom app has no default category, so on one this is always the category it shows."
           },
           "logo_url_override": {
             "anyOf": [
@@ -15600,7 +15617,7 @@
           "id"
         ],
         "title": "AppStoreCatalogAppResponse",
-        "description": "`AppBase` plus catalog-scoped `appstore_settings` \u2014 no admin-only workflow,\napproval-message, `admins`, or `custom_attributes` fields.\n\nUsed by the appstore-catalog endpoint (the end-user app store view), which has no\nbusiness exposing approval/provisioning/deprovisioning workflow bindings or the\npost-approval message to the requester."
+        "description": "An app as the AppStore catalog shows it to a requester.\n\nIt leaves out admin-only fields: workflow bindings, `post_approval_message`, `admins`, and\n`custom_attributes`."
       },
       "AppStoreCatalogListOutput": {
         "properties": {
@@ -15668,7 +15685,7 @@
               }
             ],
             "title": "Allowed Requester Group Uuids",
-            "description": "UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant."
+            "description": "UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app."
           },
           "time_based_access": {
             "$ref": "#/components/schemas/TimeBasedAccess",
@@ -15733,7 +15750,7 @@
           "time_based_access"
         ],
         "title": "AppStoreCatalogSettingsResponse",
-        "description": "`AppStoreSettingsBase` as-is \u2014 no `in_app_store`/`catalog_visibility`.\n\nUsed by the appstore-catalog endpoint, where both are implied by appearing in the\ncatalog at all (in the store, at FULL/LIMITED visibility) rather than informative."
+        "description": "An app's AppStore settings as the AppStore catalog shows them.\n\n`in_app_store` and `catalog_visibility` are left out: every app in the catalog is in the\nAppStore, and the catalog has already applied its visibility."
       },
       "AppStoreSettingsCompact": {
         "properties": {
@@ -15801,7 +15818,7 @@
               }
             ],
             "title": "Allowed Requester Group Uuids",
-            "description": "UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, making the app requestable by everyone in the tenant."
+            "description": "UUIDs of groups whose members may request this app. Null or an empty list removes the restriction, so everyone in your organization can request the app."
           },
           "time_based_access": {
             "anyOf": [
@@ -15830,14 +15847,15 @@
             "anyOf": [
               {
                 "type": "string",
-                "maxLength": 2048
+                "maxLength": 2048,
+                "minLength": 1
               },
               {
                 "type": "null"
               }
             ],
             "title": "Redirect Url",
-            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. Max 2048 characters."
+            "description": "If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Send null to clear an existing redirect; omit the field to leave it unchanged. An empty string is rejected. Max 2048 characters."
           },
           "default_entitlement": {
             "anyOf": [
@@ -15925,7 +15943,7 @@
               }
             ],
             "title": "Allowed Requester Group Uuids",
-            "description": "UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant."
+            "description": "UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app."
           },
           "time_based_access": {
             "$ref": "#/components/schemas/TimeBasedAccess",
@@ -16020,7 +16038,7 @@
               }
             ],
             "title": "App Class Id",
-            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
+            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`; omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
           },
           "auth": {
             "anyOf": [
@@ -16070,7 +16088,7 @@
               }
             ],
             "title": "Label Override",
-            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app. Send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
+            "description": "The app's display name in your organization, shown as `label`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default name. On any other app, send `null` to clear it, so `label` shows the app's default name. It can't be empty. At most 255 characters."
           },
           "description_override": {
             "anyOf": [
@@ -16084,7 +16102,7 @@
               }
             ],
             "title": "Description Override",
-            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app. Send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
+            "description": "The app's description in your organization, shown as `description`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default description. On any other app, send `null` to clear it, so `description` shows the app's default description. It can't be empty. At most 1,000 characters."
           },
           "category_override": {
             "anyOf": [
@@ -16096,7 +16114,7 @@
               }
             ],
             "title": "Category Override",
-            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app. Send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
+            "description": "The app's category in your organization, shown as `category`. Required when creating a custom app, and can't be cleared on one, since a custom app has no default category. On any other app, send `null` to clear it, so `category` shows the app's default category. Possible values: 'Accounting & Finance', 'Marketing & Analytics', 'Content & Social Media', 'Sales & Support', 'Design & Creativity', 'IT & Security', 'Developers', 'HR & Learning', 'Office & Legal', 'Communication', 'Collaboration', 'Commerce & Marketplaces', 'Other', 'Internal'"
           },
           "logo_url_override": {
             "anyOf": [
@@ -16157,7 +16175,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "AppUpdateInput",
-        "description": "Body of `PATCH /v1/apps/{app_uuid}`: update metadata overrides and/or rotate credentials.\n\nMetadata fields are merge-patched; `auth`, `settings` and `version` are replaced as one\ngroup, so `auth` is required whenever either of the others is sent.",
+        "description": "Body of `PATCH /v1/apps/{app_uuid}`: update metadata overrides and/or rotate credentials.\n\nMetadata fields are merge-patched; `auth`, `settings` and `version` are replaced as one\ngroup. The router checks that group against the app, since only it knows whether the\napp is connected to an integration.",
         "examples": [
           {
             "description_override": "Hand-rolled deploy dashboard.",
@@ -16221,7 +16239,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "AttributeV1Input",
-        "description": "One uploaded attribute row, with unknown fields rejected instead of ignored."
+        "description": "One attribute on an uploaded account. Unknown fields return 400."
       },
       "BaseApp": {
         "properties": {
@@ -16242,7 +16260,7 @@
           "title": {
             "type": "string",
             "title": "Title",
-            "description": "Title of the knowledge entry. Must be unique within the domain."
+            "description": "Title of the knowledge entry. Must be unique in your organization."
           },
           "content": {
             "anyOf": [
@@ -16408,7 +16426,7 @@
           "label": {
             "type": "string",
             "title": "Label",
-            "description": "Stable public reference (unique per domain after unification)."
+            "description": "Stable reference, unique in your organization."
           },
           "name": {
             "anyOf": [
@@ -16432,7 +16450,6 @@
               "json",
               "user",
               "group",
-              "multi-select",
               "single-select"
             ],
             "title": "Attribute Type",
@@ -16465,7 +16482,7 @@
           "source_type"
         ],
         "title": "CustomAttributeDefinition",
-        "description": "A custom-attribute definition (the schema behind custom-attribute values).\n\nUnified by ``label``: one record per logical attribute (the N per-integration\n``CustomAttributesConfig`` rows that share a label are coalesced into one). ``label`` is the\nstable public reference \u2014 there is no per-row ``uuid`` in V1."
+        "description": "A custom-attribute definition: the schema behind custom-attribute values.\n\nThere is one definition per `label`, unified across every app that supplies it. `label` is\nthe stable reference; definitions have no `uuid`."
       },
       "CustomAttributeDefinitionListOutput": {
         "properties": {
@@ -16777,7 +16794,7 @@
           "id": {
             "type": "string",
             "title": "Id",
-            "description": "The domain app UUID of the disconnected integration."
+            "description": "The app's `id`."
           },
           "app_class_id": {
             "type": "string",
@@ -16910,7 +16927,7 @@
             },
             "type": "array",
             "title": "Time Based Access",
-            "description": "This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or domain."
+            "description": "This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or your organization."
           }
         },
         "type": "object",
@@ -16921,7 +16938,7 @@
           "time_based_access"
         ],
         "title": "EntitlementAppStoreCatalogOutput",
-        "description": "An entitlement as it appears in a single app's AppStore entitlement catalog.\n\nA trimmed subset of `EntitlementOutput`, mirroring how `AppStoreCatalogAppResponse`\ntrims `AppResponse`: admin-only fields (workflow bindings, `visible_in_appstore`,\n`allowed_requester_groups`, etc.) aren't meaningful to an end user browsing the\nstore, or are implied by the entitlement appearing in the catalog at all."
+        "description": "An entitlement as it appears in a single app's AppStore entitlement catalog.\n\nIt carries a subset of `EntitlementOutput`'s fields, leaving out admin-only ones such as\nworkflow bindings, `visible_in_appstore`, and `allowed_requester_groups`."
       },
       "EntitlementAppStoreSettings": {
         "properties": {
@@ -16930,11 +16947,11 @@
             "title": "Visible In Appstore",
             "description": "Whether this entitlement is visible in the AppStore catalog."
           },
-          "allowed_requester_groups_override": {
+          "allowed_requester_group_uuids_override": {
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/GroupRef"
+                  "type": "string"
                 },
                 "type": "array"
               },
@@ -16942,8 +16959,8 @@
                 "type": "null"
               }
             ],
-            "title": "Allowed Requester Groups Override",
-            "description": "Groups whose members may request this entitlement, overriding the app's allowed requester groups. Null means this entitlement inherits the app's allowed requester groups. An empty list means the override is on with no group restriction: anyone can request this entitlement, even if the app restricts requesters."
+            "title": "Allowed Requester Group Uuids Override",
+            "description": "UUIDs of groups whose members may request this entitlement, overriding the app's allowed requester groups. `null` means this entitlement inherits the app's allowed requester groups. An empty list means the override is on with no group restriction: anyone can request this entitlement, even if the app restricts requesters."
           },
           "time_based_access_override": {
             "anyOf": [
@@ -16956,16 +16973,17 @@
             ],
             "description": "This entitlement's own time-based access options. Null means this entitlement inherits the app's time-based access options."
           },
-          "request_validation_webhook": {
+          "request_validation_webhook_uuid": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/WebhookRef"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "The inline webhook called to validate access requests for this entitlement. This is configured directly on the entitlement; null means no webhook is configured (there is no inheritance from the app)."
+            "title": "Request Validation Webhook Uuid",
+            "description": "UUID of the inline webhook called to validate access requests for this entitlement. `null` means no webhook is set on this entitlement. Nothing is inherited from the app."
           }
         },
         "type": "object",
@@ -17309,7 +17327,7 @@
           "id"
         ],
         "title": "EntitlementRefInput",
-        "description": "The write-side entitlement ref: unknown fields reject instead of ignore.\n\nThe shared ref stays open because it also serializes in responses, where a\nclosed schema would break generated clients on additive fields."
+        "description": "A reference to an entitlement. Unknown fields return 400."
       },
       "EntitlementTimeBasedAccessOverridePatchInput": {
         "properties": {
@@ -17320,7 +17338,7 @@
             "type": "array",
             "minItems": 1,
             "title": "Options",
-            "description": "Full replacement list of time-based access option labels for this entitlement's override, referencing options already defined for the domain. Must contain at least one label; to clear the override entirely, send `time_based_access_override` itself as `null` rather than an empty list here."
+            "description": "Full replacement list of time-based access option labels for this entitlement's override, referencing options already defined for your organization. Must contain at least one label; to clear the override entirely, send `time_based_access_override` itself as `null` rather than an empty list here."
           }
         },
         "additionalProperties": false,
@@ -17398,7 +17416,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "EntitlementV1Input",
-        "description": "One uploaded entitlement row, with unknown fields rejected instead of ignored."
+        "description": "One entitlement on an uploaded account. Unknown fields return 400."
       },
       "ErrorType": {
         "type": "string",
@@ -17412,6 +17430,16 @@
           "runtime"
         ],
         "title": "ErrorType"
+      },
+      "EvidenceRequiredBy": {
+        "type": "string",
+        "enum": [
+          "review-setting-all-removals",
+          "decision-reason",
+          "manual-action",
+          "no-removal-request"
+        ],
+        "title": "EvidenceRequiredBy"
       },
       "FilterDataType": {
         "type": "string",
@@ -17484,12 +17512,6 @@
             "type": "array",
             "title": "Values",
             "description": "Values this field accepts, for a field drawn from a fixed set. Empty when the field accepts free-form values."
-          },
-          "internal_field": {
-            "type": "string",
-            "title": "Internal Field",
-            "description": "Table field this option filters on. Never serialized.",
-            "default": ""
           }
         },
         "type": "object",
@@ -17512,12 +17534,6 @@
             "type": "string",
             "title": "Label",
             "description": "Display-only label. Sending this as a value is rejected."
-          },
-          "internal_value": {
-            "type": "string",
-            "title": "Internal Value",
-            "description": "Stored column value this maps to. Never serialized.",
-            "default": ""
           }
         },
         "type": "object",
@@ -17531,14 +17547,7 @@
       "Group": {
         "properties": {
           "id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "type": "string",
             "title": "Id",
             "description": "The ID of this group."
           },
@@ -17621,8 +17630,11 @@
           }
         },
         "type": "object",
+        "required": [
+          "id"
+        ],
         "title": "Group",
-        "description": "A v1 group, unprefixed on purpose (see `codegen_openapi_v1.py`)."
+        "description": "A group in your organization."
       },
       "GroupListOutput": {
         "properties": {
@@ -17681,21 +17693,6 @@
           "users"
         ],
         "title": "GroupMemberListOutput"
-      },
-      "GroupRef": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id",
-            "description": "The UUID of the group."
-          }
-        },
-        "type": "object",
-        "required": [
-          "id"
-        ],
-        "title": "GroupRef",
-        "description": "Reference to a group embedded in another resource."
       },
       "IdentityEvent": {
         "properties": {
@@ -18200,7 +18197,7 @@
             },
             "type": "array",
             "title": "Errors",
-            "description": "Item-level failures for bulk operations (e.g. per-row upload errors). Empty when the failure is not itemized."
+            "description": "Item-level failures for bulk operations, such as one entry for each uploaded account that failed. Empty when the failure is not itemized."
           }
         },
         "type": "object",
@@ -18209,7 +18206,7 @@
           "message"
         ],
         "title": "OperationError",
-        "description": "Terminal failure of an operation, in the standard error model."
+        "description": "Terminal failure of an operation, in the standard error shape."
       },
       "OperationOutput": {
         "properties": {
@@ -18679,63 +18676,6 @@
         ],
         "title": "RemovalError"
       },
-      "RemovalEvidence": {
-        "properties": {
-          "filename": {
-            "type": "string",
-            "title": "Filename",
-            "description": "The file's name as uploaded."
-          },
-          "content_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Content Type",
-            "description": "The file's media type, inferred from its extension. Null when the extension maps to no known type."
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description",
-            "description": "The note the uploader attached."
-          },
-          "uploaded_by": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/User"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Who attached the file."
-          },
-          "uploaded_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Uploaded At",
-            "description": "When the file was attached."
-          }
-        },
-        "type": "object",
-        "required": [
-          "filename",
-          "uploaded_at"
-        ],
-        "title": "RemovalEvidence",
-        "description": "One file attached as proof the access was removed.\n\nDeliberately unidentified. The column behind it is a storage path component, empty for\nworkflow-record and ITSM-generated evidence and never a UUID for the rest, and no\nendpoint takes an evidence id -- so there is nothing a caller could do with one, and\npublishing that column would put a non-UUID, sometimes-empty, sometimes-colliding\nidentifier in the contract."
-      },
       "RemovalItsmTicket": {
         "properties": {
           "external_id": {
@@ -18765,11 +18705,21 @@
       "RemovalMethod": {
         "type": "string",
         "enum": [
-          "workflow",
-          "manual-task",
-          "itsm"
+          "automated",
+          "manual"
         ],
         "title": "RemovalMethod"
+      },
+      "RemovalStatus": {
+        "type": "string",
+        "enum": [
+          "in-progress",
+          "waiting-manual-step",
+          "manual-removal",
+          "failed",
+          "completed"
+        ],
+        "title": "RemovalStatus"
       },
       "ScalarScopeFilterInput": {
         "properties": {
@@ -18960,6 +18910,44 @@
             ],
             "description": "The removal this decision led to. Null when the decision leaves the access in place, or when removals have not started."
           },
+          "is_evidence_attached": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Evidence Attached",
+            "description": "Whether any evidence is attached to this subject. Whether any is owed is `evidence_required_by`."
+          },
+          "evidence_required_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvidenceRequiredBy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why evidence is owed, as the highest-ranked reason that applies: `review-setting-all-removals` when the app review asks for evidence on every removal, `decision-reason` when the decision's reason does, `manual-action` when a person acted on the removal or still must, `no-removal-request` when no workflow could carry the removal. Null when nothing asks for evidence. Read apart from `removal`, so an approved subject whose decision reason asks for evidence carries it too."
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SubjectEvidence"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Files attached as evidence for this subject, identifying fields only and no download link. Requires `expand=evidence`."
+          },
           "ai_recommendation": {
             "anyOf": [
               {
@@ -19101,6 +19089,63 @@
         "type": "object",
         "title": "SubjectEntitlement"
       },
+      "SubjectEvidence": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename",
+            "description": "The file's name as uploaded."
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type",
+            "description": "The file's media type, inferred from its extension. Null when the extension maps to no known type."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "The note the uploader attached."
+          },
+          "uploaded_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who attached the file."
+          },
+          "uploaded_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Uploaded At",
+            "description": "When the file was attached."
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "uploaded_at"
+        ],
+        "title": "SubjectEvidence",
+        "description": "One file attached as evidence for a subject. Evidence files have no ID."
+      },
       "SubjectFiltersResponse": {
         "properties": {
           "fields": {
@@ -19119,18 +19164,8 @@
       "SubjectRemoval": {
         "properties": {
           "status": {
-            "type": "string",
-            "enum": [
-              "auto-removed",
-              "auto-removing",
-              "waiting-manual-removal",
-              "manually-removed",
-              "waiting-auto-removal",
-              "access-modified",
-              "removal-errored"
-            ],
-            "title": "Status",
-            "description": "How far the removal has got. Derived live from the workflow carrying it out, so it is current even mid-flight.\n\n`removal-errored` is the one value the subject filters do not accept: it is graded from the workflow rather than stored, so no row could match it."
+            "$ref": "#/components/schemas/RemovalStatus",
+            "description": "Where the removal stands, current even while the removal runs. `waiting-manual-step` is a workflow blocked on a person; `manual-removal` is a removal left to a person with no workflow to track it. It describes the removal only: a finished removal reads `completed` while evidence of it is still owed, which the subject's `evidence_required_by` reports."
           },
           "method": {
             "anyOf": [
@@ -19141,7 +19176,7 @@
                 "type": "null"
               }
             ],
-            "description": "How the access is being taken away: `workflow` when an integration does it, `manual-task` when a person does, `itsm` when it is tracked in a ticket. Null before the review decides how this subject will be removed."
+            "description": "How a completed removal was carried out: `automated` when the workflow did it with no manual task, `manual` when a person did. Null until the removal is `completed`."
           },
           "assignees": {
             "items": {
@@ -19160,35 +19195,7 @@
                 "type": "null"
               }
             ],
-            "description": "Why the last removal attempt failed, if one did. Null when the run recorded no reason, which a `removal-errored` status does not by itself guarantee."
-          },
-          "completed_at": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Completed At",
-            "description": "When the access was removed."
-          },
-          "evidence": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/RemovalEvidence"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Evidence",
-            "description": "Files attached as proof the access was removed, identifying fields only and no download link. Requires `expand=removal.evidence`."
+            "description": "Why the last removal attempt failed, if one did. Null when the run recorded no reason, which a `failed` status does not by itself guarantee."
           },
           "itsm_ticket": {
             "anyOf": [
@@ -19700,7 +19707,7 @@
               }
             ],
             "title": "Options",
-            "description": "Time-based access options available for this app. Null means the app uses the domain-level defaults."
+            "description": "Time-based access options available for this app. Null means the app uses your organization's defaults."
           },
           "default": {
             "anyOf": [
@@ -19802,7 +19809,7 @@
               }
             ],
             "title": "Options",
-            "description": "Labels of domain-level time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to the domain defaults."
+            "description": "Labels of your organization's time-based access options to enable for this app. Null or an empty list clears all app-specific options, reverting to your organization's defaults."
           },
           "default": {
             "anyOf": [
@@ -20266,21 +20273,6 @@
         ],
         "title": "UserWithCustomAttributes"
       },
-      "WebhookRef": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id",
-            "description": "The UUID of the inline webhook."
-          }
-        },
-        "type": "object",
-        "required": [
-          "id"
-        ],
-        "title": "WebhookRef",
-        "description": "Reference to an inline webhook embedded in another resource."
-      },
       "Workflow": {
         "properties": {
           "id": {
@@ -20418,7 +20410,7 @@
               }
             ],
             "title": "App Id",
-            "description": "UUID of the app this Workflow belongs to. May be null for a shared, not-yet-associated Workflow. Immutable on update: a PUT whose app_id differs from the stored Workflow's app is rejected with a 400 (workflow.app_reassignment_not_allowed)."
+            "description": "UUID of the app this Workflow belongs to. May be null for a shared, not-yet-associated Workflow. Immutable on update: a PUT whose app_id differs from the Workflow's current app is rejected with a 400 (workflow.app_reassignment_not_allowed)."
           },
           "steps": {
             "items": {
@@ -20636,7 +20628,7 @@
     },
     {
       "name": "Access Reviews",
-      "description": "\nAn access review is a campaign that reviews who has access to what across your connected apps.\nEach app in a campaign is an app review.\n\nv1 has two access-review endpoints so far, both scoped to one app review:\n\n- `GET /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}/subject-filters` lists the fields\n  you can filter the app review's subjects on. Each field comes with the operators it supports\n  and, when it has a fixed set of values, the values it accepts.\n- `POST /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}:sync` runs the app review's data\n  import, optionally with new scope filters. It returns 202 with an operation. Poll\n  `GET /v1/operations/{operation_id}` until `done` is true.\n\nYou can't create, list, or update campaigns in v1 yet. These endpoints are enabled per\norganization, separately from the rest of v1, and return 404 where they aren't enabled.\n"
+      "description": "\nAn access review is a campaign that reviews who has access to what across your connected apps.\nEach app in a campaign is an app review.\n\nv1 has two access-review endpoints so far, both scoped to one app review:\n\n- `GET /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}/subject-filters` lists the fields\n  you can filter the app review's subjects on. Each field comes with the operators it supports\n  and, when it has a fixed set of values, the values it accepts.\n- `POST /v1/access-reviews/{review_uuid}/apps/{app_review_uuid}:sync` runs the app review's data\n  import, optionally with new scope filters. It returns 202 with an operation. Poll\n  `GET /v1/operations/{operation_id}` until `done` is true.\n\nYou can't create, list, or update campaigns in v1 yet. Lumos enables these endpoints per\norganization, separately from the rest of v1, so contact your Lumos representative to turn them on.\n"
     },
     {
       "name": "Accounts",
@@ -20660,7 +20652,7 @@
     },
     {
       "name": "Entitlements",
-      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, a\npermission. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change\n  today, and sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT.\n\nNot every entitlement supports them. An entitlement with no request configuration behind it\nreturns 404 with `Workflows are not available for this entitlement.` on all six.\n"
+      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, a\npermission. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and\n  `custom_approval_message_override`. Sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval\noverride also has a DELETE that turns it off.\n\nAn entitlement that can't be requested returns 404 with\n`Workflows are not available for this entitlement.` on each of these endpoints.\n"
     },
     {
       "name": "Groups",
@@ -20680,15 +20672,15 @@
     },
     {
       "name": "Knowledge",
-      "description": "\nKnowledge entries are the documents and notes Lumos agents draw on when they answer access\nquestions. Each entry carries a title, body, tags, and product scopes, plus an optional file\nattachment.\n\nBecause of that attachment, create and update send `multipart/form-data` rather than JSON. On\nupdate, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`\nremoves an existing file without uploading a replacement.\n\n`DELETE` archives rather than destroys. The entry stops appearing in list results and stays\nrecoverable.\n\nPages here are small: `page_size` defaults to 10 and is clamped to 25.\n"
+      "description": "\nKnowledge entries are the documents and notes Lumos agents draw on when they answer access\nquestions. Each entry carries a title, body, tags, and product scopes, plus an optional file\nattachment.\n\nBecause of that attachment, create and update send `multipart/form-data` rather than JSON. On\nupdate, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`\nremoves an existing file without uploading a replacement.\n\n`DELETE` deletes a knowledge entry. It no longer appears in list results, and you can't restore\nit through the API.\n\nPages here are small: `page_size` defaults to 10 and is clamped to 25.\n"
     },
     {
       "name": "Lifecycle Management",
-      "description": "\nLifecycle management covers user offboardings. An offboarding runs your organization's\noffboarding workflow for one user, either right away or at a scheduled time.\n\n- `POST /v1/lifecycle-management/user-offboardings` starts an offboarding now, or at\n  `scheduled_at` when you send a future time.\n- `GET /v1/lifecycle-management/user-offboardings/{user_offboarding_id}` reads one.\n- `POST /v1/lifecycle-management/user-offboardings/{user_offboarding_id}:cancel` cancels one that\n  is scheduled or in progress.\n\nThere is no list endpoint, so keep the `id` that create returns.\n\n`workflow_config_id` names an offboarding workflow configuration, not a workflow from\n`/v1/workflows`. Omit it to use the configuration your organization has selected for automatic\noffboarding. Only organizations with the multiple offboarding workflows feature can send it. For\nany other organization, a request that includes it returns 400.\n\nThese endpoints are enabled per organization, separately from the rest of v1, and return 404 where\nthey aren't enabled.\n"
+      "description": "\nLifecycle management covers user offboardings. An offboarding runs your organization's\noffboarding workflow for one user, either right away or at a scheduled time.\n\n- `POST /v1/lifecycle-management/user-offboardings` starts an offboarding now, or at\n  `scheduled_at` when you send a future time.\n- `GET /v1/lifecycle-management/user-offboardings/{user_offboarding_id}` reads one.\n- `POST /v1/lifecycle-management/user-offboardings/{user_offboarding_id}:cancel` cancels one that\n  is scheduled or in progress.\n\nThere is no list endpoint, so keep the `id` that create returns.\n\n`workflow_config_id` names an offboarding workflow configuration, not a workflow from\n`/v1/workflows`. Omit it to use the configuration your organization has selected for automatic\noffboarding. Only organizations with the multiple offboarding workflows feature can send it. For\nany other organization, a request that includes it returns 400.\n\nLumos enables these endpoints per organization, separately from the rest of v1, so contact your\nLumos representative to turn them on.\n"
     },
     {
       "name": "Meta",
-      "description": "\n`GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.\nUse either to check your setup.\n\nBoth require an API token. A 200 means your token works and v1 is enabled for your organization.\nWhere v1 isn't enabled, every `/v1` path returns 404.\n"
+      "description": "\n`GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.\nUse either to check your setup.\n\nBoth require an API token. A 200 means your token works and v1 is enabled for your organization.\nLumos enables v1 per organization, so contact your Lumos representative to turn it on.\n"
     },
     {
       "name": "Operations",
@@ -20696,7 +20688,7 @@
     },
     {
       "name": "Pre-Approval Rules",
-      "description": "\nA pre-approval rule pre-approves matching access requests for an app.\n\n- `GET /v1/apps/{app_uuid}/pre-approval-rules` lists an app's rules, and `POST` on the same path\n  creates one.\n- `GET`, `PATCH`, and `DELETE` on `/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}`\n  read, update, and delete one.\n\nIf the app has been merged into another app, these endpoints work on the rules of the app it was\nmerged into.\n\nThese endpoints are enabled per organization, separately from the rest of v1, and return 404 where\ncondition-based pre-approval rules aren't turned on.\n"
+      "description": "\nA pre-approval rule pre-approves matching access requests for an app.\n\n- `GET /v1/apps/{app_uuid}/pre-approval-rules` lists an app's rules, and `POST` on the same path\n  creates one.\n- `GET`, `PATCH`, and `DELETE` on `/v1/apps/{app_uuid}/pre-approval-rules/{pre_approval_rule_id}`\n  read, update, and delete one.\n\nIf the app has been merged into another app, these endpoints work on the rules of the app it was\nmerged into.\n\nLumos enables condition-based pre-approval rules per organization, separately from the rest of v1,\nso contact your Lumos representative to turn them on.\n"
     },
     {
       "name": "Tasks",
