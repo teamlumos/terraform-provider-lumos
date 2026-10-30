@@ -380,7 +380,7 @@ func (s *Apps) V1ListApps(ctx context.Context, request operations.V1ListAppsRequ
 // V1CreateApp - Create App
 // Create a custom app, or connect an integration.
 //
-// Omit `app_class_id`, or send `custom`, to create a custom app — one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.
+// Omit `app_class_id`, or send `custom`, to create a custom app — one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply when connecting an integration, that is, with any `app_class_id` other than `custom`.
 //
 // Either kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.
 //
@@ -4850,7 +4850,7 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 }
 
 // V1DisconnectApp - Disconnect App
-// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`.
+// Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`. A custom app with no accounts is instead deleted together with its App Store settings, admins and custom attribute configuration, as `DELETE` does.
 //
 // Use `DELETE /v1/apps/{app_uuid}` instead to remove the app outright; unlike this operation it reports whether the record actually went away. Returns 404 if `app_uuid` is unknown in the caller's organization.
 func (s *Apps) V1DisconnectApp(ctx context.Context, request operations.V1DisconnectAppRequest, opts ...operations.Option) (*operations.V1DisconnectAppResponse, error) {
