@@ -380,9 +380,7 @@ removed {
 					PreConfig: func() {
 						api.mu.Lock()
 						defer api.mu.Unlock()
-						api.settings["allowed_requester_groups_override"] = []any{
-							map[string]any{"id": "group1"}, map[string]any{"id": "group2"},
-						}
+						api.settings["allowed_requester_group_uuids_override"] = []any{"group1", "group2"}
 					},
 					Config: config(server.URL, true, true),
 					ConfigPlanChecks: resource.ConfigPlanChecks{

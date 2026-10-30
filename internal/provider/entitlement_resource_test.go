@@ -66,10 +66,10 @@ func newFakeEntitlementAPI(t *testing.T, source string) *fakeEntitlementAPI {
 			"custom_approval_message_override": nil,
 		},
 		settings: map[string]any{
-			"visible_in_appstore":               true,
-			"allowed_requester_groups_override": []any{map[string]any{"id": "group1"}},
-			"time_based_access_override":        nil,
-			"request_validation_webhook":        nil,
+			"visible_in_appstore":                    true,
+			"allowed_requester_group_uuids_override": []any{"group1"},
+			"time_based_access_override":             nil,
+			"request_validation_webhook_uuid":        nil,
 		},
 	}
 }
@@ -148,24 +148,10 @@ func (f *fakeEntitlementAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				if v != nil {
 					f.settings[k] = v
 				}
-			case "allowed_requester_group_uuids_override":
-				if v == nil {
-					f.settings["allowed_requester_groups_override"] = nil
-					continue
-				}
-				refs := []any{}
-				for _, id := range v.([]any) {
-					refs = append(refs, map[string]any{"id": id})
-				}
-				f.settings["allowed_requester_groups_override"] = refs
+			case "allowed_requester_group_uuids_override", "request_validation_webhook_uuid":
+				f.settings[k] = v
 			case "time_based_access_override":
 				f.settings[k] = withOptionObjects(v)
-			case "request_validation_webhook_uuid":
-				if v == nil {
-					f.settings["request_validation_webhook"] = nil
-					continue
-				}
-				f.settings["request_validation_webhook"] = map[string]any{"id": v}
 			}
 		}
 		json.NewEncoder(w).Encode(f.settings)

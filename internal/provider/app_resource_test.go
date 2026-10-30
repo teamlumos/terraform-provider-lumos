@@ -1140,9 +1140,8 @@ resource "lumos_app" "wiki" {
 
 // TestAppCustomClassID creates a custom app whose config sets app_class_id =
 // "custom", the value a custom app reads back with, then drops it from the
-// config and puts it back. Neither form plans a change, and the create must
-// leave app_class_id out, since the API takes any app_class_id on create as
-// an integration to connect.
+// config and puts it back. Neither form plans a change, and the create sends
+// app_class_id = "custom", which the API takes as a custom app.
 func TestAppCustomClassID(t *testing.T) {
 	api := &fakeCustomAppAPI{t: t}
 	server := httptest.NewServer(api)
@@ -1180,8 +1179,8 @@ resource "lumos_app" "wiki" {
 	if len(api.creates) != 1 {
 		t.Fatalf("got %d creates, want 1: %v", len(api.creates), api.creates)
 	}
-	if v, ok := api.creates[0]["app_class_id"]; ok {
-		t.Errorf("create sent app_class_id = %v; want it left out: %v", v, api.creates[0])
+	if v := api.creates[0]["app_class_id"]; v != "custom" {
+		t.Errorf("create sent app_class_id = %v; want \"custom\": %v", v, api.creates[0])
 	}
 	if len(api.patches) != 0 {
 		t.Errorf("got %d updates, want none: %v", len(api.patches), api.patches)
