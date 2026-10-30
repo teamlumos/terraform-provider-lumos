@@ -18,9 +18,7 @@ func initHooks(h *Hooks) {
 	h.registerBeforeRequestHook(readExpand{})
 	h.registerBeforeRequestHook(removeFromAppStore{})
 	h.registerBeforeRequestHook(clearUnsetFields{})
-	h.registerBeforeRequestHook(appCreateBody{})
 	h.registerBeforeRequestHook(appUpdateBody{})
-	h.registerAfterSuccessHook(appDeleteRecordKept{})
 	h.registerAfterSuccessHook(entitlementSettingsUnlisted{})
 	h.registerBeforeRequestHook(requireListFilter{})
 }
