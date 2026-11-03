@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/operations"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/models/shared"
 )
@@ -14,9 +15,20 @@ func (r *UserRolesDataSourceModel) RefreshFromSharedUserRolesOutput(ctx context.
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		r.Roles = make([]types.String, 0, len(resp.Roles))
-		for _, v := range resp.Roles {
-			r.Roles = append(r.Roles, types.StringValue(v))
+		r.Roles = []tfTypes.UserRole{}
+
+		for _, rolesItem := range resp.Roles {
+			var roles tfTypes.UserRole
+
+			roles.IsCustom = types.BoolValue(rolesItem.IsCustom)
+			roles.Label = types.StringValue(rolesItem.Label)
+			if rolesItem.ResourceType != nil {
+				roles.ResourceType = types.StringValue(string(*rolesItem.ResourceType))
+			} else {
+				roles.ResourceType = types.StringNull()
+			}
+
+			r.Roles = append(r.Roles, roles)
 		}
 		r.UserID = types.StringValue(resp.UserID)
 	}

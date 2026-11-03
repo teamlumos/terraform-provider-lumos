@@ -91,7 +91,7 @@ type AppStoreSettingsResponse struct {
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
 	// When true, requesters may select more than one permission in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
-	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+	// UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
 	// Time-based access configuration for this app.
 	TimeBasedAccess AppStoreSettingsResponseTimeBasedAccess `json:"time_based_access"`

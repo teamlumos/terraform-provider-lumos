@@ -56,7 +56,7 @@ func (r *WorkflowStepsDataSource) Schema(ctx context.Context, req datasource.Sch
 			},
 			"type": schema.StringAttribute{
 				Optional:    true,
-				Description: `The type of workflow the steps are for. Some steps work in only one type: ` + "`" + `manual_provisioning_task` + "`" + ` in ` + "`" + `account-provisioning` + "`" + ` and ` + "`" + `manual_deprovisioning_task` + "`" + ` in ` + "`" + `account-deprovisioning` + "`" + `. Without ` + "`" + `type` + "`" + `, only the steps every type accepts are listed.`,
+				Description: `The type of workflow the steps are for. With ` + "`" + `type` + "`" + `, the list holds exactly the steps a workflow of that type accepts: for example, ` + "`" + `approval` + "`" + ` accepts only ` + "`" + `branch` + "`" + ` and ` + "`" + `approval-chain` + "`" + ` only ` + "`" + `approval_task` + "`" + `. Without ` + "`" + `type` + "`" + `, the list is every step any workflow type accepts for the app, so it can hold steps the type you create refuses. Pass ` + "`" + `type` + "`" + ` to see one type's steps.`,
 			},
 			"workflow_steps": schema.ListNestedAttribute{
 				Computed: true,
@@ -66,6 +66,10 @@ func (r *WorkflowStepsDataSource) Schema(ctx context.Context, req datasource.Sch
 							Computed: true,
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
+									"description": schema.StringAttribute{
+										Computed:    true,
+										Description: `The JSON forms an assignee parameter accepts, one per assignee. Omitted for any other parameter.`,
+									},
 									"hidden": schema.BoolAttribute{
 										Computed:    true,
 										Description: `Whether the parameter should be hidden.`,

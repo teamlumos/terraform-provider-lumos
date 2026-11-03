@@ -61,11 +61,7 @@ func (e *AccountV1InputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AccountV1Input - One uploaded account row, with unknown fields rejected instead of ignored.
-//
-// `extra="forbid"` is not recursive, so every nested row model is overridden
-// with its strict variant; the element types narrow only the validation
-// config, so the invariance complaints don't apply to how these are used.
+// AccountV1Input - One uploaded account. Unknown fields return 400.
 type AccountV1Input struct {
 	// A unique identifier for this account, such as an account ID or email.
 	UniqueIdentifier *string `json:"unique_identifier"`

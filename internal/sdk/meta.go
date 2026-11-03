@@ -22,7 +22,7 @@ import (
 // Use either to check your setup.
 //
 // Both require an API token. A 200 means your token works and v1 is enabled for your organization.
-// Where v1 isn't enabled, every `/v1` path returns 404.
+// Lumos enables v1 per organization, so contact your Lumos representative to turn it on.
 type Meta struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration

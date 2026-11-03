@@ -29,7 +29,9 @@ import (
 //   - `GET /v1/users/current` returns the user who owns your API token.
 //   - `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the
 //     accounts that user holds.
-//   - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles.
+//   - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has a `label` (a built-in
+//     role's label such as `app-admin`, or a custom role's name), `is_custom`, and a `resource_type`
+//     that is null for roles that apply across the organization.
 //     `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and
 //     `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already
 //     has, or removing one they don't have, changes nothing.
@@ -54,7 +56,7 @@ func newUsers(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Ho
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
-// A page can hold fewer items than `page_size` while more results remain (rows without a public representation are dropped after fetching). Treat an absent `next_page_token`, not a short page, as the end of the list.
+// A page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.
 func (s *Users) V1ListUsers(ctx context.Context, request operations.V1ListUsersRequest, opts ...operations.Option) (*operations.V1ListUsersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

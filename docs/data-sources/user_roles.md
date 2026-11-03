@@ -34,4 +34,13 @@ output "my_roles" {
 
 ### Read-Only
 
-- `roles` (List of String) The roles currently assigned to the user: a built-in role's label, such as `app-admin`, or a custom role's name.
+- `roles` (Attributes List) The roles currently assigned to the user. (see [below for nested schema](#nestedatt--roles))
+
+<a id="nestedatt--roles"></a>
+### Nested Schema for `roles`
+
+Read-Only:
+
+- `is_custom` (Boolean) Whether this is a custom role your organization defined.
+- `label` (String) A built-in role's label, such as `app-admin`, or a custom role's name. This is the value the `role_name` path parameter accepts.
+- `resource_type` (String) The type of resource the role applies to, such as `app`. Null for roles that apply across the organization.

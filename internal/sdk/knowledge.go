@@ -26,8 +26,8 @@ import (
 // update, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`
 // removes an existing file without uploading a replacement.
 //
-// `DELETE` archives rather than destroys. The entry stops appearing in list results and stays
-// recoverable.
+// `DELETE` deletes a knowledge entry. It no longer appears in list results, and you can't restore
+// it through the API.
 //
 // Pages here are small: `page_size` defaults to 10 and is clamped to 25.
 type Knowledge struct {
@@ -45,7 +45,7 @@ func newKnowledge(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hook
 }
 
 // ListKnowledgeContext - List Knowledge Context
-// List knowledge entries for the caller's domain with optional filters and cursor pagination.
+// List knowledge entries in your organization with optional filters and cursor pagination.
 //
 // Pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 func (s *Knowledge) ListKnowledgeContext(ctx context.Context, request operations.ListKnowledgeContextRequest, opts ...operations.Option) (*operations.ListKnowledgeContextResponse, error) {
@@ -303,7 +303,7 @@ func (s *Knowledge) ListKnowledgeContext(ctx context.Context, request operations
 }
 
 // CreateKnowledgeContext - Create Knowledge Context
-// Create a new knowledge entry in the caller's domain.
+// Create a new knowledge entry in your organization.
 //
 // Send as `multipart/form-data`. The `file` field is optional — omit it to create an entry without an attachment.
 func (s *Knowledge) CreateKnowledgeContext(ctx context.Context, request shared.BodyCreateKnowledgeContext, opts ...operations.Option) (*operations.CreateKnowledgeContextResponse, error) {
@@ -564,7 +564,7 @@ func (s *Knowledge) CreateKnowledgeContext(ctx context.Context, request shared.B
 }
 
 // GetKnowledgeContext - Get Knowledge Context
-// Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. An archived (deleted) entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.
+// Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. A deleted entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.
 func (s *Knowledge) GetKnowledgeContext(ctx context.Context, request operations.GetKnowledgeContextRequest, opts ...operations.Option) (*operations.GetKnowledgeContextResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1079,7 +1079,7 @@ func (s *Knowledge) UpdateKnowledgeContext(ctx context.Context, request operatio
 }
 
 // DeleteKnowledgeContext - Delete Knowledge Context
-// Archive (soft-delete) a knowledge entry. The entry is marked ARCHIVED and will no longer appear in list results. This action is reversible at the database level.
+// Delete a knowledge entry. It no longer appears in list results, and you can't restore it through the API.
 func (s *Knowledge) DeleteKnowledgeContext(ctx context.Context, request operations.DeleteKnowledgeContextRequest, opts ...operations.Option) (*operations.DeleteKnowledgeContextResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

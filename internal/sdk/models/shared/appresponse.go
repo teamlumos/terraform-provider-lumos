@@ -171,7 +171,7 @@ type AppstoreSettingsAppStoreSettingsResponse struct {
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
 	// When true, requesters may select more than one permission in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
-	// UUIDs of the groups whose members may request this app. Null means the app is requestable by everyone in the tenant.
+	// UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`
 	// Time-based access configuration for this app.
 	TimeBasedAccess AppstoreSettingsTimeBasedAccess `json:"time_based_access"`
@@ -332,11 +332,11 @@ type AppResponse struct {
 	Status *AppResponseStatus `json:"status,omitzero"`
 	// Whether this app has been disconnected (its stored credentials removed via `POST /v1/apps/{app_uuid}:disconnect`). A disconnected app is excluded from `GET /v1/apps?disconnected=false`; reconnect it by sending credentials to `PATCH /v1/apps/{app_uuid}`.
 	Disconnected *bool `json:"disconnected,omitzero"`
-	// The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name.
+	// The display name set for this app in your organization, exactly as written. `label` shows it when set. Null when the app uses its default name. A custom app has no default name, so on one this is always the name it shows.
 	LabelOverride *string `json:"label_override,omitzero"`
-	// The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description.
+	// The description set for this app in your organization, exactly as written. `description` shows it when set. Null when the app uses its default description. A custom app has no default description, so on one this is always the description it shows.
 	DescriptionOverride *string `json:"description_override,omitzero"`
-	// The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category.
+	// The category set for this app in your organization, exactly as written. `category` shows it when set. Null when the app uses its default category. A custom app has no default category, so on one this is always the category it shows.
 	CategoryOverride *string `json:"category_override,omitzero"`
 	// The logo URL set for this app in your organization, exactly as written. `logo_url` shows it when set. Null when the app uses its default logo.
 	LogoURLOverride *string `json:"logo_url_override,omitzero"`

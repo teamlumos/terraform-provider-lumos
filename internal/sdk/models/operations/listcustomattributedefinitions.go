@@ -75,7 +75,6 @@ const (
 	AttributeTypeJSON         AttributeType = "json"
 	AttributeTypeUser         AttributeType = "user"
 	AttributeTypeGroup        AttributeType = "group"
-	AttributeTypeMultiSelect  AttributeType = "multi-select"
 	AttributeTypeSingleSelect AttributeType = "single-select"
 )
 
@@ -101,8 +100,6 @@ func (e *AttributeType) UnmarshalJSON(data []byte) error {
 	case "user":
 		fallthrough
 	case "group":
-		fallthrough
-	case "multi-select":
 		fallthrough
 	case "single-select":
 		*e = AttributeType(v)

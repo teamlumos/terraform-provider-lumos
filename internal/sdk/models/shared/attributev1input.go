@@ -2,7 +2,7 @@
 
 package shared
 
-// AttributeV1Input - One uploaded attribute row, with unknown fields rejected instead of ignored.
+// AttributeV1Input - One attribute on an uploaded account. Unknown fields return 400.
 type AttributeV1Input struct {
 	// The unique identifier of the custom attribute
 	UniqueIdentifier *string `json:"unique_identifier,omitzero"`

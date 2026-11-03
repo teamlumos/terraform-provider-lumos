@@ -26,7 +26,7 @@ func (f *File) GetContent() []byte {
 }
 
 type BodyCreateKnowledgeContext struct {
-	// Title of the knowledge entry. Must be unique within the domain.
+	// Title of the knowledge entry. Must be unique in your organization.
 	Title string `multipartForm:"name=title"`
 	// Body text (markdown supported). Omit when providing a file attachment instead.
 	Content *string `multipartForm:"name=content"`

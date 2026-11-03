@@ -68,6 +68,12 @@ type Subject struct {
 	Note *string `json:"note,omitzero"`
 	// The removal this decision led to. Null when the decision leaves the access in place, or when removals have not started.
 	Removal *SubjectRemoval `json:"removal,omitzero"`
+	// Whether any evidence is attached to this subject. Whether any is owed is `evidence_required_by`.
+	IsEvidenceAttached *bool `json:"is_evidence_attached,omitzero"`
+	// Why evidence is owed, as the highest-ranked reason that applies: `review-setting-all-removals` when the app review asks for evidence on every removal, `decision-reason` when the decision's reason does, `manual-action` when a person acted on the removal or still must, `no-removal-request` when no workflow could carry the removal. Null when nothing asks for evidence. Read apart from `removal`, so an approved subject whose decision reason asks for evidence carries it too.
+	EvidenceRequiredBy *EvidenceRequiredBy `json:"evidence_required_by,omitzero"`
+	// Files attached as evidence for this subject, identifying fields only and no download link. Requires `expand=evidence`.
+	Evidence []SubjectEvidence `json:"evidence,omitzero"`
 	// What AI Assist recommended for this subject, if it reached one. Requires `expand=ai_recommendation`.
 	AiRecommendation *AiRecommendation `json:"ai_recommendation,omitzero"`
 }
@@ -158,6 +164,27 @@ func (s *Subject) GetRemoval() *SubjectRemoval {
 		return nil
 	}
 	return s.Removal
+}
+
+func (s *Subject) GetIsEvidenceAttached() *bool {
+	if s == nil {
+		return nil
+	}
+	return s.IsEvidenceAttached
+}
+
+func (s *Subject) GetEvidenceRequiredBy() *EvidenceRequiredBy {
+	if s == nil {
+		return nil
+	}
+	return s.EvidenceRequiredBy
+}
+
+func (s *Subject) GetEvidence() []SubjectEvidence {
+	if s == nil {
+		return nil
+	}
+	return s.Evidence
 }
 
 func (s *Subject) GetAiRecommendation() *AiRecommendation {

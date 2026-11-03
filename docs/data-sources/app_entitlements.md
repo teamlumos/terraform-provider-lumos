@@ -38,7 +38,7 @@ output "requestable_labels" {
 ### Optional
 
 - `search` (String) Case-insensitive substring match against the entitlement's label. Resend it with each `page_token`.
-- `visible_in_appstore` (Boolean) Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.
+- `visible_in_appstore` (Boolean) Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: `true` returns those visible in the catalog, `false` those hidden from it. While the app isn't in the AppStore, all of its entitlements count as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement on the app regardless of AppStore configuration. Requires permission to read AppStore item settings.
 
 ### Read-Only
 

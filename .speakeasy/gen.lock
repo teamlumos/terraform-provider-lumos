@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 0bb029b0d9edf189b9c1cbf8125b5762
+  docChecksum: efcf7512566f9d08f6e6ee74cac93108
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -260,6 +260,7 @@ trackedFiles:
   internal/provider/types/output_parameter_schema.go: {}
   internal/provider/types/pre_approval_rule.go: {}
   internal/provider/types/user.go: {}
+  internal/provider/types/user_role.go: {}
   internal/provider/types/user_with_custom_attributes.go: {}
   internal/provider/types/value.go: {}
   internal/provider/types/workflow_step_input.go: {}
@@ -555,6 +556,7 @@ trackedFiles:
   internal/sdk/models/shared/entitlementupdateinput.go: {}
   internal/sdk/models/shared/entitlementv1input.go: {}
   internal/sdk/models/shared/errortype.go: {}
+  internal/sdk/models/shared/evidencerequiredby.go: {}
   internal/sdk/models/shared/filterdatatype.go: {}
   internal/sdk/models/shared/filteroperator.go: {}
   internal/sdk/models/shared/filteroption.go: {}
@@ -594,9 +596,9 @@ trackedFiles:
     pristine_git_object: 35e3d12f1e4b065d09b78b29b12a5729a315adda
   internal/sdk/models/shared/reassigntaskinput.go: {}
   internal/sdk/models/shared/removalerror.go: {}
-  internal/sdk/models/shared/removalevidence.go: {}
   internal/sdk/models/shared/removalitsmticket.go: {}
   internal/sdk/models/shared/removalmethod.go: {}
+  internal/sdk/models/shared/removalstatus.go: {}
   internal/sdk/models/shared/scalarscopefilterinput.go: {}
   internal/sdk/models/shared/security.go:
     id: 9098af98367e
@@ -604,6 +606,7 @@ trackedFiles:
   internal/sdk/models/shared/subject.go: {}
   internal/sdk/models/shared/subjectassignee.go: {}
   internal/sdk/models/shared/subjectentitlement.go: {}
+  internal/sdk/models/shared/subjectevidence.go: {}
   internal/sdk/models/shared/subjectfiltersresponse.go: {}
   internal/sdk/models/shared/subjectremoval.go: {}
   internal/sdk/models/shared/subjecttype.go: {}
@@ -626,6 +629,7 @@ trackedFiles:
   internal/sdk/models/shared/userlistoutput.go: {}
   internal/sdk/models/shared/useroffboardinginput.go: {}
   internal/sdk/models/shared/useroffboardingoutput.go: {}
+  internal/sdk/models/shared/userrole.go: {}
   internal/sdk/models/shared/userroleaddoutput.go: {}
   internal/sdk/models/shared/userrolesoutput.go: {}
   internal/sdk/models/shared/userwithcustomattributes.go:
@@ -2656,7 +2660,7 @@ examples:
           user_id: "<id>"
       responses:
         "200":
-          application/json: {"user_id": "<id>", "roles": ["<value 1>", "<value 2>", "<value 3>"]}
+          application/json: {"user_id": "<id>", "roles": [{"label": "<value>", "is_custom": false, "resource_type": "non-human-identity"}, {"label": "<value>", "is_custom": true, "resource_type": "task"}, {"label": "<value>", "is_custom": true, "resource_type": "task"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":

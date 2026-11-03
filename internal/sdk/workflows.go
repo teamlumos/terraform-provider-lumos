@@ -1095,7 +1095,11 @@ func (s *Workflows) UpdateWorkflow(ctx context.Context, request operations.Updat
 // DeleteWorkflow - Delete Workflow
 // Delete a workflow definition by ID.
 //
-// Unbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.
+// These return 409:
+// - `workflow.bound_delete_not_allowed`: the workflow is still an app's approval workflow, or an entitlement's approval, provisioning or deprovisioning workflow. Unbind it first.
+// - `workflow.default_delete_not_allowed`: the workflow is an app's default workflow.
+//
+// An approval chain can't be deleted on its own, so deleting one returns 422 `workflow.approval_chain_delete_not_supported`. Edit the approval workflow that uses it instead.
 func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.DeleteWorkflowRequest, opts ...operations.Option) (*operations.DeleteWorkflowResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

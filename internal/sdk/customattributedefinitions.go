@@ -42,7 +42,7 @@ func newCustomAttributeDefinitions(rootSDK *Lumos, sdkConfig config.SDKConfigura
 }
 
 // ListCustomAttributeDefinitions - List Custom Attribute Definitions
-// List custom-attribute definitions for the domain, unified by label. Filter by label, config_type, source_type, attribute_type, and/or app.
+// List your organization's custom-attribute definitions, unified by label. Filter by label, config_type, source_type, attribute_type, and/or app. Multi-select attributes are not listed.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.
 func (s *CustomAttributeDefinitions) ListCustomAttributeDefinitions(ctx context.Context, request operations.ListCustomAttributeDefinitionsRequest, opts ...operations.Option) (*operations.ListCustomAttributeDefinitionsResponse, error) {

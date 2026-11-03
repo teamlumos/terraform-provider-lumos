@@ -26,6 +26,7 @@ func (r *WorkflowStepsDataSourceModel) RefreshFromSharedWorkflowStepTemplateList
 				workflowSteps.InputSchema = make(map[string]tfTypes.InputParameterSchema, len(workflowStepsItem.InputSchema))
 				for inputParameterSchemaKey, inputParameterSchemaValue := range workflowStepsItem.InputSchema {
 					var inputParameterSchemaResult tfTypes.InputParameterSchema
+					inputParameterSchemaResult.Description = types.StringPointerValue(inputParameterSchemaValue.Description)
 					inputParameterSchemaResult.Hidden = types.BoolPointerValue(inputParameterSchemaValue.Hidden)
 					if inputParameterSchemaValue.JSONSchema == nil {
 						inputParameterSchemaResult.JSONSchema = nil

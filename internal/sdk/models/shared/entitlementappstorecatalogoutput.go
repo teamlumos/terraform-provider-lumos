@@ -78,10 +78,8 @@ func (e *EntitlementAppStoreCatalogOutputSource) UnmarshalJSON(data []byte) erro
 
 // EntitlementAppStoreCatalogOutput - An entitlement as it appears in a single app's AppStore entitlement catalog.
 //
-// A trimmed subset of `EntitlementOutput`, mirroring how `AppStoreCatalogAppResponse`
-// trims `AppResponse`: admin-only fields (workflow bindings, `visible_in_appstore`,
-// `allowed_requester_groups`, etc.) aren't meaningful to an end user browsing the
-// store, or are implied by the entitlement appearing in the catalog at all.
+// It carries a subset of `EntitlementOutput`'s fields, leaving out admin-only ones such as
+// workflow bindings, `visible_in_appstore`, and `allowed_requester_groups`.
 type EntitlementAppStoreCatalogOutput struct {
 	// The ID of this entitlement.
 	ID string `json:"id"`
@@ -91,7 +89,7 @@ type EntitlementAppStoreCatalogOutput struct {
 	Source EntitlementAppStoreCatalogOutputSource `json:"source"`
 	// Optional long-form description of the entitlement.
 	Description *string `json:"description,omitzero"`
-	// This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or domain.
+	// This entitlement's effective time-based access options -- its own, if overridden, otherwise inherited from the app or your organization.
 	TimeBasedAccess []TimeBasedAccessOverrideOption `json:"time_based_access"`
 }
 

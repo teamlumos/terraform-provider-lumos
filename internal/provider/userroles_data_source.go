@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	tfTypes "github.com/teamlumos/terraform-provider-lumos/internal/provider/types"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk"
 )
 
@@ -28,8 +29,8 @@ type UserRolesDataSource struct {
 
 // UserRolesDataSourceModel describes the data model.
 type UserRolesDataSourceModel struct {
-	Roles  []types.String `tfsdk:"roles"`
-	UserID types.String   `tfsdk:"user_id"`
+	Roles  []tfTypes.UserRole `tfsdk:"roles"`
+	UserID types.String       `tfsdk:"user_id"`
 }
 
 // Metadata returns the data source type name.
@@ -43,10 +44,25 @@ func (r *UserRolesDataSource) Schema(ctx context.Context, req datasource.SchemaR
 		MarkdownDescription: "The Lumos roles assigned to one user.",
 
 		Attributes: map[string]schema.Attribute{
-			"roles": schema.ListAttribute{
-				Computed:    true,
-				ElementType: types.StringType,
-				Description: `The roles currently assigned to the user: a built-in role's label, such as ` + "`" + `app-admin` + "`" + `, or a custom role's name.`,
+			"roles": schema.ListNestedAttribute{
+				Computed: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"is_custom": schema.BoolAttribute{
+							Computed:    true,
+							Description: `Whether this is a custom role your organization defined.`,
+						},
+						"label": schema.StringAttribute{
+							Computed:    true,
+							Description: `A built-in role's label, such as ` + "`" + `app-admin` + "`" + `, or a custom role's name. This is the value the ` + "`" + `role_name` + "`" + ` path parameter accepts.`,
+						},
+						"resource_type": schema.StringAttribute{
+							Computed:    true,
+							Description: `The type of resource the role applies to, such as ` + "`" + `app` + "`" + `. Null for roles that apply across the organization.`,
+						},
+					},
+				},
+				Description: `The roles currently assigned to the user.`,
 			},
 			"user_id": schema.StringAttribute{
 				Required:    true,

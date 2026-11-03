@@ -9,9 +9,9 @@ import (
 )
 
 type SyncAppReviewRequest struct {
-	// The access review's ID. v1 can't list access reviews yet, but v0 returns this ID as the review's `id`.
+	// The access review's ID.
 	ReviewUUID string `pathParam:"style=simple,explode=false,name=review_uuid"`
-	// The app review's ID. An app review is one app within the access review that `review_uuid` names. v0 returns this ID as the `id` of an entry in the review's `apps`.
+	// The app review's ID. An app review is one app within the access review that `review_uuid` names.
 	AppReviewUUID      string                    `pathParam:"style=simple,explode=false,name=app_review_uuid"`
 	SyncAppReviewInput shared.SyncAppReviewInput `request:"mediaType=application/json"`
 }

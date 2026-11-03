@@ -2,7 +2,7 @@
 
 package shared
 
-// EntitlementV1Input - One uploaded entitlement row, with unknown fields rejected instead of ignored.
+// EntitlementV1Input - One entitlement on an uploaded account. Unknown fields return 400.
 type EntitlementV1Input struct {
 	// The unique identifier of the entitlement.
 	UniqueIdentifier *string `json:"unique_identifier,omitzero"`

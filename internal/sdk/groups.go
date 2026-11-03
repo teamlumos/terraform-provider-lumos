@@ -47,6 +47,8 @@ func newGroups(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.H
 // ListGroups - List Groups
 // List the groups synced from your connected integrations. Returns 404 if `app_id` is not an app in your organization.
 //
+// Listing groups needs permission to read groups across the organization. Of the built-in roles, Admin, Read Only Admin, AppStore Read Only Admin, and App Admin have it. Anyone else gets 403.
+//
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 func (s *Groups) ListGroups(ctx context.Context, request operations.ListGroupsRequest, opts ...operations.Option) (*operations.ListGroupsResponse, error) {
 	o := operations.Options{}

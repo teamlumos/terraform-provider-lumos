@@ -10,9 +10,8 @@ import (
 type RemovalMethod string
 
 const (
-	RemovalMethodWorkflow   RemovalMethod = "workflow"
-	RemovalMethodManualTask RemovalMethod = "manual-task"
-	RemovalMethodItsm       RemovalMethod = "itsm"
+	RemovalMethodAutomated RemovalMethod = "automated"
+	RemovalMethodManual    RemovalMethod = "manual"
 )
 
 func (e RemovalMethod) ToPointer() *RemovalMethod {
@@ -24,11 +23,9 @@ func (e *RemovalMethod) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	switch v {
-	case "workflow":
+	case "automated":
 		fallthrough
-	case "manual-task":
-		fallthrough
-	case "itsm":
+	case "manual":
 		*e = RemovalMethod(v)
 		return nil
 	default:

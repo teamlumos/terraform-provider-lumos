@@ -58,7 +58,7 @@ func newIntegrations(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 }
 
 // ListIntegrationsV1 - List Integrations
-// List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned — catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only — name, category, and logo. Integrations you have connected are read via the Apps API.
+// List the integrations (apps) available to connect in your organization (paginated). Only connectable integrations are returned — catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only — name, category, and logo. Integrations you have connected are read via the Apps API.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter. When `next_page_token` is `null`, the current page is the last one.
 func (s *Integrations) ListIntegrationsV1(ctx context.Context, request operations.ListIntegrationsV1Request, opts ...operations.Option) (*operations.ListIntegrationsV1Response, error) {

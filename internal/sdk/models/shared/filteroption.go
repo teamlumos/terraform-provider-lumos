@@ -18,8 +18,6 @@ type FilterOption struct {
 	Operators []FilterOperator `json:"operators,omitzero"`
 	// Values this field accepts, for a field drawn from a fixed set. Empty when the field accepts free-form values.
 	Values []FilterValue `json:"values,omitzero"`
-	// Table field this option filters on. Never serialized.
-	InternalField *string `default:"" json:"internal_field"`
 }
 
 func (f FilterOption) MarshalJSON() ([]byte, error) {
@@ -66,11 +64,4 @@ func (f *FilterOption) GetValues() []FilterValue {
 		return nil
 	}
 	return f.Values
-}
-
-func (f *FilterOption) GetInternalField() *string {
-	if f == nil {
-		return nil
-	}
-	return f.InternalField
 }
