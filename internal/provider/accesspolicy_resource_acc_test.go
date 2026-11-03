@@ -11,11 +11,11 @@ import (
 
 // TestAccAccessPolicy grants a custom app and a manual entitlement the test
 // creates, moving the policy between the everyone condition and a condition
-// written in the expanded form, then publishes it, renames it while
-// published and imports it. Every step must plan no change once applied.
-// The condition matches an address no one has, so the policy can't collide
-// with another published policy's condition, and it stays disabled, so it
-// grants nothing; the everyone condition is only ever on the draft.
+// written in the expanded form, then finds it by name, renames it and imports
+// it. Every step must plan no change once applied. The policy stays a
+// disabled draft, so it grants nothing. It never publishes: the test org
+// requires approval before an access policy is published, and Terraform can't
+// submit one for approval.
 func TestAccAccessPolicy(t *testing.T) {
 	prefix := "tf-acc-" + acctest.RandString(8)
 	condition := fmt.Sprintf(`jsonencode({
@@ -86,15 +86,14 @@ data "lumos_access_policies" "by_name" {
 				),
 			},
 			{
-				Config: config(prefix, byCondition, "published", byName),
+				Config: config(prefix, byCondition, "draft", byName),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("lumos_access_policy.test", "status", "published"),
 					resource.TestCheckResourceAttr("data.lumos_access_policies.by_name", "access_policies.#", "1"),
 					resource.TestCheckResourceAttrPair("data.lumos_access_policies.by_name", "access_policies.0.access_condition", "lumos_access_policy.test", "access_condition"),
 				),
 			},
 			{
-				Config: config(renamed, byCondition, "published", ""),
+				Config: config(renamed, byCondition, "draft", ""),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
 						plancheck.ExpectResourceAction("lumos_access_policy.test", plancheck.ResourceActionUpdate),
@@ -103,7 +102,7 @@ data "lumos_access_policies" "by_name" {
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("lumos_access_policy.test", "name", renamed),
-					resource.TestCheckResourceAttr("lumos_access_policy.test", "status", "published"),
+					resource.TestCheckResourceAttr("lumos_access_policy.test", "status", "draft"),
 				),
 			},
 			{
