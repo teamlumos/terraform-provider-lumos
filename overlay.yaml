@@ -472,6 +472,11 @@ actions:
   - target: $["components"]["schemas"]["EntitlementCreateInput"]["properties"]["app_id"]
     update:
       x-speakeasy-param-force-new: true
+  # The API refuses a blank label, but its spec no longer says so; checking
+  # at plan keeps a blank label from failing the apply.
+  - target: $["components"]["schemas"]["EntitlementCreateInput","EntitlementUpdateInput"]["properties"]["label"]
+    update:
+      minLength: 1
   # Unexpanded, a workflow slot is always {id}.
   - target: $["components"]["schemas"]["EntitlementOutput"]["properties"]["approval_workflow_override","provisioning_workflow","deprovisioning_workflow"]["anyOf"]
     remove: true

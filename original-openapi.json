@@ -1923,10 +1923,10 @@
                   "type": "null"
                 }
               ],
-              "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter.",
+              "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both.",
               "title": "Has User"
             },
-            "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both. The unversioned GET /accounts lists only matched accounts and ignores this parameter."
+            "description": "`true` lists only accounts matched to a user, `false` only accounts with no user. Omit to list both."
           },
           {
             "name": "expand",
@@ -2904,7 +2904,7 @@
           "Apps"
         ],
         "summary": "Create App",
-        "description": "Create a custom app, or connect an integration.\n\nOmit `app_class_id`, or send `custom`, to create a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply with `app_class_id`.\n\nEither kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
+        "description": "Create a custom app, or connect an integration.\n\nOmit `app_class_id`, or send `custom`, to create a custom app \u2014 one Lumos has no connector for, whose accounts you maintain yourself. It needs `label_override`, `category_override` and `description_override`. Any other `app_class_id` instead connects that integration using the credentials in `auth`; which keys are required varies by integration, so read them from `GET /v1/integrations/{app_class_id}/connection-schema` rather than hardcoding them. `auth`, `settings` and `version` only apply when connecting an integration.\n\nEither kind of app can be created with its `*_override` fields, the same ones `PATCH /v1/apps/{app_uuid}` sets, and they're stored exactly as sent. `label`, `description`, `category`, `logo_url` and `website_url` are read-only: they show the override where one is set and the app's default otherwise.\n\nCredentials that validate right away connect the app. Its first sync then waits for an admin to review its match rules, and starts from the Lumos UI or from `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Integrations that need browser consent are finished in the Lumos UI instead. The response is the created app either way. Both are marked `connection_source=api`, so `GET /v1/apps?connection_source=api&disconnected=false` lists everything you registered here.",
         "operationId": "v1CreateApp",
         "security": [
           {
@@ -2973,7 +2973,7 @@
             }
           },
           "409": {
-            "description": "Conflict \u2014 an instance for this app already exists in your organization.",
+            "description": "Conflict \u2014 an instance for this app already exists in your organization, or none of your connected on-prem agents run this on-prem connector (code `app.on_prem_connector_unavailable`); install it on an agent, then retry.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3013,7 +3013,7 @@
             }
           },
           "422": {
-            "description": "Unprocessable \u2014 the API can't connect this integration: a CSV/flatfile app, whose column mapping is set up only in the Lumos UI; an integration whose connection fields the API doesn't support yet; or an on-prem connector that none of your connected on-prem agents run. The `detail` field names the reason.",
+            "description": "Unprocessable \u2014 the API can't connect this integration (code `app.api_unsupported`): a CSV/flatfile app, whose column mapping is set up only in the Lumos UI, or an integration whose connection fields the API doesn't support yet. The `detail` field names the reason.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3458,7 +3458,7 @@
             }
           },
           "422": {
-            "description": "Unprocessable \u2014 credentials were supplied for an integration the API can't manage: a CSV/flatfile app, or one whose connection fields the API doesn't support yet. Manage it in the Lumos UI instead. Or `null` was sent for a custom app's `label_override`, `description_override` or `category_override`, which a custom app has no default for.",
+            "description": "Unprocessable \u2014 credentials were supplied for an integration the API can't manage (code `app.api_unsupported`): a CSV/flatfile app, or one whose connection fields the API doesn't support yet. Manage it in the Lumos UI instead. Or `null` was sent for a custom app's `label_override`, `description_override` or `category_override`, which a custom app has no default for (code `app.field_not_clearable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3556,7 +3556,7 @@
             }
           },
           "409": {
-            "description": "Conflict \u2014 the app is not managed via the API (`connection_source` is not `api`), or the custom app can't be deleted (`app.delete_blocked`) because it still has accounts or other Lumos data still references it.",
+            "description": "Conflict \u2014 the app is not managed via the API (`connection_source` is not `api`), or the custom app can't be deleted (`app.delete_blocked`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3797,7 +3797,7 @@
             "description": "Not Found"
           },
           "409": {
-            "description": "A concurrent write claimed the same custom intake reference key.",
+            "description": "`in_app_store: true` for an app without at least one admin (a user or a group), code `app.admin_required`; set its admins with `PUT /v1/apps/{app_uuid}/admins`, then retry. Or a concurrent write claimed the same custom intake reference key.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3827,7 +3827,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "The patch names something that can't be applied: `in_app_store: true` for an app without at least one admin (a user or a group); a group in `allowed_requester_group_uuids` or a label in `time_based_access.options` your organization doesn't have; a `time_based_access.default` the app doesn't offer, including options that drop the current default without a new `default`; an unknown `request_validation_webhook_uuid`; or a `default_entitlement` that doesn't exist, belongs to another app, or isn't requestable.",
+            "description": "The patch names something that can't be applied, and `code` names it: a group in `allowed_requester_group_uuids` your organization doesn't have (`group.not_found`); a label in `time_based_access.options` it doesn't have (`time_based_access.unknown_option`); a `time_based_access.default` the app doesn't offer, including options that drop the current default without a new `default` (`time_based_access.default_not_offered`); an unknown `request_validation_webhook_uuid` (`webhook.not_found`) or one that isn't a request-validation webhook (`request_validation_webhook.wrong_type`); or a `default_entitlement` that doesn't exist (`entitlement.not_found`), belongs to another app (`entitlement.wrong_app`), or isn't requestable (`entitlement.not_requestable`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4065,7 +4065,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "A user or group isn't in your organization.",
+            "description": "A user or group isn't in your organization: code `user.not_found` or `group.not_found`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4566,7 +4566,7 @@
           "Apps"
         ],
         "summary": "Set App Approval Workflow",
-        "description": "Bind an approval workflow to this app, replacing whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. It also has to be a usable template: its assignees must resolve inside your organization, and it cannot already be bound to a different app. Any of those failing returns 400.",
+        "description": "Bind an approval workflow to this app, replacing whatever was bound before.\n\nThe workflow must already exist and belong to your organization, or the request returns 404. A workflow that is not an access-request approval workflow returns 422 `workflow.type_mismatch`. It also has to be a usable template: its assignees must resolve inside your organization, or the request returns 400.\n\nA workflow that belongs to another app, or is bound to another app or entitlement, returns 409 `workflow.bind_conflict`, as does one deleted while the request ran. A refused request changes nothing.",
         "operationId": "setAppApprovalWorkflow",
         "security": [
           {
@@ -4794,7 +4794,7 @@
           "Apps"
         ],
         "summary": "Set App Default Provisioning Workflow",
-        "description": "Bind the default provisioning workflow for this app, replacing whatever was bound before. Entitlements with no provisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account provisioning workflow. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.",
+        "description": "Bind the default provisioning workflow for this app, replacing whatever was bound before. Entitlements with no provisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account provisioning workflow; one of another type returns 422 `workflow.type_mismatch`. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.\n\nA workflow that belongs to another app returns 409 `workflow.bind_conflict`, as does one deleted while the request ran.",
         "operationId": "setAppProvisioningWorkflow",
         "security": [
           {
@@ -5022,7 +5022,7 @@
           "Apps"
         ],
         "summary": "Set App Default Deprovisioning Workflow",
-        "description": "Bind the default deprovisioning workflow for this app, replacing whatever was bound before. Entitlements with no deprovisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account deprovisioning workflow. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.",
+        "description": "Bind the default deprovisioning workflow for this app, replacing whatever was bound before. Entitlements with no deprovisioning workflow of their own fall back to this one.\n\nThe workflow must already exist, belong to your organization, and be an account deprovisioning workflow; one of another type returns 422 `workflow.type_mismatch`. A workflow containing steps this API cannot represent is rejected with 400 rather than bound, since you would not be able to read it back afterwards.\n\nA workflow that belongs to another app returns 409 `workflow.bind_conflict`, as does one deleted while the request ran.",
         "operationId": "setAppDeprovisioningWorkflow",
         "security": [
           {
@@ -5142,7 +5142,7 @@
           "Apps"
         ],
         "summary": "Disconnect App",
-        "description": "Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`.\n\nUse `DELETE /v1/apps/{app_uuid}` instead to remove the app outright; unlike this operation it reports whether the record actually went away. Returns 404 if `app_uuid` is unknown in the caller's organization.",
+        "description": "Disconnect an app: removes its stored credentials and returns it to a connectable state. When no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect later by sending credentials to `PATCH /v1/apps/{app_uuid}`. A custom app with no accounts is instead deleted along with its own configuration, as `DELETE` does.\n\nUse `DELETE /v1/apps/{app_uuid}` instead to remove the app outright; unlike this operation it reports whether the record actually went away. Returns 404 if `app_uuid` is unknown in the caller's organization.",
         "operationId": "v1DisconnectApp",
         "security": [
           {
@@ -5384,7 +5384,7 @@
             }
           },
           "422": {
-            "description": "Unprocessable \u2014 the app is a manual/CSV app, or an integration the API can't manage; `detail` names the reason.",
+            "description": "Unprocessable \u2014 the app is a manual/CSV app (code `app.manual_sync_unsupported`), or an integration the API can't manage (code `app.api_unsupported`); `detail` names the reason.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5971,7 +5971,7 @@
           "Entitlements"
         ],
         "summary": "Delete Entitlement",
-        "description": "Delete an entitlement.\n\nRefuses while anyone still holds the entitlement: that returns 409, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.",
+        "description": "Delete an entitlement.\n\nRefuses while anyone still holds the entitlement: that returns 409 `entitlement_in_use`, and the count of current holders arrives as `active_accounts` in the error body. Revoke the remaining access first, then retry. Returns 404 if the entitlement is unknown in your organization.",
         "operationId": "deleteEntitlement",
         "security": [
           {
@@ -6036,14 +6036,14 @@
             "description": "Not Found"
           },
           "409": {
+            "description": "Conflict \u2014 anyone still holds the entitlement (`entitlement_in_use`), or deletion is blocked until other data lets go of it (`entitlement.delete_blocked`): it has pending access requests, it has time-based access requests scheduled for removal, or a draft or published access policy references it. `detail` names the reason.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiErrorEnvelope"
                 }
               }
-            },
-            "description": "Conflict"
+            }
           },
           "429": {
             "content": {
@@ -6066,7 +6066,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 deletion is blocked: the entitlement wasn't created in Lumos (`source` isn't `manual`), it has pending access requests, it has time-based access requests scheduled for removal, or a draft or published access policy references it. `detail` names the reason.",
+            "description": "Unprocessable \u2014 the entitlement wasn't created in Lumos (`source` isn't `manual`), so it can't be deleted (`entitlement.not_manual`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6445,7 +6445,7 @@
             "description": "Internal Server Error"
           },
           "422": {
-            "description": "Unprocessable \u2014 a referenced value could not be resolved in your organization: an `allowed_requester_group_uuids_override` UUID that isn't a group, or a `request_validation_webhook_uuid` that doesn't exist.",
+            "description": "Unprocessable \u2014 the patch names something that can't be applied, and `code` names it: an `allowed_requester_group_uuids_override` UUID that isn't a group in your organization (`group.not_found`); a label in `time_based_access_override.options` your organization doesn't have (`time_based_access.unknown_option`); or a `request_validation_webhook_uuid` that doesn't exist (`webhook.not_found`) or isn't a request-validation webhook (`request_validation_webhook.wrong_type`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6571,7 +6571,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Approval Workflow Override",
-        "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist, belong to your organization, and be an access-request approval workflow. Anything else returns 400. An entitlement that can't be requested can't take an override and returns 404.",
+        "description": "Bind an approval workflow to this one entitlement, overriding the approval workflow on its app. Replaces any override already bound.\n\nThe workflow must already exist and belong to your organization, or the request returns 404. One that is not an access-request approval workflow returns 422 `workflow.type_mismatch`, and one that is not a usable approval template returns 400. An entitlement that can't be requested can't take an override and returns 404.\n\nA workflow that belongs to another app, or is bound to another app or entitlement, returns 409 `workflow.bind_conflict`, as does one deleted while the request ran. A refused request changes nothing.",
         "operationId": "setEntitlementApprovalWorkflowOverride",
         "security": [
           {
@@ -6900,7 +6900,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Provisioning Workflow",
-        "description": "Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a provisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement, and must include the step that grants this entitlement, aimed at it.",
+        "description": "Bind a provisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist and belong to your organization, or the request returns 404. One that is not a provisioning workflow returns 422 `workflow.type_mismatch`, and any other invalid workflow returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement, and must include the step that grants this entitlement, aimed at it. A workflow that belongs to another app or is already bound to another entitlement returns 409 `workflow.bind_conflict`, as does one deleted while the request ran.",
         "operationId": "setEntitlementProvisioningWorkflow",
         "security": [
           {
@@ -7128,7 +7128,7 @@
           "Entitlements"
         ],
         "summary": "Set Entitlement Deprovisioning Workflow",
-        "description": "Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist, belong to your organization, and be a deprovisioning workflow. Anything else returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement.",
+        "description": "Bind a deprovisioning workflow to this one entitlement, in place of the default on its app. Replaces whatever was bound before.\n\nThe workflow must already exist and belong to your organization, or the request returns 404. One that is not a deprovisioning workflow returns 422 `workflow.type_mismatch`, and any other invalid workflow returns 400. An entitlement that can't be requested returns 404.\n\nA workflow can be bound to one entitlement. A workflow that belongs to another app or is already bound to another entitlement returns 409 `workflow.bind_conflict`, as does one deleted while the request ran.",
         "operationId": "setEntitlementDeprovisioningWorkflow",
         "security": [
           {
@@ -9134,7 +9134,7 @@
           "Workflows"
         ],
         "summary": "Delete Workflow",
-        "description": "Delete a workflow definition by ID.\n\nUnbind the workflow from every app and entitlement first. Deleting one that is still bound leaves the workflow field it was bound to without a workflow.\n\nAn app's default workflow can't be deleted; that returns 409 `workflow.default_delete_not_allowed`.",
+        "description": "Delete a workflow definition by ID.\n\nThese return 409:\n- `workflow.bound_delete_not_allowed`: the workflow is still an app's approval workflow, or an entitlement's approval, provisioning or deprovisioning workflow. Unbind it first.\n- `workflow.default_delete_not_allowed`: the workflow is an app's default workflow.\n\nAn approval chain can't be deleted on its own, so deleting one returns 422 `workflow.approval_chain_delete_not_supported`. Edit the approval workflow that uses it instead.",
         "operationId": "deleteWorkflow",
         "security": [
           {
@@ -9276,10 +9276,10 @@
                   "type": "null"
                 }
               ],
-              "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is not narrowed to one type and can hold steps the type you create refuses, so pass the type you will create.",
+              "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is every step any workflow type accepts for the app, so it can hold steps the type you create refuses. Pass `type` to see one type's steps.",
               "title": "Type"
             },
-            "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is not narrowed to one type and can hold steps the type you create refuses, so pass the type you will create."
+            "description": "The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is every step any workflow type accepts for the app, so it can hold steps the type you create refuses. Pass `type` to see one type's steps."
           },
           {
             "name": "search",
@@ -14995,7 +14995,7 @@
               }
             ],
             "title": "App Class Id",
-            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`; omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
+            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, an integration's id connects it with `auth`/`settings`. Omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
           },
           "auth": {
             "anyOf": [
@@ -16038,7 +16038,7 @@
               }
             ],
             "title": "App Class Id",
-            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, supplying it switches the request from creating a custom app to connecting that integration with `auth`/`settings`; omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
+            "description": "Canonical identifier of an integration, e.g. `okta.com`. On create, an integration's id connects it with `auth`/`settings`. Omit it, or send `custom`, to create a custom app. On update it is optional and, when supplied, must match the app's own integration \u2014 a mismatch is rejected with 400."
           },
           "auth": {
             "anyOf": [
@@ -17352,7 +17352,6 @@
         "properties": {
           "label": {
             "type": "string",
-            "minLength": 1,
             "title": "Label",
             "description": "New human-readable label for the entitlement. Only entitlements created in Lumos (`source` is `manual`) can be renamed; the integration owns a synced entitlement's label."
           },
@@ -17884,6 +17883,18 @@
             "title": "Hidden",
             "description": "Whether the parameter should be hidden.",
             "default": false
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "The JSON forms an assignee parameter accepts, one per assignee. Omitted for any other parameter."
           },
           "options": {
             "items": {
@@ -20136,18 +20147,59 @@
         ],
         "title": "UserOffboardingOutput"
       },
-      "UserRoleAddOutput": {
+      "UserRole": {
         "properties": {
-          "role_added": {
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "description": "A built-in role's label, such as `app-admin`, or a custom role's name. This is the value the `role_name` path parameter accepts."
+          },
+          "is_custom": {
+            "type": "boolean",
+            "title": "Is Custom",
+            "description": "Whether this is a custom role your organization defined."
+          },
+          "resource_type": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "app",
+                  "dashboard",
+                  "access-policy",
+                  "vendor",
+                  "non-human-identity",
+                  "task",
+                  "discovered-credential"
+                ]
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Role Added",
+            "title": "Resource Type",
+            "description": "The type of resource the role applies to, such as `app`. Null for roles that apply across the organization."
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "is_custom",
+          "resource_type"
+        ],
+        "title": "UserRole"
+      },
+      "UserRoleAddOutput": {
+        "properties": {
+          "role_added": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "description": "The role that was assigned. Absent when it was already assigned."
           },
           "message": {
@@ -20176,11 +20228,11 @@
           },
           "roles": {
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/UserRole"
             },
             "type": "array",
             "title": "Roles",
-            "description": "The roles currently assigned to the user: a built-in role's label, such as `app-admin`, or a custom role's name."
+            "description": "The roles currently assigned to the user."
           }
         },
         "type": "object",
@@ -20696,7 +20748,7 @@
     },
     {
       "name": "Users",
-      "description": "\nUsers are the people in your organization. These endpoints read them, and the only thing they\nchange is a user's Lumos roles.\n\n- `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`\n  requires an exact match.\n- `GET /v1/users/current` returns the user who owns your API token.\n- `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the\n  accounts that user holds.\n- `GET /v1/users/{user_id}/roles` lists a user's Lumos roles.\n  `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and\n  `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already\n  has, or removing one they don't have, changes nothing.\n\nA user who has been deleted returns the same 404 as one who doesn't exist in your organization.\n"
+      "description": "\nUsers are the people in your organization. These endpoints read them, and the only thing they\nchange is a user's Lumos roles.\n\n- `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`\n  requires an exact match.\n- `GET /v1/users/current` returns the user who owns your API token.\n- `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the\n  accounts that user holds.\n- `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has a `label` (a built-in\n  role's label such as `app-admin`, or a custom role's name), `is_custom`, and a `resource_type`\n  that is null for roles that apply across the organization.\n  `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and\n  `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already\n  has, or removing one they don't have, changes nothing.\n\nA user who has been deleted returns the same 404 as one who doesn't exist in your organization.\n"
     },
     {
       "name": "Workflows",
