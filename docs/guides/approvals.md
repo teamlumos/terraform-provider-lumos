@@ -139,12 +139,12 @@ resource "lumos_app_approval_workflow" "b" {
 
 * A chain can be used by only one workflow. Lumos refuses a template that references a chain another workflow already uses.
 * A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
-* An app can't be destroyed in one pass together with its bound approval workflows:
+* Lumos never deletes an approval chain. Destroying or replacing a chain's `lumos_workflow` removes it from Terraform state, and the chain stays in Lumos. The plan warns when it does.
+* An app can't be destroyed in one pass together with its bound approval template:
   * Destroying an app's approval binding fails the plan.
   * Lumos refuses to delete an approval template while it's an app's or entitlement's approval workflow.
-  * Lumos refuses to delete an approval chain.
 
-  To destroy the app, first stop managing the binding, the template and its chains without changing Lumos, using `removed` blocks, then destroy the app. The template and its chains stay in Lumos.
+  To destroy the app, first stop managing the binding and the template without changing Lumos, using `removed` blocks, then destroy the app and its chains. The template and its chains stay in Lumos.
 
   ```terraform
   removed {
@@ -156,13 +156,6 @@ resource "lumos_app_approval_workflow" "b" {
 
   removed {
     from = lumos_workflow.deploy_dashboard_approvals
-    lifecycle {
-      destroy = false
-    }
-  }
-
-  removed {
-    from = lumos_workflow.manager_then_it
     lifecycle {
       destroy = false
     }
