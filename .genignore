@@ -67,5 +67,8 @@ examples/data-sources/lumos_user/
 examples/data-sources/lumos_group/
 examples/data-sources/lumos_entitlement/
 internal/provider/workflow_binding_destroy.go
+internal/provider/workflow_chain_destroy.go
+internal/sdk/internal/hooks/approval_chain_kept.go
+internal/sdk/internal/hooks/approval_chain_kept_test.go
 internal/provider/app_credentials.go
 internal/planmodifiers/utils/reconnect_test.go

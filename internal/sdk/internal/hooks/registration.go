@@ -20,5 +20,6 @@ func initHooks(h *Hooks) {
 	h.registerBeforeRequestHook(clearUnsetFields{})
 	h.registerBeforeRequestHook(appUpdateBody{})
 	h.registerAfterSuccessHook(entitlementSettingsUnlisted{})
+	h.registerAfterSuccessHook(approvalChainKept{})
 	h.registerBeforeRequestHook(requireListFilter{})
 }
