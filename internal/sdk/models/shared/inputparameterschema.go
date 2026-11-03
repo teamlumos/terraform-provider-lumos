@@ -19,6 +19,8 @@ type InputParameterSchema struct {
 	Required *bool `default:"false" json:"required"`
 	// Whether the parameter should be hidden.
 	Hidden *bool `default:"false" json:"hidden"`
+	// The JSON forms an assignee parameter accepts, one per assignee. Omitted for any other parameter.
+	Description *string `json:"description,omitzero"`
 	// Available options for the value of this field.
 	Options []string `json:"options,omitzero"`
 	// The JSON Schema for the expected structure of an object or array parameter. It comes from the underlying OpenAPI operation, as close to verbatim as possible.
@@ -62,6 +64,13 @@ func (i *InputParameterSchema) GetHidden() *bool {
 		return nil
 	}
 	return i.Hidden
+}
+
+func (i *InputParameterSchema) GetDescription() *string {
+	if i == nil {
+		return nil
+	}
+	return i.Description
 }
 
 func (i *InputParameterSchema) GetOptions() []string {

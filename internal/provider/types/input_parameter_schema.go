@@ -7,10 +7,11 @@ import (
 )
 
 type InputParameterSchema struct {
-	Hidden     types.Bool     `tfsdk:"hidden"`
-	JSONSchema *JSONSchema    `tfsdk:"json_schema"`
-	Label      types.String   `tfsdk:"label"`
-	Options    []types.String `tfsdk:"options"`
-	Required   types.Bool     `tfsdk:"required"`
-	Type       types.String   `tfsdk:"type"`
+	Description types.String   `tfsdk:"description"`
+	Hidden      types.Bool     `tfsdk:"hidden"`
+	JSONSchema  *JSONSchema    `tfsdk:"json_schema"`
+	Label       types.String   `tfsdk:"label"`
+	Options     []types.String `tfsdk:"options"`
+	Required    types.Bool     `tfsdk:"required"`
+	Type        types.String   `tfsdk:"type"`
 }

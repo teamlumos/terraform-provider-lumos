@@ -77,6 +77,7 @@ Optional:
 * Placeholder steps can't be imported and applied.
 * A chain can be used by only one workflow. Lumos refuses a template that references a chain another workflow already uses.
 * A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
+* Lumos never deletes an approval chain. Destroying or replacing one removes it from Terraform state, and the chain stays in Lumos. The plan warns when it does.
 
 ## Import
 

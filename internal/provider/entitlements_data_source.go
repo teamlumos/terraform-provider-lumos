@@ -151,7 +151,7 @@ func (r *EntitlementsDataSource) Schema(ctx context.Context, req datasource.Sche
 			},
 			"visible_in_appstore": schema.BoolAttribute{
 				Optional:    true,
-				Description: `Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: ` + "`" + `true` + "`" + ` returns those visible in the catalog, ` + "`" + `false` + "`" + ` those hidden from it. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission, domain-wide.`,
+				Description: `Filter by AppStore catalog visibility. When present, only entitlements configured in the AppStore catalog are considered: ` + "`" + `true` + "`" + ` returns those visible in the catalog, ` + "`" + `false` + "`" + ` those hidden from it. An entitlement on an app that isn't in the AppStore counts as hidden. Entitlements that aren't configured in the AppStore catalog at all are excluded either way. Omit this filter to return every entitlement regardless of AppStore configuration. Requires the AppStore item settings read permission across your organization.`,
 			},
 		},
 	}

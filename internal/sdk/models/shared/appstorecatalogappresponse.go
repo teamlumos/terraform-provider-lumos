@@ -46,12 +46,10 @@ func (e *AppStoreCatalogAppResponseStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// AppStoreCatalogAppResponse - `AppBase` plus catalog-scoped `appstore_settings` — no admin-only workflow,
-// approval-message, `admins`, or `custom_attributes` fields.
+// AppStoreCatalogAppResponse - An app as the AppStore catalog shows it to a requester.
 //
-// Used by the appstore-catalog endpoint (the end-user app store view), which has no
-// business exposing approval/provisioning/deprovisioning workflow bindings or the
-// post-approval message to the requester.
+// It leaves out admin-only fields: workflow bindings, `post_approval_message`, `admins`, and
+// `custom_attributes`.
 type AppStoreCatalogAppResponse struct {
 	// The unique identifier of the app.
 	ID string `json:"id"`

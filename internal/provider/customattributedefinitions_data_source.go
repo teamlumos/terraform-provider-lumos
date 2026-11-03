@@ -56,7 +56,7 @@ func (r *CustomAttributeDefinitionsDataSource) Schema(ctx context.Context, req d
 			},
 			"attribute_type": schema.StringAttribute{
 				Optional:    true,
-				Description: `Filter by the type of value the attribute holds. must be one of ["string", "boolean", "integer", "datetime", "json", "user", "group", "multi-select", "single-select"]`,
+				Description: `Filter by the type of value the attribute holds. must be one of ["string", "boolean", "integer", "datetime", "json", "user", "group", "single-select"]`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"string",
@@ -66,7 +66,6 @@ func (r *CustomAttributeDefinitionsDataSource) Schema(ctx context.Context, req d
 						"json",
 						"user",
 						"group",
-						"multi-select",
 						"single-select",
 					),
 				},
@@ -92,7 +91,7 @@ func (r *CustomAttributeDefinitionsDataSource) Schema(ctx context.Context, req d
 						},
 						"label": schema.StringAttribute{
 							Computed:    true,
-							Description: `Stable public reference (unique per domain after unification).`,
+							Description: `Stable reference, unique in your organization.`,
 						},
 						"name": schema.StringAttribute{
 							Computed:    true,

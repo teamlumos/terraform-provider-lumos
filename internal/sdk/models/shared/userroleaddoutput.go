@@ -2,15 +2,30 @@
 
 package shared
 
+import (
+	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
+)
+
 // UserRoleAddOutput - Exactly one of the two fields is present.
 type UserRoleAddOutput struct {
 	// The role that was assigned. Absent when it was already assigned.
-	RoleAdded *string `json:"role_added,omitzero"`
+	RoleAdded *UserRole `json:"role_added,omitzero"`
 	// Set when the role was already assigned and nothing changed.
 	Message *string `json:"message,omitzero"`
 }
 
-func (u *UserRoleAddOutput) GetRoleAdded() *string {
+func (u UserRoleAddOutput) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(u, "", false)
+}
+
+func (u *UserRoleAddOutput) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &u, "", false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserRoleAddOutput) GetRoleAdded() *UserRole {
 	if u == nil {
 		return nil
 	}

@@ -3,71 +3,17 @@
 package shared
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-	"time"
 )
-
-// SubjectRemovalStatus - How far the removal has got. Derived live from the workflow carrying it out, so it is current even mid-flight.
-//
-// `removal-errored` is the one value the subject filters do not accept: it is graded from the workflow rather than stored, so no row could match it.
-type SubjectRemovalStatus string
-
-const (
-	SubjectRemovalStatusAutoRemoved          SubjectRemovalStatus = "auto-removed"
-	SubjectRemovalStatusAutoRemoving         SubjectRemovalStatus = "auto-removing"
-	SubjectRemovalStatusWaitingManualRemoval SubjectRemovalStatus = "waiting-manual-removal"
-	SubjectRemovalStatusManuallyRemoved      SubjectRemovalStatus = "manually-removed"
-	SubjectRemovalStatusWaitingAutoRemoval   SubjectRemovalStatus = "waiting-auto-removal"
-	SubjectRemovalStatusAccessModified       SubjectRemovalStatus = "access-modified"
-	SubjectRemovalStatusRemovalErrored       SubjectRemovalStatus = "removal-errored"
-)
-
-func (e SubjectRemovalStatus) ToPointer() *SubjectRemovalStatus {
-	return &e
-}
-func (e *SubjectRemovalStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "auto-removed":
-		fallthrough
-	case "auto-removing":
-		fallthrough
-	case "waiting-manual-removal":
-		fallthrough
-	case "manually-removed":
-		fallthrough
-	case "waiting-auto-removal":
-		fallthrough
-	case "access-modified":
-		fallthrough
-	case "removal-errored":
-		*e = SubjectRemovalStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for SubjectRemovalStatus: %v", v)
-	}
-}
 
 type SubjectRemoval struct {
-	// How far the removal has got. Derived live from the workflow carrying it out, so it is current even mid-flight.
-	//
-	// `removal-errored` is the one value the subject filters do not accept: it is graded from the workflow rather than stored, so no row could match it.
-	Status SubjectRemovalStatus `json:"status"`
-	// How the access is being taken away: `workflow` when an integration does it, `manual-task` when a person does, `itsm` when it is tracked in a ticket. Null before the review decides how this subject will be removed.
+	Status RemovalStatus `json:"status"`
+	// How a completed removal was carried out: `automated` when the workflow did it with no manual task, `manual` when a person did. Null until the removal is `completed`.
 	Method *RemovalMethod `json:"method,omitzero"`
 	// Who is responsible for carrying out a removal that a person performs. An entitlement also lists the removers assigned on its account, whose remit covers every entitlement bundled under it.
 	Assignees []SubjectAssignee `json:"assignees,omitzero"`
-	// Why the last removal attempt failed, if one did. Null when the run recorded no reason, which a `removal-errored` status does not by itself guarantee.
+	// Why the last removal attempt failed, if one did. Null when the run recorded no reason, which a `failed` status does not by itself guarantee.
 	Error *RemovalError `json:"error,omitzero"`
-	// When the access was removed.
-	CompletedAt *time.Time `json:"completed_at,omitzero"`
-	// Files attached as proof the access was removed, identifying fields only and no download link. Requires `expand=removal.evidence`.
-	Evidence []RemovalEvidence `json:"evidence,omitzero"`
 	// The ITSM ticket tracking this removal. Requires `expand=removal.itsm_ticket`.
 	ItsmTicket *RemovalItsmTicket `json:"itsm_ticket,omitzero"`
 }
@@ -83,9 +29,9 @@ func (s *SubjectRemoval) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s *SubjectRemoval) GetStatus() SubjectRemovalStatus {
+func (s *SubjectRemoval) GetStatus() RemovalStatus {
 	if s == nil {
-		return SubjectRemovalStatus("")
+		return RemovalStatus("")
 	}
 	return s.Status
 }
@@ -109,20 +55,6 @@ func (s *SubjectRemoval) GetError() *RemovalError {
 		return nil
 	}
 	return s.Error
-}
-
-func (s *SubjectRemoval) GetCompletedAt() *time.Time {
-	if s == nil {
-		return nil
-	}
-	return s.CompletedAt
-}
-
-func (s *SubjectRemoval) GetEvidence() []RemovalEvidence {
-	if s == nil {
-		return nil
-	}
-	return s.Evidence
 }
 
 func (s *SubjectRemoval) GetItsmTicket() *RemovalItsmTicket {

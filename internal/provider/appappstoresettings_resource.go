@@ -224,7 +224,7 @@ func (r *AppAppstoreSettingsResource) Schema(ctx context.Context, req resource.S
 				Optional:    true,
 				Description: `If set, requesting this app redirects the user to this URL instead of going through the normal access-request flow. Max 2048 characters. Omitted or set to ` + "`" + `null` + "`" + `, the redirect is cleared.`,
 				Validators: []validator.String{
-					stringvalidator.UTF8LengthAtMost(2048),
+					stringvalidator.UTF8LengthBetween(1, 2048),
 				},
 			},
 			"request_instructions": schema.StringAttribute{

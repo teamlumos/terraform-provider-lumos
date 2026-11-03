@@ -35,7 +35,7 @@ output "provisioning_steps" {
 
 - `app_id` (String) The app to list steps for. Omit to list only app-independent steps.
 - `search` (String) Case-insensitive substring filter over step names.
-- `type` (String) The type of workflow the steps are for. Some steps work in only one type: `manual_provisioning_task` in `account-provisioning` and `manual_deprovisioning_task` in `account-deprovisioning`. Without `type`, only the steps every type accepts are listed.
+- `type` (String) The type of workflow the steps are for. With `type`, the list holds exactly the steps a workflow of that type accepts: for example, `approval` accepts only `branch` and `approval-chain` only `approval_task`. Without `type`, the list is every step any workflow type accepts for the app, so it can hold steps the type you create refuses. Pass `type` to see one type's steps.
 
 ### Read-Only
 
@@ -56,6 +56,7 @@ Read-Only:
 
 Read-Only:
 
+- `description` (String) The JSON forms an assignee parameter accepts, one per assignee. Omitted for any other parameter.
 - `hidden` (Boolean) Whether the parameter should be hidden.
 - `json_schema` (Attributes) The JSON Schema for the expected structure of an object or array parameter. It comes from the underlying OpenAPI operation, as close to verbatim as possible. (see [below for nested schema](#nestedatt--workflow_steps--input_schema--json_schema))
 - `label` (String) A human-readable label for the parameter.

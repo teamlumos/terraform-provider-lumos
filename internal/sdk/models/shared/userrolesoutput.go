@@ -5,8 +5,8 @@ package shared
 type UserRolesOutput struct {
 	// The UUID of the user whose roles are listed.
 	UserID string `json:"user_id"`
-	// The roles currently assigned to the user: a built-in role's label, such as `app-admin`, or a custom role's name.
-	Roles []string `json:"roles"`
+	// The roles currently assigned to the user.
+	Roles []UserRole `json:"roles"`
 }
 
 func (u *UserRolesOutput) GetUserID() string {
@@ -16,9 +16,9 @@ func (u *UserRolesOutput) GetUserID() string {
 	return u.UserID
 }
 
-func (u *UserRolesOutput) GetRoles() []string {
+func (u *UserRolesOutput) GetRoles() []UserRole {
 	if u == nil {
-		return []string{}
+		return []UserRole{}
 	}
 	return u.Roles
 }

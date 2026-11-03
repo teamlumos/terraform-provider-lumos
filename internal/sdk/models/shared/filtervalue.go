@@ -2,29 +2,12 @@
 
 package shared
 
-import (
-	"github.com/teamlumos/terraform-provider-lumos/internal/sdk/internal/utils"
-)
-
 // FilterValue - One value a field accepts, and the label a UI shows for it.
 type FilterValue struct {
 	// Machine-matchable value. Send this in a filter's `values`.
 	Value string `json:"value"`
 	// Display-only label. Sending this as a value is rejected.
 	Label string `json:"label"`
-	// Stored column value this maps to. Never serialized.
-	InternalValue *string `default:"" json:"internal_value"`
-}
-
-func (f FilterValue) MarshalJSON() ([]byte, error) {
-	return utils.MarshalJSON(f, "", false)
-}
-
-func (f *FilterValue) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &f, "", false, nil); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (f *FilterValue) GetValue() string {
@@ -39,11 +22,4 @@ func (f *FilterValue) GetLabel() string {
 		return ""
 	}
 	return f.Label
-}
-
-func (f *FilterValue) GetInternalValue() *string {
-	if f == nil {
-		return nil
-	}
-	return f.InternalValue
 }

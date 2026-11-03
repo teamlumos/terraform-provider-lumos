@@ -29,8 +29,8 @@ import (
 //     import, optionally with new scope filters. It returns 202 with an operation. Poll
 //     `GET /v1/operations/{operation_id}` until `done` is true.
 //
-// You can't create, list, or update campaigns in v1 yet. These endpoints are enabled per
-// organization, separately from the rest of v1, and return 404 where they aren't enabled.
+// You can't create, list, or update campaigns in v1 yet. Lumos enables these endpoints per
+// organization, separately from the rest of v1, so contact your Lumos representative to turn them on.
 type AccessReviews struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration
@@ -317,7 +317,7 @@ func (s *AccessReviews) SyncAppReview(ctx context.Context, request operations.Sy
 //
 // Copy an option's `value` verbatim into `values`; `label` is display-only and is rejected as a value. Values are always strings, so a numeric or date argument is `["90"]` rather than `[90]`.
 //
-// Deliberately unpaginated: the response is one discovery document whose size is bounded by the app review's schema rather than by its data.
+// This list isn't paginated.
 //
 // Fields whose values are open-ended — permission, reviewer, manager, team, title, entitlement type — are not listed here yet.
 func (s *AccessReviews) ListSubjectFilters(ctx context.Context, request operations.ListSubjectFiltersRequest, opts ...operations.Option) (*operations.ListSubjectFiltersResponse, error) {
@@ -575,7 +575,7 @@ func (s *AccessReviews) ListSubjectFilters(ctx context.Context, request operatio
 //
 // What a subject is follows from the app review's type — an accounts review reviews accounts, an entitlements review reviews the entitlements an account holds — and `subject_type` says which. An entitlement subject also names the account it belongs to, so one shape serves both.
 //
-// `removal.status` is read from the workflow carrying the removal out rather than from a stored column, so it is current while the removal is still running.
+// `removal.status` is current even while the removal runs. Evidence is reported beside `removal` rather than in it (`is_evidence_attached`, `evidence_required_by`, and the files under `expand=evidence`), since an approved subject can owe evidence too.
 //
 // `removal.error` says which capability failed and what the integration reported. It does not say whether retrying will help; a removal waiting on a person clears only once that person acts.
 func (s *AccessReviews) GetSubject(ctx context.Context, request operations.GetSubjectRequest, opts ...operations.Option) (*operations.GetSubjectResponse, error) {

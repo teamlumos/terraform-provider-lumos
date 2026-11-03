@@ -82,6 +82,7 @@ Optional:
 * **`status` and `is_enabled` are required.** They always have a value, and a policy has no unset state to clear them to. A published policy can't go back to `draft`, a draft can't be enabled, and two published policies can't share a condition; Lumos refuses each of these and the apply fails with its error.
 * **Editing a published policy publishes the change** in the same apply.
 * **Drafts started in the Lumos UI:** while a published policy has an unpublished draft from the UI, Lumos refuses edits to it, and the apply fails until that draft is published or discarded.
+* **Organizations that require approval for access policy changes:** Lumos refuses to create a policy as `published`, to publish a draft, or to edit a published policy until the change is approved, and changes are submitted for approval in the Lumos UI. In such an organization, Terraform can create and edit drafts only.
 
 ## Destroy behavior
 

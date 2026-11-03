@@ -12,7 +12,7 @@ import (
 type V1ListIdentityEventsRequest struct {
 	// Filter events tied to specific user UUIDs.
 	IdentityIds []string `queryParam:"style=form,explode=true,name=identity_ids"`
-	// Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An unrecognized label returns 400.
+	// Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively. Use the labels `changed_field` returns, such as `Status` or `Group Membership`, or a custom attribute's label. An event whose custom attribute has been deleted shows `-`, which is not a filter value. An unrecognized label returns 400.
 	ChangedFields []string `queryParam:"style=form,explode=true,name=changed_fields"`
 	// Only include events detected at or after this ISO-8601 timestamp (inclusive).
 	StartTime *time.Time `queryParam:"style=form,explode=true,name=start_time"`
