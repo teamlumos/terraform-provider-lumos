@@ -31,8 +31,8 @@ description: |-
 
 Destroy deletes the app. What happens depends on the kind of app:
 
-* **Connected integration:** Lumos disconnects it first, removing its credentials. If other Lumos data still references the app, for example synced accounts, Lumos keeps the record in a disconnected state, and Terraform treats the destroy as done.
-* **Custom app:** if the app still has users, or other configuration such as App Store intake fields points at it, Lumos refuses the delete and nothing changes: the app stays, including any App Store listing, and destroy fails with the API's error. Remove that configuration first, or stop managing the app with a `removed` block.
+* **Connected integration:** Lumos disconnects it, removing its credentials, and Terraform treats the destroy as done. Lumos then removes the app's accounts and deletes its record in the background. If another app depends on the record, for example through a custom attribute it uses, a default entitlement or a separation-of-duties rule, Lumos keeps the record in a disconnected state.
+* **Custom app:** Lumos deletes the app along with its own configuration and history, including its access requests and its part of any access review. Lumos refuses the delete while the app still has accounts, or while other Lumos data references it, for example an access policy that grants one of its entitlements. Nothing changes then, and destroy fails with the API's error. Remove those references first, or stop managing the app with a `removed` block. After removing accounts, a retry can fail for a short time until Lumos updates the app's account count.
 
 Apps connected outside the API, in the Lumos UI, can't be deleted through it, and destroy fails. To stop managing such an app without deleting it, use a `removed` block:
 

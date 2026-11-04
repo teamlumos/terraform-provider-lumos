@@ -240,13 +240,14 @@ After the first successful apply, delete the `import` blocks.
 
 * **Overrides work on connected apps too.** An `*_override` replaces the integration's value in your organization. Leaving it out shows the integration's default value. The read-only attributes without `_override` (`label`, `description`, `category`, `logo_url`, `website_url`) always show the effective value.
 * **Custom apps** need `label_override`, `category_override` and `description_override`. A custom app can leave `app_class_id` out or set it to `"custom"`, the value it reads back with.
-* **Destroy deletes the app** (custom apps) or disconnects it (connected apps). In 0.10.x, destroy only removed the app from state. To stop managing an app without deleting it, use a `removed` block.
+* **Destroy deletes the app** (custom apps) or disconnects it (connected apps). Deleting a custom app also deletes its access requests and its part of any access review. See [`lumos_app`](../resources/app.md#destroy-behavior). In 0.10.x, destroy only removed the app from state. To stop managing an app without deleting it, use a `removed` block.
 
 ### `lumos_app_store_app` → `lumos_app_appstore_settings`, `lumos_app` and workflows
 
 | 0.x | 1.x |
 |---|---|
 | Listing the app (create) / unlisting it (destroy) | `in_app_store` (destroy also unlists) |
+| `integration_specific_id`, `source_app_id` (0.12) | Removed. The settings are addressed by the app's ID. If the 0.x state has no `app_id`, find the app's ID with `data "lumos_apps"` |
 | `request_flow.discoverability` (`FULL`, `LIMITED`, `NONE`) | `catalog_visibility` (`visible`, `search-only`, `hidden`) <!-- TODO: confirm the value mapping --> |
 | `request_flow.admins` | `admins`, each `{ id, type }` with `type` set to `"user"` or `"group"`. A listed app needs at least one |
 | `request_flow.allowed_groups` (`type`, `groups`) | `allowed_requester_group_uuids`. Empty lets anyone request. Groups are referenced by ID only. To find a group's ID from its integration ID, use `data "lumos_groups"` |
@@ -379,6 +380,8 @@ For existing apps, you can import the templates and chains directly from Lumos (
 
 The generated configuration already uses entitlement IDs, so policies don't need [Finding entitlement IDs](#finding-entitlement-ids), except to replace those IDs with references.
 
+If your organization requires approval for access policy changes, Terraform can create and edit drafts only. Importing a published policy works, but an apply that changes it fails. To manage published policies in Terraform, turn off approvals for access policy changes. See [`lumos_access_policy`](../resources/access_policy.md#behavior).
+
 ### `lumos_pre_approval_rule`
 
 The 0.x fields are replaced by one `condition`. Lumos has already converted existing rules, so the condition generated in step 5 matches what the rule does today.
@@ -416,7 +419,7 @@ A label with more than one ID belongs to more than one entitlement. Tell them ap
 
 ## `lumos_apps` filters
 
-In 0.11, `lumos_apps` defaulted to `connection_source = "API"` and `disconnected = false`. Unless you set those arguments, it returned only integrations that were connected through the API and not disconnected. In 1.x, `lumos_apps` has no defaults and returns every app. To keep the 0.11 results, set both:
+In 0.11 and 0.12, `lumos_apps` defaulted to `connection_source = "API"` and `disconnected = false`. Unless you set those arguments, it returned only integrations that were connected through the API and not disconnected. In 1.x, `lumos_apps` has no defaults and returns every app. To keep the 0.x results, set both:
 
 ```terraform
 data "lumos_apps" "managed" {

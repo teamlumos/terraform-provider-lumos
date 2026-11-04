@@ -38,6 +38,22 @@ For approval templates and chains, see the [approvals guide](../guides/approvals
 * A chain a template stops referencing is kept, so it stays managed by its own `lumos_workflow` resource.
 * Lumos never deletes an approval chain. Destroying or replacing one removes it from Terraform state, and the chain stays in Lumos. The plan warns when it does.
 
+## Destroy behavior
+
+Destroy deletes the workflow, unless it's bound to an app or an entitlement as its approval, provisioning or deprovisioning workflow. Lumos then keeps the workflow, and destroy fails with the API's error. To destroy it, first point the binding at another workflow.
+
+To stop managing a workflow without deleting it, use a `removed` block:
+
+```terraform
+removed {
+  from = lumos_workflow.okta_approvals
+
+  lifecycle {
+    destroy = false
+  }
+}
+```
+
 ## Import
 
 In Terraform v1.5.0 and later, an [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the workflow's ID:
