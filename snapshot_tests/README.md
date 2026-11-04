@@ -28,6 +28,7 @@ A case that needs one that isn't set is skipped.
 |---|---|
 | `GROUP_ID` | A group in the org, for requester groups, app admins and assignees. |
 | `LUMOS_TEST_TBA_LABEL` | The label of a time-based access option defined in the org. |
+| `LUMOS_TEST_PUBLISH_POLICIES` | Set to `1` when the org lets Terraform publish access policies. An org that requires approval for access policy changes refuses to publish one, or to edit a published one, so the cases that do skip. |
 
 Everything a case creates has `bb-<run id>` in its name. When a case fails, the
 runner still destroys what it created, keeps the case's workdir (with the full

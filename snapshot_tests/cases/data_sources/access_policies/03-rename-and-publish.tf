@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # The condition policy is renamed and published. The lookups read again after
 # the apply and still match the resource.
 resource "lumos_app" "this" {

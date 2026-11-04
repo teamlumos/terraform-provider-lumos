@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # The draft is published but not yet enabled.
 resource "lumos_app" "wiki" {
   label_override       = "bb-${var.run_id} Policy Wiki"

@@ -1,4 +1,6 @@
 # The binding is forgotten so the case can be destroyed.
+# Lumos refuses to delete a workflow while it's bound, so the bound workflow is
+# forgotten too, and it stays in Lumos.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Template Fallback"
   category_override    = "Developers"
@@ -19,18 +21,16 @@ resource "lumos_workflow" "manager" {
   ]
 }
 
-resource "lumos_workflow" "approvals" {
-  app_id = lumos_app.this.id
-  type   = "approval"
-  name   = "bb-${var.run_id} Everyone through the manager"
-  steps = [{
-    step   = "branch"
-    inputs = jsonencode({ branches = [], fallback_workflow_id = lumos_workflow.manager.id })
-  }]
+removed {
+  from = lumos_app_approval_workflow.this
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 removed {
-  from = lumos_app_approval_workflow.this
+  from = lumos_workflow.approvals
 
   lifecycle {
     destroy = false

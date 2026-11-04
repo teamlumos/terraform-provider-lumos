@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # A draft granting one app to identities with a run-specific email domain.
 resource "lumos_app" "wiki" {
   label_override       = "bb-${var.run_id} Policy Wiki"

@@ -1,4 +1,6 @@
 # The binding is forgotten instead, so the case can be destroyed.
+# Lumos refuses to delete a workflow while it's bound, so the bound workflow is
+# forgotten too, and it stays in Lumos.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Account Provisioning"
   category_override    = "Developers"
@@ -31,18 +33,16 @@ resource "lumos_workflow" "create_account" {
   ]
 }
 
-resource "lumos_workflow" "create_account_target_user" {
-  app_id = lumos_app.this.id
-  type   = "account-provisioning"
-  name   = "bb-${var.run_id} Requester creates account"
-  steps = [{
-    step   = "manual_provisioning_task_target_user"
-    inputs = jsonencode({ instructions = "Sign up with your work email." })
-  }]
+removed {
+  from = lumos_app_provisioning_workflow.this
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 removed {
-  from = lumos_app_provisioning_workflow.this
+  from = lumos_workflow.create_account_target_user
 
   lifecycle {
     destroy = false

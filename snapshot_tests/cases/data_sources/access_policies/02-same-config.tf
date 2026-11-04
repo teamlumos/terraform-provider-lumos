@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # The same config. Nothing changes, so the lookups read at plan and the plan
 # is empty.
 resource "lumos_app" "this" {

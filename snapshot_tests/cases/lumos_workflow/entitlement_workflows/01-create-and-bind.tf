@@ -1,6 +1,7 @@
 # Entitlement workflows on a custom app, where no integration steps exist:
-# provisioning waits for an admin's approval and the user's third day;
-# deprovisioning waits a week. Both bound to the entitlement.
+# provisioning waits a day, then for the user's third day; deprovisioning
+# waits a week. Both bound to the entitlement. (An approval_task isn't offered
+# in an entitlement-provisioning workflow, so Lumos refuses one there.)
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Entitlement Workflows"
   category_override    = "Developers"
@@ -20,8 +21,8 @@ resource "lumos_workflow" "grant_admin" {
   name   = "bb-${var.run_id} Grant admin"
   steps = [
     {
-      step   = "approval_task"
-      inputs = jsonencode({ stage_number = 1, assignees = [{ uuid = "app_admins", type = "dynamic_assignee" }] })
+      step   = "wait"
+      inputs = jsonencode({ duration = "P1D" })
     },
     {
       step   = "wait_until"

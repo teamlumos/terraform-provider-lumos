@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # One published policy, and a draft with the same condition, which is allowed.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Duplicate Condition"
