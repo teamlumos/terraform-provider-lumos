@@ -47,7 +47,7 @@ func Float64(f float64) *float64 { return &f }
 // Pointer provides a helper function to return a pointer to a type
 func Pointer[T any](v T) *T { return &v }
 
-// Lumos API (v1): ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.x (version = "~> 0.10").
+// Lumos API (v1): Manage Lumos apps, entitlements, workflows, access policies and pre-approval rules through the Lumos V1 API. To upgrade from 0.x, follow the migration guide: https://registry.terraform.io/providers/teamlumos/lumos/latest/docs/guides/migrating-from-0x
 type Lumos struct {
 	SDKVersion string
 	// An access policy grants apps, and optionally specific entitlements on them, to the identities that
@@ -446,10 +446,10 @@ func WithTimeout(timeout time.Duration) SDKOption {
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Lumos {
 	sdk := &Lumos{
-		SDKVersion: "1.0.0-alpha.1",
+		SDKVersion: "1.0.0",
 		sdkConfiguration: config.SDKConfiguration{
-			UserAgent:         "speakeasy-sdk/terraform 1.0.0-alpha.1 2.943.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
-			SDKVersion:        "1.0.0-alpha.1",
+			UserAgent:         "speakeasy-sdk/terraform 1.0.0 2.943.0 0.1.0 github.com/teamlumos/terraform-provider-lumos/internal/sdk",
+			SDKVersion:        "1.0.0",
 			GenVersion:        "2.943.0",
 			OpenAPIDocVersion: "0.1.0",
 			ServerList:        ServerList,

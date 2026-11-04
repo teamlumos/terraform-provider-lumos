@@ -55,7 +55,7 @@ func (p *LumosProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 				Optional:    true,
 			},
 		},
-		MarkdownDescription: `Lumos API (v1): ALPHA: the 1.x line targets the Lumos V1 API and may introduce breaking changes without prior notice. Pin an exact version. For production, stay on 0.x (version = "~> 0.10").`,
+		MarkdownDescription: `Lumos API (v1): Manage Lumos apps, entitlements, workflows, access policies and pre-approval rules through the Lumos V1 API. To upgrade from 0.x, follow the migration guide: https://registry.terraform.io/providers/teamlumos/lumos/latest/docs/guides/migrating-from-0x`,
 	}
 }
 
