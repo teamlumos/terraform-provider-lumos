@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: efcf7512566f9d08f6e6ee74cac93108
+  docChecksum: 419396c362f381371f4f726ea5f7c03a
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
-  releaseVersion: 1.0.0-alpha.1
-  configChecksum: b56f687f107e4c658c1f5391c2c0c4cd
+  releaseVersion: 1.0.0
+  configChecksum: 59da0ca3562be60aef9db5679c250c6e
 persistentEdits:
   generation_id: 9e9c7775-27d2-4db1-8dfe-bf8627f74482
   pristine_commit_hash: e8e8a9d0e34c0c0e114532211563fa3e4a455925
@@ -33,9 +33,6 @@ trackedFiles:
     pristine_git_object: 8e707bb129af1da185ba30b4c289b0160819c437
   examples/data-sources/lumos_current_user/data-source.tf: {}
   examples/data-sources/lumos_users/data-source.tf: {}
-  examples/provider/provider.tf:
-    id: 954e955c0240
-    pristine_git_object: 7e0d9b9fffadefc671336d169d61f02a5d2ded72
   go.mod:
     id: c47645c391ad
     pristine_git_object: b87076e8562f91f0b9d6f8e9f526132e0457c114
