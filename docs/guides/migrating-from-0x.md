@@ -20,7 +20,10 @@ The migration itself doesn't create, change or delete anything in Lumos. The fir
 ## Before you start
 
 * **The V1 API must be enabled for your organization.**
-* **Terraform 1.7 or later** for `removed` blocks and `import` blocks with `for_each`. Terraform 1.5 works if you use `terraform state rm` and write one `import` block per resource.
+* **Terraform 1.7 or later** for `removed` blocks and `import` blocks with `for_each`. Terraform 1.5 and 1.6 also work, with three changes to the steps below:
+  * Run `terraform state rm` instead of writing `removed` blocks (step 2).
+  * Write one `import` block per resource (step 4).
+  * On 1.5 only, write each pre-approval rule's import ID as a plain JSON string, such as `id = "{\"app_id\": \"<app id>\", \"id\": \"<pre-approval rule id>\"}"`, because 1.5 doesn't allow `jsonencode` in an `import` block (step 4).
 * **Back up your state:** `terraform state pull > pre-1x.tfstate`.
 * **Start from a clean plan on 0.x.** Run `terraform plan` on your current 0.x version and resolve any changes first, so the migration doesn't mix with unrelated drift.
 
@@ -84,7 +87,7 @@ To stop managing either one without changing Lumos, use a `removed` block.
 terraform state list | grep '^lumos_'
 ```
 
-Note each resource's ID (`terraform state show <address>`). For `lumos_app_store_app`, the ID to import is its `app_id`. For `lumos_requestable_permission`, note its `app_id` and `label` too, to [find its entitlement](#finding-entitlement-ids).
+Note each resource's ID (`terraform state show <address>`). For `lumos_app_store_app`, the ID to import is its `app_id`. For `lumos_requestable_permission`, note its `app_id`, `label` and `request_config.appstore_visibility` too, to [find its entitlement](#finding-entitlement-ids).
 
 ### 2. Stop managing the 0.x resources, without changing Lumos
 
@@ -99,6 +102,20 @@ removed {
 }
 ```
 
+In the same edit, delete the 0.x `lumos_*` data source blocks. Then look for anything else that still refers to a 0.x resource, such as an output, a `locals` value or a resource from another provider. Terraform can't plan while those references remain, and fails with `Reference to undeclared resource`. Replace each one with the ID you noted in step 1. You'll point it at the 1.x resource in step 5.
+
+```terraform
+# Before
+output "aws_admin_id" {
+  value = lumos_requestable_permission.aws_admin.id
+}
+
+# After
+output "aws_admin_id" {
+  value = "<requestable permission id>"
+}
+```
+
 Then run `terraform apply`. Before you confirm, check that the plan lists each resource as no longer managed and destroys nothing.
 
 ```shell
@@ -107,7 +124,7 @@ terraform apply
 
 On Terraform older than 1.7, run `terraform state rm <address>` for each resource instead.
 
-Then delete the `removed` blocks and any 0.x `lumos_*` data source blocks.
+Then delete the `removed` blocks.
 
 ### 3. Switch to 1.x
 
@@ -149,13 +166,14 @@ import {
   id = "<access policy id>"
 }
 
+# A pre-approval rule's import ID holds its app's ID and its own ID.
 import {
   to = lumos_pre_approval_rule.platform_viewers
-  id = "<pre-approval rule id>"
+  id = jsonencode({ app_id = "<app id>", id = "<pre-approval rule id>" })
 }
 ```
 
-Each `lumos_requestable_permission` is imported as the `lumos_entitlement` behind it, using the entitlement's ID (see [Finding entitlement IDs](#finding-entitlement-ids)), plus a `lumos_entitlement_appstore_settings` if the permission had App Store settings:
+Each `lumos_requestable_permission` is imported as two 1.x resources: the `lumos_entitlement` behind it, and its `lumos_entitlement_appstore_settings`. Import both for every permission, even one whose configuration set no `request_config`, because every 0.x permission has App Store settings in Lumos. Both use the entitlement's ID, not the permission's (see [Finding entitlement IDs](#finding-entitlement-ids)):
 
 ```terraform
 import {
@@ -169,7 +187,43 @@ import {
 }
 ```
 
-If the configuration set approvals or provisioning (approvers, manager approval, stage 2 approvers, provisioning webhooks, manual provisioning steps), import the workflows Lumos already has, and their bindings. The workflow IDs are on the app (`approval_workflow.id`, `default_provisioning_workflow.id`, `default_deprovisioning_workflow.id`) and on the entitlement (`approval_workflow_override.id`, `provisioning_workflow.id`, `deprovisioning_workflow.id`). An approval template's `branch` step references its chains by ID, and each chain is its own `lumos_workflow`.
+If the configuration set approvals or provisioning (approvers, manager approval, stage 2 approvers, provisioning webhooks, manual provisioning steps), import the workflows Lumos already has, and their bindings. Each one comes in three parts:
+
+* **The template:** the workflow bound to the app or entitlement. Its ID is on the app as `approval_workflow.id`, `default_provisioning_workflow.id` and `default_deprovisioning_workflow.id`, and on each entitlement as `approval_workflow_override.id`, `provisioning_workflow.id` and `deprovisioning_workflow.id`.
+* **The chains:** an approval template's `branch` step sends each request to an approval chain, referenced by ID. Each chain is its own `lumos_workflow`.
+* **The binding:** a resource such as `lumos_app_approval_workflow` that ties the template to the app. Its import ID is the app's ID, or the entitlement's ID for an entitlement binding.
+
+To list the template IDs, add the data sources and an output, and run `terraform plan`:
+
+```terraform
+data "lumos_app" "okta" {
+  id = "<app id>"
+}
+
+data "lumos_app_entitlements" "okta" {
+  app_id = "<app id>"
+}
+
+output "okta_workflow_ids" {
+  value = {
+    app_approval_template = try(data.lumos_app.okta.approval_workflow.id, null)
+    # Only entitlements with their own approval override.
+    entitlement_approval_templates = {
+      for e in data.lumos_app_entitlements.okta.entitlements :
+      e.label => e.approval_workflow_override.id
+      if e.approval_workflow_override != null
+    }
+  }
+}
+```
+
+A template's chain IDs aren't on the app or the entitlement. They're inside the template's `branch` step, so you find them by importing the template first:
+
+1. Write `import` blocks for the templates and bindings, and run step 5.
+2. In `generated.tf`, each template's `branch` step lists its chains: `fallback_workflow_id` is the chain for requests that match no branch, and each entry in `branches` names another one.
+3. Add an `import` block for each chain ID, and run step 5 again.
+
+The import blocks for an app with one chain, and an entitlement with its own override, look like this:
 
 ```terraform
 import {
@@ -182,10 +236,27 @@ import {
   id = "<approval chain id>"
 }
 
-# A binding's import ID is the app's (or entitlement's) ID.
+# A binding's import ID is the app's ID.
 import {
   to = lumos_app_approval_workflow.okta
   id = "<app id>"
+}
+
+# An entitlement's override: its template, its chain, and a binding
+# whose import ID is the entitlement's ID.
+import {
+  to = lumos_workflow.okta_admin_approvals
+  id = "<entitlement's approval template id>"
+}
+
+import {
+  to = lumos_workflow.okta_admin_chain
+  id = "<entitlement's approval chain id>"
+}
+
+import {
+  to = lumos_entitlement_approval_workflow.okta_admin
+  id = "<entitlement id>"
 }
 ```
 
@@ -197,7 +268,9 @@ See the [approvals guide](approvals.md) for how templates, chains and bindings f
 terraform plan -generate-config-out=generated.tf
 ```
 
-Terraform writes a resource block for every import with no matching block. Review `generated.tf`:
+Terraform writes a resource block for every import with no matching block. It won't write to a file that already exists. To run this again, for example after fixing an import or adding the chains in step 4, either delete `generated.tf` or write to a new file, such as `-generate-config-out=generated-2.tf`. Imports that already have a block, in your files or in an earlier generated file, aren't generated again.
+
+Review `generated.tf`:
 
 * **Connected apps:** `auth` is never read back from Lumos, so the generated `lumos_app` has no credentials. Add `auth`, and `settings` if the integration takes any, from the 0.x configuration.
 * **References:** replace hardcoded IDs with references, such as `app_id = lumos_app.okta.id`.
@@ -232,7 +305,7 @@ After the first successful apply, delete the `import` blocks.
 |---|---|
 | `name` | `label_override` (read back as `label`) |
 | `description`, `category`, `logo_url`, `website_url` | `description_override`, `category_override`, `logo_url_override`, `website_url_override` (read back without `_override`) |
-| `request_instructions` | `lumos_app_appstore_settings.request_instructions` |
+| `request_instructions` | `lumos_app_appstore_settings.request_instructions`. 0.x had two names for this one setting: this and `lumos_app_store_app.custom_request_instructions`. A 0.x configuration that set them to different values showed a change on every plan |
 | `app_class_id`, `auth`, `settings`, `version` | Same |
 | `custom_attributes` (read-only) | Same |
 | `links`, `sources`, `user_friendly_label` (read-only) | Removed |
@@ -248,7 +321,7 @@ After the first successful apply, delete the `import` blocks.
 |---|---|
 | Listing the app (create) / unlisting it (destroy) | `in_app_store` (destroy also unlists) |
 | `integration_specific_id`, `source_app_id` (0.12) | Removed. The settings are addressed by the app's ID. If the 0.x state has no `app_id`, find the app's ID with `data "lumos_apps"` |
-| `request_flow.discoverability` (`FULL`, `LIMITED`, `NONE`) | `catalog_visibility` (`visible`, `search-only`, `hidden`) <!-- TODO: confirm the value mapping --> |
+| `request_flow.discoverability` (`FULL`, `LIMITED`, `NONE`) | `catalog_visibility`: `FULL` is `visible`, `LIMITED` is `search-only` and `NONE` is `hidden` |
 | `request_flow.admins` | `admins`, each `{ id, type }` with `type` set to `"user"` or `"group"`. A listed app needs at least one |
 | `request_flow.allowed_groups` (`type`, `groups`) | `allowed_requester_group_uuids`. Empty lets anyone request. Groups are referenced by ID only. To find a group's ID from its integration ID, use `data "lumos_groups"` |
 | `custom_request_instructions` | `request_instructions` |
@@ -347,8 +420,6 @@ For existing apps, you can import the templates and chains directly from Lumos (
 
 **New in 1.x: conditional approvals.** 0.x could only manage one approval chain per app. A 1.x template can send different requests through different chains, for example requests from one team through a shorter chain, using `branches`. A template imported from an app whose approvals were set up in the Lumos UI may already have branches. If it does, import each chain it references as its own `lumos_workflow`. See the [approvals guide](approvals.md) for how to write branches.
 
-<!-- TODO: confirm the 0.x manager stage reads back through GET /v1/workflows as `{ label = "Manager", type = "custom_attribute_definition" }`. -->
-
 ### `lumos_requestable_permission` → `lumos_entitlement` and its settings
 
 | 0.x | 1.x |
@@ -416,6 +487,33 @@ output "aws_entitlement_ids" {
 `terraform plan` prints each label with its entitlement IDs. Use the ID in the permission's `import` block, then delete the data source and the output.
 
 A label with more than one ID belongs to more than one entitlement. Tell them apart by `entitlement_type_label`, `description` and `source`. A permission created in Lumos (0.x `type = "NATIVE"`) has `source = "manual"`. A permission synced from an integration has that integration's source.
+
+Two permissions created in Lumos with the same label on the same app can match on all three. For example, 0.x permissions `aws_admin` (`VISIBLE`) and `aws_admin_legacy` (`HIDDEN`), both labelled `Admin`, both have `entitlement_type_label = "Role"`, `description = null` and `source = "manual"`.
+
+If they had different `request_config.appstore_visibility` in 0.x (noted in step 1), look each one up by its visibility:
+
+```terraform
+data "lumos_app_entitlements" "aws_visible" {
+  app_id              = "<app id>"
+  visible_in_appstore = true
+}
+
+data "lumos_app_entitlements" "aws_hidden" {
+  app_id              = "<app id>"
+  visible_in_appstore = false
+}
+
+output "aws_entitlement_ids_by_visibility" {
+  value = {
+    visible = { for e in data.lumos_app_entitlements.aws_visible.entitlements : e.label => e.id... }
+    hidden  = { for e in data.lumos_app_entitlements.aws_hidden.entitlements : e.label => e.id... }
+  }
+}
+```
+
+`Admin` under `visible` is the entitlement for `aws_admin`, and `Admin` under `hidden` is the one for `aws_admin_legacy`.
+
+If they had the same visibility, import both entitlements under temporary names and run step 5. Then match them on their other settings, such as the overrides in each generated `lumos_entitlement_appstore_settings`, or the entitlement IDs a generated `lumos_access_policy` grants. Before step 6, rename each one to match its 0.x permission, in both its `import` block's `to` and its resource block.
 
 ## `lumos_apps` filters
 
