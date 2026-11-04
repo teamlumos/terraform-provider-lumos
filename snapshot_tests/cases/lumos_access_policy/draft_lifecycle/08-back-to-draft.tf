@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # expect: error
 # A published policy can't go back to draft.
 resource "lumos_app" "wiki" {

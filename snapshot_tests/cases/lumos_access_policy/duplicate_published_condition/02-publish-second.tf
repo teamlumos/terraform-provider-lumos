@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # expect: error
 # Publishing the draft would give two published policies the same condition.
 resource "lumos_app" "this" {

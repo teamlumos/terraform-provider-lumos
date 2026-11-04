@@ -1,4 +1,6 @@
 # The bindings are forgotten so the case can be destroyed.
+# Lumos refuses to delete a workflow while it's bound, so the bound workflows are
+# forgotten too, and they stay in Lumos.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Empty Workflows"
   category_override    = "Developers"
@@ -6,27 +8,6 @@ resource "lumos_app" "this" {
 }
 
 data "lumos_current_user" "me" {}
-
-resource "lumos_workflow" "account_provisioning" {
-  app_id = lumos_app.this.id
-  type   = "account-provisioning"
-  name   = "bb-${var.run_id} Empty account-provisioning"
-  steps  = []
-}
-
-resource "lumos_workflow" "account_deprovisioning" {
-  app_id = lumos_app.this.id
-  type   = "account-deprovisioning"
-  name   = "bb-${var.run_id} Empty account-deprovisioning"
-  steps  = []
-}
-
-resource "lumos_workflow" "entitlement_provisioning" {
-  app_id = lumos_app.this.id
-  type   = "entitlement-provisioning"
-  name   = "bb-${var.run_id} Empty entitlement-provisioning"
-  steps  = []
-}
 
 resource "lumos_entitlement" "admin" {
   app_id = lumos_app.this.id
@@ -51,6 +32,30 @@ removed {
 
 removed {
   from = lumos_entitlement_provisioning_workflow.this
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = lumos_workflow.account_provisioning
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = lumos_workflow.account_deprovisioning
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = lumos_workflow.entitlement_provisioning
 
   lifecycle {
     destroy = false

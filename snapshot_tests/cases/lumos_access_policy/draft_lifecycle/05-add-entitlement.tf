@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # Editing the enabled policy: the wiki becomes pre-approved and the
 # dashboard's Admin entitlement is added. The change is published in the same
 # apply.

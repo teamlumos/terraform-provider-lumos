@@ -1,4 +1,4 @@
-# Same config as step 01: the plan creates the workflow again and binds it.
+# Same config as step 01. The delete was refused, so this plans no changes.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Bound Workflow Deleted"
   category_override    = "Developers"

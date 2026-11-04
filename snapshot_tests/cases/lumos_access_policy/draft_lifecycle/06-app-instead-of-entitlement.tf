@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # The dashboard grant switches from its Admin entitlement to the app itself.
 resource "lumos_app" "wiki" {
   label_override       = "bb-${var.run_id} Policy Wiki"

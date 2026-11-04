@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # Two draft policies, read back through lumos_access_policies (filtered by
 # name) and lumos_access_policy (by ID). The lookups depend on the policies,
 # so on create their outputs are known only after apply.

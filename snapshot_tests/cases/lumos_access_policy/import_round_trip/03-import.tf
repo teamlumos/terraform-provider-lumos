@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # The policy is found by its name and imported with the config it was created
 # with, so the import plans no changes.
 resource "lumos_app" "this" {

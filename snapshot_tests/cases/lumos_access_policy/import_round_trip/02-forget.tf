@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # Terraform stops managing the policy without deleting it.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Policy Import"

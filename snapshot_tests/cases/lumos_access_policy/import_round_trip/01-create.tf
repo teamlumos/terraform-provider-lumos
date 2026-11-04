@@ -1,3 +1,4 @@
+# requires: LUMOS_TEST_PUBLISH_POLICIES
 # A published policy granting an app and an entitlement.
 resource "lumos_app" "this" {
   label_override       = "bb-${var.run_id} Policy Import"
