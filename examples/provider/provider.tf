@@ -2,7 +2,7 @@ terraform {
   required_providers {
     lumos = {
       source  = "teamlumos/lumos"
-      version = "1.0.0-alpha.1"
+      version = "~> 1.0"
     }
   }
 }
