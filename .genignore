@@ -72,3 +72,4 @@ internal/sdk/internal/hooks/approval_chain_kept.go
 internal/sdk/internal/hooks/approval_chain_kept_test.go
 internal/provider/app_credentials.go
 internal/planmodifiers/utils/reconnect_test.go
+examples/provider/provider.tf
