@@ -40,7 +40,7 @@ type V1PatchAppStoreSettingsResponse struct {
 	RawResponse *http.Response
 	// Successful Response
 	AppStoreSettingsResponse *shared.AppStoreSettingsResponse
-	// Invalid custom intake field collection or malformed request.
+	// Malformed request, or a `custom_intake_fields` list with problems: a duplicate or badly formed `reference_key`, a dropdown without options, a text field with options, a `field_type` change on a saved field, and so on. Every problem is listed in `error.errors`, code `appstore_settings.custom_intake_fields_invalid`.
 	APIErrorEnvelope *shared.APIErrorEnvelope
 }
 

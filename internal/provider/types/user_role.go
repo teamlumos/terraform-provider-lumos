@@ -7,6 +7,7 @@ import (
 )
 
 type UserRole struct {
+	ID           types.String `tfsdk:"id"`
 	IsCustom     types.Bool   `tfsdk:"is_custom"`
 	Label        types.String `tfsdk:"label"`
 	ResourceType types.String `tfsdk:"resource_type"`

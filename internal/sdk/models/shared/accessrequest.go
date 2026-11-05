@@ -120,7 +120,7 @@ type AccessRequest struct {
 	// The tasks on this request that the caller can see. Only returned with `expand=tasks`.
 	Tasks []Task `json:"tasks,omitzero"`
 	// The requester's answers to the app's custom intake fields. Only returned with `expand=custom_fields`.
-	CustomFields []CustomIntakeFieldResponseOutput `json:"custom_fields,omitzero"`
+	CustomFields []AccessRequestCustomField `json:"custom_fields,omitzero"`
 }
 
 func (a AccessRequest) MarshalJSON() ([]byte, error) {
@@ -225,7 +225,7 @@ func (a *AccessRequest) GetTasks() []Task {
 	return a.Tasks
 }
 
-func (a *AccessRequest) GetCustomFields() []CustomIntakeFieldResponseOutput {
+func (a *AccessRequest) GetCustomFields() []AccessRequestCustomField {
 	if a == nil {
 		return nil
 	}

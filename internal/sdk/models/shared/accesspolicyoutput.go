@@ -35,6 +35,32 @@ func (e *AccessPolicyOutputStatus) UnmarshalJSON(data []byte) error {
 	}
 }
 
+// OwnersOutput - The owners of a resource.
+//
+// Each entry is a reference holding only `id` unless its list is expanded, in which case
+// it is the same `User` or `Group` that `GET /v1/users` and `GET /v1/groups` return.
+// Expanding only adds fields to an entry.
+type OwnersOutput struct {
+	// The users who own the resource.
+	Users []User `json:"users"`
+	// The groups that own the resource.
+	Groups []Group `json:"groups"`
+}
+
+func (o *OwnersOutput) GetUsers() []User {
+	if o == nil {
+		return []User{}
+	}
+	return o.Users
+}
+
+func (o *OwnersOutput) GetGroups() []Group {
+	if o == nil {
+		return []Group{}
+	}
+	return o.Groups
+}
+
 // AccessPolicyOutput - The full representation of an access policy returned by the V1 API.
 type AccessPolicyOutput struct {
 	// The name of the access policy.
@@ -51,6 +77,8 @@ type AccessPolicyOutput struct {
 	Apps []AccessPolicyAppOutput `json:"apps"`
 	// The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos).
 	AccessCondition any `json:"access_condition,omitzero"`
+	// The users and groups that own this access policy. Returned only with `expand=owners`, `owners.users`, or `owners.groups`.
+	Owners *OwnersOutput `json:"owners,omitzero"`
 	// True when the policy applies to everyone in your organization. `access_condition` is then null.
 	IsEveryoneCondition bool `json:"is_everyone_condition"`
 }
@@ -118,6 +146,13 @@ func (a *AccessPolicyOutput) GetAccessCondition() any {
 		return nil
 	}
 	return a.AccessCondition
+}
+
+func (a *AccessPolicyOutput) GetOwners() *OwnersOutput {
+	if a == nil {
+		return nil
+	}
+	return a.Owners
 }
 
 func (a *AccessPolicyOutput) GetIsEveryoneCondition() bool {

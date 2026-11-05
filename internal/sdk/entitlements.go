@@ -21,8 +21,8 @@ import (
 )
 
 // Entitlements -
-// An entitlement is a grantable unit of access on an app: a role, a license tier, a group, a
-// permission. Accounts hold entitlements.
+// An entitlement is a grantable unit of access on an app: a role, a license tier, a group, or
+// another access right. Accounts hold entitlements.
 //
 //   - `POST /v1/entitlements` creates a requestable entitlement on an app.
 //   - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
@@ -55,7 +55,7 @@ func newEntitlements(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *h
 }
 
 // ListEntitlements - List Entitlements
-// List every entitlement across your organization -- roles, licenses, groups, and permissions -- spanning every app.
+// List every entitlement across your organization -- roles, licenses, groups, and other access rights -- spanning every app.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
@@ -2616,6 +2616,8 @@ func (s *Entitlements) SetEntitlementApprovalWorkflowOverride(ctx context.Contex
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -3366,6 +3368,8 @@ func (s *Entitlements) SetEntitlementProvisioningWorkflow(ctx context.Context, r
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -3882,6 +3886,8 @@ func (s *Entitlements) SetEntitlementDeprovisioningWorkflow(ctx context.Context,
 	case httpRes.StatusCode == 404:
 		fallthrough
 	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 422:
 		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {

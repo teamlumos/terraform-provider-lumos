@@ -20,6 +20,7 @@ func (r *UserRolesDataSourceModel) RefreshFromSharedUserRolesOutput(ctx context.
 		for _, rolesItem := range resp.Roles {
 			var roles tfTypes.UserRole
 
+			roles.ID = types.StringValue(rolesItem.ID)
 			roles.IsCustom = types.BoolValue(rolesItem.IsCustom)
 			roles.Label = types.StringValue(rolesItem.Label)
 			if rolesItem.ResourceType != nil {

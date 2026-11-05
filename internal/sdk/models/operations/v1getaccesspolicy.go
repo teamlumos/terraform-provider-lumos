@@ -11,6 +11,19 @@ import (
 type V1GetAccessPolicyRequest struct {
 	// The access policy's ID, which `GET /v1/access-policies` returns as `id`.
 	AccessPolicyID string `pathParam:"style=simple,explode=false,name=access_policy_id"`
+	// Fields to expand: `owners`, `owners.users`, `owners.groups`.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
+}
+
+func (v V1GetAccessPolicyRequest) MarshalJSON() ([]byte, error) {
+	return utils.MarshalJSON(v, "", false)
+}
+
+func (v *V1GetAccessPolicyRequest) UnmarshalJSON(data []byte) error {
+	if err := utils.UnmarshalJSON(data, &v, "", false, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *V1GetAccessPolicyRequest) GetAccessPolicyID() string {
@@ -18,6 +31,13 @@ func (v *V1GetAccessPolicyRequest) GetAccessPolicyID() string {
 		return ""
 	}
 	return v.AccessPolicyID
+}
+
+func (v *V1GetAccessPolicyRequest) GetExpand() []string {
+	if v == nil {
+		return nil
+	}
+	return v.Expand
 }
 
 // #region class-body-v1getaccesspolicyrequest

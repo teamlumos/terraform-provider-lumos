@@ -899,6 +899,14 @@ actions:
   - target: $["components"]["schemas"]["AccessPolicyOutput"]
     update:
       required: ["name", "business_justification", "id", "status", "is_enabled", "apps", "is_everyone_condition"]
+  # owners is only present when expanded, and no read asks for it: the API
+  # answers any expand with 400 unless the org has owners enabled.
+  - target: $["components"]["schemas"]["AccessPolicyOutput"]["properties"]["owners"]
+    update:
+      x-speakeasy-terraform-ignore: true
+  - target: $["paths"]["/v1/access-policies","/v1/access-policies/{access_policy_id}"]["get"]["parameters"][?@.name=="expand"]
+    update:
+      x-speakeasy-terraform-ignore: true
   # Labels are dropped: a config never sets them, and a set element has to
   # match the config's whole value.
   - target: $["components"]["schemas"]["AccessPolicyAppOutput","AccessPolicyEntitlementOutput"]["properties"]["label"]

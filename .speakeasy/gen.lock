@@ -1,7 +1,7 @@
 lockVersion: 2.0.0
 id: c7830d5c-39eb-428e-bde1-daaba29fa325
 management:
-  docChecksum: 419396c362f381371f4f726ea5f7c03a
+  docChecksum: 16f62f7fbd57ecd62d7c7cd4f40121bc
   docVersion: 0.1.0
   speakeasyVersion: 1.800.1
   generationVersion: 2.943.0
@@ -365,6 +365,7 @@ trackedFiles:
   internal/sdk/models/operations/getappapprovalworkflow.go: {}
   internal/sdk/models/operations/getappdeprovisioningworkflow.go: {}
   internal/sdk/models/operations/getappprovisioningworkflow.go: {}
+  internal/sdk/models/operations/getcustomattributedefinition.go: {}
   internal/sdk/models/operations/getentitlement.go: {}
   internal/sdk/models/operations/getentitlementapprovalworkflowoverride.go: {}
   internal/sdk/models/operations/getentitlementappstoresettings.go: {}
@@ -385,6 +386,7 @@ trackedFiles:
   internal/sdk/models/operations/listaccounts.go: {}
   internal/sdk/models/operations/listappcategories.go: {}
   internal/sdk/models/operations/listappentitlements.go: {}
+  internal/sdk/models/operations/listcustomattributedefinitionconfigs.go: {}
   internal/sdk/models/operations/listcustomattributedefinitions.go: {}
   internal/sdk/models/operations/listentitlementaccounts.go: {}
   internal/sdk/models/operations/listentitlements.go: {}
@@ -476,6 +478,7 @@ trackedFiles:
   internal/sdk/models/shared/accessrequestcancelinput.go: {}
   internal/sdk/models/shared/accessrequestcreateinput.go: {}
   internal/sdk/models/shared/accessrequestcreateoutput.go: {}
+  internal/sdk/models/shared/accessrequestcustomfield.go: {}
   internal/sdk/models/shared/accessrequestentitlement.go: {}
   internal/sdk/models/shared/accessrequestlistoutput.go: {}
   internal/sdk/models/shared/account.go:
@@ -523,14 +526,13 @@ trackedFiles:
   internal/sdk/models/shared/customattribute.go:
     id: 9dad24736676
     pristine_git_object: 2ed1d6ed3cf49c4faa1308f827a6680992b8e036
+  internal/sdk/models/shared/customattributeconfig.go: {}
+  internal/sdk/models/shared/customattributeconfiglistoutput.go: {}
   internal/sdk/models/shared/customattributedefinition.go: {}
   internal/sdk/models/shared/customattributedefinitionlistoutput.go: {}
   internal/sdk/models/shared/customattributescopefilterinput.go: {}
   internal/sdk/models/shared/customintakefield.go: {}
   internal/sdk/models/shared/customintakefieldpatchinput.go: {}
-  internal/sdk/models/shared/customintakefieldresponseoutput.go:
-    id: 644ec2f8ff02
-    pristine_git_object: 0b55c40af8cf3145bf96c0401577710aeca2e69f
   internal/sdk/models/shared/customintakefieldtype.go: {}
   internal/sdk/models/shared/datetimescopefilterinput.go: {}
   internal/sdk/models/shared/disconnectintegrationoutput.go:
@@ -2657,7 +2659,7 @@ examples:
           user_id: "<id>"
       responses:
         "200":
-          application/json: {"user_id": "<id>", "roles": [{"label": "<value>", "is_custom": false, "resource_type": "non-human-identity"}, {"label": "<value>", "is_custom": true, "resource_type": "task"}, {"label": "<value>", "is_custom": true, "resource_type": "task"}]}
+          application/json: {"user_id": "<id>", "roles": [{"id": "<id>", "label": "<value>", "is_custom": false, "resource_type": "non-human-identity"}, {"id": "<id>", "label": "<value>", "is_custom": true, "resource_type": "task"}, {"id": "<id>", "label": "<value>", "is_custom": true, "resource_type": "task"}]}
         "400":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
@@ -2668,6 +2670,7 @@ examples:
         path:
           user_id: "<id>"
           role_name: "<value>"
+          role_id: "<id>"
       responses:
         "201":
           application/json: {}
@@ -2681,6 +2684,7 @@ examples:
         path:
           user_id: "<id>"
           role_name: "<value>"
+          role_id: "<id>"
       responses:
         "400":
           application/json: {"error": {"detail": "<value>", "type": "authentication", "code": "<value>"}}
@@ -2732,6 +2736,32 @@ examples:
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
         "500":
           application/json: {"error": {"detail": "<value>", "type": "permission", "code": "<value>"}}
+  getCustomAttributeDefinition:
+    speakeasy-default-get-custom-attribute-definition:
+      parameters:
+        path:
+          definition_id: "7b98b746-1009-4ba7-94e3-df568d99bbbb"
+      responses:
+        "200":
+          application/json: {"id": "<id>", "label": "<value>", "attribute_type": "string", "config_type": "user", "source_type": "native"}
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "not_found", "code": "<value>"}}
+  listCustomAttributeDefinitionConfigs:
+    speakeasy-default-list-custom-attribute-definition-configs:
+      parameters:
+        path:
+          definition_id: "f5c2781e-e9a4-4ec9-9b04-4053df3aa49e"
+        query:
+          page_size: 100
+      responses:
+        "200":
+          application/json: {"custom_attribute_configs": []}
+        "400":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
+        "500":
+          application/json: {"error": {"detail": "<value>", "type": "validation", "code": "<value>"}}
 examplesVersion: 1.0.2
 generatedTests: {}
 generatedFiles:

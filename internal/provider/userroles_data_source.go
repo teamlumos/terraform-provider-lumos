@@ -48,13 +48,17 @@ func (r *UserRolesDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Computed: true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
+						"id": schema.StringAttribute{
+							Computed:    true,
+							Description: `The role's identifier: a built-in role's kebab-case name, such as ` + "`" + `app-admin` + "`" + `, or a custom role's UUID. This is the value the ` + "`" + `role_id` + "`" + ` path parameter accepts.`,
+						},
 						"is_custom": schema.BoolAttribute{
 							Computed:    true,
 							Description: `Whether this is a custom role your organization defined.`,
 						},
 						"label": schema.StringAttribute{
 							Computed:    true,
-							Description: `A built-in role's label, such as ` + "`" + `app-admin` + "`" + `, or a custom role's name. This is the value the ` + "`" + `role_name` + "`" + ` path parameter accepts.`,
+							Description: `The role's display name, such as ` + "`" + `App Admin` + "`" + ` for a built-in role or the name your organization gave a custom role. It is not accepted in place of ` + "`" + `id` + "`" + `.`,
 						},
 						"resource_type": schema.StringAttribute{
 							Computed:    true,

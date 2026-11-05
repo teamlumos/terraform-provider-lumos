@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Lumos API (v1)",
-    "description": "\nLumos API v1 is the programmatic interface to your connected apps, the entitlements on them, and\nthe workflows that grant access to those entitlements.\n\nEvery path is prefixed with `/v1`. Authenticate with an API token, which inherits the permissions\nof the user who created it: a call returns what that user could see in the Lumos UI, and nothing\nmore.\n\nNew here? Browse what you can connect with `GET /v1/integrations`, read the credentials an\nintegration expects with `GET /v1/integrations/{app_class_id}/connection-schema`, then connect it\nwith `POST /v1/apps`.\n\nEvery list endpoint shares one pagination contract. Set the page length with `page_size`, then send\nthe `next_page_token` from a response back as `page_token` to fetch the next page. A `null`\n`next_page_token` means you have reached the end.\n\nEvery error shares one envelope. Branch on the machine-readable `code`, not on `detail`.\n\nv1 is in beta: it is enabled per organization, and paths and payloads can still change.\n",
+    "description": "\nLumos API v1 is the programmatic interface to your connected apps, the entitlements on them, and\nthe workflows that grant access to those entitlements.\n\nEvery path is prefixed with `/v1`. Authenticate with an API token, which inherits the permissions\nof the user who created it: a call returns what that user could see in the Lumos UI, and nothing\nmore.\n\nNew here? Browse what you can connect with `GET /v1/integrations`, read the credentials an\nintegration expects with `GET /v1/integrations/{app_class_id}/connection-schema`, then connect it\nwith `POST /v1/apps`.\n\nEvery list endpoint shares one pagination contract. Set the page length with `page_size`, then send\nthe `next_page_token` from a response back as `page_token` to fetch the next page. A `null`\n`next_page_token` means you have reached the end.\n\nEvery error shares one envelope. Branch on the machine-readable `code`, not on `detail`.\n",
     "version": "0.1.0"
   },
   "servers": [
@@ -17,7 +17,7 @@
           "Access Policies"
         ],
         "summary": "List Access Policies",
-        "description": "List the access policies in your organization, newest first.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List the access policies in your organization, newest first.\n\n`expand=owners` returns the owners as ids. `owners.users` and `owners.groups` return the full users and groups. Any owners expand needs permission to list both users and groups, or the request returns 403.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "v1ListAccessPolicies",
         "security": [
           {
@@ -42,6 +42,27 @@
               "title": "Name"
             },
             "description": "Filter by policy name (case insensitive)"
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fields to expand: `owners`, `owners.users`, `owners.groups`.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand: `owners`, `owners.users`, `owners.groups`."
           },
           {
             "name": "page_token",
@@ -270,7 +291,7 @@
           "Access Policies"
         ],
         "summary": "Get Access Policy",
-        "description": "Get an access policy by ID. A policy with a published version returns that version. A policy that has only a draft returns the draft. Returns 404 if the ID is unknown in your organization.",
+        "description": "Get an access policy by ID. A policy with a published version returns that version. A policy that has only a draft returns the draft. Returns 404 if the ID is unknown in your organization.\n\n`expand=owners` returns the owners as ids. `owners.users` and `owners.groups` return the full users and groups. Any owners expand needs permission to list both users and groups, or the request returns 403.",
         "operationId": "v1GetAccessPolicy",
         "security": [
           {
@@ -288,6 +309,27 @@
               "title": "Access Policy Id"
             },
             "description": "The access policy's ID, which `GET /v1/access-policies` returns as `id`."
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fields to expand: `owners`, `owners.users`, `owners.groups`.",
+              "title": "Expand"
+            },
+            "description": "Fields to expand: `owners`, `owners.users`, `owners.groups`."
           }
         ],
         "responses": {
@@ -986,7 +1028,7 @@
           "Access Requests"
         ],
         "summary": "Create Access Request",
-        "description": "Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.\n\nName entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement you can't request on `app_id` returns `400 access_request.entitlement_not_requestable`.",
+        "description": "Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.\n\nName entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement you can't request on `app_id` returns `400 access_request.entitlement_not_requestable`.\n\nAnswer the app's custom intake fields in `custom_fields`, keyed by `reference_key`. A missing required answer, an unknown key, an answer over 500 characters, or a dropdown answer that is not one of its options returns `400 access_request.custom_fields_invalid`, with every problem listed in `error.errors` as `custom_fields.<reference_key>`.\n\nAny other refusal returns `400 access_request.<reason>`, where the reason is one of `invalid`, `not_requestable`, `entitlement_invalid`, `access_length_invalid`, `expiration_invalid`, `itsm_ticket_id_required`, `missing_fields`, `rejected_by_webhook`.",
         "operationId": "v1CreateAccessRequest",
         "security": [
           {
@@ -1035,7 +1077,7 @@
             "description": "Unauthorized"
           },
           "403": {
-            "description": "`requester_user_id` was sent by a caller who is not an organization admin.",
+            "description": "`requester_user_id` was sent by a caller who is not an organization admin, or the requester may not create this request (`access_request.forbidden`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3715,7 +3757,7 @@
           "Apps"
         ],
         "summary": "Update AppStore Settings",
-        "description": "Update an app's AppStore configuration.\n\nThis is a merge patch: a field you omit keeps its current value, and a field you send as `null` is cleared. `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always hold a value, so sending `null` for one of them returns 400. List fields such as `allowed_requester_group_uuids` and `custom_intake_fields` replace their contents rather than merging into them.",
+        "description": "Update an app's AppStore configuration.\n\nThis is a merge patch: a field you omit keeps its current value, and a field you send as `null` is cleared. `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always hold a value, so sending `null` for one of them returns 400. List fields such as `allowed_requester_group_uuids` and `custom_intake_fields` replace their contents rather than merging into them.\n\nA `custom_intake_fields` list the app cannot take returns `400 appstore_settings.custom_intake_fields_invalid` with every problem listed in `error.errors`, each pointing at the field by position, such as `custom_intake_fields[2].reference_key`.",
         "operationId": "v1PatchAppStoreSettings",
         "security": [
           {
@@ -3757,7 +3799,7 @@
             }
           },
           "400": {
-            "description": "Invalid custom intake field collection or malformed request.",
+            "description": "Malformed request, or a `custom_intake_fields` list with problems: a duplicate or badly formed `reference_key`, a dropdown without options, a text field with options, a `field_type` change on a saved field, and so on. Every problem is listed in `error.errors`, code `appstore_settings.custom_intake_fields_invalid`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4083,7 +4125,7 @@
           "Apps"
         ],
         "summary": "List App Entitlements",
-        "description": "List the entitlements on an app: its roles, licenses, groups, and permissions.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nReturns 404 if `app_uuid` is unknown in your organization.\n\n`visible_in_appstore` is the entitlement's own catalog visibility, separate from the app-level `in_app_store` on `GET /v1/apps`: the filter ignores the app's setting, but `expand=appstore_settings` returns no settings while the app is not in the AppStore.",
+        "description": "List the entitlements on an app: its roles, licenses, groups, and other access rights.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nReturns 404 if `app_uuid` is unknown in your organization.\n\n`visible_in_appstore` is the entitlement's own catalog visibility, separate from the app-level `in_app_store` on `GET /v1/apps`: the filter ignores the app's setting, but `expand=appstore_settings` returns no settings while the app is not in the AppStore.",
         "operationId": "listAppEntitlements",
         "security": [
           {
@@ -4676,6 +4718,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -4904,6 +4956,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -5132,6 +5194,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -5412,7 +5484,7 @@
           "Entitlements"
         ],
         "summary": "List Entitlements",
-        "description": "List every entitlement across your organization -- roles, licenses, groups, and permissions -- spanning every app.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.\n\nA request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.",
+        "description": "List every entitlement across your organization -- roles, licenses, groups, and other access rights -- spanning every app.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.\n\nA page can hold fewer items than `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as the end of the list.\n\nA request that takes too long to answer, such as a `search` that matches few entitlements in a large organization, returns 422 with code `entitlements.list_too_broad`. Narrow the `search`, or list one app's entitlements with `GET /v1/apps/{app_uuid}/entitlements`.",
         "operationId": "listEntitlements",
         "security": [
           {
@@ -6681,6 +6753,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       },
@@ -7010,6 +7092,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -7238,6 +7330,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is of a type this slot can't take (code `workflow.type_mismatch`). The `detail` field names the expected type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -9227,6 +9329,16 @@
               }
             },
             "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Unprocessable \u2014 the workflow is an approval chain, which can't be deleted on its own (code `workflow.approval_chain_delete_not_supported`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -9577,6 +9689,255 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomAttributeDefinitionListOutput"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/custom-attribute-definitions/{definition_id}": {
+      "get": {
+        "tags": [
+          "Custom Attribute Definitions"
+        ],
+        "summary": "Get Custom Attribute Definition",
+        "description": "Get one of your organization's custom-attribute definitions by its id.",
+        "operationId": "getCustomAttributeDefinition",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "definition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Definition Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAttributeDefinition"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/custom-attribute-definitions/{definition_id}/configs": {
+      "get": {
+        "tags": [
+          "Custom Attribute Definitions"
+        ],
+        "summary": "List Custom Attribute Definition Configs",
+        "description": "List the configs a custom-attribute definition coalesces: each app that syncs the attribute, and the native one your team defined, highest priority first.\n\nPaginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "operationId": "listCustomAttributeDefinitionConfigs",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "definition_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Definition Id"
+            }
+          },
+          {
+            "name": "page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.",
+              "title": "Page Token"
+            },
+            "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected.",
+              "default": 100,
+              "title": "Page Size"
+            },
+            "description": "Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomAttributeConfigListOutput"
                 }
               }
             }
@@ -13061,7 +13422,7 @@
         }
       }
     },
-    "/v1/users/{user_id}/roles/{role_name}": {
+    "/v1/users/{user_id}/roles/{role_id}": {
       "post": {
         "tags": [
           "Users"
@@ -13087,15 +13448,15 @@
             "description": "The user's ID, which `GET /v1/users` returns as `id`."
           },
           {
-            "name": "role_name",
+            "name": "role_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400.",
-              "title": "Role Name"
+              "description": "The role to assign or remove, by the `id` that `GET /v1/users/{user_id}/roles` returns. It is either a built-in role's id or the UUID of a custom role in your organization. The built-in ids are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A role's `label` or name is not accepted. A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.id_required`. An unknown role returns 400.",
+              "title": "Role Id"
             },
-            "description": "The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400."
+            "description": "The role to assign or remove, by the `id` that `GET /v1/users/{user_id}/roles` returns. It is either a built-in role's id or the UUID of a custom role in your organization. The built-in ids are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A role's `label` or name is not accepted. A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.id_required`. An unknown role returns 400."
           }
         ],
         "responses": {
@@ -13206,15 +13567,15 @@
             "description": "The user's ID, which `GET /v1/users` returns as `id`."
           },
           {
-            "name": "role_name",
+            "name": "role_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400.",
-              "title": "Role Name"
+              "description": "The role to assign or remove, by the `id` that `GET /v1/users/{user_id}/roles` returns. It is either a built-in role's id or the UUID of a custom role in your organization. The built-in ids are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A role's `label` or name is not accepted. A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.id_required`. An unknown role returns 400.",
+              "title": "Role Id"
             },
-            "description": "The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400."
+            "description": "The role to assign or remove, by the `id` that `GET /v1/users/{user_id}/roles` returns. It is either a built-in role's id or the UUID of a custom role in your organization. The built-in ids are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A role's `label` or name is not accepted. A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.id_required`. An unknown role returns 400."
           }
         ],
         "responses": {
@@ -13580,6 +13941,17 @@
             "type": "object",
             "description": "The Lumos Condition object determining which identities qualify for this policy. For more information, see the [Lumos Conditions documentation](https://docs.lumos.com/kb/life_cycle_management/building-conditions-in-lumos)."
           },
+          "owners": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OwnersOutput"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The users and groups that own this access policy. Returned only with `expand=owners`, `owners.users`, or `owners.groups`."
+          },
           "is_everyone_condition": {
             "type": "boolean",
             "title": "Is Everyone Condition",
@@ -13817,7 +14189,7 @@
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/CustomIntakeFieldResponseOutput"
+                  "$ref": "#/components/schemas/AccessRequestCustomField"
                 },
                 "type": "array"
               },
@@ -13935,7 +14307,7 @@
               }
             ],
             "title": "Access Length",
-            "description": "Once granted, how long the access should last. Omitting it means permanent access, which works only if the app offers Unlimited. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and permissions. `expiration_in_seconds` names the same options in seconds; sending both returns 400."
+            "description": "Once granted, how long the access should last. Omitting it means permanent access, which works only if the app offers Unlimited. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and entitlements. `expiration_in_seconds` names the same options in seconds; sending both returns 400."
           },
           "entitlement_ids": {
             "anyOf": [
@@ -13951,6 +14323,21 @@
             ],
             "title": "Entitlement Ids",
             "description": "Entitlement UUIDs to request, as `/v1/entitlements` returns them. Each must be requestable on `app_id`. Omit this to just request access to the app."
+          },
+          "custom_fields": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Fields",
+            "description": "Answers to the app's custom intake fields, keyed by `reference_key`. `GET /v1/apps/{app_id}/appstore-settings` lists the fields with their keys, required flags and dropdown options. Every required field needs a non-blank answer, and a dropdown answer must match one of its options exactly. Problems return `400 access_request.custom_fields_invalid` with one entry per field in `errors`."
           }
         },
         "additionalProperties": false,
@@ -13972,6 +14359,14 @@
             "app_id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890",
             "business_justification": "Access for a new engineer joining my team.",
             "target_user_id": "3c4d5e6f-7081-9012-cdef-123456789012"
+          },
+          {
+            "app_id": "1a2b3c4d-5e6f-7890-abcd-ef1234567890",
+            "business_justification": "I review pull requests for the payments service.",
+            "custom_fields": {
+              "cost_center": "4210",
+              "environment": "Production"
+            }
           }
         ]
       },
@@ -13991,6 +14386,45 @@
           "access_requests"
         ],
         "title": "AccessRequestCreateOutput"
+      },
+      "AccessRequestCustomField": {
+        "properties": {
+          "reference_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Key",
+            "description": "The field's `reference_key`, as `GET /v1/apps/{app_id}/appstore-settings` lists it. Null when the field was deleted after the request was made."
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "description": "The question shown to the requester."
+          },
+          "response": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response",
+            "description": "The requester's answer."
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "AccessRequestCustomField",
+        "description": "One answer to an app's custom intake field, as stored on the request."
       },
       "AccessRequestEntitlement": {
         "properties": {
@@ -15665,12 +16099,12 @@
           "allow_permission_selection": {
             "type": "boolean",
             "title": "Allow Permission Selection",
-            "description": "When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false."
+            "description": "When true, requesters may select which entitlement to request. When false, the default entitlement is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false."
           },
           "allow_multiple_permission_selection": {
             "type": "boolean",
             "title": "Allow Multiple Permission Selection",
-            "description": "When true, requesters may select more than one permission in a single request."
+            "description": "When true, requesters may select more than one entitlement in a single request."
           },
           "allowed_requester_group_uuids": {
             "anyOf": [
@@ -15798,12 +16232,12 @@
           "allow_permission_selection": {
             "type": "boolean",
             "title": "Allow Permission Selection",
-            "description": "When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. Omit to leave unchanged."
+            "description": "When true, requesters may select which entitlement to request. When false, the default entitlement is used automatically and only approvers can change it. Omit to leave unchanged."
           },
           "allow_multiple_permission_selection": {
             "type": "boolean",
             "title": "Allow Multiple Permission Selection",
-            "description": "When true, requesters may select more than one permission per request. Omit to leave unchanged."
+            "description": "When true, requesters may select more than one entitlement per request. Omit to leave unchanged."
           },
           "allowed_requester_group_uuids": {
             "anyOf": [
@@ -15923,12 +16357,12 @@
           "allow_permission_selection": {
             "type": "boolean",
             "title": "Allow Permission Selection",
-            "description": "When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false."
+            "description": "When true, requesters may select which entitlement to request. When false, the default entitlement is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false."
           },
           "allow_multiple_permission_selection": {
             "type": "boolean",
             "title": "Allow Multiple Permission Selection",
-            "description": "When true, requesters may select more than one permission in a single request."
+            "description": "When true, requesters may select more than one entitlement in a single request."
           },
           "allowed_requester_group_uuids": {
             "anyOf": [
@@ -16421,12 +16855,107 @@
         ],
         "title": "CustomAttribute"
       },
+      "CustomAttributeConfig": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The attribute's name in its source."
+          },
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "App Id",
+            "description": "UUID of the app this config belongs to. Null when it has none, or its app no longer exists."
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority",
+            "description": "Rank among the definition's configs; `0` is highest. Configs that tie all contribute values."
+          },
+          "attribute_type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "boolean",
+              "integer",
+              "datetime",
+              "json",
+              "user",
+              "group",
+              "multi-select",
+              "single-select"
+            ],
+            "title": "Attribute Type",
+            "description": "The type of value this config holds."
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "synced",
+              "native",
+              "ai-generated"
+            ],
+            "title": "Source Type",
+            "description": "Where this config comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "priority",
+          "attribute_type",
+          "source_type"
+        ],
+        "title": "CustomAttributeConfig",
+        "description": "One source of a definition's values: a connected app's attribute, or one your team\ndefined in Lumos. When an entity holds values from several, the highest-priority one wins."
+      },
+      "CustomAttributeConfigListOutput": {
+        "properties": {
+          "next_page_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page Token",
+            "description": "Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it."
+          },
+          "custom_attribute_configs": {
+            "items": {
+              "$ref": "#/components/schemas/CustomAttributeConfig"
+            },
+            "type": "array",
+            "title": "Custom Attribute Configs",
+            "description": "The definition's configs in this page, highest priority first."
+          }
+        },
+        "type": "object",
+        "required": [
+          "custom_attribute_configs"
+        ],
+        "title": "CustomAttributeConfigListOutput"
+      },
       "CustomAttributeDefinition": {
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "UUID of this definition."
+          },
           "label": {
             "type": "string",
             "title": "Label",
-            "description": "Stable reference, unique in your organization."
+            "description": "Display name, unique among your organization's definitions of a config_type."
           },
           "name": {
             "anyOf": [
@@ -16476,13 +17005,14 @@
         },
         "type": "object",
         "required": [
+          "id",
           "label",
           "attribute_type",
           "config_type",
           "source_type"
         ],
         "title": "CustomAttributeDefinition",
-        "description": "A custom-attribute definition: the schema behind custom-attribute values.\n\nThere is one definition per `label`, unified across every app that supplies it. `label` is\nthe stable reference; definitions have no `uuid`."
+        "description": "A custom-attribute definition: the schema behind custom-attribute values.\n\nThere is one definition per `label`, unified across every app that supplies it."
       },
       "CustomAttributeDefinitionListOutput": {
         "properties": {
@@ -16695,33 +17225,6 @@
         ],
         "title": "CustomIntakeFieldPatchInput"
       },
-      "CustomIntakeFieldResponseOutput": {
-        "properties": {
-          "prompt": {
-            "type": "string",
-            "title": "Prompt",
-            "description": "The custom intake field prompt shown to the requester."
-          },
-          "response": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Response",
-            "description": "The requester's response to the custom intake field."
-          }
-        },
-        "type": "object",
-        "required": [
-          "prompt"
-        ],
-        "title": "CustomIntakeFieldResponseOutput",
-        "description": "API version of a CustomIntakeFieldResponse on an access request."
-      },
       "CustomIntakeFieldType": {
         "type": "string",
         "enum": [
@@ -16884,7 +17387,7 @@
           "label": {
             "type": "string",
             "title": "Label",
-            "description": "Human-readable label for the entitlement (e.g. a role or permission name)."
+            "description": "Human-readable label for the entitlement (e.g. a role or license name)."
           },
           "source": {
             "type": "string",
@@ -17164,7 +17667,7 @@
           "label": {
             "type": "string",
             "title": "Label",
-            "description": "Human-readable label for the entitlement (e.g. a role or permission name)."
+            "description": "Human-readable label for the entitlement (e.g. a role or license name)."
           },
           "entitlement_type_label": {
             "type": "string",
@@ -18309,6 +18812,33 @@
         ],
         "title": "OutputParameterSchema",
         "description": "Schema for one output that a workflow step produces."
+      },
+      "OwnersOutput": {
+        "properties": {
+          "users": {
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "type": "array",
+            "title": "Users",
+            "description": "The users who own the resource."
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            },
+            "type": "array",
+            "title": "Groups",
+            "description": "The groups that own the resource."
+          }
+        },
+        "type": "object",
+        "required": [
+          "users",
+          "groups"
+        ],
+        "title": "OwnersOutput",
+        "description": "The owners of a resource.\n\nEach entry is a reference holding only `id` unless its list is expanded, in which case\nit is the same `User` or `Group` that `GET /v1/users` and `GET /v1/groups` return.\nExpanding only adds fields to an entry."
       },
       "PerformTaskActionInput": {
         "properties": {
@@ -20149,10 +20679,15 @@
       },
       "UserRole": {
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The role's identifier: a built-in role's kebab-case name, such as `app-admin`, or a custom role's UUID. This is the value the `role_id` path parameter accepts."
+          },
           "label": {
             "type": "string",
             "title": "Label",
-            "description": "A built-in role's label, such as `app-admin`, or a custom role's name. This is the value the `role_name` path parameter accepts."
+            "description": "The role's display name, such as `App Admin` for a built-in role or the name your organization gave a custom role. It is not accepted in place of `id`."
           },
           "is_custom": {
             "type": "boolean",
@@ -20183,6 +20718,7 @@
         },
         "type": "object",
         "required": [
+          "id",
           "label",
           "is_custom",
           "resource_type"
@@ -20700,11 +21236,11 @@
     },
     {
       "name": "Custom Attribute Definitions",
-      "description": "\nCustom attributes are the extra fields your organization keeps on users. These endpoints read\ntheir *definitions*, not the values stored against any particular user.\n\n`GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that\nsupplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from\nones your team created, or with `app_id` to see only what a single app supplies.\n"
+      "description": "\nCustom attributes are the extra fields your organization keeps on users. These endpoints read\ntheir *definitions*, not the values stored against any particular user.\n\n`GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that\nsupplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from\nones your team created, or with `app_id` to see only what a single app supplies.\n\n`GET /v1/custom-attribute-definitions/{id}` reads one definition by its `id`, and\n`GET /v1/custom-attribute-definitions/{id}/configs` lists the configs behind it, highest priority\nfirst.\n"
     },
     {
       "name": "Entitlements",
-      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, a\npermission. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and\n  `custom_approval_message_override`. Sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval\noverride also has a DELETE that turns it off.\n\nAn entitlement that can't be requested returns 404 with\n`Workflows are not available for this entitlement.` on each of these endpoints.\n"
+      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, or\nanother access right. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and\n  `custom_approval_message_override`. Sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval\noverride also has a DELETE that turns it off.\n\nAn entitlement that can't be requested returns 404 with\n`Workflows are not available for this entitlement.` on each of these endpoints.\n"
     },
     {
       "name": "Groups",
@@ -20728,11 +21264,11 @@
     },
     {
       "name": "Lifecycle Management",
-      "description": "\nLifecycle management covers user offboardings. An offboarding runs your organization's\noffboarding workflow for one user, either right away or at a scheduled time.\n\n- `POST /v1/lifecycle-management/user-offboardings` starts an offboarding now, or at\n  `scheduled_at` when you send a future time.\n- `GET /v1/lifecycle-management/user-offboardings/{user_offboarding_id}` reads one.\n- `POST /v1/lifecycle-management/user-offboardings/{user_offboarding_id}:cancel` cancels one that\n  is scheduled or in progress.\n\nThere is no list endpoint, so keep the `id` that create returns.\n\n`workflow_config_id` names an offboarding workflow configuration, not a workflow from\n`/v1/workflows`. Omit it to use the configuration your organization has selected for automatic\noffboarding. Only organizations with the multiple offboarding workflows feature can send it. For\nany other organization, a request that includes it returns 400.\n\nLumos enables these endpoints per organization, separately from the rest of v1, so contact your\nLumos representative to turn them on.\n"
+      "description": "\nLifecycle management covers user offboardings. An offboarding runs your organization's\noffboarding workflow for one user, either right away or at a scheduled time.\n\n- `POST /v1/lifecycle-management/user-offboardings` starts an offboarding now, or at\n  `scheduled_at` when you send a future time.\n- `GET /v1/lifecycle-management/user-offboardings/{user_offboarding_id}` reads one.\n- `POST /v1/lifecycle-management/user-offboardings/{user_offboarding_id}:cancel` cancels one that\n  is scheduled or in progress.\n\nThere is no list endpoint, so keep the `id` that create returns.\n\n`workflow_config_id` names an offboarding workflow configuration, not a workflow from\n`/v1/workflows`. Omit it to use the configuration your organization has selected for automatic\noffboarding. Only organizations with the multiple offboarding workflows feature can send it. For\nany other organization, a request that includes it returns 400.\n"
     },
     {
       "name": "Meta",
-      "description": "\n`GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.\nUse either to check your setup.\n\nBoth require an API token. A 200 means your token works and v1 is enabled for your organization.\nLumos enables v1 per organization, so contact your Lumos representative to turn it on.\n"
+      "description": "\n`GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.\nUse either to check your setup.\n\nBoth require an API token. A 200 means your token works.\n"
     },
     {
       "name": "Operations",
@@ -20748,7 +21284,7 @@
     },
     {
       "name": "Users",
-      "description": "\nUsers are the people in your organization. These endpoints read them, and the only thing they\nchange is a user's Lumos roles.\n\n- `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`\n  requires an exact match.\n- `GET /v1/users/current` returns the user who owns your API token.\n- `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the\n  accounts that user holds.\n- `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has a `label` (a built-in\n  role's label such as `app-admin`, or a custom role's name), `is_custom`, and a `resource_type`\n  that is null for roles that apply across the organization.\n  `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and\n  `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already\n  has, or removing one they don't have, changes nothing.\n\nA user who has been deleted returns the same 404 as one who doesn't exist in your organization.\n"
+      "description": "\nUsers are the people in your organization. These endpoints read them, and the only thing they\nchange is a user's Lumos roles.\n\n- `GET /v1/users` lists users. `search` matches names and emails, and `exact_match=true`\n  requires an exact match.\n- `GET /v1/users/current` returns the user who owns your API token.\n- `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the\n  accounts that user holds.\n- `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has an `id` (a built-in\n  role's kebab-case name such as `app-admin`, or a custom role's UUID), a display `label`,\n  `is_custom`, and a `resource_type` that is null for roles that apply across the organization.\n  `POST /v1/users/{user_id}/roles/{role_id}` assigns one, and\n  `DELETE /v1/users/{user_id}/roles/{role_id}` removes one, where `role_id` is the role's `id`.\n  Assigning a role the user already has, or removing one they don't have, changes nothing.\n\nA user who has been deleted returns the same 404 as one who doesn't exist in your organization.\n"
     },
     {
       "name": "Workflows",

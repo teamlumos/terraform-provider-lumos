@@ -119,14 +119,14 @@ func (r *AppResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 						PlanModifiers: []planmodifier.Bool{
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `When true, requesters may select more than one permission in a single request.`,
+						Description: `When true, requesters may select more than one entitlement in a single request.`,
 					},
 					"allow_permission_selection": schema.BoolAttribute{
 						Computed: true,
 						PlanModifiers: []planmodifier.Bool{
 							speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
 						},
-						Description: `When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.`,
+						Description: `When true, requesters may select which entitlement to request. When false, the default entitlement is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.`,
 					},
 					"allowed_requester_group_uuids": schema.SetAttribute{
 						Computed: true,

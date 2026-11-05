@@ -21,8 +21,7 @@ import (
 // `GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.
 // Use either to check your setup.
 //
-// Both require an API token. A 200 means your token works and v1 is enabled for your organization.
-// Lumos enables v1 per organization, so contact your Lumos representative to turn it on.
+// Both require an API token. A 200 means your token works.
 type Meta struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration

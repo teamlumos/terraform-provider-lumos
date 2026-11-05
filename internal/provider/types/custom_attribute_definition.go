@@ -9,6 +9,7 @@ import (
 type CustomAttributeDefinition struct {
 	AttributeType types.String `tfsdk:"attribute_type"`
 	ConfigType    types.String `tfsdk:"config_type"`
+	ID            types.String `tfsdk:"id"`
 	Label         types.String `tfsdk:"label"`
 	Name          types.String `tfsdk:"name"`
 	SourceType    types.String `tfsdk:"source_type"`
