@@ -4,9 +4,9 @@ terraform {
   required_providers {
     lumos = {
       source = "teamlumos/lumos"
-      # The prerelease under test. Ignored when dev_overrides points at a
-      # local build.
-      version = "1.0.0-beta.1"
+      # The release under test. Ignored when dev_overrides points at a local
+      # build.
+      version = "1.0.0"
     }
   }
 }

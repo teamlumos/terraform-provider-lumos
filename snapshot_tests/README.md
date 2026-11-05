@@ -37,7 +37,7 @@ named with that run id are left in Lumos.
 
 ### Which provider build runs
 
-`shared/versions.tf` pins the prerelease under test, and `terraform init`
+`shared/versions.tf` pins the release under test, and `terraform init`
 downloads it from the registry.
 
 To run a local build instead, build it and point Terraform at it with
