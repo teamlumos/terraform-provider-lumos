@@ -34,3 +34,7 @@ output "webhook_types_are_known" {
 output "user_filter_returns_only_users" {
   value = length(data.lumos_custom_attribute_definitions.users.custom_attribute_definitions) > 0 && alltrue([for d in data.lumos_custom_attribute_definitions.users.custom_attribute_definitions : d.attribute_type == "user"])
 }
+
+output "custom_attribute_definitions_have_ids" {
+  value = alltrue([for d in data.lumos_custom_attribute_definitions.users.custom_attribute_definitions : d.id != ""])
+}
