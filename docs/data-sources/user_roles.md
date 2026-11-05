@@ -41,6 +41,7 @@ output "my_roles" {
 
 Read-Only:
 
+- `id` (String) The role's identifier: a built-in role's kebab-case name, such as `app-admin`, or a custom role's UUID. This is the value the `role_id` path parameter accepts.
 - `is_custom` (Boolean) Whether this is a custom role your organization defined.
-- `label` (String) A built-in role's label, such as `app-admin`, or a custom role's name. This is the value the `role_name` path parameter accepts.
+- `label` (String) The role's display name, such as `App Admin` for a built-in role or the name your organization gave a custom role. It is not accepted in place of `id`.
 - `resource_type` (String) The type of resource the role applies to, such as `app`. Null for roles that apply across the organization.

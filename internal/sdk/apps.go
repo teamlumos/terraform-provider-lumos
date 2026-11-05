@@ -1961,6 +1961,8 @@ func (s *Apps) V1GetAppStoreSettings(ctx context.Context, request operations.V1G
 // Update an app's AppStore configuration.
 //
 // This is a merge patch: a field you omit keeps its current value, and a field you send as `null` is cleared. `in_app_store`, `catalog_visibility`, `allow_permission_selection` and `allow_multiple_permission_selection` always hold a value, so sending `null` for one of them returns 400. List fields such as `allowed_requester_group_uuids` and `custom_intake_fields` replace their contents rather than merging into them.
+//
+// A `custom_intake_fields` list the app cannot take returns `400 appstore_settings.custom_intake_fields_invalid` with every problem listed in `error.errors`, each pointing at the field by position, such as `custom_intake_fields[2].reference_key`.
 func (s *Apps) V1PatchAppStoreSettings(ctx context.Context, request operations.V1PatchAppStoreSettingsRequest, opts ...operations.Option) (*operations.V1PatchAppStoreSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2738,7 +2740,7 @@ func (s *Apps) V1SetAppAdmins(ctx context.Context, request operations.V1SetAppAd
 }
 
 // ListAppEntitlements - List App Entitlements
-// List the entitlements on an app: its roles, licenses, groups, and permissions.
+// List the entitlements on an app: its roles, licenses, groups, and other access rights.
 //
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 //
@@ -3767,6 +3769,8 @@ func (s *Apps) SetAppApprovalWorkflow(ctx context.Context, request operations.Se
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -4284,6 +4288,8 @@ func (s *Apps) SetAppProvisioningWorkflow(ctx context.Context, request operation
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):
@@ -4800,6 +4806,8 @@ func (s *Apps) SetAppDeprovisioningWorkflow(ctx context.Context, request operati
 	case httpRes.StatusCode == 404:
 		fallthrough
 	case httpRes.StatusCode == 409:
+		fallthrough
+	case httpRes.StatusCode == 422:
 		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {

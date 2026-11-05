@@ -152,8 +152,8 @@ type Lumos struct {
 	// endpoints.
 	//
 	Apps *Apps
-	// An entitlement is a grantable unit of access on an app: a role, a license tier, a group, a
-	// permission. Accounts hold entitlements.
+	// An entitlement is a grantable unit of access on an app: a role, a license tier, a group, or
+	// another access right. Accounts hold entitlements.
 	//
 	// - `POST /v1/entitlements` creates a requestable entitlement on an app.
 	// - `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.
@@ -243,6 +243,10 @@ type Lumos struct {
 	// supplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from
 	// ones your team created, or with `app_id` to see only what a single app supplies.
 	//
+	// `GET /v1/custom-attribute-definitions/{id}` reads one definition by its `id`, and
+	// `GET /v1/custom-attribute-definitions/{id}/configs` lists the configs behind it, highest priority
+	// first.
+	//
 	CustomAttributeDefinitions *CustomAttributeDefinitions
 	// An integration is a service Lumos knows how to connect to, identified by an `app_class_id` such as
 	// `okta.com` or `workspace.google.com`. This is the catalog you connect *from*. Apps you have
@@ -271,8 +275,7 @@ type Lumos struct {
 	// `GET /v1/info` returns the API's current git revision, and `GET /v1/art` returns Lumos ASCII art.
 	// Use either to check your setup.
 	//
-	// Both require an API token. A 200 means your token works and v1 is enabled for your organization.
-	// Lumos enables v1 per organization, so contact your Lumos representative to turn it on.
+	// Both require an API token. A 200 means your token works.
 	//
 	Meta *Meta
 	// An operation tracks work that continues after the request that started it has returned. These
@@ -349,9 +352,6 @@ type Lumos struct {
 	// offboarding. Only organizations with the multiple offboarding workflows feature can send it. For
 	// any other organization, a request that includes it returns 400.
 	//
-	// Lumos enables these endpoints per organization, separately from the rest of v1, so contact your
-	// Lumos representative to turn them on.
-	//
 	LifecycleManagement *LifecycleManagement
 	// Users are the people in your organization. These endpoints read them, and the only thing they
 	// change is a user's Lumos roles.
@@ -361,12 +361,12 @@ type Lumos struct {
 	// - `GET /v1/users/current` returns the user who owns your API token.
 	// - `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the
 	//   accounts that user holds.
-	// - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has a `label` (a built-in
-	//   role's label such as `app-admin`, or a custom role's name), `is_custom`, and a `resource_type`
-	//   that is null for roles that apply across the organization.
-	//   `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and
-	//   `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already
-	//   has, or removing one they don't have, changes nothing.
+	// - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has an `id` (a built-in
+	//   role's kebab-case name such as `app-admin`, or a custom role's UUID), a display `label`,
+	//   `is_custom`, and a `resource_type` that is null for roles that apply across the organization.
+	//   `POST /v1/users/{user_id}/roles/{role_id}` assigns one, and
+	//   `DELETE /v1/users/{user_id}/roles/{role_id}` removes one, where `role_id` is the role's `id`.
+	//   Assigning a role the user already has, or removing one they don't have, changes nothing.
 	//
 	// A user who has been deleted returns the same 404 as one who doesn't exist in your organization.
 	//

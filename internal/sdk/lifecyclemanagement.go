@@ -33,9 +33,6 @@ import (
 // `/v1/workflows`. Omit it to use the configuration your organization has selected for automatic
 // offboarding. Only organizations with the multiple offboarding workflows feature can send it. For
 // any other organization, a request that includes it returns 400.
-//
-// Lumos enables these endpoints per organization, separately from the rest of v1, so contact your
-// Lumos representative to turn them on.
 type LifecycleManagement struct {
 	rootSDK          *Lumos
 	sdkConfiguration config.SDKConfiguration

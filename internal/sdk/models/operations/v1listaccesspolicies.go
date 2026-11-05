@@ -11,6 +11,8 @@ import (
 type V1ListAccessPoliciesRequest struct {
 	// Filter by policy name (case insensitive)
 	Name *string `queryParam:"style=form,explode=true,name=name"`
+	// Fields to expand: `owners`, `owners.users`, `owners.groups`.
+	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	// Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.
 	PageToken *string `queryParam:"style=form,explode=true,name=page_token"`
 	// Maximum number of items to return per page. Values above 1000 are clamped to 1000 rather than rejected.
@@ -33,6 +35,13 @@ func (v *V1ListAccessPoliciesRequest) GetName() *string {
 		return nil
 	}
 	return v.Name
+}
+
+func (v *V1ListAccessPoliciesRequest) GetExpand() []string {
+	if v == nil {
+		return nil
+	}
+	return v.Expand
 }
 
 func (v *V1ListAccessPoliciesRequest) GetPageToken() *string {

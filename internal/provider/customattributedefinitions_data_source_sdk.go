@@ -24,6 +24,7 @@ func (r *CustomAttributeDefinitionsDataSourceModel) RefreshFromSharedCustomAttri
 
 			customAttributeDefinitions.AttributeType = types.StringValue(string(customAttributeDefinitionsItem.AttributeType))
 			customAttributeDefinitions.ConfigType = types.StringValue(string(customAttributeDefinitionsItem.ConfigType))
+			customAttributeDefinitions.ID = types.StringValue(customAttributeDefinitionsItem.ID)
 			customAttributeDefinitions.Label = types.StringValue(customAttributeDefinitionsItem.Label)
 			customAttributeDefinitions.Name = types.StringPointerValue(customAttributeDefinitionsItem.Name)
 			customAttributeDefinitions.SourceType = types.StringValue(string(customAttributeDefinitionsItem.SourceType))

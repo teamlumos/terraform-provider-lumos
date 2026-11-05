@@ -19,10 +19,12 @@ type AccessRequestCreateInput struct {
 	BusinessJustification *string `json:"business_justification,omitzero"`
 	// Once granted, how long the access should last, in seconds. The value must equal one of the app's time-based access options (when requesting entitlements, one that all of them offer) and be at least 30 minutes; anything else is rejected with 400. Omit it for permanent access, which works only if the app offers Unlimited. `access_length` names the same options by label and is the easier field to use; sending both returns 400.
 	ExpirationInSeconds *int64 `json:"expiration_in_seconds,omitzero"`
-	// Once granted, how long the access should last. Omitting it means permanent access, which works only if the app offers Unlimited. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and permissions. `expiration_in_seconds` names the same options in seconds; sending both returns 400.
+	// Once granted, how long the access should last. Omitting it means permanent access, which works only if the app offers Unlimited. All possible values are '2 hours', '4 hours', '8 hours', '12 hours', '1 day', '2 days', '3 days', '7 days', '14 days', '30 days', '90 days', 'Unlimited', but the exact options depend on the settings of the app and entitlements. `expiration_in_seconds` names the same options in seconds; sending both returns 400.
 	AccessLength *string `json:"access_length,omitzero"`
 	// Entitlement UUIDs to request, as `/v1/entitlements` returns them. Each must be requestable on `app_id`. Omit this to just request access to the app.
 	EntitlementIds []string `json:"entitlement_ids,omitzero"`
+	// Answers to the app's custom intake fields, keyed by `reference_key`. `GET /v1/apps/{app_id}/appstore-settings` lists the fields with their keys, required flags and dropdown options. Every required field needs a non-blank answer, and a dropdown answer must match one of its options exactly. Problems return `400 access_request.custom_fields_invalid` with one entry per field in `errors`.
+	CustomFields map[string]string `json:"custom_fields,omitzero"`
 }
 
 func (a AccessRequestCreateInput) MarshalJSON() ([]byte, error) {
@@ -90,4 +92,11 @@ func (a *AccessRequestCreateInput) GetEntitlementIds() []string {
 		return nil
 	}
 	return a.EntitlementIds
+}
+
+func (a *AccessRequestCreateInput) GetCustomFields() map[string]string {
+	if a == nil {
+		return nil
+	}
+	return a.CustomFields
 }

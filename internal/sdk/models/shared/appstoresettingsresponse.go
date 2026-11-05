@@ -87,9 +87,9 @@ func (e *CatalogVisibility) UnmarshalJSON(data []byte) error {
 type AppStoreSettingsResponse struct {
 	// Custom instructions shown to a requester when they open the access-request form. Null means no custom instructions are set.
 	RequestInstructions *string `json:"request_instructions,omitzero"`
-	// When true, requesters may select which permission to request. When false, the default permission is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
+	// When true, requesters may select which entitlement to request. When false, the default entitlement is used automatically and only approvers can change it. An app that was never configured reports the value Lumos applies when validating its access requests, which may be false.
 	AllowPermissionSelection bool `json:"allow_permission_selection"`
-	// When true, requesters may select more than one permission in a single request.
+	// When true, requesters may select more than one entitlement in a single request.
 	AllowMultiplePermissionSelection bool `json:"allow_multiple_permission_selection"`
 	// UUIDs of the groups whose members may request this app. Null means everyone in your organization can request the app.
 	AllowedRequesterGroupUuids []string `json:"allowed_requester_group_uuids,omitzero"`

@@ -108,10 +108,11 @@ func (e *SourceType) UnmarshalJSON(data []byte) error {
 
 // CustomAttributeDefinition - A custom-attribute definition: the schema behind custom-attribute values.
 //
-// There is one definition per `label`, unified across every app that supplies it. `label` is
-// the stable reference; definitions have no `uuid`.
+// There is one definition per `label`, unified across every app that supplies it.
 type CustomAttributeDefinition struct {
-	// Stable reference, unique in your organization.
+	// UUID of this definition.
+	ID string `json:"id"`
+	// Display name, unique among your organization's definitions of a config_type.
 	Label string `json:"label"`
 	// Representative machine/synced attribute name.
 	Name *string `json:"name,omitzero"`
@@ -121,6 +122,13 @@ type CustomAttributeDefinition struct {
 	ConfigType ConfigType `json:"config_type"`
 	// Where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.
 	SourceType SourceType `json:"source_type"`
+}
+
+func (c *CustomAttributeDefinition) GetID() string {
+	if c == nil {
+		return ""
+	}
+	return c.ID
 }
 
 func (c *CustomAttributeDefinition) GetLabel() string {

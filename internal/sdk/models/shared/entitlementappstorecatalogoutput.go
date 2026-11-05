@@ -83,7 +83,7 @@ func (e *EntitlementAppStoreCatalogOutputSource) UnmarshalJSON(data []byte) erro
 type EntitlementAppStoreCatalogOutput struct {
 	// The ID of this entitlement.
 	ID string `json:"id"`
-	// Human-readable label for the entitlement (e.g. a role or permission name).
+	// Human-readable label for the entitlement (e.g. a role or license name).
 	Label string `json:"label"`
 	// How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
 	Source EntitlementAppStoreCatalogOutputSource `json:"source"`

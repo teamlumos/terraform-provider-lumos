@@ -192,7 +192,7 @@ type EntitlementOutput struct {
 	ID string `json:"id"`
 	// The ID of the app that owns this entitlement.
 	AppID string `json:"app_id"`
-	// Human-readable label for the entitlement (e.g. a role or permission name).
+	// Human-readable label for the entitlement (e.g. a role or license name).
 	Label string `json:"label"`
 	// Human-readable label for the entitlement's type (e.g. 'Role', 'License', 'Group').
 	EntitlementTypeLabel string `json:"entitlement_type_label"`

@@ -305,6 +305,10 @@ func (s *AccessRequests) V1ListAccessRequests(ctx context.Context, request opera
 // Create a request for access to an app, or to specific entitlements on it, for you or for `target_user_id`. One submission can create several requests, so the 201 response lists them in `access_requests`.
 //
 // Name entitlements in `entitlement_ids` by Entitlement UUID. An unknown ID returns `404 access_request.entitlement_not_found`. An entitlement you can't request on `app_id` returns `400 access_request.entitlement_not_requestable`.
+//
+// Answer the app's custom intake fields in `custom_fields`, keyed by `reference_key`. A missing required answer, an unknown key, an answer over 500 characters, or a dropdown answer that is not one of its options returns `400 access_request.custom_fields_invalid`, with every problem listed in `error.errors` as `custom_fields.<reference_key>`.
+//
+// Any other refusal returns `400 access_request.<reason>`, where the reason is one of `invalid`, `not_requestable`, `entitlement_invalid`, `access_length_invalid`, `expiration_invalid`, `itsm_ticket_id_required`, `missing_fields`, `rejected_by_webhook`.
 func (s *AccessRequests) V1CreateAccessRequest(ctx context.Context, request shared.AccessRequestCreateInput, opts ...operations.Option) (*operations.V1CreateAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

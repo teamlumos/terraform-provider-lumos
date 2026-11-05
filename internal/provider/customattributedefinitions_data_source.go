@@ -89,9 +89,13 @@ func (r *CustomAttributeDefinitionsDataSource) Schema(ctx context.Context, req d
 							Computed:    true,
 							Description: `Entity type this attribute attaches to. Always ` + "`" + `user` + "`" + `.`,
 						},
+						"id": schema.StringAttribute{
+							Computed:    true,
+							Description: `UUID of this definition.`,
+						},
 						"label": schema.StringAttribute{
 							Computed:    true,
-							Description: `Stable reference, unique in your organization.`,
+							Description: `Display name, unique among your organization's definitions of a config_type.`,
 						},
 						"name": schema.StringAttribute{
 							Computed:    true,

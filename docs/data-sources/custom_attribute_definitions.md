@@ -45,6 +45,7 @@ Read-Only:
 
 - `attribute_type` (String) The type of value the attribute holds.
 - `config_type` (String) Entity type this attribute attaches to. Always `user`.
-- `label` (String) Stable reference, unique in your organization.
+- `id` (String) UUID of this definition.
+- `label` (String) Display name, unique among your organization's definitions of a config_type.
 - `name` (String) Representative machine/synced attribute name.
 - `source_type` (String) Where the attribute comes from: `synced` from a connected app, `native` defined by your team in Lumos, or `ai-generated` inferred by Lumos.

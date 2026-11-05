@@ -29,12 +29,12 @@ import (
 //   - `GET /v1/users/current` returns the user who owns your API token.
 //   - `GET /v1/users/{user_id}` reads one user, and `GET /v1/users/{user_id}/accounts` lists the
 //     accounts that user holds.
-//   - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has a `label` (a built-in
-//     role's label such as `app-admin`, or a custom role's name), `is_custom`, and a `resource_type`
-//     that is null for roles that apply across the organization.
-//     `POST /v1/users/{user_id}/roles/{role_name}` assigns one, and
-//     `DELETE /v1/users/{user_id}/roles/{role_name}` removes one. Assigning a role the user already
-//     has, or removing one they don't have, changes nothing.
+//   - `GET /v1/users/{user_id}/roles` lists a user's Lumos roles. Each role has an `id` (a built-in
+//     role's kebab-case name such as `app-admin`, or a custom role's UUID), a display `label`,
+//     `is_custom`, and a `resource_type` that is null for roles that apply across the organization.
+//     `POST /v1/users/{user_id}/roles/{role_id}` assigns one, and
+//     `DELETE /v1/users/{user_id}/roles/{role_id}` removes one, where `role_id` is the role's `id`.
+//     Assigning a role the user already has, or removing one they don't have, changes nothing.
 //
 // A user who has been deleted returns the same 404 as one who doesn't exist in your organization.
 type Users struct {
@@ -1395,7 +1395,7 @@ func (s *Users) AddUserRole(ctx context.Context, request operations.AddUserRoleR
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/users/{user_id}/roles/{role_name}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/users/{user_id}/roles/{role_id}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}
@@ -1647,7 +1647,7 @@ func (s *Users) RemoveUserRole(ctx context.Context, request operations.RemoveUse
 	} else {
 		baseURL = *o.ServerURL
 	}
-	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/users/{user_id}/roles/{role_name}", request, nil)
+	opURL, err := utils.GenerateURL(ctx, baseURL, "/v1/users/{user_id}/roles/{role_id}", request, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error generating URL: %w", err)
 	}

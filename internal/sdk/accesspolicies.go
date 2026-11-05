@@ -47,6 +47,8 @@ func newAccessPolicies(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks 
 // V1ListAccessPolicies - List Access Policies
 // List the access policies in your organization, newest first.
 //
+// `expand=owners` returns the owners as ids. `owners.users` and `owners.groups` return the full users and groups. Any owners expand needs permission to list both users and groups, or the request returns 403.
+//
 // Paginated via opaque cursor: pass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.
 func (s *AccessPolicies) V1ListAccessPolicies(ctx context.Context, request operations.V1ListAccessPoliciesRequest, opts ...operations.Option) (*operations.V1ListAccessPoliciesResponse, error) {
 	o := operations.Options{}
@@ -614,6 +616,8 @@ func (s *AccessPolicies) V1CreateAccessPolicy(ctx context.Context, request share
 
 // V1GetAccessPolicy - Get Access Policy
 // Get an access policy by ID. A policy with a published version returns that version. A policy that has only a draft returns the draft. Returns 404 if the ID is unknown in your organization.
+//
+// `expand=owners` returns the owners as ids. `owners.users` and `owners.groups` return the full users and groups. Any owners expand needs permission to list both users and groups, or the request returns 403.
 func (s *AccessPolicies) V1GetAccessPolicy(ctx context.Context, request operations.V1GetAccessPolicyRequest, opts ...operations.Option) (*operations.V1GetAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -665,6 +669,10 @@ func (s *AccessPolicies) V1GetAccessPolicy(ctx context.Context, request operatio
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", s.sdkConfiguration.UserAgent)
+
+	if err := utils.PopulateQueryParams(ctx, req, request, nil, nil); err != nil {
+		return nil, fmt.Errorf("error populating query params: %w", err)
+	}
 
 	if err := utils.PopulateSecurity(ctx, req, s.sdkConfiguration.Security); err != nil {
 		return nil, err

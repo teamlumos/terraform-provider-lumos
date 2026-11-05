@@ -49,7 +49,7 @@ output "entitlement_app_id" {
 - `description` (String) The description shown to requesters: `description_override` if set, otherwise the integration's own description. Read-only; set `description_override` instead.
 - `description_override` (String) The description set in Lumos, kept across syncs. Null when none is set, and the entitlement shows its integration's description.
 - `entitlement_type_label` (String) Human-readable label for the entitlement's type (e.g. 'Role', 'License', 'Group').
-- `label` (String) Human-readable label for the entitlement (e.g. a role or permission name).
+- `label` (String) Human-readable label for the entitlement (e.g. a role or license name).
 - `provisioning_workflow` (Attributes) The entitlement's provisioning workflow. Returns {id} by default; expand with expand=provisioning_workflow for the full workflow. (see [below for nested schema](#nestedatt--provisioning_workflow))
 - `source` (String) How this entitlement was discovered. `manual` is created in Lumos; other values come from an upstream integration.
 

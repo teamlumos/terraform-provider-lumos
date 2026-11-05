@@ -49,12 +49,21 @@ func (e *ResourceType) UnmarshalJSON(data []byte) error {
 }
 
 type UserRole struct {
-	// A built-in role's label, such as `app-admin`, or a custom role's name. This is the value the `role_name` path parameter accepts.
+	// The role's identifier: a built-in role's kebab-case name, such as `app-admin`, or a custom role's UUID. This is the value the `role_id` path parameter accepts.
+	ID string `json:"id"`
+	// The role's display name, such as `App Admin` for a built-in role or the name your organization gave a custom role. It is not accepted in place of `id`.
 	Label string `json:"label"`
 	// Whether this is a custom role your organization defined.
 	IsCustom bool `json:"is_custom"`
 	// The type of resource the role applies to, such as `app`. Null for roles that apply across the organization.
 	ResourceType *ResourceType `json:"resource_type"`
+}
+
+func (u *UserRole) GetID() string {
+	if u == nil {
+		return ""
+	}
+	return u.ID
 }
 
 func (u *UserRole) GetLabel() string {

@@ -125,7 +125,7 @@ func (r *EntitlementsDataSource) Schema(ctx context.Context, req datasource.Sche
 						},
 						"label": schema.StringAttribute{
 							Computed:    true,
-							Description: `Human-readable label for the entitlement (e.g. a role or permission name).`,
+							Description: `Human-readable label for the entitlement (e.g. a role or license name).`,
 						},
 						"provisioning_workflow": schema.SingleNestedAttribute{
 							Computed: true,

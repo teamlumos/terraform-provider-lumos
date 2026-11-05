@@ -1277,6 +1277,8 @@ func (s *Workflows) DeleteWorkflow(ctx context.Context, request operations.Delet
 		fallthrough
 	case httpRes.StatusCode == 409:
 		fallthrough
+	case httpRes.StatusCode == 422:
+		fallthrough
 	case httpRes.StatusCode == 429:
 		switch {
 		case utils.MatchContentType(httpRes.Header.Get("Content-Type"), `application/json`):

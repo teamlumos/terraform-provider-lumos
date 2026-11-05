@@ -11,8 +11,8 @@ import (
 type RemoveUserRoleRequest struct {
 	// The user's ID, which `GET /v1/users` returns as `id`.
 	UserID string `pathParam:"style=simple,explode=false,name=user_id"`
-	// The role to assign or remove. It is either a built-in role's label or the exact name of a custom role in your organization. The built-in labels are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.label_required`. An unknown role returns 400.
-	RoleName string `pathParam:"style=simple,explode=false,name=role_name"`
+	// The role to assign or remove, by the `id` that `GET /v1/users/{user_id}/roles` returns. It is either a built-in role's id or the UUID of a custom role in your organization. The built-in ids are `organization-admin` (Admin), `read-only-organization-admin` (Read Only Admin), `auditor` (Auditor), `appstore-read-only-admin` (AppStore Read Only Admin), `app-admin` (App Admin), `vendor-owner` (Vendor Owner), `vendor-agreement-owner` (Vendor Agreement Owner), `mcp-governance` (MCP Governance), and `user` (User). A role's `label` or name is not accepted. A built-in role's SCREAMING_CASE name, such as `APP_ADMIN`, returns 400 with code `role.id_required`. An unknown role returns 400.
+	RoleID string `pathParam:"style=simple,explode=false,name=role_id"`
 }
 
 func (r *RemoveUserRoleRequest) GetUserID() string {
@@ -22,11 +22,11 @@ func (r *RemoveUserRoleRequest) GetUserID() string {
 	return r.UserID
 }
 
-func (r *RemoveUserRoleRequest) GetRoleName() string {
+func (r *RemoveUserRoleRequest) GetRoleID() string {
 	if r == nil {
 		return ""
 	}
-	return r.RoleName
+	return r.RoleID
 }
 
 type RemoveUserRoleResponse struct {
