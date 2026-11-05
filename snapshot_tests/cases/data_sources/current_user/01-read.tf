@@ -21,3 +21,7 @@ output "users_finds_exactly_me" {
 output "has_roles" {
   value = length(data.lumos_user_roles.me.roles) > 0
 }
+
+output "roles_have_ids" {
+  value = alltrue([for r in data.lumos_user_roles.me.roles : r.id != ""])
+}
