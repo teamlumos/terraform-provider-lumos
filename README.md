@@ -13,6 +13,16 @@ The **Lumos Terraform Provider** allows administrators and IAM engineers to mana
 
 This provider is **generated from Lumos’s OpenAPI specification** using [Speakeasy](https://speakeasyapi.dev/) and is published publicly to the Terraform Registry.
 
+> [!IMPORTANT]
+> **This branch is the 0.x provider. The current version, 1.x, is on [`release/v1`](https://github.com/teamlumos/terraform-provider-lumos/tree/release/v1).**
+>
+> | Version | Branch | API | Status |
+> |---|---|---|---|
+> | 1.x | [`release/v1`](https://github.com/teamlumos/terraform-provider-lumos/tree/release/v1) | Lumos V1 API | Current |
+> | 0.x | `master` | Lumos V0 API | Deprecated. The V0 API sunsets on May 8, 2027 |
+>
+> 1.0.0 is a breaking release. To upgrade, follow [Migrating from 0.x to 1.x](https://registry.terraform.io/providers/teamlumos/lumos/latest/docs/guides/migrating-from-0x). To stay on 0.x until you migrate, pin `version = "~> 0.12"`.
+
 ---
 
 ## Table of Contents
