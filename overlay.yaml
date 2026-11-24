@@ -505,10 +505,16 @@ actions:
   - target: $["paths"]["/access_reviews/{access_review_id}/apps/{arda_id}"]
     remove: true
 
-  # Knowledge context endpoints - not exposed via Terraform. Exclude from SDK generation.
+  # Knowledge context and skill endpoints - not exposed via Terraform. Exclude from SDK generation.
   - target: $["paths"]["/v1/knowledge/context"]
     remove: true
   - target: $["paths"]["/v1/knowledge/context/{knowledge_context_id}"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/skills"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/skills/{title}"]
+    remove: true
+  - target: $["paths"]["/v1/knowledge/skills/{skill_id}/files/{path}"]
     remove: true
 
   # Integration catalog / connection-schema discovery and the sync trigger back the
