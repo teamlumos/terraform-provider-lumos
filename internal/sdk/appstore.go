@@ -34,6 +34,10 @@ func newAppStore(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks
 
 // CreateAccessRequest - Create Access Request
 // Create a request to access a specific permission in the appstore.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.CreateAccessRequestInput, opts ...operations.Option) (*operations.CreateAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -262,6 +266,10 @@ func (s *AppStore) CreateAccessRequest(ctx context.Context, request shared.Creat
 
 // GetAccessRequests - Get Access Requests
 // Get all access requests for the current organization.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.GetAccessRequestsRequest, opts ...operations.Option) (*operations.GetAccessRequestsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -486,6 +494,10 @@ func (s *AppStore) GetAccessRequests(ctx context.Context, request operations.Get
 
 // CancelAccessRequest - Cancel Access Request
 // Cancel an access request.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.CancelAccessRequestRequest, opts ...operations.Option) (*operations.CancelAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -690,6 +702,10 @@ func (s *AppStore) CancelAccessRequest(ctx context.Context, request operations.C
 
 // GetAccessRequest - Get Access Request
 // Get access request by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetAccessRequestRequest, opts ...operations.Option) (*operations.GetAccessRequestResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -914,6 +930,10 @@ func (s *AppStore) GetAccessRequest(ctx context.Context, request operations.GetA
 
 // GetAppStoreApps - Get Appstore Apps
 // List all AppStore apps.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAppStoreAppsRequest, opts ...operations.Option) (*operations.GetAppStoreAppsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1138,6 +1158,10 @@ func (s *AppStore) GetAppStoreApps(ctx context.Context, request operations.GetAp
 
 // AddAppToAppStore - Add App To Appstore
 // Add app to AppStore with given settings.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppToAppStoreInput, opts ...operations.Option) (*operations.AddAppToAppStoreResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1365,6 +1389,10 @@ func (s *AppStore) AddAppToAppStore(ctx context.Context, request shared.AddAppTo
 
 // RemoveAppFromAppStore - Remove App From Appstore
 // Remove app from AppStore.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations.RemoveAppFromAppStoreRequest, opts ...operations.Option) (*operations.RemoveAppFromAppStoreResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1586,6 +1614,10 @@ func (s *AppStore) RemoveAppFromAppStore(ctx context.Context, request operations
 
 // GetAppStoreApp - Get Appstore App
 // Get AppStore app.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetAppStoreAppRequest, opts ...operations.Option) (*operations.GetAppStoreAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1811,6 +1843,10 @@ func (s *AppStore) GetAppStoreApp(ctx context.Context, request operations.GetApp
 
 // GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGet - Get Appstore Permissions For App
 // Get AppStore permissions for an application.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGet(ctx context.Context, request operations.GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermissionsGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2035,6 +2071,10 @@ func (s *AppStore) GetAppstorePermissionsForAppAppstoreAppsAppIDRequestablePermi
 
 // GetAppStoreAppSettings - Get Appstore App Settings
 // Get AppStore app settings.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operations.GetAppStoreAppSettingsRequest, opts ...operations.Option) (*operations.GetAppStoreAppSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2256,6 +2296,10 @@ func (s *AppStore) GetAppStoreAppSettings(ctx context.Context, request operation
 
 // UpdateAppStoreAppSettings - Update Appstore App Settings
 // Update AppStore app settings.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operations.UpdateAppStoreAppSettingsRequest, opts ...operations.Option) (*operations.UpdateAppStoreAppSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2483,6 +2527,10 @@ func (s *AppStore) UpdateAppStoreAppSettings(ctx context.Context, request operat
 
 // GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet - Get Appstore Pre Approval Rules For App
 // Get AppStore pre-approval rules for an app.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(ctx context.Context, request operations.GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetRequest, opts ...operations.Option) (*operations.GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2707,6 +2755,10 @@ func (s *AppStore) GetAppstorePreApprovalRulesForAppAppstorePreApprovalRulesGet(
 
 // CreatePreApprovalRuleAppstorePreApprovalRulesPost - Create Pre Approval Rule
 // Create a pre-approval rule attached to an App in the AppStore.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context.Context, request shared.PreApprovalRuleInput, opts ...operations.Option) (*operations.CreatePreApprovalRuleAppstorePreApprovalRulesPostResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2934,6 +2986,10 @@ func (s *AppStore) CreatePreApprovalRuleAppstorePreApprovalRulesPost(ctx context
 
 // DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete - Delete Pre Approval Rule
 // Delete a pre-approval rule by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDelete(ctx context.Context, request operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteRequest, opts ...operations.Option) (*operations.DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDDeleteResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3135,6 +3191,10 @@ func (s *AppStore) DeletePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 
 // GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGet - Get Appstore Pre Approval Rule
 // Get an AppStore pre-approval rule.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGet(ctx context.Context, request operations.GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetRequest, opts ...operations.Option) (*operations.GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3359,6 +3419,10 @@ func (s *AppStore) GetAppstorePreApprovalRuleAppstorePreApprovalRulesPreApproval
 //
 // All fields present in the payload will override the pre-approval rule's data.
 // Any missing fields will be disregarded.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatch(ctx context.Context, request operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchRequest, opts ...operations.Option) (*operations.UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleIDPatchResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3586,6 +3650,10 @@ func (s *AppStore) UpdatePreApprovalRuleAppstorePreApprovalRulesPreApprovalRuleI
 
 // GetAppstorePermissionsAppstoreRequestablePermissionsGet - Get Appstore Permissions
 // Get AppStore permissions for an application.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx context.Context, request operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionsAppstoreRequestablePermissionsGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3829,6 +3897,10 @@ func (s *AppStore) GetAppstorePermissionsAppstoreRequestablePermissionsGet(ctx c
 //   - manual_steps_needed: false
 //
 // - All other fields will have null values by default.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPost(ctx context.Context, request operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostRequest, opts ...operations.Option) (*operations.CreateAppstoreRequestablePermissionAppstoreRequestablePermissionsPostResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4062,6 +4134,10 @@ func (s *AppStore) CreateAppstoreRequestablePermissionAppstoreRequestablePermiss
 // Delete a requestable permission by ID.
 //
 //	Only permissions of type 'NATIVE' can be deleted.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDelete(ctx context.Context, request operations.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteRequest, opts ...operations.Option) (*operations.DeleteAppstorePermissionAppstoreRequestablePermissionsPermissionIDDeleteResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4263,6 +4339,10 @@ func (s *AppStore) DeleteAppstorePermissionAppstoreRequestablePermissionsPermiss
 
 // GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet - Get Appstore Permission
 // Get an AppStore permission.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGet(ctx context.Context, request operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetRequest, opts ...operations.Option) (*operations.GetAppstorePermissionAppstoreRequestablePermissionsPermissionIDGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4494,6 +4574,10 @@ func (s *AppStore) GetAppstorePermissionAppstoreRequestablePermissionsPermission
 //
 //	Non-updatable fields for now:
 //	    request_config -> request_fulfillment_config -> provisioning_group
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *AppStore) UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatch(ctx context.Context, request operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchRequest, opts ...operations.Option) (*operations.UpdateAppstorePermissionAppstoreRequestablePermissionsPermissionIDPatchResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

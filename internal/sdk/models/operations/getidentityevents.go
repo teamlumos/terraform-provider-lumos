@@ -13,7 +13,7 @@ import (
 type GetIdentityEventsRequest struct {
 	// Filter events tied to specific user UUIDs.
 	IdentityIds []string `queryParam:"style=form,explode=true,name=identity_ids"`
-	// Filter events by changed field names, eg - 'title' or 'team'
+	// Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively, such as `Title`, `Status` or `Group Membership`.
 	ChangedFields []string   `queryParam:"style=form,explode=true,name=changed_fields"`
 	StartTime     *time.Time `queryParam:"style=form,explode=true,name=start_time"`
 	EndTime       *time.Time `queryParam:"style=form,explode=true,name=end_time"`

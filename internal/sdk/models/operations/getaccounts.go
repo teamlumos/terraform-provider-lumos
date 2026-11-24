@@ -16,6 +16,8 @@ type GetAccountsRequest struct {
 	DiscoveredAfter  *time.Time                      `queryParam:"style=form,explode=true,name=discovered_after"`
 	Sources          []shared.DiscoverySource        `queryParam:"style=form,explode=true,name=sources"`
 	Status           []shared.AccountLifecycleStatus `queryParam:"style=form,explode=true,name=status"`
+	// Also list accounts matched to no user (their `user_id` is `null`), such as service accounts. By default only accounts matched to a user are listed.
+	IncludeUnmatched *bool `default:"false" queryParam:"style=form,explode=true,name=include_unmatched"`
 	// Fields to expand. Supported fields: app.
 	Expand []string `queryParam:"style=form,explode=true,name=expand"`
 	Page   *int64   `default:"1" queryParam:"style=form,explode=true,name=page"`
@@ -66,6 +68,13 @@ func (g *GetAccountsRequest) GetStatus() []shared.AccountLifecycleStatus {
 		return nil
 	}
 	return g.Status
+}
+
+func (g *GetAccountsRequest) GetIncludeUnmatched() *bool {
+	if g == nil {
+		return nil
+	}
+	return g.IncludeUnmatched
 }
 
 func (g *GetAccountsRequest) GetExpand() []string {

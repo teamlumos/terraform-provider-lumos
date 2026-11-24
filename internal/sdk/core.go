@@ -34,6 +34,10 @@ func newCore(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hooks *hooks.Hoo
 
 // GetAccessPolicies - Get Access Policies
 // Get all access policies. Results are sorted by created time descending by default.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetAccessPolicies(ctx context.Context, request operations.GetAccessPoliciesRequest, opts ...operations.Option) (*operations.GetAccessPoliciesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -259,6 +263,10 @@ func (s *Core) GetAccessPolicies(ctx context.Context, request operations.GetAcce
 
 // CreateAccessPolicy - Create Access Policy
 // Create a new access policy.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) CreateAccessPolicy(ctx context.Context, request shared.AccessPolicyInput, opts ...operations.Option) (*operations.CreateAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -486,6 +494,10 @@ func (s *Core) CreateAccessPolicy(ctx context.Context, request shared.AccessPoli
 
 // DeleteAccessPolicy - Delete Access Policy
 // Delete an access policy by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) DeleteAccessPolicy(ctx context.Context, request operations.DeleteAccessPolicyRequest, opts ...operations.Option) (*operations.DeleteAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -687,6 +699,10 @@ func (s *Core) DeleteAccessPolicy(ctx context.Context, request operations.Delete
 
 // GetAccessPolicy - Get Access Policy
 // Get an access policy by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetAccessPolicy(ctx context.Context, request operations.GetAccessPolicyRequest, opts ...operations.Option) (*operations.GetAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -908,6 +924,10 @@ func (s *Core) GetAccessPolicy(ctx context.Context, request operations.GetAccess
 
 // UpdateAccessPolicy - Update Access Policy
 // Update an access policy by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) UpdateAccessPolicy(ctx context.Context, request operations.UpdateAccessPolicyRequest, opts ...operations.Option) (*operations.UpdateAccessPolicyResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1135,6 +1155,10 @@ func (s *Core) UpdateAccessPolicy(ctx context.Context, request operations.Update
 
 // GetAccounts - Get Accounts
 // Get all accounts associated with apps at your company.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRequest, opts ...operations.Option) (*operations.GetAccountsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1359,6 +1383,10 @@ func (s *Core) GetAccounts(ctx context.Context, request operations.GetAccountsRe
 
 // PostAccounts - Create Accounts
 // Upload accounts to an app.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) PostAccounts(ctx context.Context, request operations.PostAccountsAccountsUploadInput, opts ...operations.Option) (*operations.PostAccountsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1586,6 +1614,10 @@ func (s *Core) PostAccounts(ctx context.Context, request operations.PostAccounts
 
 // GetUploadJobState - Get Upload Job State
 // Get state of an account upload job.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUploadJobStateRequest, opts ...operations.Option) (*operations.GetUploadJobStateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -1806,6 +1838,10 @@ func (s *Core) GetUploadJobState(ctx context.Context, request operations.GetUplo
 
 // GetActivityLogs - Get Activity Logs
 // Get activity logs.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivityLogsRequest, opts ...operations.Option) (*operations.GetActivityLogsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2030,6 +2066,10 @@ func (s *Core) GetActivityLogs(ctx context.Context, request operations.GetActivi
 
 // ActivityRecords - Update Activity Records
 // Update the last_login or last_activity for a given account.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecordInput, opts ...operations.Option) (*operations.ActivityRecordsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2257,6 +2297,10 @@ func (s *Core) ActivityRecords(ctx context.Context, request shared.ActivityRecor
 
 // GetActivityRecordsJobState - Get Activity Records Job State
 // Get the state of an activity records post-processing job.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operations.GetActivityRecordsJobStateRequest, opts ...operations.Option) (*operations.GetActivityRecordsJobStateResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2477,6 +2521,10 @@ func (s *Core) GetActivityRecordsJobState(ctx context.Context, request operation
 
 // ListApps - Get Apps
 // List all of your company's apps.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest, opts ...operations.Option) (*operations.ListAppsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2704,6 +2752,10 @@ func (s *Core) ListApps(ctx context.Context, request operations.ListAppsRequest,
 // Create a new custom app, or connect an integration app.
 //
 // With a `name`/`category`/`description` body this creates a custom app. With an `app_class_id` body it connects the integration identified by `app_class_id` using the credentials in `auth` — integrations that validate in-band connect immediately and trigger an initial sync, while integrations that require browser consent are finished in the Lumos UI. Custom apps and integrations created here are both marked `connection_source=API`; list your API-managed apps with `GET /apps?connection_source=API&disconnected=false`.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opts ...operations.Option) (*operations.CreateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -2941,6 +2993,10 @@ func (s *Core) CreateApp(ctx context.Context, request shared.AppInputCreate, opt
 
 // GetAppCategories - Get App Categories
 // Get app categories.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) (*operations.GetAppCategoriesResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3140,6 +3196,10 @@ func (s *Core) GetAppCategories(ctx context.Context, opts ...operations.Option) 
 
 // DisconnectApp - Disconnect App
 // Disconnect an API-managed app. For integrations this removes the stored credentials and returns the app to a connectable state; for custom apps it removes the app. In both cases, when no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect an integration later with `PUT /apps/{app_id}`. Returns 404 if `app_id` is unknown in the caller's organization.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) DisconnectApp(ctx context.Context, request operations.DisconnectAppRequest, opts ...operations.Option) (*operations.DisconnectAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3368,6 +3428,10 @@ func (s *Core) DisconnectApp(ctx context.Context, request operations.DisconnectA
 
 // GetApp - Get App
 // Get an app by id.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opts ...operations.Option) (*operations.GetAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3593,6 +3657,10 @@ func (s *Core) GetApp(ctx context.Context, request operations.GetAppRequest, opt
 
 // UpdateApp - Update App
 // Update domain-specific app metadata overrides. This updates the app instance in your domain, not the shared Lumos app catalog.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppRequest, opts ...operations.Option) (*operations.UpdateAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -3820,6 +3888,10 @@ func (s *Core) UpdateApp(ctx context.Context, request operations.UpdateAppReques
 
 // ReconnectApp - Reconnect App
 // Update an app in place: apply domain-specific metadata overrides (the same fields as `PATCH /apps/{app_id}`) and/or rotate an integration's credentials. Providing `auth`/`settings`/`version` (with the matching `app_class_id`) reconnects the app: credentials are always overwritten and re-validated, and a sync is triggered — like connect, the app either connects in-band or awaits browser consent in the Lumos UI, and while a sync is in flight the request is throttled with `429` and a `Retry-After` header. Metadata-only bodies (custom apps, or integrations without credential changes) never touch credentials.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) ReconnectApp(ctx context.Context, request operations.ReconnectAppRequest, opts ...operations.Option) (*operations.ReconnectAppResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4060,6 +4132,10 @@ func (s *Core) ReconnectApp(ctx context.Context, request operations.ReconnectApp
 
 // GetAppSettings - Get Appstore App Settings
 // Get App settings.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSettingsRequest, opts ...operations.Option) (*operations.GetAppSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4281,6 +4357,10 @@ func (s *Core) GetAppSettings(ctx context.Context, request operations.GetAppSett
 
 // UpdateAppSettings - Update Domain App Appstore Settings
 // Update app settings.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateAppSettingsRequest, opts ...operations.Option) (*operations.UpdateAppSettingsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4508,6 +4588,10 @@ func (s *Core) UpdateAppSettings(ctx context.Context, request operations.UpdateA
 
 // GetGroups - Get Groups
 // Get groups synced from connected integrations
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsRequest, opts ...operations.Option) (*operations.GetGroupsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4733,6 +4817,10 @@ func (s *Core) GetGroups(ctx context.Context, request operations.GetGroupsReques
 
 // GetGroup - Get Group
 // Get group by ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest, opts ...operations.Option) (*operations.GetGroupResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -4954,6 +5042,10 @@ func (s *Core) GetGroup(ctx context.Context, request operations.GetGroupRequest,
 
 // GetGroupMembership - Get Group Membership
 // Get user members by group ID.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGroupMembershipRequest, opts ...operations.Option) (*operations.GetGroupMembershipResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5178,6 +5270,10 @@ func (s *Core) GetGroupMembership(ctx context.Context, request operations.GetGro
 
 // GetIdentityEvents - Get Identity Events
 // Get user identity events.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetIdentityEvents(ctx context.Context, request operations.GetIdentityEventsRequest, opts ...operations.Option) (*operations.GetIdentityEventsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5402,6 +5498,10 @@ func (s *Core) GetIdentityEvents(ctx context.Context, request operations.GetIden
 
 // GetInlineWebhooksInlineWebhooksGet - Get Inline Webhooks
 // Get available webhooks
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...operations.Option) (*operations.GetInlineWebhooksInlineWebhooksGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5601,6 +5701,10 @@ func (s *Core) GetInlineWebhooksInlineWebhooksGet(ctx context.Context, opts ...o
 
 // ListUsers - Get Users
 // List all of your company's users.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersRequest, opts ...operations.Option) (*operations.ListUsersResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -5826,6 +5930,10 @@ func (s *Core) ListUsers(ctx context.Context, request operations.ListUsersReques
 
 // CurrentUser - Get Current User
 // Get current user
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*operations.CurrentUserResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6025,6 +6133,10 @@ func (s *Core) CurrentUser(ctx context.Context, opts ...operations.Option) (*ope
 
 // GetUser - Get User
 // Get user by id.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, opts ...operations.Option) (*operations.GetUserResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6250,6 +6362,10 @@ func (s *Core) GetUser(ctx context.Context, request operations.GetUserRequest, o
 
 // GetUserAccounts - Get User Accounts
 // Get a list of Accounts for this user
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAccountsRequest, opts ...operations.Option) (*operations.GetUserAccountsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6475,6 +6591,10 @@ func (s *Core) GetUserAccounts(ctx context.Context, request operations.GetUserAc
 // GetUserRolesUsersUserIDRolesGet - Get User Roles
 // Get the roles assigned to a specific user,
 // ensuring the user belongs to the specified domain.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) GetUserRolesUsersUserIDRolesGet(ctx context.Context, request operations.GetUserRolesUsersUserIDRolesGetRequest, opts ...operations.Option) (*operations.GetUserRolesUsersUserIDRolesGetResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6695,6 +6815,10 @@ func (s *Core) GetUserRolesUsersUserIDRolesGet(ctx context.Context, request oper
 
 // RemoveRoleFromUserUsersUserIDRolesRoleNameDelete - Remove Role From User
 // Remove a specific role from a user, ensuring the user belongs to the specified domain.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) RemoveRoleFromUserUsersUserIDRolesRoleNameDelete(ctx context.Context, request operations.RemoveRoleFromUserUsersUserIDRolesRoleNameDeleteRequest, opts ...operations.Option) (*operations.RemoveRoleFromUserUsersUserIDRolesRoleNameDeleteResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -6895,6 +7019,10 @@ func (s *Core) RemoveRoleFromUserUsersUserIDRolesRoleNameDelete(ctx context.Cont
 
 // AddRoleToUserUsersUserIDRolesRoleNamePost - Add Role To User
 // Add a role to a specific user, ensuring the user belongs to the specified domain.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *Core) AddRoleToUserUsersUserIDRolesRoleNamePost(ctx context.Context, request operations.AddRoleToUserUsersUserIDRolesRoleNamePostRequest, opts ...operations.Option) (*operations.AddRoleToUserUsersUserIDRolesRoleNamePostResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

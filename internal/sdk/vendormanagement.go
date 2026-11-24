@@ -34,6 +34,10 @@ func newVendorManagement(rootSDK *Lumos, sdkConfig config.SDKConfiguration, hook
 
 // CreateFoundDocumentJSON - Upload Found Documents
 // Upload a newly discovered document (e.g. Order Form, Quote) to Lumos for review
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *VendorManagement) CreateFoundDocumentJSON(ctx context.Context, request shared.FoundDocumentsUpload, opts ...operations.Option) (*operations.CreateFoundDocumentJSONResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -261,6 +265,10 @@ func (s *VendorManagement) CreateFoundDocumentJSON(ctx context.Context, request 
 
 // CreateFoundDocumentMultipart - Upload Found Documents
 // Upload a newly discovered document (e.g. Order Form, Quote) to Lumos for review
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *VendorManagement) CreateFoundDocumentMultipart(ctx context.Context, request operations.CreateFoundDocumentMultipartRequestBody, opts ...operations.Option) (*operations.CreateFoundDocumentMultipartResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -488,6 +496,10 @@ func (s *VendorManagement) CreateFoundDocumentMultipart(ctx context.Context, req
 
 // CreateOrder - Upload Order
 // Upload a newly discovered document (e.g. Order Form, Quote) to Lumos
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *VendorManagement) CreateOrder(ctx context.Context, request shared.OrderInput, opts ...operations.Option) (*operations.CreateOrderResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -715,6 +727,10 @@ func (s *VendorManagement) CreateOrder(ctx context.Context, request shared.Order
 
 // ListVendorAgreements - Get Vendor Agreements
 // List all of your company's vendor agreements.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *VendorManagement) ListVendorAgreements(ctx context.Context, request operations.ListVendorAgreementsRequest, opts ...operations.Option) (*operations.ListVendorAgreementsResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{
@@ -939,6 +955,10 @@ func (s *VendorManagement) ListVendorAgreements(ctx context.Context, request ope
 
 // UpdateVendorAgreementCustomAttribute - Update Vendor Agreement Custom Attribute
 // Update a custom attribute attached to a vendor agreement.
+//
+// https://docs.lumos.com/reference/v1/migrate/endpoint-map - The v1 replacement for this endpoint
+//
+// Deprecated: This will be removed in a future release, please migrate away from it as soon as possible.
 func (s *VendorManagement) UpdateVendorAgreementCustomAttribute(ctx context.Context, request operations.UpdateVendorAgreementCustomAttributeRequest, opts ...operations.Option) (*operations.UpdateVendorAgreementCustomAttributeResponse, error) {
 	o := operations.Options{}
 	supportedOptions := []string{

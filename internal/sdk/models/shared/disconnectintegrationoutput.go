@@ -8,7 +8,7 @@ type DisconnectIntegrationOutput struct {
 	AppClassID string `json:"app_class_id"`
 	// Confirms the app was disconnected. Always `true` on a successful response — the app's stored credentials were removed and it was returned to a connectable state (or its record deleted when no users remained).
 	Disconnected bool `json:"disconnected"`
-	// The domain app UUID of the disconnected integration.
+	// The app's `id`.
 	ID string `json:"id"`
 }
 
