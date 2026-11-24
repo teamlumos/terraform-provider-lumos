@@ -1,5 +1,10 @@
+LATEST_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
+VERSION ?= $(shell echo $(LATEST_TAG) | awk -F. '{print $$1"."$$2"."$$3+1}')
+
 .PHONY: provider
 provider: overlay.yaml
+	@echo "Setting terraform.version to $(VERSION), the version the next tag will carry..."
+	@sed "s/^  version: .*/  version: $(VERSION)/" .speakeasy/gen.yaml > .speakeasy/gen.yaml.tmp && mv .speakeasy/gen.yaml.tmp .speakeasy/gen.yaml
 	@echo "Running Speakeasy to generate the provider..."
 	speakeasy run --skip-compile --skip-versioning
 	@echo "Running go mod tidy..."

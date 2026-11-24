@@ -48,13 +48,15 @@ The OpenAPI JSON is generated from the FastAPI-based `apiserver` in the main Lum
 
 1. Copy the updated OpenAPI JSON into this repo as `original-openapi.json`
 2. Update `overlay.yaml` if needed to opt in new resources, data sources, hooks, or validators
-3. Set `terraform.version` in `.speakeasy/gen.yaml` to the version you'll tag next, such as
-   `0.13.0` after `v0.12.0`. The SDK's User-Agent and the README's version pins use it.
-4. Run:
+3. Run:
 
 ```sh
 make provider
 ```
+
+It sets `terraform.version` in `.speakeasy/gen.yaml` to the next patch after the latest tag,
+such as `0.12.1` after `v0.12.0`, since that's the version the next tag will carry. For a minor
+or major release, pass it: `make provider VERSION=0.13.0`.
 
 This command:
 
