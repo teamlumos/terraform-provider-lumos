@@ -445,7 +445,7 @@
           "review_type": {
             "$ref": "#/components/schemas/ReviewType",
             "default": "ENTITLEMENTS",
-            "description": "What to review for this app."
+            "description": "What to review for this app. When omitted, the app takes the request's top-level `review_type` where the endpoint has one."
           },
           "scope_filters": {
             "anyOf": [
@@ -616,7 +616,19 @@
                 "type": "null"
               }
             ],
-            "description": "Action taken when removing access for accounts in this review."
+            "deprecated": true,
+            "description": "Action taken when removing access for accounts in this review. Deprecated: on an account review whose removals run on workflows, removals run the app's `removal_workflow` and read this action only when no workflow is set, so set `removal_workflow` there. Entitlement reviews and other account reviews still remove access with this action."
+          },
+          "removal_workflow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RemovalWorkflowRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The deprovisioning workflow that removes access for accounts rejected on this app. Removals use it on account reviews whose removals run on workflows. A workflow deleted since it was set is still returned with `deleted: true`."
           },
           "review_type": {
             "anyOf": [
@@ -3342,7 +3354,7 @@
             "type": "array"
           },
           "title": {
-            "description": "Title of the knowledge entry. Must be unique within the domain.",
+            "description": "Title of the knowledge entry. Must be unique in your organization.",
             "title": "Title",
             "type": "string"
           }
@@ -4467,6 +4479,45 @@
         "title": "CreateAccessRequestInput",
         "type": "object"
       },
+      "CreateAccessReviewErrorOutput": {
+        "description": "One entry of a create response's `errors`: an app or an `identities` UUID, never both.",
+        "properties": {
+          "app_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID of the domain app that could not be added.",
+            "title": "App Id"
+          },
+          "error": {
+            "description": "Description of why the entry was not used.",
+            "title": "Error",
+            "type": "string"
+          },
+          "identity_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUID from `identities` that was skipped. Set instead of `app_id`.",
+            "title": "Identity Id"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "CreateAccessReviewErrorOutput",
+        "type": "object"
+      },
       "CreateAccessReviewInput": {
         "additionalProperties": false,
         "examples": [
@@ -4498,11 +4549,20 @@
             "deadline_at": "2026-06-30T23:59:59Z",
             "name": "Finance apps \u2014 inactive users only",
             "owner_id": "00000000-0000-0000-0000-0000000000aa"
+          },
+          {
+            "deadline_at": "2026-06-30T23:59:59Z",
+            "identities": [
+              "00000000-0000-0000-0000-0000000000aa",
+              "00000000-0000-0000-0000-0000000000bb"
+            ],
+            "name": "Departed users",
+            "review_type": "ACCOUNTS"
           }
         ],
         "properties": {
           "apps": {
-            "description": "List of domain apps to include in this review. Capped at 200 entries per the Access Review scale limits (technically-supported tier).",
+            "description": "List of domain apps to include in this review. Leave it out and send `identities` to have the apps picked for you. Capped at 200 entries per the Access Review scale limits (technically-supported tier).",
             "items": {
               "$ref": "#/components/schemas/AccessReviewDomainAppInput"
             },
@@ -4515,6 +4575,24 @@
             "format": "date-time",
             "title": "Deadline At",
             "type": "string"
+          },
+          "identities": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "maxItems": 1000,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "UUIDs of the users to review: the `id` of a user from `GET /users`. Each app in the review gets an `IDENTITY` scope filter for these users, applied together with any `scope_filters` sent for it. Without `apps`, the review gets every app in your Lumos app list where one of these users has an account that a review imports; more than 200 such apps is a 422. A UUID that matches no user is skipped and reported in `errors`. Used once, at creation: not stored, not returned by `GET /access_reviews/{id}`, and not applied to apps added later. Capped at 1000 users.",
+            "title": "Identities"
           },
           "name": {
             "description": "Name of the access review campaign.",
@@ -4558,6 +4636,11 @@
             "description": "Recurrence frequency in days. Mutually exclusive with recurrence_config, and only accepted together with target_launch_date.",
             "title": "Recurrence Days Frequency"
           },
+          "review_type": {
+            "$ref": "#/components/schemas/ReviewType",
+            "default": "ENTITLEMENTS",
+            "description": "What to review for the apps in this request: `ACCOUNTS` asks whether each account should exist, `ENTITLEMENTS` asks about each permission an account holds. Applies to apps picked from `identities` and to entries of `apps` that send no `review_type` of their own. An account with no permissions has nothing to review under `ENTITLEMENTS`, so use `ACCOUNTS` when every account must appear, as in an offboarding review. Used once, at creation, like `identities`."
+          },
           "target_launch_date": {
             "anyOf": [
               {
@@ -4589,7 +4672,7 @@
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/AccessReviewDomainAppErrorOutput"
+                  "$ref": "#/components/schemas/CreateAccessReviewErrorOutput"
                 },
                 "type": "array"
               },
@@ -4597,7 +4680,7 @@
                 "type": "null"
               }
             ],
-            "description": "Per-app errors for any domain apps that could not be added. The review is still created with the valid apps.",
+            "description": "One entry per domain app that could not be added (`app_id`) and per `identities` UUID that matched no user (`identity_id`). The review is still created from the valid apps and users.",
             "title": "Errors"
           }
         },
@@ -4605,6 +4688,47 @@
           "access_review"
         ],
         "title": "CreateAccessReviewOutput",
+        "type": "object"
+      },
+      "CreateSkillInput": {
+        "additionalProperties": false,
+        "examples": [
+          {
+            "files": [
+              {
+                "content": "---\nname: vendor-onboarding\ndescription: Onboard a new vendor.\n---\n\nFollow references/setup.md.",
+                "path": "SKILL.md"
+              },
+              {
+                "content": "1. Request the vendor's W-9.",
+                "path": "references/setup.md"
+              }
+            ],
+            "title": "vendor-onboarding"
+          }
+        ],
+        "properties": {
+          "files": {
+            "description": "The skill's files. Exactly one must be `SKILL.md`, which may open with YAML frontmatter whose `description` becomes the skill's summary. Paths must be unique.",
+            "items": {
+              "$ref": "#/components/schemas/SkillFileInput"
+            },
+            "minItems": 1,
+            "title": "Files",
+            "type": "array"
+          },
+          "title": {
+            "description": "Title for the skill, unique in your organization. It is stored as a slug, so `Vendor Onboarding` becomes `vendor-onboarding`; the response carries the stored title.",
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "files"
+        ],
+        "title": "CreateSkillInput",
         "type": "object"
       },
       "CustomAttribute": {
@@ -4813,7 +4937,7 @@
             "type": "boolean"
           },
           "id": {
-            "description": "The domain app UUID of the disconnected integration.",
+            "description": "The app's `id`.",
             "title": "Id",
             "type": "string"
           }
@@ -5840,6 +5964,35 @@
           "knowledge_context"
         ],
         "title": "ListKnowledgeContextOutput",
+        "type": "object"
+      },
+      "ListSkillsOutput": {
+        "properties": {
+          "next_page_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Token for the next page, or null when this is the last page. An absent token is the only end-of-results signal. A page holding fewer than `page_size` items does not mean the results are exhausted. Treat the value as opaque: do not decode, construct, or interpret it.",
+            "title": "Next Page Token"
+          },
+          "skills": {
+            "description": "Skills on this page.",
+            "items": {
+              "$ref": "#/components/schemas/SkillListItemOutput"
+            },
+            "title": "Skills",
+            "type": "array"
+          }
+        },
+        "required": [
+          "skills"
+        ],
+        "title": "ListSkillsOutput",
         "type": "object"
       },
       "ManagerApprovalOption": {
@@ -6937,7 +7090,7 @@
         "type": "string"
       },
       "PositionalWeekday": {
-        "description": "A positional weekday for monthly/yearly recurrences \u2014 e.g. \"the first Monday of the\nmonth\" is ``{\"weekday\": 0, \"n\": 1}``. Mirrors ``dateutil.rrule.weekday``.\n\nA plain integer weekday (0-6) covers the common case; this richer form is only needed\nwhen an Nth-occurrence qualifier is present, which a bare int cannot express.",
+        "description": "A positional weekday for monthly or yearly recurrences. For example, \"the first Monday of\nthe month\" is `{\"weekday\": 0, \"n\": 1}`.\n\nA plain integer weekday (0-6) covers the common case. Use this form only when you need an\nNth occurrence, which a plain integer can't express.",
         "properties": {
           "n": {
             "anyOf": [
@@ -7181,10 +7334,26 @@
           "ONBOARDING",
           "PLATFORM",
           "SAVINGS",
-          "ACCESS_POLICIES"
+          "ACCESS_POLICIES",
+          "IDENTITY_INTELLIGENCE"
         ],
         "title": "ProductArea",
         "type": "string"
+      },
+      "PutSkillFileInput": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "description": "Full text of the file; replaces any existing file at this path. For `SKILL.md`, a frontmatter `name` renames the skill and `description` replaces its summary.",
+            "title": "Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "title": "PutSkillFileInput",
+        "type": "object"
       },
       "ReassignTaskInput": {
         "properties": {
@@ -7435,7 +7604,7 @@
       },
       "RecurrenceConfigInput": {
         "additionalProperties": false,
-        "description": "Extends RecurrenceConfig with rrule semantic validation for use on write paths.\n\nUnknown keys are refused here but not on the parent, which also reads a stored rule back\nand has to tolerate a key added upstream. On the way in there is no such caller: a\nmisspelled rule field would otherwise be dropped, and the review would be created on a\nschedule the caller never asked for.",
+        "description": "A recurrence rule. Unknown keys return 400.",
         "properties": {
           "byhour": {
             "anyOf": [
@@ -7637,6 +7806,41 @@
           "freq"
         ],
         "title": "RecurrenceConfigInput",
+        "type": "object"
+      },
+      "RemovalWorkflowRef": {
+        "properties": {
+          "deleted": {
+            "description": "Whether the workflow has been deleted since it was set. Removals refuse a deleted workflow, so set another.",
+            "title": "Deleted",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "UUID of the bound workflow.",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "deleted"
+        ],
+        "title": "RemovalWorkflowRef",
+        "type": "object"
+      },
+      "RemovalWorkflowRefInput": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "description": "UUID of the bound workflow.",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "RemovalWorkflowRefInput",
         "type": "object"
       },
       "RequestApprovalConfigInput": {
@@ -8712,7 +8916,7 @@
         "type": "string"
       },
       "ScopeFilterGroupOutput": {
-        "description": "Self-describing discovery group.\n\nEach entry in ``items`` is a valid :type:`ScopeFilterInput` payload \u2014 the\ncaller can POST it back unmodified in a create/edit request. For groups\nwhose values vary per-user (CUSTOM_ATTRIBUTE) or are datetime ranges\n(LAST_LOGIN, LAST_ACTIVITY), ``items`` is empty and\n``filter_input_template`` shows the expected shape instead.",
+        "description": "Self-describing discovery group.\n\nEach entry in ``items`` is a valid :type:`ScopeFilterInput` payload \u2014 the\ncaller can POST it back unmodified in a create/edit request. For groups\nwhose values vary per-user (CUSTOM_ATTRIBUTE) or are datetime ranges\n(LAST_LOGIN, LAST_ACTIVITY), ``items`` is empty and\n``filter_input_template`` shows the expected shape instead. IDENTITY and\nACCOUNT also leave ``items`` empty and name the endpoint that lists their\nvalues in ``discovery_endpoint``.",
         "properties": {
           "default_label": {
             "anyOf": [
@@ -8726,6 +8930,18 @@
             "description": "Default display label (e.g. 'No' for delta filter).",
             "title": "Default Label"
           },
+          "discovery_endpoint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Path on this API that lists the values for this group, with its query string. Present for IDENTITY (`/users`, which takes `search_term`; use the user's `id` as `value`) and ACCOUNT (`/accounts` for the app, unmatched accounts included; use the account's `id` as `value`).",
+            "title": "Discovery Endpoint"
+          },
           "filter_input_template": {
             "anyOf": [
               {
@@ -8735,7 +8951,7 @@
                 "type": "null"
               }
             ],
-            "description": "Template shape for filter input on this group. Present for datetime groups and CUSTOM_ATTRIBUTE \u2014 where values vary per request so no pre-computed items list exists.",
+            "description": "Template shape for filter input on this group. Present for datetime groups, CUSTOM_ATTRIBUTE, IDENTITY and ACCOUNT \u2014 where values vary per request so no pre-computed items list exists.",
             "title": "Filter Input Template"
           },
           "group": {
@@ -8836,6 +9052,191 @@
           "scope_options"
         ],
         "title": "ScopeOptionsResponse",
+        "type": "object"
+      },
+      "SkillFileInput": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "description": "Full text of the file.",
+            "title": "Content",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path of the file within the skill: `SKILL.md` for its instructions, `custom-instructions.md` for your organization's additions, or any other path such as `references/setup.md` for a reference file.",
+            "minLength": 1,
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "title": "SkillFileInput",
+        "type": "object"
+      },
+      "SkillFileOutput": {
+        "properties": {
+          "content": {
+            "description": "Full text of the file.",
+            "title": "Content",
+            "type": "string"
+          },
+          "path": {
+            "description": "Path of the file within the skill, e.g. `SKILL.md` or `references/setup.md`. A relative pointer inside a skill's instructions names one of these paths.",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "title": "SkillFileOutput",
+        "type": "object"
+      },
+      "SkillListItemOutput": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Short summary of what the skill does, or null when it has none.",
+            "title": "Description"
+          },
+          "files": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SkillFileOutput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The skill's files: its instructions in `SKILL.md` plus any references. A Lumos-provided skill whose instructions stay internal returns a summary of what it does in place of its instructions. Null when the list was sent `include_files=false`.",
+            "title": "Files"
+          },
+          "id": {
+            "description": "Opaque UUID of the skill. It never changes, including when the skill is renamed or your organization customizes a Lumos-provided skill. Pass it to `PUT /v1/knowledge/skills/{skill_id}/files/{path}`.",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_default": {
+            "description": "True for a skill Lumos provides to every organization, false for your own.",
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "is_enabled": {
+            "description": "False when your organization has switched the skill off. Don't run it.",
+            "title": "Is Enabled",
+            "type": "boolean"
+          },
+          "title": {
+            "description": "Slug-style title, unique in your organization, e.g. `app-setup`. Pass it to `GET /v1/knowledge/skills/{title}`. Your own skills can be renamed and a freed title reused, so store `id` rather than the title.",
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ISO 8601 last-updated timestamp, or null when unknown.",
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "is_default",
+          "is_enabled",
+          "updated_at",
+          "files"
+        ],
+        "title": "SkillListItemOutput",
+        "type": "object"
+      },
+      "SkillOutput": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Short summary of what the skill does, or null when it has none.",
+            "title": "Description"
+          },
+          "files": {
+            "description": "The skill's files: its instructions in `SKILL.md` plus any references. A Lumos-provided skill whose instructions stay internal returns a summary of what it does in place of its instructions.",
+            "items": {
+              "$ref": "#/components/schemas/SkillFileOutput"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "id": {
+            "description": "Opaque UUID of the skill. It never changes, including when the skill is renamed or your organization customizes a Lumos-provided skill. Pass it to `PUT /v1/knowledge/skills/{skill_id}/files/{path}`.",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_default": {
+            "description": "True for a skill Lumos provides to every organization, false for your own.",
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "is_enabled": {
+            "description": "False when your organization has switched the skill off. Don't run it.",
+            "title": "Is Enabled",
+            "type": "boolean"
+          },
+          "title": {
+            "description": "Slug-style title, unique in your organization, e.g. `app-setup`. Pass it to `GET /v1/knowledge/skills/{title}`. Your own skills can be renamed and a freed title reused, so store `id` rather than the title.",
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ISO 8601 last-updated timestamp, or null when unknown.",
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "is_default",
+          "is_enabled",
+          "updated_at",
+          "files"
+        ],
+        "title": "SkillOutput",
         "type": "object"
       },
       "SupportRequestStatus": {
@@ -9324,7 +9725,12 @@
                 "type": "null"
               }
             ],
-            "description": "Action taken when removing access for accounts in this review."
+            "deprecated": true,
+            "description": "Action taken when removing access for accounts in this review. Deprecated: on an account review whose removals run on workflows, removals run the app's `removal_workflow` and read this action only when no workflow is set, so set `removal_workflow` there. Entitlement reviews and other account reviews still remove access with this action."
+          },
+          "removal_workflow": {
+            "$ref": "#/components/schemas/RemovalWorkflowRefInput",
+            "description": "The deprovisioning workflow that removes access for accounts rejected on this app, as `{id}`. Accepted on account reviews whose removals run on workflows, in any app status until the review completes. The workflow must belong to this app, be a deprovisioning workflow, and have at least one step. Cannot be `null`."
           },
           "scope_filters": {
             "anyOf": [
@@ -9397,7 +9803,9 @@
             "apps": [
               {
                 "id": "00000000-0000-0000-0000-0000000000ab",
-                "removal_action": "DEPROVISION",
+                "removal_workflow": {
+                  "id": "00000000-0000-0000-0000-0000000000cd"
+                },
                 "scope_filters": [
                   {
                     "after": "2026-01-01T00:00:00Z",
@@ -10108,7 +10516,12 @@
   "paths": {
     "/access_policies": {
       "get": {
+        "deprecated": true,
         "description": "Get all access policies. Results are sorted by created time descending by default.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccessPolicies",
         "parameters": [
           {
@@ -10190,7 +10603,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "Create a new access policy.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createAccessPolicy",
         "requestBody": {
           "content": {
@@ -10237,7 +10655,12 @@
     },
     "/access_policies/{access_policy_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Delete an access policy by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "deleteAccessPolicy",
         "parameters": [
           {
@@ -10276,7 +10699,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get an access policy by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccessPolicy",
         "parameters": [
           {
@@ -10322,7 +10750,12 @@
         ]
       },
       "put": {
+        "deprecated": true,
         "description": "Update an access policy by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateAccessPolicy",
         "parameters": [
           {
@@ -10380,7 +10813,12 @@
     },
     "/access_reviews": {
       "get": {
+        "deprecated": true,
         "description": "List access reviews for your organization. Paginated via standard `page` + `size` query params \u2014 `size` is capped at 100; requests over the cap return 422.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "listAccessReviews",
         "parameters": [
           {
@@ -10444,7 +10882,12 @@
         ]
       },
       "post": {
-        "description": "Create a new access review campaign.\n\nThe review's initial status depends on whether apps are provided and whether a `target_launch_date` is set:\n\n- **With apps**: the review starts in `IN_PREPARATION` while account and entitlement snapshots are taken. Status automatically transitions to `IN_PROGRESS` once snapshotting completes.\n- **Without apps**: the review is created directly in `IN_PROGRESS`.\n- **With a `target_launch_date`**: the review is held for that date in `SCHEDULED`, or `SCHEDULED_IN_PREPARATION` while its apps are snapshotted, and returns to `SCHEDULED` once snapshotting completes. A daily job launches it on the date, moving it to `IN_PROGRESS`.\n\nA `recurrence_config` or `recurrence_days_frequency` takes effect only alongside a `target_launch_date`; sent without one it is rejected.\n\nPoll `GET /access_reviews/{id}` to observe the status transition. To add apps after creation, use `POST /access_reviews/{id}/apps` (allowed on any status except `COMPLETED`).",
+        "deprecated": true,
+        "description": "Create a new access review campaign.\n\nThe review's initial status depends on whether apps are provided and whether a `target_launch_date` is set:\n\n- **With apps**: the review starts in `IN_PREPARATION` while account and entitlement snapshots are taken. Status automatically transitions to `IN_PROGRESS` once snapshotting completes.\n- **Without apps**: the review is created directly in `IN_PROGRESS`.\n- **With a `target_launch_date`**: the review is held for that date in `SCHEDULED`, or `SCHEDULED_IN_PREPARATION` while its apps are snapshotted, and returns to `SCHEDULED` once snapshotting completes. A daily job launches it on the date, moving it to `IN_PROGRESS`.\n\nA `recurrence_config` or `recurrence_days_frequency` takes effect only alongside a `target_launch_date`; sent without one it is rejected.\n\nTo review specific people, send their user UUIDs in `identities`. Sent without `apps`, the review gets one app for each domain app where any of them has an account. Sent with `apps`, only those apps are added. Either way each app gets an `IDENTITY` scope filter for those users, and the list itself is not kept. Apps are reviewed as `ENTITLEMENTS` unless the request's `review_type` or the app's own says `ACCOUNTS`.\n\nPoll `GET /access_reviews/{id}` to observe the status transition. To add apps after creation, use `POST /access_reviews/{id}/apps` (allowed on any status except `COMPLETED`).",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createAccessReview",
         "requestBody": {
           "content": {
@@ -10500,7 +10943,12 @@
     },
     "/access_reviews/scope_options": {
       "get": {
-        "description": "Get available scope filter options for a domain app or ARDA.\n\nTo use these in `scope_filters` on a create/edit request, copy an item's `value` (and `name`) verbatim \u2014 `value` is the machine-matchable identifier, while `label` is display-only. Posting a `label` as a `value` (or any value not present here) is rejected.\n\nACCOUNT_ENTITLEMENT groups are split per `entitlement_type_label` (e.g. 'Roles', 'Groups'), with each group's `items` capped at 1000 entitlement labels. Groups whose underlying bucket exceeds the cap set `truncated: true` so callers know some valid labels are not present in the response.",
+        "deprecated": true,
+        "description": "Get available scope filter options for a domain app or ARDA.\n\nTo use these in `scope_filters` on a create/edit request, copy an item's `value` (and `name`) verbatim \u2014 `value` is the machine-matchable identifier, while `label` is display-only. Posting a `label` as a `value` (or any value not present here) is rejected.\n\nACCOUNT_ENTITLEMENT groups are split per `entitlement_type_label` (e.g. 'Roles', 'Groups'), with each group's `items` capped at 1000 entitlement labels. Groups whose underlying bucket exceeds the cap set `truncated: true` so callers know some valid labels are not present in the response.\n\nIDENTITY and ACCOUNT groups carry no `items`; follow their `discovery_endpoint` to list users or the app's accounts, and post the user's or account's `id` as the filter `value`.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getScopeOptions",
         "parameters": [
           {
@@ -10571,7 +11019,12 @@
     },
     "/access_reviews/{access_review_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Soft-delete an access review campaign. Fails with 400 if a review duplication is currently in progress.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "deleteAccessReview",
         "parameters": [
           {
@@ -10619,7 +11072,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get an access review by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccessReview",
         "parameters": [
           {
@@ -10665,7 +11123,12 @@
         ]
       },
       "patch": {
-        "description": "Update an existing access review campaign. Top-level fields are editable on any review that is not yet `COMPLETED`. Per-app (`apps[].scope_filters`) edits are only accepted while the ARDA is still in `IN_PREPARATION` or `ASSIGNING_REVIEWERS` status.\n\nFields absent from the body are left untouched. Setting a `target_launch_date` moves the review to `SCHEDULED`; sending it as `null` unschedules the review and turns off any recurrence. Scheduling fields cannot be changed while the review's apps are being snapshotted (`IN_PREPARATION`, `SCHEDULED_IN_PREPARATION`).",
+        "deprecated": true,
+        "description": "Update an existing access review campaign. Top-level fields are editable on any review that is not yet `COMPLETED`. Per-app `apps[].scope_filters` edits are only accepted while the ARDA is still in `IN_PREPARATION` or `ASSIGNING_REVIEWERS` status; `apps[].removal_workflow`, `apps[].removal_action` and `apps[].evidence_upload_setting` are accepted in any status. An app listed more than once takes each field from the last entry that sets it.\n\nFields absent from the body are left untouched. Setting a `target_launch_date` moves the review to `SCHEDULED`; sending it as `null` unschedules the review and turns off any recurrence. Scheduling fields cannot be changed while the review's apps are being snapshotted (`IN_PREPARATION`, `SCHEDULED_IN_PREPARATION`).",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateAccessReview",
         "parameters": [
           {
@@ -10732,7 +11195,12 @@
     },
     "/access_reviews/{access_review_id}/apps": {
       "post": {
+        "deprecated": true,
         "description": "Add apps to an existing access review. Allowed on any review that is not yet `COMPLETED`. Soft-errors on invalid or duplicate domain app UUIDs \u2014 per-app failures are returned in the `errors` array rather than raising.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "addAppsToAccessReview",
         "parameters": [
           {
@@ -10799,7 +11267,12 @@
     },
     "/access_reviews/{access_review_id}/apps/{arda_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Soft-delete an app from an access review campaign. Fails with 400 if the review is already `COMPLETED`.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "deleteAccessReviewApp",
         "parameters": [
           {
@@ -10858,7 +11331,12 @@
     },
     "/accounts": {
       "get": {
+        "deprecated": true,
         "description": "Get all accounts associated with apps at your company.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccounts",
         "parameters": [
           {
@@ -10950,6 +11428,18 @@
             }
           },
           {
+            "description": "Also list accounts matched to no user (their `user_id` is `null`), such as service accounts. By default only accounts matched to a user are listed.",
+            "in": "query",
+            "name": "include_unmatched",
+            "required": false,
+            "schema": {
+              "default": false,
+              "description": "Also list accounts matched to no user (their `user_id` is `null`), such as service accounts. By default only accounts matched to a user are listed.",
+              "title": "Include Unmatched",
+              "type": "boolean"
+            }
+          },
+          {
             "description": "Fields to expand. Supported fields: app.",
             "in": "query",
             "name": "expand",
@@ -11027,7 +11517,12 @@
     },
     "/accounts/upload": {
       "post": {
+        "deprecated": true,
         "description": "Upload accounts to an app.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "postAccounts",
         "requestBody": {
           "content": {
@@ -11094,7 +11589,12 @@
     },
     "/accounts/upload/{job_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get state of an account upload job.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getUploadJobState",
         "parameters": [
           {
@@ -11142,7 +11642,12 @@
     },
     "/activity_logs": {
       "get": {
+        "deprecated": true,
         "description": "Get activity logs.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getActivityLogs",
         "parameters": [
           {
@@ -11242,7 +11747,12 @@
     },
     "/activity_records": {
       "post": {
+        "deprecated": true,
         "description": "Update the last_login or last_activity for a given account.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "activityRecords",
         "requestBody": {
           "content": {
@@ -11289,7 +11799,12 @@
     },
     "/activity_records/job/{job_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get the state of an activity records post-processing job.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getActivityRecordsJobState",
         "parameters": [
           {
@@ -11337,7 +11852,12 @@
     },
     "/apps": {
       "get": {
+        "deprecated": true,
         "description": "List all of your company's apps.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "listApps",
         "parameters": [
           {
@@ -11488,7 +12008,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "Create a new custom app, or connect an integration app.\n\nWith a `name`/`category`/`description` body this creates a custom app. With an `app_class_id` body it connects the integration identified by `app_class_id` using the credentials in `auth` \u2014 integrations that validate in-band connect immediately and trigger an initial sync, while integrations that require browser consent are finished in the Lumos UI. Custom apps and integrations created here are both marked `connection_source=API`; list your API-managed apps with `GET /apps?connection_source=API&disconnected=false`.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createApp",
         "requestBody": {
           "content": {
@@ -11515,7 +12040,7 @@
             "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization."
           },
           "404": {
             "description": "Not found \u2014 no integration with this `app_class_id` is available to your domain."
@@ -11553,7 +12078,12 @@
     },
     "/apps/categories": {
       "get": {
+        "deprecated": true,
         "description": "Get app categories.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAppCategories",
         "responses": {
           "200": {
@@ -11584,7 +12114,12 @@
     },
     "/apps/{app_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Disconnect an API-managed app. For integrations this removes the stored credentials and returns the app to a connectable state; for custom apps it removes the app. In both cases, when no users remain the underlying record is also deleted where possible (a record still referenced by other Lumos data is kept, disconnected). Reconnect an integration later with `PUT /apps/{app_id}`. Returns 404 if `app_id` is unknown in the caller's organization.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "disconnectApp",
         "parameters": [
           {
@@ -11612,7 +12147,7 @@
             "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization."
           },
           "404": {
             "description": "Not found \u2014 no app with this id in your domain."
@@ -11645,7 +12180,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get an app by id.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getApp",
         "parameters": [
           {
@@ -11712,7 +12252,12 @@
         ]
       },
       "patch": {
+        "deprecated": true,
         "description": "Update domain-specific app metadata overrides. This updates the app instance in your domain, not the shared Lumos app catalog.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateApp",
         "parameters": [
           {
@@ -11768,7 +12313,12 @@
         ]
       },
       "put": {
+        "deprecated": true,
         "description": "Update an app in place: apply domain-specific metadata overrides (the same fields as `PATCH /apps/{app_id}`) and/or rotate an integration's credentials. Providing `auth`/`settings`/`version` (with the matching `app_class_id`) reconnects the app: credentials are always overwritten and re-validated, and a sync is triggered \u2014 like connect, the app either connects in-band or awaits browser consent in the Lumos UI, and while a sync is in flight the request is throttled with `429` and a `Retry-After` header. Metadata-only bodies (custom apps, or integrations without credential changes) never touch credentials.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "reconnectApp",
         "parameters": [
           {
@@ -11806,7 +12356,7 @@
             "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization."
           },
           "404": {
             "description": "Not found \u2014 no app with this id in your domain."
@@ -11847,7 +12397,12 @@
     },
     "/apps/{app_id}/settings": {
       "get": {
+        "deprecated": true,
         "description": "Get App settings.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAppSettings",
         "parameters": [
           {
@@ -11893,7 +12448,12 @@
         ]
       },
       "patch": {
+        "deprecated": true,
         "description": "Update app settings.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateAppSettings",
         "parameters": [
           {
@@ -11951,7 +12511,12 @@
     },
     "/apps/{app_id}/sync": {
       "post": {
+        "deprecated": true,
         "description": "Trigger a sync for a connected app on demand (e.g. from automation, after Terraform has connected it). The sync runs asynchronously \u2014 the call returns `202 Accepted` once the sync is launched; poll `GET /apps/{app_id}` to follow status.\n\nRequires `sync_type` (only `full_sync` is supported today). The app must be connected or in an error state from a prior sync (so callers can retry after failure). Manual/CSV apps are not supported. Only one sync may run at a time: while a sync is in flight the request is rejected with `409` \u2014 wait for the running sync to finish, then retry.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "triggerAppSync",
         "parameters": [
           {
@@ -11989,10 +12554,10 @@
             "description": "Bad request \u2014 the request could not be processed. Common causes: missing or malformed credentials, an unknown `app_class_id`, or an invalid configuration value. See the `detail` field for the specific reason."
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to manage apps on this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to manage apps in your organization."
           },
           "404": {
-            "description": "Not found \u2014 no app with this id in your domain."
+            "description": "Not found \u2014 no app with this id in your organization."
           },
           "409": {
             "description": "Conflict \u2014 a sync is already running for this app, the app is not in a syncable state, or its first sync is deferred pending admin review (match rules, or a flatfile column mapping) in the Lumos UI."
@@ -12004,7 +12569,7 @@
             "description": "Not implemented \u2014 this app does not support the requested operation."
           },
           "502": {
-            "description": "Bad gateway \u2014 the downstream sync launch failed."
+            "description": "Bad gateway \u2014 Lumos couldn't start the sync. Retry later."
           }
         },
         "security": [
@@ -12020,7 +12585,12 @@
     },
     "/appstore/access_request": {
       "post": {
+        "deprecated": true,
         "description": "Create a request to access a specific permission in the appstore.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createAccessRequest",
         "requestBody": {
           "content": {
@@ -12074,7 +12644,12 @@
     },
     "/appstore/access_requests": {
       "get": {
+        "deprecated": true,
         "description": "Get all access requests for the current organization.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccessRequests",
         "parameters": [
           {
@@ -12248,7 +12823,12 @@
     },
     "/appstore/access_requests/{id}": {
       "delete": {
+        "deprecated": true,
         "description": "Cancel an access request.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "cancelAccessRequest",
         "parameters": [
           {
@@ -12305,7 +12885,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get access request by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAccessRequest",
         "parameters": [
           {
@@ -12374,7 +12959,12 @@
     },
     "/appstore/apps": {
       "get": {
+        "deprecated": true,
         "description": "List all AppStore apps.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAppStoreApps",
         "parameters": [
           {
@@ -12519,7 +13109,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "Add app to AppStore with given settings.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "addAppToAppStore",
         "requestBody": {
           "content": {
@@ -12566,7 +13161,12 @@
     },
     "/appstore/apps/{app_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Remove app from AppStore.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "removeAppFromAppStore",
         "parameters": [
           {
@@ -12610,7 +13210,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get AppStore app.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAppStoreApp",
         "parameters": [
           {
@@ -12679,7 +13284,12 @@
     },
     "/appstore/apps/{app_id}/requestable_permissions": {
       "get": {
+        "deprecated": true,
         "description": "Get AppStore permissions for an application.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_appstore_permissions_for_app_appstore_apps__app_id__requestable_permissions_get",
         "parameters": [
           {
@@ -12816,7 +13426,12 @@
     },
     "/appstore/apps/{app_id}/settings": {
       "get": {
+        "deprecated": true,
         "description": "Get AppStore app settings.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getAppStoreAppSettings",
         "parameters": [
           {
@@ -12862,7 +13477,12 @@
         ]
       },
       "patch": {
+        "deprecated": true,
         "description": "Update AppStore app settings.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateAppStoreAppSettings",
         "parameters": [
           {
@@ -12920,7 +13540,12 @@
     },
     "/appstore/pre_approval_rules": {
       "get": {
+        "deprecated": true,
         "description": "Get AppStore pre-approval rules for an app.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_appstore_pre_approval_rules_for_app_appstore_pre_approval_rules_get",
         "parameters": [
           {
@@ -12995,7 +13620,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "Create a pre-approval rule attached to an App in the AppStore.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "create_pre_approval_rule_appstore_pre_approval_rules_post",
         "requestBody": {
           "content": {
@@ -13042,7 +13672,12 @@
     },
     "/appstore/pre_approval_rules/{pre_approval_rule_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Delete a pre-approval rule by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "delete_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__delete",
         "parameters": [
           {
@@ -13081,7 +13716,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get an AppStore pre-approval rule.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_appstore_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__get",
         "parameters": [
           {
@@ -13127,7 +13767,12 @@
         ]
       },
       "patch": {
+        "deprecated": true,
         "description": "**Update a pre-approval rule attached to an App in the AppStore.**\n\nAll fields present in the payload will override the pre-approval rule's data.\nAny missing fields will be disregarded.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "update_pre_approval_rule_appstore_pre_approval_rules__pre_approval_rule_id__patch",
         "parameters": [
           {
@@ -13185,7 +13830,12 @@
     },
     "/appstore/requestable_permissions": {
       "get": {
+        "deprecated": true,
         "description": "Get AppStore permissions for an application.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_appstore_permissions_appstore_requestable_permissions_get",
         "parameters": [
           {
@@ -13320,7 +13970,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "**Create a permission attached to an App in the AppStore.**\n\n\n*Required fields:*\n- app-identifier. The App should be identified either by app_id or app_class_id + app_instance_id.\n- label\n\n*Defaults:*\n- request_config:\n    - appstore_visibility: HIDDEN\n    - allowed_groups:\n        - type: ALL_GROUPS\n        - groups: []\n    - request_approval_config\n        - manager_approval: NONE\n        - request_approval_stages: []\n    - request_fulfillment_config\n        - manual_steps_needed: false\n- All other fields will have null values by default.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "create_appstore_requestable_permission_appstore_requestable_permissions_post",
         "parameters": [
           {
@@ -13381,7 +14036,12 @@
     },
     "/appstore/requestable_permissions/{permission_id}": {
       "delete": {
+        "deprecated": true,
         "description": "Delete a requestable permission by ID.\n\n    Only permissions of type 'NATIVE' can be deleted.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "delete_appstore_permission_appstore_requestable_permissions__permission_id__delete",
         "parameters": [
           {
@@ -13420,7 +14080,12 @@
         ]
       },
       "get": {
+        "deprecated": true,
         "description": "Get an AppStore permission.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_appstore_permission_appstore_requestable_permissions__permission_id__get",
         "parameters": [
           {
@@ -13481,7 +14146,12 @@
         ]
       },
       "patch": {
+        "deprecated": true,
         "description": "**Update an AppStore permission.**\n\n\nAll fields present in the payload will override the permission's data.\nAny missing fields will be disregarded.\n\n    Non-updatable fields for now:\n        request_config -> request_fulfillment_config -> provisioning_group",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "update_appstore_permission_appstore_requestable_permissions__permission_id__patch",
         "parameters": [
           {
@@ -13573,7 +14243,12 @@
     },
     "/found_documents": {
       "post": {
+        "deprecated": true,
         "description": "Upload a newly discovered document (e.g. Order Form, Quote) to Lumos for review",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createFoundDocument",
         "requestBody": {
           "content": {
@@ -13734,7 +14409,12 @@
     },
     "/groups": {
       "get": {
+        "deprecated": true,
         "description": "Get groups synced from connected integrations",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getGroups",
         "parameters": [
           {
@@ -13866,7 +14546,12 @@
     },
     "/groups/{group_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get group by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getGroup",
         "parameters": [
           {
@@ -13914,7 +14599,12 @@
     },
     "/groups/{group_id}/users": {
       "get": {
+        "deprecated": true,
         "description": "Get user members by group ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getGroupMembership",
         "parameters": [
           {
@@ -13989,7 +14679,12 @@
     },
     "/identity_events": {
       "get": {
+        "deprecated": true,
         "description": "Get user identity events.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getIdentityEvents",
         "parameters": [
           {
@@ -14014,7 +14709,7 @@
             }
           },
           {
-            "description": "Filter events by changed field names, eg - 'title' or 'team'",
+            "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively, such as `Title`, `Status` or `Group Membership`.",
             "in": "query",
             "name": "changed_fields",
             "required": false,
@@ -14030,7 +14725,7 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter events by changed field names, eg - 'title' or 'team'",
+              "description": "Filter to events whose `changed_field` is one of these labels, matched exactly and case-sensitively, such as `Title`, `Status` or `Group Membership`.",
               "title": "Changed Fields"
             }
           },
@@ -14153,7 +14848,12 @@
     },
     "/inline_webhooks": {
       "get": {
+        "deprecated": true,
         "description": "Get available webhooks",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_inline_webhooks_inline_webhooks_get",
         "responses": {
           "200": {
@@ -14184,7 +14884,12 @@
     },
     "/integrations": {
       "get": {
-        "description": "List the integrations (apps) available to connect in your domain (paginated). Only connectable integrations are returned \u2014 catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only \u2014 name, category, and logo. Integrations you have connected are read via the Apps API.",
+        "deprecated": true,
+        "description": "List the integrations (apps) available to connect in your organization (paginated). Only connectable integrations are returned \u2014 catalog-only apps (e.g. discovered SaaS without a Lumos integration) are excluded. Returns catalog metadata only \u2014 name, category, and logo. Integrations you have connected are read via the Apps API.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "listIntegrations",
         "parameters": [
           {
@@ -14245,7 +14950,7 @@
             "description": "Successful Response"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization."
           },
           "422": {
             "content": {
@@ -14271,7 +14976,12 @@
     },
     "/integrations/{app_class_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get a connectable integration (app) by its `app_class_id` (e.g. `okta.com`). Returns catalog metadata only; integrations you have connected are read via the Apps API. An integration the catalog list leaves out returns 404.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getIntegration",
         "parameters": [
           {
@@ -14296,10 +15006,10 @@
             "description": "Successful Response"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization."
           },
           "404": {
-            "description": "Not found \u2014 no integration with this `app_class_id` in your domain."
+            "description": "Not found \u2014 no integration with this `app_class_id` in your organization."
           },
           "422": {
             "content": {
@@ -14325,7 +15035,12 @@
     },
     "/integrations/{app_class_id}/connection-schema": {
       "get": {
+        "deprecated": true,
         "description": "Get the connection schema for an integration \u2014 the JSON schema of the `auth` and `settings` fields needed to connect it with the Apps API's create endpoint. Use it to discover how to connect an integration *before* connecting it. `app_class_id` is the canonical identifier (e.g. `okta.com`, `slack_ics`) \u2014 the same value the connect body uses. An integration the catalog list leaves out, or whose connection schema Lumos cannot describe yet, returns 404.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getIntegrationConnectionSchema",
         "parameters": [
           {
@@ -14350,10 +15065,10 @@
             "description": "Successful Response"
           },
           "403": {
-            "description": "Forbidden \u2014 the caller lacks permission to view integrations in this domain."
+            "description": "Forbidden \u2014 the caller lacks permission to view integrations in your organization."
           },
           "404": {
-            "description": "Not found \u2014 no integration with this `app_class_id` is accessible to your domain, or no connection schema is available for it yet."
+            "description": "Not found \u2014 no integration with this `app_class_id` is accessible to your organization, or no connection schema is available for it yet."
           },
           "422": {
             "content": {
@@ -14379,7 +15094,12 @@
     },
     "/lifecycle-management/user-offboardings": {
       "post": {
+        "deprecated": true,
         "description": "Trigger or schedule an offboarding for an identity. Omit `scheduled_at` to run immediately, or provide a future datetime to schedule it. Omit `workflow_config_id` to use the offboarding workflow configuration your organization has selected for automatic offboarding.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createUserOffboarding",
         "requestBody": {
           "content": {
@@ -14438,7 +15158,12 @@
     },
     "/lifecycle-management/user-offboardings/{user_offboarding_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get a user offboarding by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getUserOffboarding",
         "parameters": [
           {
@@ -14494,7 +15219,12 @@
     },
     "/lifecycle-management/user-offboardings/{user_offboarding_id}/cancel": {
       "post": {
+        "deprecated": true,
         "description": "Cancel a scheduled or in-progress user offboarding.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "cancelUserOffboarding",
         "parameters": [
           {
@@ -14546,7 +15276,12 @@
     },
     "/orders": {
       "post": {
+        "deprecated": true,
         "description": "Upload a newly discovered document (e.g. Order Form, Quote) to Lumos",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "createOrder",
         "requestBody": {
           "content": {
@@ -14591,7 +15326,12 @@
     },
     "/tasks": {
       "get": {
+        "deprecated": true,
         "description": "List tasks visible to the current user.\n\nCombine `task_category`, `product_area`, and `status` to find the tasks you care about:\n\n- **Pending access-request approvals**:\n  `GET /tasks?task_category=APPROVAL&product_area=APPSTORE&status=PENDING`\n\nPass `expand=actions` or `expand=assignees` to hydrate those fields on each result.\nCallers with permission to view every task, such as Admins, may pass `show_all_tasks=true` to\nlist tasks across the whole domain rather than just the caller's assigned set.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "list_tasks_tasks_get",
         "parameters": [
           {
@@ -14876,7 +15616,12 @@
     },
     "/tasks/{task_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get a task by ID.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_task_tasks__task_id__get",
         "parameters": [
           {
@@ -14947,7 +15692,12 @@
     },
     "/tasks/{task_id}/actions": {
       "get": {
+        "deprecated": true,
         "description": "Get available actions for a task.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_task_actions_tasks__task_id__actions_get",
         "parameters": [
           {
@@ -15001,7 +15751,12 @@
     },
     "/tasks/{task_id}/comments": {
       "post": {
+        "deprecated": true,
         "description": "Add a comment to a task.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "add_task_comment_tasks__task_id__comments_post",
         "parameters": [
           {
@@ -15059,7 +15814,12 @@
     },
     "/tasks/{task_id}/complete": {
       "post": {
+        "deprecated": true,
         "description": "**Complete a task** \u2014 transition any task to `COMPLETED` by applying its unique\ncompletion action. For approval tasks this is the \"approve\" primitive.\n\nCommon uses:\n\n- **Approve an access request** (task with `task_category=APPROVAL` and `product_area=APPSTORE`).\n- **Mark a non-approval task done** when it exposes exactly one action that transitions\n  to `COMPLETED` (e.g. acknowledging a manual provisioning step). Tasks with multiple\n  possible completion actions should use `POST /tasks/{task_id}/perform-action` instead.\n\nThis endpoint resolves the unique action on the task that transitions it to `COMPLETED`\nand applies it on behalf of the caller. The caller must be an assignee of the task (or a\ndomain admin). There is no request body.\n\nResponses:\n\n- `204 No Content` \u2014 task completed.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status (safe to treat as idempotent).\n- `404 Not Found` \u2014 task does not exist in this domain, or the Tasks API is not enabled.\n\nTo deny instead of approve, use [`POST /tasks/{task_id}/dismiss`](#dismiss-task). For\ntasks that expose custom workflow actions (not approvals), use\n[`POST /tasks/{task_id}/perform-action`](#perform-task-action).",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "complete_task_tasks__task_id__complete_post",
         "parameters": [
           {
@@ -15102,7 +15862,12 @@
     },
     "/tasks/{task_id}/dismiss": {
       "post": {
+        "deprecated": true,
         "description": "**Dismiss a task** \u2014 transition any task to `DISMISSED` by applying its unique\ndismissal action. For approval tasks this is the \"deny / reject\" primitive; for\nnon-approval tasks it cancels the task without performing its work.\n\nCommon uses:\n\n- **Deny an access request**.\n- **Cancel a non-approval task** (e.g. dismiss an error task once the underlying issue is\n  handled out-of-band). Tasks with multiple possible dismissal actions should use\n  `POST /tasks/{task_id}/perform-action` instead.\n\nResolves the unique action on the task that transitions it to `DISMISSED` and applies it\non behalf of the caller. The caller must be an assignee of the task (or a domain admin).\nThere is no request body.\n\nResponses:\n\n- `204 No Content` \u2014 task dismissed.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status.\n- `404 Not Found` \u2014 task does not exist in this domain, or the Tasks API is not enabled.\n\nTo approve instead of deny, use [`POST /tasks/{task_id}/complete`](#complete-task).",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "dismiss_task_tasks__task_id__dismiss_post",
         "parameters": [
           {
@@ -15145,7 +15910,12 @@
     },
     "/tasks/{task_id}/perform-action": {
       "post": {
+        "deprecated": true,
         "description": "**Perform a custom action on a task** \u2014 the generic escape hatch for tasks that expose\nworkflow-specific actions beyond approve/deny.\n\nFor approval tasks, prefer `POST /tasks/{task_id}/complete` or\n`POST /tasks/{task_id}/dismiss` \u2014 those endpoints are simpler and do not require\ndiscovering the action type.\n\nUse this endpoint only when the task exposes custom actions. Discover the available\nactions for a task with `GET /tasks/{task_id}/actions`; each returned action includes an\n`action_type` (the value to pass in this request body) and the status transitions it can\nproduce.\n\n`transition_to` is optional \u2014 if the action has exactly one possible target status, it\nis inferred. Pass it explicitly when an action can transition to more than one status.\n\nResponses:\n\n- `204 No Content` \u2014 action performed.\n- `400 Bad Request` \u2014 unknown action type or invalid transition.\n- `403 Forbidden` \u2014 caller is not authorized to act on the task.\n- `409 Conflict` \u2014 task is already in the requested status.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "perform_task_action_tasks__task_id__perform_action_post",
         "parameters": [
           {
@@ -15198,7 +15968,12 @@
     },
     "/tasks/{task_id}/reassign": {
       "post": {
+        "deprecated": true,
         "description": "Reassign a task.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "reassign_task_tasks__task_id__reassign_post",
         "parameters": [
           {
@@ -15251,7 +16026,12 @@
     },
     "/users": {
       "get": {
+        "deprecated": true,
         "description": "List all of your company's users.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "listUsers",
         "parameters": [
           {
@@ -15368,7 +16148,12 @@
     },
     "/users/current": {
       "get": {
+        "deprecated": true,
         "description": "Get current user",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "currentUser",
         "responses": {
           "200": {
@@ -15395,7 +16180,12 @@
     },
     "/users/{user_id}": {
       "get": {
+        "deprecated": true,
         "description": "Get user by id.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getUser",
         "parameters": [
           {
@@ -15464,7 +16254,12 @@
     },
     "/users/{user_id}/accounts": {
       "get": {
+        "deprecated": true,
         "description": "Get a list of Accounts for this user",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "getUserAccounts",
         "parameters": [
           {
@@ -15560,7 +16355,12 @@
     },
     "/users/{user_id}/roles": {
       "get": {
+        "deprecated": true,
         "description": "Get the roles assigned to a specific user,\nensuring the user belongs to the specified domain.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "get_user_roles_users__user_id__roles_get",
         "parameters": [
           {
@@ -15606,7 +16406,12 @@
     },
     "/users/{user_id}/roles/{role_name}": {
       "delete": {
+        "deprecated": true,
         "description": "Remove a specific role from a user, ensuring the user belongs to the specified domain.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "remove_role_from_user_users__user_id__roles__role_name__delete",
         "parameters": [
           {
@@ -15654,7 +16459,12 @@
         ]
       },
       "post": {
+        "deprecated": true,
         "description": "Add a role to a specific user, ensuring the user belongs to the specified domain.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "add_role_to_user_users__user_id__roles__role_name__post",
         "parameters": [
           {
@@ -15709,7 +16519,7 @@
     },
     "/v1/knowledge/context": {
       "get": {
-        "description": "List knowledge entries for the caller's domain with optional filters and cursor pagination.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "description": "List knowledge entries in your organization with optional filters and cursor pagination.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
         "operationId": "listKnowledgeContext",
         "parameters": [
           {
@@ -15886,7 +16696,7 @@
         ]
       },
       "post": {
-        "description": "Create a new knowledge entry in the caller's domain.\n\nSend as `multipart/form-data`. The `file` field is optional \u2014 omit it to create an entry without an attachment.",
+        "description": "Create a new knowledge entry in your organization.\n\nSend as `multipart/form-data`. The `file` field is optional \u2014 omit it to create an entry without an attachment.",
         "operationId": "createKnowledgeContext",
         "requestBody": {
           "content": {
@@ -15975,7 +16785,7 @@
     },
     "/v1/knowledge/context/{knowledge_context_id}": {
       "delete": {
-        "description": "Archive (soft-delete) a knowledge entry. The entry is marked ARCHIVED and will no longer appear in list results. This action is reversible at the database level.",
+        "description": "Delete a knowledge entry. It no longer appears in list results, and you can't restore it through the API.",
         "operationId": "deleteKnowledgeContext",
         "parameters": [
           {
@@ -16072,7 +16882,7 @@
         ]
       },
       "get": {
-        "description": "Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. An archived (deleted) entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.",
+        "description": "Get one knowledge entry by ID, with its content, tags, product scopes, and the URL of any attached file. A deleted entry, or an ID that matches no entry in your organization, returns 404 `knowledge.not_found`.",
         "operationId": "getKnowledgeContext",
         "parameters": [
           {
@@ -16289,9 +17099,564 @@
         ]
       }
     },
+    "/v1/knowledge/skills": {
+      "get": {
+        "description": "List the skills available to your organization, including Lumos-provided defaults, with each skill's files unless `include_files=false`.\n\nNarrow the list with `filters`, a JSON array of `{field, operator, values}`: `title` (`CONTAINS`, `EQ`), `is_enabled` and `is_default` (`EQ` with `true` or `false`), for example `[{\"field\":\"is_default\",\"operator\":\"EQ\",\"values\":[\"false\"]}]`. `title_search`, `enabled_state` and `is_default` are shorthands for the same filters; every filter given applies.\n\nPass the `next_page_token` value from the previous response back as the `page_token` query parameter to fetch the next page. When `next_page_token` is `null`, the current page is the last one.",
+        "operationId": "listSkills",
+        "parameters": [
+          {
+            "description": "JSON array of `{field, operator, values}` predicates, AND'ed together. Fields: `title`, `is_enabled`, `is_default`.",
+            "in": "query",
+            "name": "filters",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "JSON array of `{field, operator, values}` predicates, AND'ed together. Fields: `title`, `is_enabled`, `is_default`.",
+              "title": "Filters"
+            }
+          },
+          {
+            "description": "Shorthand for a `title` `CONTAINS` filter; case-insensitive.",
+            "in": "query",
+            "name": "title_search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Shorthand for a `title` `CONTAINS` filter; case-insensitive.",
+              "title": "Title Search"
+            }
+          },
+          {
+            "description": "Shorthand for an `is_enabled` filter. `any` (the default) adds none.",
+            "in": "query",
+            "name": "enabled_state",
+            "required": false,
+            "schema": {
+              "default": "any",
+              "description": "Shorthand for an `is_enabled` filter. `any` (the default) adds none.",
+              "enum": [
+                "enabled",
+                "disabled",
+                "any"
+              ],
+              "title": "Enabled State",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Shorthand for an `is_default` filter.",
+            "in": "query",
+            "name": "is_default",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Shorthand for an `is_default` filter.",
+              "title": "Is Default"
+            }
+          },
+          {
+            "description": "Return each skill's files. Send `false` for titles and summaries only.",
+            "in": "query",
+            "name": "include_files",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Return each skill's files. Send `false` for titles and summaries only.",
+              "title": "Include Files",
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.",
+            "in": "query",
+            "name": "page_token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Opaque cursor from a previous response's `next_page_token`. Omit to fetch the first page. Treat as opaque: do not decode, construct, or interpret it.",
+              "title": "Page Token"
+            }
+          },
+          {
+            "description": "Maximum number of items to return per page. Values above 25 are clamped to 25 rather than rejected.",
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "description": "Maximum number of items to return per page. Values above 25 are clamped to 25 rather than rejected.",
+              "minimum": 1,
+              "title": "Page Size",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSkillsOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Skills",
+        "tags": [
+          "Skills"
+        ]
+      },
+      "post": {
+        "description": "Create a skill in your organization from its files. `SKILL.md` carries its instructions and is required; `custom-instructions.md` and any other path, such as `references/setup.md`, are optional. The title is stored as a slug and must not match another skill in your organization or a Lumos-provided one: a clash returns 409 `skill.already_exists`. The response is the skill as `GET /v1/knowledge/skills/{title}` returns it.",
+        "operationId": "createSkill",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSkillInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Invalid input \u2014 `skill.invalid_input`."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden \u2014 caller lacks the Knowledge Hub manage-skills permission."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "The title is taken \u2014 `skill.already_exists`."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Skill",
+        "tags": [
+          "Skills"
+        ]
+      }
+    },
+    "/v1/knowledge/skills/{skill_id}/files/{path}": {
+      "put": {
+        "description": "Write one file of a skill, creating it or replacing its content. `SKILL.md` replaces the instructions; a frontmatter `name` in it renames the skill, so read `title` from the response. A `name` that matches another skill in your organization or a Lumos-provided one returns 409 `skill.already_exists`. `custom-instructions.md` replaces your organization's additions. Any other path adds or replaces a reference file. A Lumos-provided skill takes no reference files and returns 400 `skill.invalid_input`. An id that matches no skill in your organization returns 404 `skill.not_found`.",
+        "operationId": "putSkillFile",
+        "parameters": [
+          {
+            "description": "The skill's `id`, which every skill read and write returns.",
+            "in": "path",
+            "name": "skill_id",
+            "required": true,
+            "schema": {
+              "description": "The skill's `id`, which every skill read and write returns.",
+              "title": "Skill Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Path of the file within the skill, e.g. `references/setup.md`.",
+            "in": "path",
+            "name": "path",
+            "required": true,
+            "schema": {
+              "description": "Path of the file within the skill, e.g. `references/setup.md`.",
+              "title": "Path",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutSkillFileInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "description": "Invalid input \u2014 `skill.invalid_input`."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden \u2014 caller lacks the Knowledge Hub manage-skills permission."
+          },
+          "404": {
+            "description": "No skill has that id \u2014 `skill.not_found`."
+          },
+          "409": {
+            "description": "The `SKILL.md` `name` is taken \u2014 `skill.already_exists`."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Skill File",
+        "tags": [
+          "Skills"
+        ]
+      }
+    },
+    "/v1/knowledge/skills/{title}": {
+      "get": {
+        "description": "Get one skill by title, with every file it carries. A disabled skill is still returned, with `is_enabled` false. A title that matches no skill in your organization returns 404 `skill.not_found`.",
+        "operationId": "getSkill",
+        "parameters": [
+          {
+            "description": "The skill's title, which `GET /v1/knowledge/skills` returns.",
+            "in": "path",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "description": "The skill's title, which `GET /v1/knowledge/skills` returns.",
+              "title": "Title",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillOutput"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Skill",
+        "tags": [
+          "Skills"
+        ]
+      }
+    },
     "/vendor_agreements": {
       "get": {
+        "deprecated": true,
         "description": "List all of your company's vendor agreements.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "listVendorAgreements",
         "parameters": [
           {
@@ -16357,7 +17722,12 @@
     },
     "/vendor_agreements/{vendor_agreement_id}/custom_attributes/{label}": {
       "put": {
+        "deprecated": true,
         "description": "Update a custom attribute attached to a vendor agreement.",
+        "externalDocs": {
+          "description": "The v1 replacement for this endpoint",
+          "url": "https://docs.lumos.com/reference/v1/migrate/endpoint-map"
+        },
         "operationId": "updateVendorAgreementCustomAttribute",
         "parameters": [
           {
@@ -16551,11 +17921,11 @@
       "name": "Integrations"
     },
     {
-      "description": "\nAn app is an integration you have connected, one per connected instance of a service. Your Okta\ntenant is an app. A second Slack workspace is a second app.\n\n### Connecting one\n\n1. `GET /v1/integrations/{app_class_id}/connection-schema` to see which `auth` and `settings`\n   keys the integration expects.\n2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect, and\n   their first sync waits for an admin to review match rules. It starts from the Lumos UI, or from\n   `POST /v1/apps/{app_uuid}:sync` with `skip_first_sync_review: true`. Apps that need browser\n   consent are finished in the Lumos UI.\n3. `GET /v1/apps/{app_uuid}` to follow the first sync. `sync_status` shows the state of the\n   app's most recent sync. A sync started with `POST /v1/apps/{app_uuid}:sync` also returns an\n   operation, which you poll with `GET /v1/operations/{operation_id}`.\n4. `POST /v1/apps/{app_uuid}:sync` to resync later. Only one sync runs per app at a time, so a\n   second request while one is in flight returns 409.\n\nRotate credentials with `PATCH /v1/apps/{app_uuid}`, which also updates an app's metadata.\n`POST /v1/apps/{app_uuid}:disconnect` drops the stored credentials and returns the app to a\nconnectable state; `DELETE /v1/apps/{app_uuid}` removes the app outright.\n\n### Reading apps\n\n`expand` is opt-in and evaluated per field: ask for `admins`, `custom_attributes`,\n`appstore_settings`, or any of the three workflow fields. A field you lack permission to read is\nleft out of the response instead of failing the whole request, so a 200 does not prove every field\nyou asked for came back.\n\nTo list only the connected apps you manage through the API, combine `connection_source=API` with\n`disconnected=false`.\n\n### Bound workflows\n\nEach app carries three bindings: an approval workflow, a default provisioning workflow, and a\ndefault deprovisioning workflow. The two `default_` workflows are the ones that entitlements on\nthe app fall back to. To bind a workflow to one entitlement instead, use the Entitlements\nendpoints.\n",
+      "description": "\nAn app is an integration you have connected, one per connected instance of a service. Your Okta\ntenant is an app. A second Slack workspace is a second app.\n\n### Connecting one\n\n1. `GET /v1/integrations/{app_class_id}/connection-schema` to see which `auth` and `settings`\n   keys the integration expects.\n2. `POST /v1/apps` with those credentials. Apps whose credentials validate right away connect, and\n   their first sync waits for an admin to review match rules. It starts from the Lumos UI, or from\n   `POST /v1/apps/{app_id}:sync` with `skip_first_sync_review: true`. Apps that need browser\n   consent are finished in the Lumos UI.\n3. `GET /v1/apps/{app_id}` to follow the first sync. `sync_status` shows the state of the\n   app's most recent sync. A sync started with `POST /v1/apps/{app_id}:sync` also returns an\n   operation, which you poll with `GET /v1/operations/{operation_id}`.\n4. `POST /v1/apps/{app_id}:sync` to resync later. Only one sync runs per app at a time, so a\n   second request while one is in flight returns 409.\n\nRotate credentials with `PATCH /v1/apps/{app_id}`, which also updates an app's metadata.\n`POST /v1/apps/{app_id}:disconnect` drops the stored credentials and returns the app to a\nconnectable state; `DELETE /v1/apps/{app_id}` removes the app outright.\n\n### Reading apps\n\n`expand` is opt-in and evaluated per field: ask for `admins`, `custom_attributes`,\n`appstore_settings`, or any of the three workflow fields. A field you lack permission to read is\nleft out of the response instead of failing the whole request, so a 200 does not prove every field\nyou asked for came back.\n\nTo list only the connected apps you manage through the API, combine `connection_source=API` with\n`disconnected=false`.\n\n### Bound workflows\n\nEach app carries three bindings: an approval workflow, a default provisioning workflow, and a\ndefault deprovisioning workflow. The two `default_` workflows are the ones that entitlements on\nthe app fall back to. To bind a workflow to one entitlement instead, use the Entitlements\nendpoints.\n",
       "name": "Apps"
     },
     {
-      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, a\npermission. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_uuid}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` renames it. `label` is the only field you can change\n  today, and sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT.\n\nNot every entitlement supports them. An entitlement with no request configuration behind it\nreturns 404 with `Workflows are not available for this entitlement.` on all six.\n",
+      "description": "\nAn entitlement is a grantable unit of access on an app: a role, a license tier, a group, or\nanother access right. Accounts hold entitlements.\n\n- `POST /v1/entitlements` creates a requestable entitlement on an app.\n- `GET /v1/apps/{app_id}/entitlements` lists the entitlements on one app.\n- `GET /v1/entitlements/{entitlement_uuid}/accounts` lists who currently holds one.\n- `PATCH /v1/entitlements/{entitlement_uuid}` updates its `label`, `description`, and\n  `custom_approval_message_override`. Sending any other field returns 400.\n- `DELETE /v1/entitlements/{entitlement_uuid}` refuses while the entitlement is still held,\n  returning 409 with an `active_accounts` count.\n\n### Per-entitlement workflows\n\nAn entitlement can have its own approval override, provisioning workflow, and deprovisioning\nworkflow, bound to it rather than to the whole app. Each has a GET and a PUT, and the approval\noverride also has a DELETE that turns it off.\n\nAn entitlement that can't be requested returns 404 with\n`Workflows are not available for this entitlement.` on each of these endpoints.\n",
       "name": "Entitlements"
     },
     {
@@ -16563,15 +17933,15 @@
       "name": "Accounts"
     },
     {
-      "description": "\nA workflow is a reusable definition of the steps Lumos runs to approve a request, provision access,\nor deprovision it. Create the definition here, then bind it to an app or an entitlement through\ntheir own workflow endpoints.\n\n### Building one\n\n1. `GET /v1/workflow-steps?app_id={app_uuid}&type={workflow type}` to discover the steps available\n   for that app in the type of workflow you will create, each with the input schema it accepts.\n   Without `type`, it lists only the steps every workflow type accepts.\n2. `POST /v1/workflows` with the steps you want.\n3. Bind it, for example with `PUT /v1/apps/{app_uuid}/default-provisioning-workflow`.\n\n`type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` returns 400 for a\nchange to either.\n\n### Workflows this API cannot describe\n\nSome workflows Lumos builds for you, including the out-of-the-box provisioning defaults, contain\nsteps with no public representation. `GET /v1/workflows` skips them, so a page can hold fewer items\nthan `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as\nthe end of the list. Binding one of these to an app or entitlement returns 400.\n",
+      "description": "\nA workflow is a reusable definition of the steps Lumos runs to approve a request, provision access,\nor deprovision it. Create the definition here, then bind it to an app or an entitlement through\ntheir own workflow endpoints.\n\n### Building one\n\n1. `GET /v1/workflow-steps?app_id={app_id}&type={workflow type}` to discover the steps available\n   for that app in the type of workflow you will create, each with the input schema it accepts.\n   Without `type`, it lists only the steps every workflow type accepts.\n2. `POST /v1/workflows` with the steps you want.\n3. Bind it, for example with `PUT /v1/apps/{app_id}/default-provisioning-workflow`.\n\n`type` and `app_id` are fixed at creation. `PUT /v1/workflows/{workflow_id}` returns 400 for a\nchange to either.\n\n### Workflows this API cannot describe\n\nSome workflows Lumos builds for you, including the out-of-the-box provisioning defaults, contain\nsteps with no public representation. `GET /v1/workflows` skips them, so a page can hold fewer items\nthan `page_size` while more results remain. Treat an absent `next_page_token`, not a short page, as\nthe end of the list. Binding one of these to an app or entitlement returns 400.\n",
       "name": "Workflows"
     },
     {
-      "description": "\nCustom attributes are the extra fields your organization keeps on users. These endpoints read\ntheir *definitions*, not the values stored against any particular user.\n\n`GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that\nsupplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from\nones your team created, or with `app_id` to see only what a single app supplies.\n",
+      "description": "\nCustom attributes are the extra fields your organization keeps on users. These endpoints read\ntheir *definitions*, not the values stored against any particular user.\n\n`GET /v1/custom-attribute-definitions` returns one entry per label, unified across every app that\nsupplies it. Narrow the list with `source_type` to tell attributes synced from an app apart from\nones your team created, or with `app_id` to see only what a single app supplies.\n\n`GET /v1/custom-attribute-definitions/{id}` reads one definition by its `id`, and\n`GET /v1/custom-attribute-definitions/{id}/configs` lists the configs behind it, highest priority\nfirst.\n",
       "name": "Custom Attribute Definitions"
     },
     {
-      "description": "\nKnowledge entries are the documents and notes Lumos agents draw on when they answer access\nquestions. Each entry carries a title, body, tags, and product scopes, plus an optional file\nattachment.\n\nBecause of that attachment, create and update send `multipart/form-data` rather than JSON. On\nupdate, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`\nremoves an existing file without uploading a replacement.\n\n`DELETE` archives rather than destroys. The entry stops appearing in list results and stays\nrecoverable.\n\nPages here are small: `page_size` defaults to 10 and is clamped to 25.\n",
+      "description": "\nKnowledge entries are the documents and notes Lumos agents draw on when they answer access\nquestions. Each entry carries a title, body, tags, and product scopes, plus an optional file\nattachment.\n\nBecause of that attachment, create and update send `multipart/form-data` rather than JSON. On\nupdate, tag and scope lists replace what was there instead of appending, and `clear_attachment=true`\nremoves an existing file without uploading a replacement.\n\n`DELETE` deletes a knowledge entry. It no longer appears in list results, and you can't restore\nit through the API.\n\nPages here are small: `page_size` defaults to 10 and is clamped to 25.\n",
       "name": "Knowledge"
     }
   ]
