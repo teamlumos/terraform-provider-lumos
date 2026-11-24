@@ -48,7 +48,9 @@ The OpenAPI JSON is generated from the FastAPI-based `apiserver` in the main Lum
 
 1. Copy the updated OpenAPI JSON into this repo as `original-openapi.json`
 2. Update `overlay.yaml` if needed to opt in new resources, data sources, hooks, or validators
-3. Run:
+3. Set `terraform.version` in `.speakeasy/gen.yaml` to the version you'll tag next, such as
+   `0.13.0` after `v0.12.0`. The SDK's User-Agent and the README's version pins use it.
+4. Run:
 
 ```sh
 make provider
