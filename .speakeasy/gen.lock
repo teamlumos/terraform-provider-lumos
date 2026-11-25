@@ -5,12 +5,12 @@ management:
   docVersion: 0.1.0
   speakeasyVersion: 1.700.2
   generationVersion: 2.801.2
-  releaseVersion: 0.12.0
-  configChecksum: 1bc74b88722bd28f9e1e26d67c4205f2
+  releaseVersion: 0.12.1
+  configChecksum: e770b5ad47e2fc18efcc76eef9ec7ef0
 persistentEdits:
-  generation_id: 1a18f497-aaef-4dfb-b8ad-cac196917fa9
-  pristine_commit_hash: 5350fe8b97b0353af2f527b3492e216ce1bdea90
-  pristine_tree_hash: 1eef0713b54e177c1754d3a2d406b8df8818abd5
+  generation_id: 4a063b07-3c7a-4f85-95cb-18b09bcb3366
+  pristine_commit_hash: b4b660dd5d7e18bc3fabb77af5443f057571e2aa
+  pristine_tree_hash: 22e0d29da84bb4e06fcbc1cefdf7459e73651fcc
 features:
   terraform:
     additionalDependencies: 0.1.0
@@ -87,8 +87,8 @@ trackedFiles:
     pristine_git_object: ee93b441d8ba27af724f23bf8366b691531e3258
   examples/provider/provider.tf:
     id: 954e955c0240
-    last_write_checksum: sha1:b13ead6f962fe9a11e1ce95956dd70ad669ac853
-    pristine_git_object: 6c78d5016e76fea0f0107cb2958b704526b80266
+    last_write_checksum: sha1:0bcea21ee386ae5990f80f339e5ee68911ae5fe8
+    pristine_git_object: bfd3f9b9e19f7191af913fef6a3e33e7577a7bc2
   examples/resources/lumos_access_policy/import-by-string-id.tf:
     id: b2884d5cbe46
     last_write_checksum: sha1:6b5ff2e87b0625432d42f14d228e4cca1432da0a
@@ -639,8 +639,8 @@ trackedFiles:
     pristine_git_object: cc77d973211d08b0c9930fb4ffd35715d0e5a832
   internal/sdk/lumos.go:
     id: 146a43b83b47
-    last_write_checksum: sha1:d29b352dc5675539268996ca10c731d13c83dc67
-    pristine_git_object: d5ec5489ad19640db0c25c9bcd304b28ad82e9f0
+    last_write_checksum: sha1:ebfd031bcf4b374816e72dd76e38734ead8ae5f7
+    pristine_git_object: 3d197c59deffada2e971d9e539ec872dca76b75c
   internal/sdk/meta.go:
     id: 88371e7fe431
     last_write_checksum: sha1:15ce132d7d0676c3e589e05d27e73e7803934daa
